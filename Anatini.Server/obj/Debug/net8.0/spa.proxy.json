@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:64257",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\uniqu\\source\\repos\\Anatini\\Anatini.Server\\..\\anatini.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
