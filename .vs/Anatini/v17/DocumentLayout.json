@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\uniqu\\source\\repos\\anatini\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9EBDE344-2624-FB27-E1CC-93E446DFBB8C}|anatini.client\\anatini.client.esproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{9EBDE344-2624-FB27-E1CC-93E446DFBB8C}|anatini.client\\anatini.client.esproj|solutionrelative:anatini.client\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|solutionrelative:anatini.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.server\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|solutionrelative:anatini.server\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|solutionrelative:anatini.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,27 +27,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": ".gitignore",
-              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore",
-              "RelativeDocumentMoniker": "anatini.client\\.gitignore",
-              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore",
-              "RelativeToolTip": "anatini.client\\.gitignore",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-06-20T04:41:24.375Z",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\Program.cs",
+              "RelativeDocumentMoniker": "Anatini.Server\\Program.cs",
+              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\Program.cs",
+              "RelativeToolTip": "Anatini.Server\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-20T04:52:27.807Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": ".gitignore",
-              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\.gitignore",
-              "RelativeDocumentMoniker": "Anatini.Server\\.gitignore",
-              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\.gitignore",
-              "RelativeToolTip": "Anatini.Server\\.gitignore",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-06-20T04:41:21.107Z",
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "Anatini.Server\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "Anatini.Server\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-20T05:04:38.594Z",
               "EditorCaption": ""
             }
           ]
