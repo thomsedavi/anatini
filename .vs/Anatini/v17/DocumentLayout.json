@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\uniqu\\source\\repos\\anatini\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9EBDE344-2624-FB27-E1CC-93E446DFBB8C}|anatini.client\\anatini.client.esproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{9EBDE344-2624-FB27-E1CC-93E446DFBB8C}|anatini.client\\anatini.client.esproj|solutionrelative:anatini.client\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|c:\\users\\uniqu\\source\\repos\\anatini\\anatini.server\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}|anatini.Server\\anatini.Server.csproj|solutionrelative:anatini.server\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +18,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore",
+              "RelativeDocumentMoniker": "anatini.client\\.gitignore",
+              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\anatini.client\\.gitignore",
+              "RelativeToolTip": "anatini.client\\.gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-06-20T04:41:24.375Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\.gitignore",
+              "RelativeDocumentMoniker": "Anatini.Server\\.gitignore",
+              "ToolTip": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\.gitignore",
+              "RelativeToolTip": "Anatini.Server\\.gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-06-20T04:41:21.107Z",
+              "EditorCaption": ""
             }
           ]
         }
