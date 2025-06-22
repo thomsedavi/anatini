@@ -1,20 +1,32 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import { ref } from 'vue';
+
+  const name = ref<string>('');
+  const email = ref<string>('');
+  const password = ref<string>('');
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <form id="app" action="/api/authentication/signup" method="post">
+    <p>
+      <label for="name">Name</label>
+      <input id="name" v-model="name" type="text" name="name">
+    </p>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+    <p>
+      <label for="email">Email</label>
+      <input id="email" v-model="email" type="email" name="email">
+    </p>
 
-  <main>
-    <TheWelcome />
-  </main>
+    <p>
+      <label for="password">Password</label>
+      <input id="password" v-model="password" type="password" name="password">
+    </p>
+
+    <p>
+      <input type="submit" value="Submit">
+    </p>
+  </form>
 </template>
 
 <style scoped>
