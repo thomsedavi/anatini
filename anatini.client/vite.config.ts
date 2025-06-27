@@ -47,6 +47,10 @@ export default defineConfig({
     },
     server: {
         proxy: {
+            '^/api/controller': {
+                target,
+                secure: false
+            },
             '^/api/authentication': {
                 target,
                 secure: false

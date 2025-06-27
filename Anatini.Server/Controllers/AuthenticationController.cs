@@ -1,4 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace anatini.Server.Controllers
 {
@@ -6,15 +10,34 @@ namespace anatini.Server.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        private static readonly List<SignupForm> users = [];
-
         [HttpPost("signup")]
         [Consumes("application/x-www-form-urlencoded")]
-        public IActionResult Signup([FromForm] SignupForm values)
+        public IActionResult Signup([FromForm] SignupForm request)
         {
-            users.Add(values);
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, "1"),
+                new(ClaimTypes.Email, request.Email)
+            };
 
-            return Ok(values);
+            var key = Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = "https://id.anatini.com",
+                Audience = "https://api.anatini.com",
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var jwt = tokenHandler.WriteToken(token);
+
+            return Ok(new {Bearer = jwt});
         }
     }
 
