@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:54083",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\uniqu\\source\\repos\\anatini\\anatini.Server\\..\\anatini.client",
+"WorkingDirectory": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\..\\anatini.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

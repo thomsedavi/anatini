@@ -1,4 +1,4 @@
-namespace anatini.Server
+namespace Anatini.Server
 {
     public class WeatherForecast
     {

@@ -1,17 +1,18 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace anatini.Server.Controllers
+namespace Anatini.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
         [HttpPost("signup")]
-        [Consumes("application/x-www-form-urlencoded")]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         public IActionResult Signup([FromForm] SignupForm request)
         {
             var claims = new List<Claim>
@@ -37,7 +38,7 @@ namespace anatini.Server.Controllers
 
             var jwt = tokenHandler.WriteToken(token);
 
-            return Ok(new {Bearer = jwt});
+            return Ok(new { Bearer = jwt });
         }
     }
 

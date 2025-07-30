@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace anatini.Server.Controllers
+namespace Anatini.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

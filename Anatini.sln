@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36212.18 d17.14
+VisualStudioVersion = 17.14.36301.6 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "anatini.client", "anatini.client\anatini.client.esproj", "{9EBDE344-2624-FB27-E1CC-93E446DFBB8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anatini.Server", "anatini.Server\anatini.Server.csproj", "{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anatini.Server", "Anatini.Server\Anatini.Server.csproj", "{2C45B8CF-F2AD-4738-9A27-5E96B79C1A6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
