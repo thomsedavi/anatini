@@ -1,6 +1,6 @@
 {
 "SpaProxyServer": {
-"ServerUrl": "https://localhost:54083",
+"ServerUrl": "https://localhost:57850",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
 "WorkingDirectory": "C:\\Users\\uniqu\\source\\repos\\anatini\\Anatini.Server\\..\\anatini.client",

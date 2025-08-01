@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Anatini.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+884dcb299a96654e7ab348d817ba367a0b39c3f1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd9cfffe09c245912cc1bdb483b0e0d018b5efdb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Anatini.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Anatini.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
