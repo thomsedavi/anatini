@@ -15,7 +15,7 @@
     loading.value = true
 
     fetch(`/api/users/${array[0]}/posts/${array[1]}`, { method: "GET" })
-      .then(value => {
+      .then((value: Response) => {
         if (value.ok) {
           value.json()
             .then(value => {
@@ -25,9 +25,9 @@
               error.value = 'Unknown Error';
             });
         } else if (value.status === 401) {
-          error.value = 'unauthorised';
+          error.value = 'Unauthorised';
         } else {
-          error.value = 'internal server error';
+          error.value = 'Unkown Error';
         }
       })
       .catch(() => {

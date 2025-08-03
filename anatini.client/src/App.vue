@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+  import { store } from './store.ts'
 </script>
 
 <template>
@@ -10,7 +10,8 @@
     <RouterLink to="/users/david/posts/post-1">Post 1</RouterLink>
     <RouterLink to="/users/david/posts/post-2">Post 2</RouterLink>
     <RouterLink to="/users/david">David</RouterLink>
-    <RouterLink to="/signup">Signup</RouterLink>
+    <RouterLink v-if="!store.isLoggedIn" to="/signup">Signup</RouterLink>
+    <button v-if="store.isLoggedIn" @click="store.logOut">Log Out</button>
   </nav>
   <main>
     <RouterView />

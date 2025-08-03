@@ -1,5 +1,9 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router'
+  import { store } from '../store.ts'
+
+  const router = useRouter();
 
   const name = ref<string>('');
   const email = ref<string>('');
@@ -22,8 +26,22 @@
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams(body),
-    }).then(value => {
-      console.log('value', value);
+    }).then((value: Response) => {
+      if (value.ok) {
+        value.json()
+          .then(value => {
+            store.logIn(value.bearer);
+
+            router.replace({ path: '/' });
+          })
+          .catch(() => {
+            console.log('Unknown Error');
+          });
+      } else if (value.status === 400) {
+        console.log("Bad Request");
+      } else {
+        console.log("Unknown Error");
+      }
     });
   }
 
