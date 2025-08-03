@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Anatini.Server.Controllers
 {
@@ -8,8 +9,23 @@ namespace Anatini.Server.Controllers
     {
         [HttpGet("{userHandle}/posts/{postHandle}")]
         [ProducesResponseType<PostResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetUserPost(string userHandle, string postHandle)
+        {
+            var response = new PostResponse
+            {
+                Post = $"users/{userHandle}/posts/{postHandle}",
+            };
+
+            return Ok(response);
+        }
+
+        [HttpPost("{userHandle}/posts/{postHandle}")]
+        [Authorize]
+        [ProducesResponseType<PostResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult PostUserPost(string userHandle, string postHandle)
         {
             var response = new PostResponse
             {
