@@ -22,7 +22,7 @@ namespace Anatini.Server.Controllers
         {
             if (request.InviteCode != "1234-5678")
             {
-                return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } } );
+                return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } });
             }
 
             var claims = new List<Claim>
@@ -52,11 +52,11 @@ namespace Anatini.Server.Controllers
         }
     }
 
-    // [JsonPropertyName] should format to camelCase but for some reason not currently working
+    // [JsonPropertyName] should format to camelCase but for some reason not currently working, figure out why later
     // https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-9.0#configure-formatters-2
     public class SignupForm
     {
-        [StringLength(60, MinimumLength = 3), DataType(DataType.Text)]
+        [StringLength(60), DataType(DataType.Text)]
         [JsonPropertyName("name")]
         public required string Name { get; set; }
         [DataType(DataType.EmailAddress)]

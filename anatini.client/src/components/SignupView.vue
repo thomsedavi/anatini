@@ -20,28 +20,51 @@
 
   const router = useRouter();
 
-  const nameInput = useTemplateRef<HTMLInputElement>('name')
-  const emailInput = useTemplateRef<HTMLInputElement>('email')
-  const passwordInput = useTemplateRef<HTMLInputElement>('password')
-  const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code')
+  const nameInput = useTemplateRef<HTMLInputElement>('name');
+  const emailInput = useTemplateRef<HTMLInputElement>('email');
+  const passwordInput = useTemplateRef<HTMLInputElement>('password');
+  const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
 
   onMounted(() => {
     nameInput.value?.focus()
   })
 
+  function validateInput(input: HTMLInputElement | null, error: string): boolean {
+    if (!input?.value.trim()) {
+      input?.setCustomValidity(error);
+      return false;
+    } else {
+      input?.setCustomValidity('');
+      return true;
+    }
+  }
+
+  function reportValidity(): void {
+    // only one input gets reported at a time,
+    // chain them this way so they cascade from top to bottom
+    !nameInput.value?.reportValidity() || !emailInput.value?.reportValidity() || !passwordInput.value?.reportValidity() || !inviteCodeInput.value?.reportValidity();
+  }
+
   async function signup(e: Event) {
     e.preventDefault();
 
-    nameInput.value?.setCustomValidity('');
-    emailInput.value?.setCustomValidity('');
-    passwordInput.value?.setCustomValidity('');
-    inviteCodeInput.value?.setCustomValidity('');
+    let validationPassed = true;
+
+    !validateInput(nameInput.value, 'Please enter a name.') && (validationPassed = false);
+    !validateInput(emailInput.value, 'Please enter an email.') && (validationPassed = false);
+    !validateInput(passwordInput.value, 'Please enter a password.') && (validationPassed = false);
+    !validateInput(inviteCodeInput.value, 'Please enter an invite code.') && (validationPassed = false);
+
+    if (!validationPassed) {
+      reportValidity();
+      return;
+    }
 
     const body = {
-      name: nameInput.value?.value,
-      email: emailInput.value?.value,
-      password: passwordInput.value?.value,
-      inviteCode: inviteCodeInput.value?.value
+      name: nameInput.value?.value.trim(),
+      email: emailInput.value?.value.trim(),
+      password: passwordInput.value?.value.trim(),
+      inviteCode: inviteCodeInput.value?.value.trim(),
     };
 
     fetch("api/authentication/signup", {
@@ -65,24 +88,12 @@
         response.json()
           .then((json: BadRequestResponseJson) => {
             if (json.errors) {
-              // TODO for some reason the controller is returning errors in PascalCase instead of camelCase? :(
-              // I've spent hours trying to figure out why, but nothing works
-              // repair JSON here for now, revisit later
-              // See: AuthenticationController.cs
-
-              console.log('raw errors', json.errors);
-
-              json.errors.Name && (json.errors.name = json.errors.Name) && (delete json.errors.Name);
-              json.errors.Email && (json.errors.email = json.errors.Email) && (delete json.errors.Email);
-              json.errors.Password && (json.errors.password = json.errors.Password) && (delete json.errors.Password);
-              json.errors.InviteCode && (json.errors.inviteCode = json.errors.InviteCode) && (delete json.errors.InviteCode);
-
-              console.log('fixed errors', json.errors);
-
               json.errors.name && nameInput.value?.setCustomValidity(json.errors.name.join(';'));
               json.errors.email && emailInput.value?.setCustomValidity(json.errors.email.join(';'));
               json.errors.password && passwordInput.value?.setCustomValidity(json.errors.password.join(';'));
               json.errors.inviteCode && inviteCodeInput.value?.setCustomValidity(json.errors.inviteCode.join(';'));
+
+              reportValidity();
             } else {
               console.log("Unknown Error");
             }
@@ -100,7 +111,7 @@
   <form id="signup" @submit="signup" action="???" method="post">
     <p>
       <label for="name">Name</label>
-      <input id="name" type="text" name="name" ref="name" @input="event => nameInput?.setCustomValidity('')">
+      <input id="name" type="text" name="name" maxlength="60" ref="name" @input="event => nameInput?.setCustomValidity('')">
     </p>
 
     <p>
