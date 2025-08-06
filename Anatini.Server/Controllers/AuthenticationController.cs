@@ -14,6 +14,7 @@ namespace Anatini.Server.Controllers
     public class AuthenticationController : ControllerBase
     {
         private static readonly string[] s_inviteCodeError = ["Invalid Invite Code"];
+        private static readonly string[] s_passwordError = ["Incorrect Password"];
 
         [HttpPost("signup")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
@@ -25,10 +26,28 @@ namespace Anatini.Server.Controllers
                 return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } });
             }
 
+            return Ok(new { Bearer = GetBearer(request.Email) });
+        }
+
+        [HttpPost("login")]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public IActionResult Login([FromForm] LoginForm request)
+        {
+            if (request.Password != "password")
+            {
+                return BadRequest(new { Errors = new { Password = s_passwordError } });
+            }
+
+            return Ok(new { Bearer = GetBearer(request.Email) });
+        }
+
+        private static string GetBearer(string email)
+        {
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, "1"),
-                new(ClaimTypes.Email, request.Email)
+                new(ClaimTypes.Email, email)
             };
 
             var key = Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2");
@@ -46,9 +65,7 @@ namespace Anatini.Server.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            var jwt = tokenHandler.WriteToken(token);
-
-            return Ok(new { Bearer = jwt });
+            return tokenHandler.WriteToken(token);
         }
     }
 
@@ -68,5 +85,15 @@ namespace Anatini.Server.Controllers
         [Display(Name = "Invite Code"), DataType(DataType.Text)]
         [JsonPropertyName("inviteCode")]
         public required string InviteCode { get; set; }
+    }
+
+    public class LoginForm
+    {
+        [DataType(DataType.EmailAddress)]
+        [JsonPropertyName("email")]
+        public required string Email { get; set; }
+        [DataType(DataType.Password)]
+        [JsonPropertyName("password")]
+        public required string Password { get; set; }
     }
 }

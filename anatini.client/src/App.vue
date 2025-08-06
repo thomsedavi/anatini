@@ -11,6 +11,7 @@
     <RouterLink to="/users/david/posts/post-2">Post 2</RouterLink>
     <RouterLink to="/users/david">David</RouterLink>
     <RouterLink v-if="!store.isLoggedIn" to="/signup">Signup</RouterLink>
+    <RouterLink v-if="!store.isLoggedIn" to="/login">Login</RouterLink>
     <button v-if="store.isLoggedIn" @click="store.logOut">Log Out</button>
   </nav>
   <main>
