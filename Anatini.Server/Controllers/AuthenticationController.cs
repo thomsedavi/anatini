@@ -11,7 +11,7 @@ namespace Anatini.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController(ILogger logger) : ControllerBase
     {
         private static readonly string[] s_inviteCodeError = ["Invalid Invite Code"];
         private static readonly string[] s_passwordError = ["Incorrect Password"];
@@ -19,14 +19,39 @@ namespace Anatini.Server.Controllers
         [HttpPost("signup")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Signup([FromForm] SignupForm request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Signup([FromForm] SignupForm request)
         {
             if (request.InviteCode != "1234-5678")
             {
                 return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } });
             }
 
-            return Ok(new { Bearer = GetBearer(request.Email) });
+            try
+            {
+                using var context = new AnatiniContext();
+                
+                var id = Guid.NewGuid();
+
+                context.Users.Add(new User
+                {
+                    Id = id,
+                    Email = request.Email,
+                    Name = request.Name,
+                    Password = request.Password
+                });
+
+                await context.SaveChangesAsync();
+         
+                return Ok(new { Bearer = GetBearer(id) });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Exception creating user");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost("login")]
@@ -39,15 +64,14 @@ namespace Anatini.Server.Controllers
                 return BadRequest(new { Errors = new { Password = s_passwordError } });
             }
 
-            return Ok(new { Bearer = GetBearer(request.Email) });
+            return Ok(new { Bearer = GetBearer(Guid.NewGuid()) });
         }
 
-        private static string GetBearer(string email)
+        private static string GetBearer(Guid id)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, "1"),
-                new(ClaimTypes.Email, email)
+                new(ClaimTypes.NameIdentifier, id.ToString())
             };
 
             var key = Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2");

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server
 {
@@ -24,20 +25,19 @@ namespace Anatini.Server
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().ToContainer("Users").HasPartitionKey(user => user.PartitionKey);
-            modelBuilder.Entity<Alias>().ToContainer("Alias").HasPartitionKey(user => user.PartitionKey);
-            modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.PartitionKey);
-            modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(post => post.PartitionKey);
+            modelBuilder.Entity<User>().ToContainer("Users").HasPartitionKey(user => user.Id);
+            modelBuilder.Entity<Alias>().ToContainer("Alias").HasPartitionKey(user => user.UserId);
+            modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.UserId);
+            modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(post => post.UserId);
         }
     }
 
     public class User
     {
-        public int Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Email { get; set; }
         public required string Name { get; set; }
         public required string Password { get; set; }
-        public required string PartitionKey { get; set; }
 
         public List<Alias> Aliases { get; } = [];
         public List<Post> Posts { get; } = [];
@@ -46,26 +46,23 @@ namespace Anatini.Server
 
     public class Alias
     {
-        public int Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Handle { get; set; }
         public bool? IsPrimary { get; set; }
         public int UserId { get; set; }
-        public required string PartitionKey { get; set; }
     }
 
     public class Post
     {
-        public int Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Title { get; set; }
         public int UserId { get; set; }
-        public required string PartitionKey { get; set; }
     }
 
     public class Invite
     {
-        public int Id { get; set; }
+        public required Guid Id { get; set; }
         public int Code { get; set; }
         public int UserId { get; set; }
-        public required string PartitionKey { get; set; }
     }
 }
