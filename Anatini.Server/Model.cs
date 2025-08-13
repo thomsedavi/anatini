@@ -40,7 +40,7 @@ namespace Anatini.Server
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public required string Password { get; set; }
+        public required string HashedPassword { get; set; }
         public required DateOnly CreatedDate { get ; set; }
     }
 
@@ -57,6 +57,7 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Email { get; set; }
+        public string? Code { get; set; }
         public required DateOnly CreatedDate { get; set; }
     }
 

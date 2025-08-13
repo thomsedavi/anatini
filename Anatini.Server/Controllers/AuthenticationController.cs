@@ -4,6 +4,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +14,7 @@ namespace Anatini.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController() : ControllerBase
+    public class AuthenticationController(IPasswordHasher<User> passwordHasher) : ControllerBase
     {
         private static readonly string[] s_inviteCodeError = ["Invalid Invite Code"];
         private static readonly string[] s_passwordError = ["Incorrect Password"];
@@ -33,8 +34,13 @@ namespace Anatini.Server.Controllers
             
             using var context = new AnatiniContext();
 
-            var userId = Guid.NewGuid();
-            var createdDate = DateOnly.FromDateTime(DateTime.Now);
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                HashedPassword = null!,
+                CreatedDate = DateOnly.FromDateTime(DateTime.Now)
+            };
 
             try
             {
@@ -42,8 +48,9 @@ namespace Anatini.Server.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Email = request.Email,
-                    UserId = userId,
-                    CreatedDate = createdDate
+                    UserId = user.Id,
+                    Code = "87654321",
+                    CreatedDate = user.CreatedDate
                 });
 
                 await context.SaveChangesAsync();
@@ -68,25 +75,21 @@ namespace Anatini.Server.Controllers
 
             try
             {
-                context.Users.Add(new User
-                {
-                    Id = userId,
-                    Name = request.Name,
-                    Password = request.Password,
-                    CreatedDate = createdDate
-                });
+                user.HashedPassword = passwordHasher.HashPassword(user, request.Password);
+
+                context.Users.Add(user);
 
                 context.UserEmails.Add(new UserEmail
                 {
                     Id = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = user.Id,
                     Email = request.Email,
-                    CreatedDate = createdDate
+                    CreatedDate = user.CreatedDate
                 });
 
                 await context.SaveChangesAsync();
          
-                return Ok(new { Bearer = GetBearer(userId) });
+                return Ok(new { Bearer = GetBearer(user.Id) });
             }
             catch (Exception exception)
             {
