@@ -84,6 +84,10 @@
           .catch(() => {
             console.log('Unknown Error');
           });
+      } else if (response.status === 409) {
+        emailInput.value?.setCustomValidity("Email in use");
+
+        reportValidity();
       } else if (response.status === 400) {
         response.json()
           .then((json: BadRequestResponseJson) => {

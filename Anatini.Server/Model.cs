@@ -6,6 +6,8 @@ namespace Anatini.Server
     public class AnatiniContext() : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<UserEmail> UserEmails { get; set; }
+        public DbSet<EmailUser> EmailUsers { get; set; }
         public DbSet<Alias> Aliases { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Invite> Invites { get; set; }
@@ -26,6 +28,8 @@ namespace Anatini.Server
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToContainer("Users").HasPartitionKey(user => user.Id);
+            modelBuilder.Entity<UserEmail>().ToContainer("UserEmails").HasPartitionKey(user => user.UserId);
+            modelBuilder.Entity<EmailUser>().ToContainer("EmailUsers").HasPartitionKey(user => user.Email);
             modelBuilder.Entity<Alias>().ToContainer("Alias").HasPartitionKey(user => user.UserId);
             modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.UserId);
             modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(post => post.UserId);
@@ -35,13 +39,25 @@ namespace Anatini.Server
     public class User
     {
         public required Guid Id { get; set; }
-        public required string Email { get; set; }
         public required string Name { get; set; }
         public required string Password { get; set; }
+        public required DateOnly CreatedDate { get ; set; }
+    }
 
-        public List<Alias> Aliases { get; } = [];
-        public List<Post> Posts { get; } = [];
-        public List<Invite> Invites { get; } = [];
+    public class UserEmail
+    {
+        public required Guid Id { get; set; }
+        public required Guid UserId { get; set; }
+        public required string Email { get; set; }
+        public required DateOnly CreatedDate { get; set; }
+    }
+
+    public class EmailUser
+    {
+        public required Guid Id { get; set; }
+        public required Guid UserId { get; set; }
+        public required string Email { get; set; }
+        public required DateOnly CreatedDate { get; set; }
     }
 
     public class Alias
@@ -49,20 +65,20 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
         public bool? IsPrimary { get; set; }
-        public int UserId { get; set; }
+        public required string UserId { get; set; }
     }
 
     public class Post
     {
         public required Guid Id { get; set; }
         public required string Title { get; set; }
-        public int UserId { get; set; }
+        public required string UserId { get; set; }
     }
 
     public class Invite
     {
         public required Guid Id { get; set; }
-        public int Code { get; set; }
-        public int UserId { get; set; }
+        public required string Code { get; set; }
+        public required string UserId { get; set; }
     }
 }

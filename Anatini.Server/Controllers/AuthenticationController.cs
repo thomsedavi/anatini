@@ -5,13 +5,15 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using CosmosException = Microsoft.Azure.Cosmos.CosmosException;
 
 namespace Anatini.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController(ILogger logger) : ControllerBase
+    public class AuthenticationController() : ControllerBase
     {
         private static readonly string[] s_inviteCodeError = ["Invalid Invite Code"];
         private static readonly string[] s_passwordError = ["Incorrect Password"];
@@ -24,32 +26,71 @@ namespace Anatini.Server.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Signup([FromForm] SignupForm request)
         {
-            if (request.InviteCode != "1234-5678")
+            if (request.InviteCode != "12345678")
             {
                 return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } });
+            }
+            
+            using var context = new AnatiniContext();
+
+            var userId = Guid.NewGuid();
+            var createdDate = DateOnly.FromDateTime(DateTime.Now);
+
+            try
+            {
+                context.EmailUsers.Add(new EmailUser
+                {
+                    Id = Guid.NewGuid(),
+                    Email = request.Email,
+                    UserId = userId,
+                    CreatedDate = createdDate
+                });
+
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    //logger.LogError(dbUpdateException, "Exception creating user");
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
+            catch (Exception exception)
+            {
+                //logger.LogError(exception, "Exception creating user");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             try
             {
-                using var context = new AnatiniContext();
-                
-                var id = Guid.NewGuid();
-
                 context.Users.Add(new User
                 {
-                    Id = id,
-                    Email = request.Email,
+                    Id = userId,
                     Name = request.Name,
-                    Password = request.Password
+                    Password = request.Password,
+                    CreatedDate = createdDate
+                });
+
+                context.UserEmails.Add(new UserEmail
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    Email = request.Email,
+                    CreatedDate = createdDate
                 });
 
                 await context.SaveChangesAsync();
          
-                return Ok(new { Bearer = GetBearer(id) });
+                return Ok(new { Bearer = GetBearer(userId) });
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                logger.LogError(ex, "Exception creating user");
+                //logger.LogError(exception, "Exception creating user");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
