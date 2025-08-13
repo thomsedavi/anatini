@@ -4,6 +4,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,6 @@ namespace Anatini.Server.Controllers
                     Id = Guid.NewGuid(),
                     Email = request.Email,
                     UserId = user.Id,
-                    Code = "87654321",
                     CreatedDate = user.CreatedDate
                 });
 
@@ -75,6 +75,11 @@ namespace Anatini.Server.Controllers
 
             try
             {
+                var code = new Random()
+                    .Next()
+                    .ToString("X")
+                    .ToLower();
+
                 user.HashedPassword = passwordHasher.HashPassword(user, request.Password);
 
                 context.Users.Add(user);
@@ -84,6 +89,8 @@ namespace Anatini.Server.Controllers
                     Id = Guid.NewGuid(),
                     UserId = user.Id,
                     Email = request.Email,
+                    Code = code,
+                    IsVerified = false,
                     CreatedDate = user.CreatedDate
                 });
 
@@ -111,11 +118,21 @@ namespace Anatini.Server.Controllers
             return Ok(new { Bearer = GetBearer(Guid.NewGuid()) });
         }
 
+        [Authorize]
+        [HttpPost("verifyEmail")]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Produces(MediaTypeNames.Application.Json)]
+        public IActionResult VerifyEmail([FromForm] VerifyEmailForm request)
+        {
+            return Ok(new { Bearer = GetBearer(Guid.NewGuid()) });
+        }
+
         private static string GetBearer(Guid id)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, id.ToString())
+                new(ClaimTypes.NameIdentifier, id.ToString()),
+                new(ClaimTypes.Role, "Verified?")
             };
 
             var key = Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2");
@@ -163,5 +180,11 @@ namespace Anatini.Server.Controllers
         [DataType(DataType.Password)]
         [JsonPropertyName("password")]
         public required string Password { get; set; }
+    }
+
+    public class VerifyEmailForm
+    {
+        [JsonPropertyName("verificationCode")]
+        public required string VerificationCode { get; set; }
     }
 }

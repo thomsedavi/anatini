@@ -63,7 +63,7 @@
     const body = {
       name: nameInput.value?.value.trim(),
       email: emailInput.value?.value.trim(),
-      password: passwordInput.value?.value.trim(),
+      password: passwordInput.value?.value,
       inviteCode: inviteCodeInput.value?.value.trim(),
     };
 
@@ -79,7 +79,7 @@
           .then((json: OkResponseJson) => {
             store.logIn(json.bearer);
 
-            router.replace({ path: '/' });
+            router.replace({ path: '/verifyEmail' });
           })
           .catch(() => {
             console.log('Unknown Error');
