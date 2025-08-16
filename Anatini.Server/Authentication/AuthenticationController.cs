@@ -43,7 +43,9 @@ namespace Anatini.Server.Authentication
 
                 var details = new Dictionary<string, string>
                 {
-                    { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" }
+                    { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" },
+                    { "Email", request.Email },
+                    { "Name", request.Name }
                 };
 
                 var createUserEvent = new CreateUserEvent(userId, UserEventType.Signup, details);
@@ -88,7 +90,8 @@ namespace Anatini.Server.Authentication
                 {
                     var details = new Dictionary<string, string>
                     {
-                        { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" }
+                        { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" },
+                        { "Email", request.Email }
                     };
 
                     var createUserEvent = new CreateUserEvent(userId.Value, UserEventType.Login, details);

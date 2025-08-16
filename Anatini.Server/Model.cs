@@ -64,7 +64,7 @@ namespace Anatini.Server
         public required Guid UserId { get; set; }
         public required string Type { get; set; }
         public required DateTime DateTimeUtc { get; set; }
-        public IDictionary<string, string>? Details { get; set; }
+        public required IDictionary<string, string> Details { get; set; }
     }
 
     public class Alias

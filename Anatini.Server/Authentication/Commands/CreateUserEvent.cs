@@ -3,7 +3,7 @@ using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Authentication.Commands
 {
-    internal class CreateUserEvent(Guid userId, UserEventType type, IDictionary<string, string>? details = null) : ICommand<int>
+    internal class CreateUserEvent(Guid userId, UserEventType type, IDictionary<string, string> details) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
