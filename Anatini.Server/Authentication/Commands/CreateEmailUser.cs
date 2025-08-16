@@ -2,20 +2,21 @@
 
 namespace Anatini.Server.Authentication.Commands
 {
-    internal class CreateEmailUser(string email, Guid userId, DateOnly createdDate) : ICommand<int>
+    internal class CreateEmailUser(string email, Guid userId) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.EmailUsers.Add(new EmailUser
+            var userEmail = new EmailUser
             {
                 Id = Guid.NewGuid(),
                 Email = email,
                 UserId = userId,
-                VerificationCode = CodeRandom.Next(),
-                CreatedDate = createdDate
-            });
+                VerificationCode = CodeRandom.Next()
+            };
+
+            context.EmailUsers.Add(userEmail);
 
             return await context.SaveChangesAsync();
         }

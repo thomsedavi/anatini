@@ -9,6 +9,7 @@ namespace Anatini.Server
         public DbSet<Alias> Aliases { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Invite> Invites { get; set; }
+        public DbSet<UserEvent> UserEvents { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,6 +31,7 @@ namespace Anatini.Server
             modelBuilder.Entity<Alias>().ToContainer("Alias").HasPartitionKey(user => user.UserId);
             modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.UserId);
             modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(post => post.UserId);
+            modelBuilder.Entity<UserEvent>().ToContainer("UserEvents").HasPartitionKey(post => post.UserId);
         }
     }
 
@@ -54,7 +56,15 @@ namespace Anatini.Server
         public required string Email { get; set; }
         public required Guid UserId { get; set; }
         public string? VerificationCode { get; set; }
-        public required DateOnly CreatedDate { get; set; }
+    }
+
+    public class UserEvent
+    {
+        public required Guid Id { get; set; }
+        public required Guid UserId { get; set; }
+        public required string Type { get; set; }
+        public required DateTime DateTimeUtc { get; set; }
+        public IDictionary<string, string>? Details { get; set; }
     }
 
     public class Alias

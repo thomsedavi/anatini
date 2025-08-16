@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Authentication.Commands;
 using Anatini.Server.Authentication.Queries;
+using Anatini.Server.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,13 +34,20 @@ namespace Anatini.Server.Authentication
                 }
 
                 var userId = Guid.NewGuid();
-                var createdDate = DateOnly.FromDateTime(DateTime.Now);
 
-                var createEmailUser = new CreateEmailUser(request.Email, userId, createdDate);
+                var createEmailUser = new CreateEmailUser(request.Email, userId);
                 await createEmailUser.ExecuteAsync();
 
-                var createUser = new CreateUser(request.Name, request.Password, request.Email, userId, createdDate);
+                var createUser = new CreateUser(request.Name, request.Password, request.Email, userId);
                 await createUser.ExecuteAsync();
+
+                var details = new Dictionary<string, string>
+                {
+                    { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" }
+                };
+
+                var createUserEvent = new CreateUserEvent(userId, UserEventType.Signup, details);
+                await createUserEvent.ExecuteAsync();
 
                 return Ok(new { Bearer = GetBearer(userId) });
             }
@@ -78,6 +86,14 @@ namespace Anatini.Server.Authentication
 
                 if (userId.HasValue)
                 {
+                    var details = new Dictionary<string, string>
+                    {
+                        { "IPAddress", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown" }
+                    };
+
+                    var createUserEvent = new CreateUserEvent(userId.Value, UserEventType.Login, details);
+                    await createUserEvent.ExecuteAsync();
+
                     return Ok(new { Bearer = GetBearer(userId.Value) });
                 }
                 else
