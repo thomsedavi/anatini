@@ -3,20 +3,9 @@
   import { useRouter } from 'vue-router'
   import { store } from '../store.ts'
 
-  type ResponseErrors = {
-    email?: string[];
-    inviteCode?: string[];
-    name?: string[];
-    password?: string[];
-  }
-
   type OkResponseJson = {
     bearer: string;
   }
-
-  type BadRequestResponseJson = {
-    errors: ResponseErrors;
-  };
 
   const router = useRouter();
 
@@ -26,7 +15,7 @@
   const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
 
   onMounted(() => {
-    nameInput.value?.focus()
+    nameInput.value!.focus()
   })
 
   function validateInput(input: HTMLInputElement | null, error: string): boolean {
@@ -42,7 +31,7 @@
   function reportValidity(): void {
     // only one input gets reported at a time,
     // chain them this way so they cascade from top to bottom
-    !nameInput.value?.reportValidity() || !emailInput.value?.reportValidity() || !passwordInput.value?.reportValidity() || !inviteCodeInput.value?.reportValidity();
+    !nameInput.value!.reportValidity() || !emailInput.value!.reportValidity() || !passwordInput.value!.reportValidity() || !inviteCodeInput.value!.reportValidity();
   }
 
   async function signup(e: Event) {
@@ -60,11 +49,11 @@
       return;
     }
 
-    const body = {
-      name: nameInput.value?.value.trim(),
-      email: emailInput.value?.value.trim(),
-      password: passwordInput.value?.value,
-      inviteCode: inviteCodeInput.value?.value.trim(),
+    const body: Record<string, string> = {
+      name: nameInput.value!.value.trim(),
+      email: emailInput.value!.value.trim(),
+      password: passwordInput.value!.value,
+      inviteCode: inviteCodeInput.value!.value.trim(),
     };
 
     fetch("api/authentication/signup", {
@@ -85,11 +74,11 @@
             console.log('Unknown Error');
           });
       } else if (response.status === 404) {
-        inviteCodeInput.value?.setCustomValidity("Invite code not found");
+        inviteCodeInput.value!.setCustomValidity("Invite code not found");
 
         reportValidity();
       } else if (response.status === 409) {
-        emailInput.value?.setCustomValidity("Email in use");
+        emailInput.value!.setCustomValidity("Email in use");
 
         reportValidity();
       } else {

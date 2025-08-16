@@ -3,18 +3,9 @@
   import { useRoute, useRouter } from 'vue-router'
   import { store } from '../store.ts'
 
-  type ResponseErrors = {
-    email?: string[];
-    password?: string[];
-  }
-
   type OkResponseJson = {
     bearer: string;
   }
-
-  type BadRequestResponseJson = {
-    errors: ResponseErrors;
-  };
 
   const router = useRouter();
   const route = useRoute();
@@ -23,7 +14,7 @@
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
 
   onMounted(() => {
-    emailInput.value?.focus()
+    emailInput.value!.focus()
   });
 
   function validateInput(input: HTMLInputElement | null, error: string): boolean {
@@ -39,7 +30,7 @@
   function reportValidity(): void {
     // only one input gets reported at a time,
     // chain them this way so they cascade from top to bottom
-    !emailInput.value?.reportValidity() || !passwordInput.value?.reportValidity();
+    !emailInput.value!.reportValidity() || !passwordInput.value!.reportValidity();
   }
 
   async function login(e: Event) {
@@ -55,9 +46,9 @@
       return;
     }
 
-    const body = {
-      email: emailInput.value?.value.trim(),
-      password: passwordInput.value?.value.trim(),
+    const body: Record<string, string> = {
+      email: emailInput.value!.value.trim(),
+      password: passwordInput.value!.value.trim(),
     };
 
     fetch("api/authentication/login", {
@@ -78,11 +69,11 @@
             console.log('Unknown Error');
           });
       } else if (response.status === 401) {
-        passwordInput.value?.setCustomValidity("Incorrect password");
+        passwordInput.value!.setCustomValidity("Incorrect password");
 
         reportValidity();
       } else if (response.status === 404) {
-        emailInput.value?.setCustomValidity("Email not found");
+        emailInput.value!.setCustomValidity("Email not found");
 
         reportValidity();
       } else {
