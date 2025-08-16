@@ -3,6 +3,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Authentication.Commands;
+using Anatini.Server.Authentication.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +16,11 @@ namespace Anatini.Server.Authentication
     [Route("api/[controller]")]
     public class AuthenticationController() : ControllerBase
     {
-        private static readonly string[] s_inviteCodeError = ["Invalid Invite Code"];
-        private static readonly string[] s_passwordError = ["Incorrect Password"];
-
         [HttpPost("signup")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Signup([FromForm] SignupForm request)
@@ -31,7 +29,7 @@ namespace Anatini.Server.Authentication
             {
                 if (request.InviteCode != "12345678")
                 {
-                    return BadRequest(new { Errors = new { InviteCode = s_inviteCodeError } });
+                    return NotFound();
                 }
 
                 var userId = Guid.NewGuid();
@@ -67,14 +65,35 @@ namespace Anatini.Server.Authentication
         [HttpPost("login")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult Login([FromForm] LoginForm request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login([FromForm] LoginForm request)
         {
-            if (request.Password != "password")
+            try
             {
-                return BadRequest(new { Errors = new { Password = s_passwordError } });
-            }
+                var verifyPassword = new VerifyPassword(request.Email, request.Password);
+                var userId = await verifyPassword.ExecuteAsync();
 
-            return Ok(new { Bearer = GetBearer(Guid.NewGuid()) });
+                if (userId.HasValue)
+                {
+                    return Ok(new { Bearer = GetBearer(userId.Value) });
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch(InvalidOperationException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                //logger.LogError(exception, "Exception logging in");
+                return Problem();
+            }
         }
 
         [Authorize]

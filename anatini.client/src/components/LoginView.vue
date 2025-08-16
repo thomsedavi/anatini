@@ -77,19 +77,14 @@
           .catch(() => {
             console.log('Unknown Error');
           });
-      } else if (response.status === 400) {
-        response.json()
-          .then((json: BadRequestResponseJson) => {
-            if (json.errors) {
-              json.errors.email && emailInput.value?.setCustomValidity(json.errors.email.join(';'));
-              json.errors.password && passwordInput.value?.setCustomValidity(json.errors.password.join(';'));
+      } else if (response.status === 401) {
+        passwordInput.value?.setCustomValidity("Incorrect password");
 
-              reportValidity();
-            } else {
-              console.log("Unknown Error");
-            }
-          }
-        );
+        reportValidity();
+      } else if (response.status === 404) {
+        emailInput.value?.setCustomValidity("Email not found");
+
+        reportValidity();
       } else {
         console.log("Unknown Error");
       }

@@ -84,25 +84,14 @@
           .catch(() => {
             console.log('Unknown Error');
           });
+      } else if (response.status === 404) {
+        inviteCodeInput.value?.setCustomValidity("Invite code not found");
+
+        reportValidity();
       } else if (response.status === 409) {
         emailInput.value?.setCustomValidity("Email in use");
 
         reportValidity();
-      } else if (response.status === 400) {
-        response.json()
-          .then((json: BadRequestResponseJson) => {
-            if (json.errors) {
-              json.errors.name && nameInput.value?.setCustomValidity(json.errors.name.join(';'));
-              json.errors.email && emailInput.value?.setCustomValidity(json.errors.email.join(';'));
-              json.errors.password && passwordInput.value?.setCustomValidity(json.errors.password.join(';'));
-              json.errors.inviteCode && inviteCodeInput.value?.setCustomValidity(json.errors.inviteCode.join(';'));
-
-              reportValidity();
-            } else {
-              console.log("Unknown Error");
-            }
-          }
-        );
       } else {
         console.log("Unknown Error");
       }
