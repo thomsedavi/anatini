@@ -1,12 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server
 {
     public class AnatiniContext() : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<UserEmail> UserEmails { get; set; }
         public DbSet<EmailUser> EmailUsers { get; set; }
         public DbSet<Alias> Aliases { get; set; }
         public DbSet<Post> Posts { get; set; }
@@ -28,7 +26,6 @@ namespace Anatini.Server
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToContainer("Users").HasPartitionKey(user => user.Id);
-            modelBuilder.Entity<UserEmail>().ToContainer("UserEmails").HasPartitionKey(user => user.UserId);
             modelBuilder.Entity<EmailUser>().ToContainer("EmailUsers").HasPartitionKey(user => user.Email);
             modelBuilder.Entity<Alias>().ToContainer("Alias").HasPartitionKey(user => user.UserId);
             modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.UserId);
@@ -42,16 +39,13 @@ namespace Anatini.Server
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
         public required DateOnly CreatedDate { get ; set; }
+        public required IEnumerable<UserEmail> Emails { get; set; }
     }
 
     public class UserEmail
     {
-        public required Guid Id { get; set; }
-        public required Guid UserId { get; set; }
         public required string Email { get; set; }
         public required bool IsVerified { get; set; }
-        public int VerificationAttemptCount { get; set; }
-        public required DateOnly CreatedDate { get; set; }
     }
 
     public class EmailUser

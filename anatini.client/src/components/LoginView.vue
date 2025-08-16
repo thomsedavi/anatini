@@ -24,7 +24,7 @@
 
   onMounted(() => {
     emailInput.value?.focus()
-  })
+  });
 
   function validateInput(input: HTMLInputElement | null, error: string): boolean {
     if (!input?.value.trim()) {

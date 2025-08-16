@@ -40,10 +40,7 @@ namespace Anatini.Server.Authentication
                 var createEmailUser = new CreateEmailUser(request.Email, userId, createdDate);
                 await createEmailUser.ExecuteAsync();
 
-                var createUserEmail = new CreateUserEmail(userId, request.Email, createdDate);
-                await createUserEmail.ExecuteAsync();
-
-                var createUser = new CreateUser(request.Name, request.Password, userId, createdDate);
+                var createUser = new CreateUser(request.Name, request.Password, request.Email, userId, createdDate);
                 await createUser.ExecuteAsync();
 
                 return Ok(new { Bearer = GetBearer(userId) });

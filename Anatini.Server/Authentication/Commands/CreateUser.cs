@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Authentication.Commands
 {
-    internal class CreateUser(string name, string password, Guid userId, DateOnly createdDate) : ICommand<int>
+    internal class CreateUser(string name, string password, string email, Guid userId, DateOnly createdDate) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -13,6 +13,7 @@ namespace Anatini.Server.Authentication.Commands
                 Id = userId,
                 Name = name,
                 HashedPassword = null!,
+                Emails = [new UserEmail{ Email = email, IsVerified = false }],
                 CreatedDate = createdDate
             };
 

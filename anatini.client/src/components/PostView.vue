@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
-  import { useRoute } from 'vue-router'
+  import { ref, watch } from 'vue';
+  import { useRoute } from 'vue-router';
 
   const route = useRoute();
 
-  const loading = ref<boolean>(false)
-  const post = ref<string | null>(null)
-  const error = ref<string | null>(null)
+  const loading = ref<boolean>(false);
+  const post = ref<string | null>(null);
+  const error = ref<string | null>(null);
 
   watch([() => route.params.userHandle, () => route.params.postHandle], fetchPost, { immediate: true })
 
