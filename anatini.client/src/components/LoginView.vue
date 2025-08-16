@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useTemplateRef, onMounted } from 'vue';
-  import { useRouter } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
   import { store } from '../store.ts'
 
   type ResponseErrors = {
@@ -17,6 +17,7 @@
   };
 
   const router = useRouter();
+  const route = useRoute();
 
   const emailInput = useTemplateRef<HTMLInputElement>('email');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
@@ -71,7 +72,7 @@
           .then((json: OkResponseJson) => {
             store.logIn(json.bearer);
 
-            router.replace({ path: '/' });
+            router.replace({ path: route.query.redirect ?? '/' });
           })
           .catch(() => {
             console.log('Unknown Error');

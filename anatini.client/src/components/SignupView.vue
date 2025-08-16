@@ -79,7 +79,7 @@
           .then((json: OkResponseJson) => {
             store.logIn(json.bearer);
 
-            router.replace({ path: '/' });
+            router.replace({ path: '/settings' });
           })
           .catch(() => {
             console.log('Unknown Error');
