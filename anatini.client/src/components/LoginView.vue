@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useTemplateRef, onMounted } from 'vue';
+  import { ref, useTemplateRef, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router'
   import { store } from '../store.ts'
 
@@ -12,6 +12,7 @@
 
   const emailInput = useTemplateRef<HTMLInputElement>('email');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
+  const isFetching = ref<boolean>(false);
 
   onMounted(() => {
     emailInput.value!.focus()
@@ -46,6 +47,8 @@
       return;
     }
 
+    isFetching.value = true;
+
     const body: Record<string, string> = {
       email: emailInput.value!.value.trim(),
       password: passwordInput.value!.value.trim(),
@@ -63,7 +66,13 @@
           .then((json: OkResponseJson) => {
             store.logIn(json.bearer);
 
-            router.replace({ path: route.query.redirect ?? '/' });
+            let path = '/';
+
+            if (typeof route.query.redirect === 'string') {
+              path = route.query.redirect;
+            }
+
+            router.replace({ path: path });
           })
           .catch(() => {
             console.log('Unknown Error');
@@ -79,6 +88,8 @@
       } else {
         console.log("Unknown Error");
       }
+    }).finally(() => {
+      isFetching.value = false;
     });
   }
 </script>
@@ -97,7 +108,7 @@
     </p>
 
     <p>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Submit" :disabled="isFetching">
     </p>
   </form>
 </template>

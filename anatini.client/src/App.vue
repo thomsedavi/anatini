@@ -1,5 +1,8 @@
 <script setup lang="ts">
-  import { store } from './store.ts'
+  import { useRouter } from 'vue-router';
+  import { store } from './store.ts';
+
+  const router = useRouter();
 </script>
 
 <template>
@@ -12,7 +15,7 @@
     <RouterLink to="/users/david">David</RouterLink>
     <RouterLink v-if="!store.isLoggedIn" to="/signup">Signup</RouterLink>
     <RouterLink v-if="!store.isLoggedIn" to="/login">Login</RouterLink>
-    <button v-if="store.isLoggedIn" @click="store.logOut">Log Out</button>
+    <button v-if="store.isLoggedIn" @click="store.logOut(router)">Log Out</button>
   </nav>
   <main>
     <RouterView />

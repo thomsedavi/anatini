@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useTemplateRef, onMounted } from 'vue';
+  import { ref, useTemplateRef, onMounted } from 'vue';
   import { useRouter } from 'vue-router'
   import { store } from '../store.ts'
 
@@ -13,6 +13,7 @@
   const emailInput = useTemplateRef<HTMLInputElement>('email');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
   const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
+  const isFetching = ref<boolean>(false);
 
   onMounted(() => {
     nameInput.value!.focus()
@@ -49,6 +50,8 @@
       return;
     }
 
+    isFetching.value = true;
+
     const body: Record<string, string> = {
       name: nameInput.value!.value.trim(),
       email: emailInput.value!.value.trim(),
@@ -84,6 +87,8 @@
       } else {
         console.log("Unknown Error");
       }
+    }).finally(() => {
+      isFetching.value = false;
     });
   }
 </script>
@@ -112,7 +117,7 @@
     </p>
 
     <p>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Submit" :disabled="isFetching">
     </p>
   </form>
 </template>
