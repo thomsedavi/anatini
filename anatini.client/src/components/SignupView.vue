@@ -79,7 +79,7 @@
           .then((json: OkResponseJson) => {
             store.logIn(json.bearer);
 
-            router.replace({ path: '/verifyEmail' });
+            router.replace({ path: '/' });
           })
           .catch(() => {
             console.log('Unknown Error');
@@ -115,7 +115,7 @@
   <form id="signup" @submit="signup" action="???" method="post">
     <p>
       <label for="name">Name</label>
-      <input id="name" type="text" name="name" maxlength="60" ref="name" @input="event => nameInput?.setCustomValidity('')">
+      <input id="name" type="text" name="name" maxlength="64" ref="name" @input="event => nameInput?.setCustomValidity('')">
     </p>
 
     <p>

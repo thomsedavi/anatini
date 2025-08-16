@@ -49,18 +49,17 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Email { get; set; }
-        public string? Code { get; set; }
         public required bool IsVerified { get; set; }
         public int VerificationAttemptCount { get; set; }
-
         public required DateOnly CreatedDate { get; set; }
     }
 
     public class EmailUser
     {
         public required Guid Id { get; set; }
-        public required Guid UserId { get; set; }
         public required string Email { get; set; }
+        public required Guid UserId { get; set; }
+        public string? VerificationCode { get; set; }
         public required DateOnly CreatedDate { get; set; }
     }
 
