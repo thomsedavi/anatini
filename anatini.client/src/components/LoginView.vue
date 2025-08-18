@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, useTemplateRef, onMounted } from 'vue';
-  import { useRoute, useRouter } from 'vue-router'
-  import { store } from '../store.ts'
+  import { useRoute, useRouter } from 'vue-router';
+  import { store } from '../store.ts';
 
   type OkResponseJson = {
     bearer: string;

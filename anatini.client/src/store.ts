@@ -3,6 +3,7 @@ import { type Router } from 'vue-router';
 
 export const store = reactive({
   isLoggedIn: localStorage.getItem('jwtToken') !== null,
+  jwtToken: localStorage.getItem('jwtToken'),
   logIn(token: string): void {
     localStorage.setItem("jwtToken", token)
     this.isLoggedIn = true;

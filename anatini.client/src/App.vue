@@ -15,6 +15,7 @@
     <RouterLink to="/users/david">David</RouterLink>
     <RouterLink v-if="!store.isLoggedIn" to="/signup">Signup</RouterLink>
     <RouterLink v-if="!store.isLoggedIn" to="/login">Login</RouterLink>
+    <RouterLink v-if="store.isLoggedIn" to="/settings">Settings</RouterLink>
     <button v-if="store.isLoggedIn" @click="store.logOut(router)">Log Out</button>
   </nav>
   <main>

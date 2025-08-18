@@ -15,7 +15,7 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController() : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
         [HttpPost("signup")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]

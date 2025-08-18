@@ -55,7 +55,7 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/api/user': {
+            '^/api/users': {
                 target,
                 secure: false
             }
