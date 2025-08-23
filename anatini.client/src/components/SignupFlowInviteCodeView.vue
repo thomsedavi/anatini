@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { ref, useTemplateRef } from 'vue';
 
+  const emit = defineEmits<{
+    submitInviteCode: [email?: string];
+  }>();
+
   const emailInput = useTemplateRef<HTMLInputElement>('email');
   const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
   const isFetching = ref<boolean>(false);
-
-  const emit = defineEmits<{
-    submitInviteCode: [email?: string]
-  }>();
 
   function validateInput(input: HTMLInputElement, error: string): boolean {
     if (!input.value.trim()) {
@@ -29,8 +29,8 @@
     }
   }
 
-  async function inviteCode(e: Event) {
-    e.preventDefault();
+  async function inviteCode(event: Event) {
+    event.preventDefault();
 
     let validationPassed = true;
 
@@ -61,7 +61,7 @@
       if (response.ok) {
         emit('submitInviteCode', emailInput.value!.value);
       } else if (response.status === 404) {
-        inviteCodeInput.value!.setCustomValidity("Invite code not found");
+        inviteCodeInput.value!.setCustomValidity("Invite code not found.");
 
         reportValidity();
       } else {
