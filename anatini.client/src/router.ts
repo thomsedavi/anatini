@@ -5,7 +5,7 @@ import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import PostView from './components/PostView.vue';
 import SettingsView from './components/SettingsView.vue';
-import SignupView from './components/SignupView.vue';
+import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
 import UsersView from './components/UsersView.vue';
 import { store } from './store.ts'
@@ -21,7 +21,7 @@ const routes = [
   },
   {
     path: '/signup',
-    component: SignupView,
+    component: SignupFlowView,
   },
   {
     path: '/login',
