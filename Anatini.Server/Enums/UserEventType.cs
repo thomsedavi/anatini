@@ -2,7 +2,11 @@
 {
     public enum UserEventType
     {
-        Signup,
-        Login
+        InviteCodeCreated,
+        EmailCreated,
+        EmailConflict,
+        VerificationBad,
+        UserCreated,
+        LoginOk
     }
 }

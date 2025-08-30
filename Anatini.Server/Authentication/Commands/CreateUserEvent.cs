@@ -1,9 +1,10 @@
-﻿using Anatini.Server.Enums;
+﻿using Anatini.Server.Controllers;
+using Anatini.Server.Enums;
 using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Authentication.Commands
 {
-    internal class CreateUserEvent(Guid userId, UserEventType type, IDictionary<string, string> details) : ICommand<int>
+    internal class CreateUserEvent(Guid userId, UserEventType type, EventData data) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -15,7 +16,7 @@ namespace Anatini.Server.Authentication.Commands
                 UserId = userId,
                 Type = Enum.GetName(type)!,
                 DateTimeUtc = DateTime.UtcNow,
-                Details = details
+                Data = data.ToDictionary()
             };
 
             context.UserEvents.Add(userEvent);

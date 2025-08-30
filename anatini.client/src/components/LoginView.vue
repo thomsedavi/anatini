@@ -29,9 +29,13 @@
   }
 
   function reportValidity(): void {
-    // only one input gets reported at a time,
-    // chain them this way so they cascade from top to bottom
-    !emailInput.value!.reportValidity() || !passwordInput.value!.reportValidity();
+    const inputs: HTMLInputElement[] = [emailInput.value!, passwordInput.value!];
+
+    for (let i = 0; i < inputs.length; i++) {
+      if (!inputs[i].reportValidity()) {
+        break;
+      }
+    }
   }
 
   async function login(e: Event) {
@@ -39,8 +43,10 @@
 
     let validationPassed = true;
 
-    !validateInput(emailInput.value, 'Please enter an email.') && (validationPassed = false);
-    !validateInput(passwordInput.value, 'Please enter a password.') && (validationPassed = false);
+    if (!validateInput(emailInput.value!, 'Please enter an email.'))
+      validationPassed = false;
+    if (!validateInput(passwordInput.value!, 'Please enter a password.'))
+      validationPassed = false;
 
     if (!validationPassed) {
       reportValidity();
@@ -79,10 +85,6 @@
           });
       } else if (response.status === 401) {
         passwordInput.value!.setCustomValidity("Incorrect password");
-
-        reportValidity();
-      } else if (response.status === 404) {
-        emailInput.value!.setCustomValidity("Email not found");
 
         reportValidity();
       } else {

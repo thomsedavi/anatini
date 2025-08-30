@@ -13,7 +13,8 @@ namespace Anatini.Server.Authentication.Commands
                 Id = Guid.NewGuid(),
                 Email = email,
                 UserId = userId,
-                VerificationCode = CodeRandom.Next()
+                VerificationCode = CodeRandom.Next(),
+                Verified = false
             };
 
             context.EmailUsers.Add(userEmail);
