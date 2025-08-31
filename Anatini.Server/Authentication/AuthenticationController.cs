@@ -7,7 +7,9 @@ using Anatini.Server.Authentication.Commands;
 using Anatini.Server.Authentication.Queries;
 using Anatini.Server.Controllers;
 using Anatini.Server.Enums;
+using Anatini.Server.Users;
 using Anatini.Server.Users.Queries;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +23,84 @@ namespace Anatini.Server.Authentication
     public class AuthenticationController : ControllerBase
     {
         [HttpPost("inviteCode")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> InviteCode()
+        {
+            try
+            {
+                var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (Guid.TryParse(userIdClaim, out var userId))
+                {
+                    var dateOnlyNZ = DateOnlyNZ.Now;
+
+                    var user = await new GetUser(userId).ExecuteAsync();
+
+                    if (user.Invites?.Any(invite => invite.CreatedDateNZ == dateOnlyNZ) ?? false)
+                    {
+                        return Conflict();
+                    }
+                    else
+                    {
+                        var inviteId = Guid.NewGuid();
+                        var inviteCode = CodeRandom.Next();
+                        var attemptCount = 0;
+                        var success = false;
+
+                        while (attemptCount++ < 5 && !success)
+                        {
+                            try
+                            {
+                                await new CreateCodeInvite(inviteCode, dateOnlyNZ, userId, inviteId).ExecuteAsync();
+                                success = true;
+                            }
+                            catch (Exception)
+                            {
+                                inviteCode = CodeRandom.Next();
+                            }
+                        }
+
+                        if (!success)
+                        {
+                            return Problem();
+                        }
+
+                        var userInvite = new UserInvite
+                        {
+                            Id = inviteId,
+                            InviteCode = inviteCode,
+                            Used = false,
+                            CreatedDateNZ = dateOnlyNZ
+                        };
+
+                        var invites = (user.Invites ?? []).ToList();
+                        invites.Add(userInvite);
+                        user.Invites = invites;
+
+                        await new UpdateUser(user).ExecuteAsync();
+
+                        return Created("?", new UserDto(user));
+                    }
+                }
+                else
+                {
+                    return Problem();
+                }
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
+        }
+
+
+        [HttpPost("email")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InviteCode([FromForm] InviteCodeForm form)
+        public async Task<IActionResult> Email([FromForm] EmailForm form)
         {
             var eventData = new EventData(HttpContext).Add("Email", form.Email);
             var userId = Guid.Empty;
@@ -110,7 +186,7 @@ namespace Anatini.Server.Authentication
 
                     var invitedByUser = await new GetUser(invitedByUserId).ExecuteAsync();
 
-                    invitedByUser!.Invites.FirstOrDefault(invite => invite.Id == emailUser.InviteId!)!.Used = true;
+                    invitedByUser.Invites!.First(invite => invite.Id == emailUser.InviteId).Used = true;
 
                     await new UpdateUser(invitedByUser).ExecuteAsync();
 

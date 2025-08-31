@@ -42,7 +42,7 @@ namespace Anatini.Server
         public required string HashedPassword { get; set; }
         public required DateOnly CreatedDateNZ { get ; set; }
         public required IEnumerable<UserEmail> Emails { get; set; }
-        public required IEnumerable<UserInvite> Invites { get; set; }
+        public IEnumerable<UserInvite>? Invites { get; set; }
     }
 
     public class UserEmail

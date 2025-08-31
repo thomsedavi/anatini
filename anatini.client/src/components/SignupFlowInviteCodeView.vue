@@ -51,7 +51,7 @@
       inviteCode: inviteCodeInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/inviteCode", {
+    fetch("api/authentication/email", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -75,7 +75,7 @@
 
 <template>
   <h2>SignupFlowInviteCodeView</h2>
-  <form id="inviteCode" @submit="inviteCode" action="api/authentication/inviteCode" method="post">
+  <form id="inviteCode" @submit="inviteCode" action="api/authentication/email" method="post">
     <p>
       <label for="email">Email</label>
       <input id="email" type="email" name="email" ref="email" @input="() => emailInput?.setCustomValidity('')">
@@ -90,5 +90,5 @@
       <input type="submit" value="Submit" :disabled="isFetching">
     </p>
   </form>
-  <button v-on:click="emit('submitInviteCode')">I have an email verification code already</button>
+  <button @click="emit('submitInviteCode')">I have an email verification code already</button>
 </template>

@@ -1,4 +1,4 @@
-﻿namespace Anatini.Server.Authentication
+﻿namespace Anatini.Server.Utils
 {
     public static class CodeRandom
     {

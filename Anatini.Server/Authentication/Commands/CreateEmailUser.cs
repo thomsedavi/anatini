@@ -1,4 +1,5 @@
 ﻿using Anatini.Server.Interfaces;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Authentication.Commands
 {

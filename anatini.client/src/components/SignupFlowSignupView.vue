@@ -132,5 +132,5 @@
       <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
     </p>
   </form>
-  <button v-if="verificationFailed" v-on:click="emit('goBack')">Go Back</button>
+  <button v-if="verificationFailed" @click="emit('goBack')">Go Back</button>
 </template>

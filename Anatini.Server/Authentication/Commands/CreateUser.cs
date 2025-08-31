@@ -1,4 +1,5 @@
 ﻿using Anatini.Server.Interfaces;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Authentication.Commands
 {
@@ -7,10 +8,6 @@ namespace Anatini.Server.Authentication.Commands
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
-
-            var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-            var dateTimeNZ = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfoNZ);
-            var createdDateNZ = DateOnly.FromDateTime(dateTimeNZ);
 
             var userEmail = new UserEmail
             {
@@ -25,8 +22,7 @@ namespace Anatini.Server.Authentication.Commands
                 Name = name,
                 HashedPassword = null!,
                 Emails = [userEmail],
-                Invites= [],
-                CreatedDateNZ = createdDateNZ
+                CreatedDateNZ = DateOnlyNZ.Now
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);

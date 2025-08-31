@@ -4,7 +4,7 @@ namespace Anatini.Server.Authentication
 {
     // [JsonPropertyName] should format to camelCase but for some reason not currently working, figure out why later
     // https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-9.0#configure-formatters-2
-    public class InviteCodeForm
+    public class EmailForm
     {
         [DataType(DataType.EmailAddress)]
         public required string Email { get; set; }
