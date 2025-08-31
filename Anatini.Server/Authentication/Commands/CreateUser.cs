@@ -10,7 +10,7 @@ namespace Anatini.Server.Authentication.Commands
 
             var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
             var dateTimeNZ = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneInfoNZ);
-            var createdDate = DateOnly.FromDateTime(dateTimeNZ);
+            var createdDateNZ = DateOnly.FromDateTime(dateTimeNZ);
 
             var userEmail = new UserEmail
             {
@@ -26,7 +26,7 @@ namespace Anatini.Server.Authentication.Commands
                 HashedPassword = null!,
                 Emails = [userEmail],
                 Invites= [],
-                CreatedDate = createdDate
+                CreatedDateNZ = createdDateNZ
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);

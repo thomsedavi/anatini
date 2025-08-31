@@ -13,7 +13,7 @@
     failVerification: [];
   }>();
   
-  type OkResponseJson = {
+  type BearerJson = {
     bearer: string;
   }
 
@@ -82,8 +82,8 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((json: OkResponseJson) => {
-            store.logIn(json.bearer);
+          .then((value: BearerJson) => {
+            store.logIn(value.bearer);
 
             router.replace({ path: '/settings' });
           })

@@ -7,6 +7,7 @@ using Anatini.Server.Authentication.Commands;
 using Anatini.Server.Authentication.Queries;
 using Anatini.Server.Controllers;
 using Anatini.Server.Enums;
+using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -147,13 +148,11 @@ namespace Anatini.Server.Authentication
 
             try
             {
-                var verifyPassword = new VerifyPassword(form.Email, form.Password);
-                var userId = await verifyPassword.ExecuteAsync();
+                var userId = await new VerifyPassword(form.Email, form.Password).ExecuteAsync();
 
                 if (userId.HasValue)
                 {
-                    var createUserEvent = new CreateUserEvent(userId.Value, UserEventType.LoginOk, eventData);
-                    await createUserEvent.ExecuteAsync();
+                    await new CreateUserEvent(userId.Value, UserEventType.LoginOk, eventData).ExecuteAsync();
 
                     return Ok(new { Bearer = GetBearer(userId.Value) });
                 }

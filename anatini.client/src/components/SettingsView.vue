@@ -2,7 +2,15 @@
   import { ref, onMounted } from 'vue';
   import { store } from '../store.ts';
 
-  const name = ref<string | null>(null);
+  type User = {
+    name: string;
+    emails: {
+      email: string;
+      verified: boolean;
+    }[];
+  }
+
+  const user = ref<User | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
 
@@ -16,7 +24,13 @@
       },
     }).then((response: Response) => {
       if (response.ok) {
-        console.log('Unknown Success');
+        response.json()
+          .then((value: User) => {
+            user.value = value;
+          })
+          .catch(() => {
+            console.log('Unknown Error');
+          });
       } else {
         console.log("Unknown Error");
       }
@@ -30,5 +44,14 @@
   <h2>SettingsView</h2>
   <p v-if="isFetching">Loading...</p>
   <p v-if="error">{{ error }}</p>
-  <p v-if="name">{{ name }}</p>
+  <template v-if="user">
+    <h3>Name</h3>
+    <p>{{ user.name }}</p>
+    <h3>Emails</h3>
+    <ul>
+      <li v-for="(email, index) in user.emails" :key="'email' + index">
+        {{ email.email }}: {{ email.verified ? "Verified" : "Not Verified" }}
+      </li>
+    </ul>
+  </template>
 </template>

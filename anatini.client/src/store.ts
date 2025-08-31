@@ -5,12 +5,14 @@ export const store = reactive({
   isLoggedIn: localStorage.getItem('jwtToken') !== null,
   jwtToken: localStorage.getItem('jwtToken'),
   logIn(token: string): void {
-    localStorage.setItem("jwtToken", token)
+    this.jwtToken = token;
     this.isLoggedIn = true;
+    localStorage.setItem("jwtToken", token);
   },
   logOut(router: Router): void {
-    localStorage.removeItem('jwtToken');
+    this.jwtToken = null;
     this.isLoggedIn = false;
+    localStorage.removeItem('jwtToken');
     router.replace({ path: '/' });
   },
 });

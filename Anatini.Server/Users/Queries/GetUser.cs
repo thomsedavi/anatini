@@ -1,6 +1,6 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Authentication.Queries
+namespace Anatini.Server.Users.Queries
 {
     public class GetUser(Guid userId) : IQuery<User?>
     {

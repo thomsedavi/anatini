@@ -40,7 +40,7 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
-        public required DateOnly CreatedDate { get ; set; }
+        public required DateOnly CreatedDateNZ { get ; set; }
         public required IEnumerable<UserEmail> Emails { get; set; }
         public required IEnumerable<UserInvite> Invites { get; set; }
     }
@@ -57,7 +57,7 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string InviteCode { get; set; }
         public required bool Used { get; set; }
-        public required DateOnly CreatedDate { get; set; }
+        public required DateOnly CreatedDateNZ { get; set; }
     }
 
     public class UserEvent
@@ -94,6 +94,6 @@ namespace Anatini.Server
         public required string InviteCode { get; set; }
         public required Guid NewUserId { get; set; }
         public required Guid InvitedByUserId { get; set; }
-        public required DateOnly CreatedDate { get; set; }
+        public required DateOnly CreatedDateNZ { get; set; }
     }
 }
