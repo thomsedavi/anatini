@@ -42,6 +42,7 @@ namespace Anatini.Server
         public required string HashedPassword { get; set; }
         public required DateOnly CreatedDateNZ { get ; set; }
         public required IEnumerable<UserEmail> Emails { get; set; }
+        public required IEnumerable<UserRefreshToken> RefreshTokens { get; set; }
         public IEnumerable<UserInvite>? Invites { get; set; }
     }
 
@@ -58,6 +59,16 @@ namespace Anatini.Server
         public required string InviteCode { get; set; }
         public required bool Used { get; set; }
         public required DateOnly CreatedDateNZ { get; set; }
+    }
+
+    public class UserRefreshToken
+    {
+        public required Guid Id { get; set; }
+        public required string RefreshToken { get; set; }
+        public required string IPAddress { get; set; }
+        public required string UserAgent { get; set; }
+        public required DateOnly CreatedDateNZ { get; set; }
+        public required bool Revoked { get; set; }
     }
 
     public class UserEvent

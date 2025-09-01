@@ -3,8 +3,9 @@
   import { useRoute, useRouter } from 'vue-router';
   import { store } from '../store.ts';
 
-  type BearerJson = {
-    bearer: string;
+  type TokensJson = {
+    accessToken: string;
+    refreshToken: string;
   }
 
   const router = useRouter();
@@ -69,8 +70,8 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: BearerJson) => {
-            store.logIn(value.bearer);
+          .then((value: TokensJson) => {
+            store.logIn(value.accessToken);
 
             let path = '/';
 

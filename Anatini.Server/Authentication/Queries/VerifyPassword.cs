@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Authentication.Queries
 {
-    internal class VerifyPassword(string email, string password) : IQuery<Guid?>
+    internal class VerifyPassword(string email, string password) : IQuery<User?>
     {
-        public async Task<Guid?> ExecuteAsync()
+        public async Task<User?> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
@@ -24,7 +24,7 @@ namespace Anatini.Server.Authentication.Queries
 
             if (result == PasswordVerificationResult.Success)
             {
-                return userId;
+                return user;
             }
             else
             {

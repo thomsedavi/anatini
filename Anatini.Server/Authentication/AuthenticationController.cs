@@ -28,17 +28,17 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> InviteCode()
         {
+            var eventData = new EventData(HttpContext);
+
             try
             {
                 var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (Guid.TryParse(userIdClaim, out var userId))
                 {
-                    var dateOnlyNZ = DateOnlyNZ.Now;
-
                     var user = await new GetUser(userId).ExecuteAsync();
 
-                    if (user.Invites?.Any(invite => invite.CreatedDateNZ == dateOnlyNZ) ?? false)
+                    if (user.Invites?.Any(invite => invite.CreatedDateNZ == eventData.DateOnlyNZNow) ?? false)
                     {
                         return Conflict();
                     }
@@ -53,7 +53,7 @@ namespace Anatini.Server.Authentication
                         {
                             try
                             {
-                                await new CreateCodeInvite(inviteCode, dateOnlyNZ, userId, inviteId).ExecuteAsync();
+                                await new CreateCodeInvite(inviteCode, userId, inviteId, eventData.DateOnlyNZNow).ExecuteAsync();
                                 success = true;
                             }
                             catch (Exception)
@@ -72,7 +72,7 @@ namespace Anatini.Server.Authentication
                             Id = inviteId,
                             InviteCode = inviteCode,
                             Used = false,
-                            CreatedDateNZ = dateOnlyNZ
+                            CreatedDateNZ = eventData.DateOnlyNZNow
                         };
 
                         var invites = (user.Invites ?? []).ToList();
@@ -80,6 +80,7 @@ namespace Anatini.Server.Authentication
                         user.Invites = invites;
 
                         await new UpdateUser(user).ExecuteAsync();
+                        await new CreateUserEvent(userId, UserEventType.InviteCreated, eventData).ExecuteAsync();
 
                         return Created("?", new UserDto(user));
                     }
@@ -178,7 +179,9 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                await new CreateUser(form.Name, form.Password, emailUser, userId).ExecuteAsync();
+                var refreshToken = TokenGenerator.Get;
+
+                await new CreateUser(form.Name, form.Password, emailUser, userId, refreshToken, eventData).ExecuteAsync();
 
                 if (emailUser.InvitedByUserId.HasValue)
                 {
@@ -203,7 +206,7 @@ namespace Anatini.Server.Authentication
 
                 await new CreateUserEvent(userId, UserEventType.UserCreated, eventData).ExecuteAsync();
 
-                return Ok(new { Bearer = GetBearer(userId) });
+                return Ok(new { AccessToken = GetAccessToken(userId, eventData.DateTimeUtc), RefreshToken = refreshToken });
             }
             catch (Exception)
             {
@@ -224,13 +227,31 @@ namespace Anatini.Server.Authentication
 
             try
             {
-                var userId = await new VerifyPassword(form.Email, form.Password).ExecuteAsync();
+                var user = await new VerifyPassword(form.Email, form.Password).ExecuteAsync();
 
-                if (userId.HasValue)
+                if (user != null)
                 {
-                    await new CreateUserEvent(userId.Value, UserEventType.LoginOk, eventData).ExecuteAsync();
+                    await new CreateUserEvent(user.Id, UserEventType.LoginOk, eventData).ExecuteAsync();
 
-                    return Ok(new { Bearer = GetBearer(userId.Value) });
+                    var refreshToken = TokenGenerator.Get;
+
+                    var userRefreshToken = new UserRefreshToken
+                    {
+                        Id = Guid.NewGuid(),
+                        RefreshToken = refreshToken,
+                        CreatedDateNZ = eventData.DateOnlyNZNow,
+                        IPAddress = eventData.Get("IPAddress"),
+                        UserAgent = eventData.Get("UserAgent"),
+                        Revoked = false
+                    };
+
+                    var refreshTokens = user.RefreshTokens.ToList();
+                    refreshTokens.Add(userRefreshToken);
+                    user.RefreshTokens = refreshTokens;
+
+                    await new UpdateUser(user).ExecuteAsync();
+
+                    return Ok(new { AccessToken = GetAccessToken(user.Id, eventData.DateTimeUtc), RefreshToken = refreshToken });
                 }
                 else
                 {
@@ -254,10 +275,10 @@ namespace Anatini.Server.Authentication
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult VerifyEmail([FromForm] VerifyEmailForm request)
         {
-            return Ok(new { Bearer = GetBearer(Guid.NewGuid()) });
+            return Problem();
         }
 
-        private static string GetBearer(Guid id)
+        private static string GetAccessToken(Guid id, DateTime dateTimeUTC)
         {
             var claims = new List<Claim>
             {
@@ -270,7 +291,7 @@ namespace Anatini.Server.Authentication
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = dateTimeUTC.AddHours(1),
                 Issuer = "https://id.anatini.com",
                 Audience = "https://api.anatini.com",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -1,9 +1,9 @@
-﻿using Anatini.Server.Interfaces;
-using Anatini.Server.Utils;
+﻿using Anatini.Server.Controllers;
+using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Authentication.Commands
 {
-    internal class CreateUser(string name, string password, EmailUser email, Guid userId) : ICommand<int>
+    internal class CreateUser(string name, string password, EmailUser email, Guid userId, string refreshToken, EventData eventData) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -16,13 +16,24 @@ namespace Anatini.Server.Authentication.Commands
                 Verified = true
             };
 
+            var userRefreshToken = new UserRefreshToken
+            {
+                Id = Guid.NewGuid(),
+                RefreshToken = refreshToken,
+                CreatedDateNZ = eventData.DateOnlyNZNow,
+                IPAddress = eventData.Get("IPAddress"),
+                UserAgent = eventData.Get("UserAgent"),
+                Revoked = false
+            };
+
             var user = new User
             {
                 Id = userId,
                 Name = name,
                 HashedPassword = null!,
                 Emails = [userEmail],
-                CreatedDateNZ = DateOnlyNZ.Now
+                CreatedDateNZ = eventData.DateOnlyNZNow,
+                RefreshTokens = [userRefreshToken]
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);

@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Authentication.Commands
 {
-    public class CreateCodeInvite(string inviteCode, DateOnly dateOnlyNZ, Guid userId, Guid inviteId) : ICommand<int>
+    public class CreateCodeInvite(string inviteCode, Guid userId, Guid inviteId, DateOnly createdDateNZ) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -14,7 +14,7 @@ namespace Anatini.Server.Authentication.Commands
                 InviteCode = inviteCode,
                 InvitedByUserId = userId,
                 NewUserId = Guid.NewGuid(),
-                CreatedDateNZ = dateOnlyNZ
+                CreatedDateNZ = createdDateNZ
             };
 
             context.CodeInvites.Add(codeInvite);

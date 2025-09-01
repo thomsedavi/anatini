@@ -15,7 +15,7 @@ namespace Anatini.Server.Authentication.Commands
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 Type = Enum.GetName(type)!,
-                DateTimeUtc = DateTime.UtcNow,
+                DateTimeUtc = data.DateTimeUtc,
                 Data = data.ToDictionary()
             };
 

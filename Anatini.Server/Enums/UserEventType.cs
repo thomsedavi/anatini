@@ -7,6 +7,7 @@
         EmailConflict,
         VerificationBad,
         UserCreated,
-        LoginOk
+        LoginOk,
+        InviteCreated
     }
 }
