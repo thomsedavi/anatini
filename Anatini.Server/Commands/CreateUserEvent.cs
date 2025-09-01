@@ -1,8 +1,8 @@
-﻿using Anatini.Server.Controllers;
-using Anatini.Server.Enums;
+﻿using Anatini.Server.Enums;
 using Anatini.Server.Interfaces;
+using Anatini.Server.Utils;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
     internal class CreateUserEvent(Guid userId, UserEventType type, EventData data) : ICommand<int>
     {

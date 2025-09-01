@@ -1,6 +1,6 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
     public class UpdateUser(User user) : ICommand<int>
     {

@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Interfaces;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
     internal class CreateEmailUser(string email, Guid userId) : ICommand<int>
     {

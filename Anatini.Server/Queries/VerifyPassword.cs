@@ -1,8 +1,9 @@
-﻿using Anatini.Server.Interfaces;
+﻿using Anatini.Server.Authentication;
+using Anatini.Server.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anatini.Server.Authentication.Queries
+namespace Anatini.Server.Queries
 {
     internal class VerifyPassword(string email, string password) : IQuery<User?>
     {

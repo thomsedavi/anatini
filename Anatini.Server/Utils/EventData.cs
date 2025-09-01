@@ -1,4 +1,4 @@
-﻿namespace Anatini.Server.Controllers
+﻿namespace Anatini.Server.Utils
 {
     public class EventData
     {

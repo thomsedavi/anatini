@@ -1,6 +1,6 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
     public class CreateCodeInvite(string inviteCode, Guid userId, Guid inviteId, DateOnly createdDateNZ) : ICommand<int>
     {

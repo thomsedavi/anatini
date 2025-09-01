@@ -1,7 +1,8 @@
-﻿using Anatini.Server.Controllers;
+﻿using Anatini.Server.Authentication;
 using Anatini.Server.Interfaces;
+using Anatini.Server.Utils;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
     internal class CreateUser(string name, string password, EmailUser email, Guid userId, string refreshToken, EventData eventData) : ICommand<int>
     {

@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anatini.Server.Users.Queries
+namespace Anatini.Server.Queries
 {
     public class GetUser(Guid userId) : IQuery<User>
     {

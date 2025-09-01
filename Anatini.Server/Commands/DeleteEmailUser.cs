@@ -1,14 +1,14 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Authentication.Commands
+namespace Anatini.Server.Commands
 {
-    internal class UpdateEmailUser(EmailUser emailUser) : ICommand<int>
+    public class DeleteEmailUser(EmailUser emailUser) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Update(emailUser);
+            context.Remove(emailUser);
 
             return await context.SaveChangesAsync();
         }
