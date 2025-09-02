@@ -8,18 +8,33 @@
       email: string;
       verified: boolean;
     }[];
+    refreshTokens: {
+      userAgent: string;
+      revoked: boolean;
+      createdDateNZ: string;
+      ipAddress: string;
+    }[];
     invites?: {
       inviteCode: string;
       createdDateNZ: string;
       used: boolean;
     }[];
-  }
+  };
+
+  type Events = {
+    events: {
+      type: string;
+      dateTimeUtc: string;
+    }[];
+  };
 
   const router = useRouter();
   const user = ref<User | null>(null);
+  const events = ref<Events | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
   const isCreatingInviteCode = ref<boolean>(false);
+  const isGettingEvents = ref<boolean>(false);
 
   onMounted(() => {
     isFetching.value = true;
@@ -66,6 +81,28 @@
       isCreatingInviteCode.value = false;
     });
   }
+
+  async function getEvents() {
+    isGettingEvents.value = true;
+
+    fetch("api/users/events", {
+      method: "GET"
+    }).then((response: Response) => {
+      if (response.ok) {
+        response.json()
+          .then((value: Events) => {
+            events.value = value;
+          })
+          .catch(() => {
+            console.log('Unknown Error');
+          });
+      } else {
+        console.log("Unknown Error");
+      }
+    }).finally(() => {
+      isGettingEvents.value = false;
+    });
+  }
 </script>
 
 <template>
@@ -81,14 +118,29 @@
         {{ email.email }}: {{ email.verified ? "Verified" : "Not Verified" }}
       </li>
     </ul>
+    <h3>Sessions</h3>
+    <ul>
+      <li v-for="(refreshToken, index) in user.refreshTokens" :key="'refreshToken' + index">
+        {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
+      </li>
+    </ul>
     <button @click="createInviteCode" :disabled="isCreatingInviteCode">Create Invite Code</button>
     <template v-if="user.invites">
       <h3>Invites</h3>
-    <ul>
-      <li v-for="(invite, index) in user.invites" :key="'invite' + index">
-        {{ invite.inviteCode }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
-      </li>
-    </ul>
+      <ul>
+        <li v-for="(invite, index) in user.invites" :key="'invite' + index">
+          {{ invite.inviteCode }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
+        </li>
+      </ul>
+    </template>
+    <button @click="getEvents" :disabled="isGettingEvents">Get Events</button>
+    <template v-if="events">
+      <h3>Events</h3>
+      <ul>
+        <li v-for="(event, index) in events.events" :key="'event' + index">
+          {{ event.type }}: {{ event.dateTimeUtc }}
+        </li>
+      </ul>
     </template>
   </template>
 </template>
