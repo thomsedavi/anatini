@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { ref, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router'
-  import { store } from '../store.ts'
 
   const { email, verificationFailed } = defineProps<{
     email?: string;
@@ -13,11 +12,6 @@
     failVerification: [];
   }>();
   
-  type TokensJson = {
-    accessToken: string;
-    refreshToken: string;
-  }
-
   const router = useRouter();
 
   const emailInput = useTemplateRef<HTMLInputElement>('email');
@@ -82,15 +76,7 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        response.json()
-          .then((value: TokensJson) => {
-            store.logIn(value.accessToken);
-
-            router.replace({ path: '/settings' });
-          })
-          .catch(() => {
-            console.log('Unknown Error');
-          });
+        router.replace({ path: '/account' });
       } else if (response.status === 404) {
         verificationCodeInput.value!.setCustomValidity("Verification code does not match, please go back and resend email.");
 

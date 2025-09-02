@@ -1,14 +1,13 @@
-import { createWebHistory, createRouter, type RouteLocationNormalizedGeneric } from 'vue-router'
+import { createWebHistory, createRouter } from 'vue-router'
 
 import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import PostView from './components/PostView.vue';
-import SettingsView from './components/SettingsView.vue';
+import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
 import UsersView from './components/UsersView.vue';
-import { store } from './store.ts'
 
 const routes = [
   {
@@ -28,9 +27,8 @@ const routes = [
     component: LoginView,
   },
   {
-    path: '/settings',
-    component: SettingsView,
-    meta: { requiresAuth: true },
+    path: '/account',
+    component: AccountView,
   },
   {
     path: '/users/:userHandle/posts/:postHandle',
@@ -50,14 +48,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 })
-
-router.beforeEach((to: RouteLocationNormalizedGeneric) => {
-  if (to.meta.requiresAuth && !store.isLoggedIn) {
-    return {
-      path: '/login',
-      query: { redirect: to.fullPath },
-    }
-  }
-});
 
 export default router

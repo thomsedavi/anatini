@@ -204,13 +204,27 @@ namespace Anatini.Server.Authentication
 
                 await new CreateUserEvent(userId, UserEventType.UserCreated, eventData).ExecuteAsync();
 
-                return Ok(new { AccessToken = GetAccessToken(userId, eventData.DateTimeUtc), RefreshToken = refreshToken });
+                var accessToken = GetAccessToken(userId, eventData.DateTimeUtc);
+
+                AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
+
+                return Ok();
             }
             catch (Exception)
             {
                 //logger.LogError(exception, "Exception creating user");
                 return Problem();
             }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("access_token");
+            Response.Cookies.Delete("refresh_token");
+
+            return Ok();
         }
 
         [HttpPost("login")]
@@ -249,7 +263,11 @@ namespace Anatini.Server.Authentication
 
                     await new UpdateUser(user).ExecuteAsync();
 
-                    return Ok(new { AccessToken = GetAccessToken(user.Id, eventData.DateTimeUtc), RefreshToken = refreshToken });
+                    var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
+
+                    AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
+
+                    return Ok();
                 }
                 else
                 {
@@ -276,6 +294,13 @@ namespace Anatini.Server.Authentication
             return Problem();
         }
 
+        [HttpGet("isAuthenticated")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult IsAuthenticated()
+        {
+            return Ok(new { User.Identity?.IsAuthenticated });
+        }
+
         private static string GetAccessToken(Guid id, DateTime dateTimeUTC)
         {
             var claims = new List<Claim>
@@ -300,6 +325,28 @@ namespace Anatini.Server.Authentication
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        private void AppendCookies(string accessToken, string refreshToken, DateTime dateTimeUtc)
+        {
+            var accessTokenCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = dateTimeUtc.AddHours(1)
+            };
+
+            var refreshTokenCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = dateTimeUtc.AddDays(28)
+            };
+
+            Response.Cookies.Append("access_token", accessToken, accessTokenCookieOptions);
+            Response.Cookies.Append("refresh_token", refreshToken, refreshTokenCookieOptions);
         }
     }
 }

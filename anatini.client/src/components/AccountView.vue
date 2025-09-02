@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
-  import { store } from '../store.ts';
+  import { useRouter } from 'vue-router';
 
   type User = {
     name: string;
@@ -15,6 +15,7 @@
     }[];
   }
 
+  const router = useRouter();
   const user = ref<User | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
@@ -23,11 +24,8 @@
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("api/users/settings", {
+    fetch("api/users/account", {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${store.jwtToken}`
-      },
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
@@ -38,11 +36,11 @@
             console.log('Unknown Error');
           });
       } else {
-        console.log("Unknown Error");
+        router.replace({ path: '/login', query: { redirect: '/account' } });
       }
     }).finally(() => {
       isFetching.value = false;
-    });;
+    });
   });
 
   async function createInviteCode() {
@@ -50,9 +48,6 @@
 
     fetch("api/authentication/inviteCode", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${store.jwtToken}`
-      },
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
@@ -74,7 +69,7 @@
 </script>
 
 <template>
-  <h2>SettingsView</h2>
+  <h2>AccountView</h2>
   <p v-if="isFetching">Loading...</p>
   <p v-if="error">{{ error }}</p>
   <template v-if="user">

@@ -1,5 +1,6 @@
 using System.Text;
 using Anatini.Server;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,13 +13,22 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication()
-    .AddJwtBearer(x =>
+    .AddJwtBearer(options =>
     {
-        x.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = "https://id.anatini.com",
             ValidAudience = "https://api.anatini.com",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2"))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["access_token"];
+                return Task.CompletedTask;
+            }
         };
     });
 

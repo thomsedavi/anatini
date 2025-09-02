@@ -11,14 +11,14 @@ namespace Anatini.Server.Users
     public class UsersController : ControllerBase
     {
         [Authorize]
-        [HttpGet("settings")]
+        [HttpGet("account")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserPost()
+        public async Task<IActionResult> Account()
         {
             try
             {
-                var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (Guid.TryParse(userIdClaim, out var userId))
                 {

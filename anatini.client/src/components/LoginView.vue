@@ -3,11 +3,6 @@
   import { useRoute, useRouter } from 'vue-router';
   import { store } from '../store.ts';
 
-  type TokensJson = {
-    accessToken: string;
-    refreshToken: string;
-  }
-
   const router = useRouter();
   const route = useRoute();
 
@@ -69,21 +64,15 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        response.json()
-          .then((value: TokensJson) => {
-            store.logIn(value.accessToken);
+        store.isLoggedIn = true;
 
-            let path = '/';
+        let path = '/';
 
-            if (typeof route.query.redirect === 'string') {
-              path = route.query.redirect;
-            }
+        if (typeof route.query.redirect === 'string') {
+          path = route.query.redirect;
+        }
 
-            router.replace({ path: path });
-          })
-          .catch(() => {
-            console.log('Unknown Error');
-          });
+        router.replace({ path: path });
       } else if (response.status === 401) {
         passwordInput.value!.setCustomValidity("Incorrect password");
 
