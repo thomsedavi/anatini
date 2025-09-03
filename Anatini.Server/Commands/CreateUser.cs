@@ -39,7 +39,7 @@ namespace Anatini.Server.Commands
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);
 
-            context.Users.Add(user);
+            context.Add(user);
 
             return await context.SaveChangesAsync();
         }

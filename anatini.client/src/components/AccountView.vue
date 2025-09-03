@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router';
 
   type User = {
     name: string;
+    defaultHandleId: string | null;
     emails: {
+      id: string;
       email: string;
       verified: boolean;
     }[];
@@ -15,9 +17,14 @@
       ipAddress: string;
     }[];
     invites?: {
+      id: string;
       inviteCode: string;
       createdDateNZ: string;
       used: boolean;
+    }[];
+    handles?: {
+      id: string;
+      handle: string;
     }[];
   };
 
@@ -35,6 +42,8 @@
   const isFetching = ref<boolean>(false);
   const isCreatingInviteCode = ref<boolean>(false);
   const isGettingEvents = ref<boolean>(false);
+  const isCreatingHandle = ref<boolean>(false);
+  const handleInput = useTemplateRef<HTMLInputElement>('handle');
 
   onMounted(() => {
     isFetching.value = true;
@@ -82,6 +91,74 @@
     });
   }
 
+  function validateInput(input: HTMLInputElement, error: string): boolean {
+    if (!input.value.trim()) {
+      input.setCustomValidity(error);
+      return false;
+    } else {
+      input.setCustomValidity('');
+      return true;
+    }
+  }
+
+  function reportValidity(): void {
+    const inputs: HTMLInputElement[] = [handleInput.value!];
+
+    for (let i = 0; i < inputs.length; i++) {
+      if (!inputs[i].reportValidity()) {
+        break;
+      }
+    }
+  }
+
+  async function createHandle(event: Event) {
+    event.preventDefault();
+
+    let validationPassed = true;
+
+    if (!validateInput(handleInput.value!, 'Please enter a handle.'))
+      validationPassed = false;
+
+    if (!validationPassed) {
+      reportValidity();
+      return;
+    }
+
+    isCreatingHandle.value = true;
+
+    const body: Record<string, string> = {
+      handle: handleInput.value!.value.trim(),
+    };
+
+    fetch("api/users/handles", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(body),
+    }).then((response: Response) => {
+      if (response.ok) {
+        response.json()
+          .then((value: User) => {
+            user.value = value;
+          })
+          .catch(() => {
+            console.log('Unknown Error');
+          });
+      } else if (response.status === 403) {
+        handleInput.value!.setCustomValidity("Handle limit reached!");
+        reportValidity();
+      } else if (response.status === 409) {
+        handleInput.value!.setCustomValidity("Handle already in use!");
+        reportValidity();
+      } else {
+        console.log("Unknown Error");
+      }
+    }).finally(() => {
+      isCreatingHandle.value = false;
+    });
+  }
+
   async function getEvents() {
     isGettingEvents.value = true;
 
@@ -125,7 +202,7 @@
       </li>
     </ul>
     <button @click="createInviteCode" :disabled="isCreatingInviteCode">Create Invite Code</button>
-    <template v-if="user.invites">
+    <template v-if="user.invites?.length">
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in user.invites" :key="'invite' + index">
@@ -139,6 +216,25 @@
       <ul>
         <li v-for="(event, index) in events.events" :key="'event' + index">
           {{ event.type }}: {{ event.dateTimeUtc }}
+        </li>
+      </ul>
+    </template>
+    <h3>Create Handle</h3>
+    <form id="createHandle" @submit="createHandle" action="???" method="post">
+      <p>
+        <label for="handle">Handle</label>
+        <input id="handle" type="text" name="handle" maxlength="64" ref="handle" @input="event => handleInput?.setCustomValidity('')">
+      </p>
+
+      <p>
+        <input type="submit" value="Submit" :disabled="isCreatingHandle">
+      </p>
+    </form>
+    <template v-if="user.handles?.length">
+      <h3>Handles</h3>
+      <ul>
+        <li v-for="(handle, index) in user.handles" :key="'handle' + index">
+          {{ handle.handle }}: {{ user.defaultHandleId === handle.id ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>

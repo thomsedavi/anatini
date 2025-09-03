@@ -18,7 +18,7 @@ namespace Anatini.Server.Commands
                 Verified = false
             };
 
-            context.EmailUsers.Add(userEmail);
+            context.Add(userEmail);
 
             return await context.SaveChangesAsync();
         }

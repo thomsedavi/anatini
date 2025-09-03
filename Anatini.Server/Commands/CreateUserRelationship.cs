@@ -18,7 +18,7 @@ namespace Anatini.Server.Commands
                     Type = type
                 };
 
-                context.UserRelationships.Add(userEvent);
+                context.Add(userEvent);
             }
 
             return await context.SaveChangesAsync();

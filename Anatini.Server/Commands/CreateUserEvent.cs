@@ -19,7 +19,7 @@ namespace Anatini.Server.Commands
                 Data = data.ToDictionary()
             };
 
-            context.UserEvents.Add(userEvent);
+            context.Add(userEvent);
 
             return await context.SaveChangesAsync();
         }

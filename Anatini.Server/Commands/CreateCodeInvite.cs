@@ -17,7 +17,7 @@ namespace Anatini.Server.Commands
                 CreatedDateNZ = createdDateNZ
             };
 
-            context.CodeInvites.Add(codeInvite);
+            context.Add(codeInvite);
 
             return await context.SaveChangesAsync();
         }
