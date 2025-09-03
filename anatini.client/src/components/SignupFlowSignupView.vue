@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router'
+  import { reportValidity, validateInputs } from './common/validity';
 
   const { email, verificationFailed } = defineProps<{
     email?: string;
@@ -20,44 +21,16 @@
   const verificationCodeInput = useTemplateRef<HTMLInputElement>('verification-code');
   const isFetching = ref<boolean>(false);
 
-  function validateInput(input: HTMLInputElement, error: string): boolean {
-    if (!input.value.trim()) {
-      input.setCustomValidity(error);
-      return false;
-    } else {
-      input.setCustomValidity('');
-      return true;
-    }
-  }
-
-  function reportValidity(): void {
-    const inputs: HTMLInputElement[] = [emailInput.value!, nameInput.value!, passwordInput.value!, verificationCodeInput.value!];
-
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].reportValidity()) {
-        break;
-      }
-    }
-  }
-
   async function signup(event: Event) {
     event.preventDefault();
 
-    let validationPassed = true;
-
-    if (!validateInput(emailInput.value!, 'Please enter an email.'))
-      validationPassed = false;
-    if (!validateInput(nameInput.value!, 'Please enter a name.'))
-      validationPassed = false;
-    if (!validateInput(passwordInput.value!, 'Please enter a password.'))
-      validationPassed = false;
-    if (!validateInput(verificationCodeInput.value!, 'Please enter a verification code.'))
-      validationPassed = false;
-
-    if (!validationPassed) {
-      reportValidity();
+    if (!validateInputs([
+      {element: emailInput.value, error: 'Please enter an email.'},
+      {element: nameInput.value, error: 'Please enter a name.'},
+      {element: passwordInput.value, error: 'Please enter a password.'},
+      {element: verificationCodeInput.value, error: 'Please enter a verification code.'},
+    ]))
       return;
-    }
 
     isFetching.value = true;
 
@@ -80,7 +53,7 @@
       } else if (response.status === 404) {
         verificationCodeInput.value!.setCustomValidity("Verification code does not match, please go back and resend email.");
 
-        reportValidity();
+        reportValidity([verificationCodeInput.value]);
 
         emit('failVerification');
       } else {

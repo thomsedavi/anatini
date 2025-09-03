@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, onMounted, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router';
+  import { reportValidity, validateInputs } from './common/validity';
 
   type User = {
     name: string;
@@ -91,38 +92,13 @@
     });
   }
 
-  function validateInput(input: HTMLInputElement, error: string): boolean {
-    if (!input.value.trim()) {
-      input.setCustomValidity(error);
-      return false;
-    } else {
-      input.setCustomValidity('');
-      return true;
-    }
-  }
-
-  function reportValidity(): void {
-    const inputs: HTMLInputElement[] = [handleInput.value!];
-
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].reportValidity()) {
-        break;
-      }
-    }
-  }
-
   async function createHandle(event: Event) {
     event.preventDefault();
 
-    let validationPassed = true;
-
-    if (!validateInput(handleInput.value!, 'Please enter a handle.'))
-      validationPassed = false;
-
-    if (!validationPassed) {
-      reportValidity();
+    if (!validateInputs([
+      {element: handleInput.value, error: 'Please enter a handle.'},
+    ]))
       return;
-    }
 
     isCreatingHandle.value = true;
 
@@ -147,10 +123,10 @@
           });
       } else if (response.status === 403) {
         handleInput.value!.setCustomValidity("Handle limit reached!");
-        reportValidity();
+        reportValidity([handleInput.value]);
       } else if (response.status === 409) {
         handleInput.value!.setCustomValidity("Handle already in use!");
-        reportValidity();
+        reportValidity([handleInput.value]);
       } else {
         console.log("Unknown Error");
       }

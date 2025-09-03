@@ -2,6 +2,7 @@
   import { ref, useTemplateRef, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { store } from '../store.ts';
+  import { reportValidity, validateInputs } from './common/validity.ts';
 
   const router = useRouter();
   const route = useRoute();
@@ -14,40 +15,14 @@
     emailInput.value!.focus()
   });
 
-  function validateInput(input: HTMLInputElement | null, error: string): boolean {
-    if (!input?.value.trim()) {
-      input?.setCustomValidity(error);
-      return false;
-    } else {
-      input?.setCustomValidity('');
-      return true;
-    }
-  }
-
-  function reportValidity(): void {
-    const inputs: HTMLInputElement[] = [emailInput.value!, passwordInput.value!];
-
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].reportValidity()) {
-        break;
-      }
-    }
-  }
-
   async function login(e: Event) {
     e.preventDefault();
 
-    let validationPassed = true;
-
-    if (!validateInput(emailInput.value!, 'Please enter an email.'))
-      validationPassed = false;
-    if (!validateInput(passwordInput.value!, 'Please enter a password.'))
-      validationPassed = false;
-
-    if (!validationPassed) {
-      reportValidity();
+    if (!validateInputs([
+      {element: emailInput.value, error: 'Please enter an email.'},
+      {element: passwordInput.value, error: 'Please enter a password.'},
+    ]))
       return;
-    }
 
     isFetching.value = true;
 
@@ -76,7 +51,7 @@
       } else if (response.status === 401) {
         passwordInput.value!.setCustomValidity("Incorrect password");
 
-        reportValidity();
+        reportValidity([passwordInput.value]);
       } else {
         console.log("Unknown Error");
       }

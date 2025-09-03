@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, useTemplateRef } from 'vue';
+  import { reportValidity, validateInputs } from './common/validity';
 
   const emit = defineEmits<{
     submitInviteCode: [email?: string];
@@ -9,40 +10,14 @@
   const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
   const isFetching = ref<boolean>(false);
 
-  function validateInput(input: HTMLInputElement, error: string): boolean {
-    if (!input.value.trim()) {
-      input.setCustomValidity(error);
-      return false;
-    } else {
-      input.setCustomValidity('');
-      return true;
-    }
-  }
-
-  function reportValidity(): void {
-    const inputs: HTMLInputElement[] = [emailInput.value!, inviteCodeInput.value!];
-
-    for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].reportValidity()) {
-        break;
-      }
-    }
-  }
-
   async function inviteCode(event: Event) {
     event.preventDefault();
 
-    let validationPassed = true;
-
-    if (!validateInput(emailInput.value!, 'Please enter an email.'))
-      validationPassed = false;
-    if (!validateInput(inviteCodeInput.value!, 'Please enter an invite code.'))
-      validationPassed = false;
-
-    if (!validationPassed) {
-      reportValidity();
+    if (!validateInputs([
+      {element: emailInput.value, error: 'Please enter an email.'},
+      {element: inviteCodeInput.value, error: 'Please enter an invite code.'},
+    ]))
       return;
-    }
 
     isFetching.value = true;
 
@@ -63,7 +38,7 @@
       } else if (response.status === 404) {
         inviteCodeInput.value!.setCustomValidity("Invite code not found.");
 
-        reportValidity();
+        reportValidity([inviteCodeInput.value]);
       } else {
         console.log("Unknown Error");
       }
