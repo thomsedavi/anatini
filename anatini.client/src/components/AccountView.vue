@@ -3,7 +3,7 @@
   import { useRouter } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
 
-  type User = {
+  type Account = {
     name: string;
     defaultHandleId: string | null;
     emails: {
@@ -37,7 +37,7 @@
   };
 
   const router = useRouter();
-  const user = ref<User | null>(null);
+  const account = ref<Account | null>(null);
   const events = ref<Events | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
@@ -54,8 +54,8 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: User) => {
-            user.value = value;
+          .then((value: Account) => {
+            account.value = value;
           })
           .catch(() => {
             console.log('Unknown Error');
@@ -76,8 +76,8 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: User) => {
-            user.value = value;
+          .then((value: Account) => {
+            account.value = value;
           })
           .catch(() => {
             console.log('Unknown Error');
@@ -115,8 +115,8 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: User) => {
-            user.value = value;
+          .then((value: Account) => {
+            account.value = value;
           })
           .catch(() => {
             console.log('Unknown Error');
@@ -162,26 +162,26 @@
   <h2>AccountView</h2>
   <p v-if="isFetching">Loading...</p>
   <p v-if="error">{{ error }}</p>
-  <template v-if="user">
+  <template v-if="account">
     <h3>Name</h3>
-    <p>{{ user.name }}</p>
+    <p>{{ account.name }}</p>
     <h3>Emails</h3>
     <ul>
-      <li v-for="(email, index) in user.emails" :key="'email' + index">
+      <li v-for="(email, index) in account.emails" :key="'email' + index">
         {{ email.email }}: {{ email.verified ? "Verified" : "Not Verified" }}
       </li>
     </ul>
     <h3>Sessions</h3>
     <ul>
-      <li v-for="(refreshToken, index) in user.refreshTokens" :key="'refreshToken' + index">
+      <li v-for="(refreshToken, index) in account.refreshTokens" :key="'refreshToken' + index">
         {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
       </li>
     </ul>
     <button @click="createInviteCode" :disabled="isCreatingInviteCode">Create Invite Code</button>
-    <template v-if="user.invites?.length">
+    <template v-if="account.invites?.length">
       <h3>Invites</h3>
       <ul>
-        <li v-for="(invite, index) in user.invites" :key="'invite' + index">
+        <li v-for="(invite, index) in account.invites" :key="'invite' + index">
           {{ invite.inviteCode }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
         </li>
       </ul>
@@ -206,11 +206,11 @@
         <input type="submit" value="Submit" :disabled="isCreatingHandle">
       </p>
     </form>
-    <template v-if="user.handles?.length">
+    <template v-if="account.handles?.length">
       <h3>Handles</h3>
       <ul>
-        <li v-for="(handle, index) in user.handles" :key="'handle' + index">
-          {{ handle.handle }}: {{ user.defaultHandleId === handle.id ? 'Default' : 'Not Default'}}
+        <li v-for="(handle, index) in account.handles" :key="'handle' + index">
+          {{ handle.handle }}: {{ account.defaultHandleId === handle.id ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>

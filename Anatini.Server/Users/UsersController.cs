@@ -57,7 +57,7 @@ namespace Anatini.Server.Users
 
                     await new UpdateUser(user).ExecuteAsync();
 
-                    return Ok(new UserDto(user));
+                    return Ok(new AccountDto(user));
                 }
                 else
                 {
@@ -86,7 +86,7 @@ namespace Anatini.Server.Users
         [HttpGet("events")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Events()
+        public async Task<IActionResult> GetEvents()
         {
             try
             {
@@ -113,7 +113,7 @@ namespace Anatini.Server.Users
         [HttpGet("account")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Account()
+        public async Task<IActionResult> GetAccount()
         {
             try
             {
@@ -123,12 +123,39 @@ namespace Anatini.Server.Users
                 {
                     var user = await new GetUser(userId).ExecuteAsync();
 
-                    return Ok(new UserDto(user));
+                    return Ok(new AccountDto(user));
                 }
                 else
                 {
                     return Problem();
                 }
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
+        }
+
+        [HttpGet("{handle}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUser(string handle)
+        {
+            try
+            {
+                var handleUser = await new GetHandleUser(handle).ExecuteAsync();
+
+                if (handleUser == null)
+                {
+                    return NotFound();
+                }
+
+                // TODO return 404 if current user requires authentication
+
+                var user = await new GetUser(handleUser.UserId).ExecuteAsync();
+
+                return Ok(new UserDto(user));
             }
             catch (Exception)
             {

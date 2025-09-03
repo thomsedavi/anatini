@@ -24,7 +24,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> InviteCode()
+        public async Task<IActionResult> PostInviteCode()
         {
             var eventData = new EventData(HttpContext);
 
@@ -80,7 +80,7 @@ namespace Anatini.Server.Authentication
                         await new UpdateUser(user).ExecuteAsync();
                         await new CreateUserEvent(userId, UserEventType.InviteCreated, eventData).ExecuteAsync();
 
-                        return Created("?", new UserDto(user));
+                        return Created("?", new AccountDto(user));
                     }
                 }
                 else
@@ -99,7 +99,7 @@ namespace Anatini.Server.Authentication
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Email([FromForm] EmailForm form)
+        public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
             var eventData = new EventData(HttpContext).Add("Email", form.Email);
             var userId = Guid.Empty;
@@ -156,7 +156,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Signup([FromForm] SignupForm form)
+        public async Task<IActionResult> PostSignup([FromForm] SignupForm form)
         {
             var eventData = new EventData(HttpContext).Add("Email", form.Email).Add("Name", form.Name);
 
@@ -219,7 +219,7 @@ namespace Anatini.Server.Authentication
 
         [Authorize]
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public IActionResult PostLogout()
         {
             Response.Cookies.Delete("access_token");
             Response.Cookies.Delete("refresh_token");
@@ -233,7 +233,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromForm] LoginForm form)
+        public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
         {
             var eventData = new EventData(HttpContext).Add("Email", form.Email);
 
@@ -289,14 +289,14 @@ namespace Anatini.Server.Authentication
         [HttpPost("verifyEmail")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult VerifyEmail([FromForm] VerifyEmailForm request)
+        public IActionResult PostVerifyEmail([FromForm] VerifyEmailForm request)
         {
             return Problem();
         }
 
         [HttpGet("isAuthenticated")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult IsAuthenticated()
+        public IActionResult GetIsAuthenticated()
         {
             return Ok(new { User.Identity?.IsAuthenticated });
         }
