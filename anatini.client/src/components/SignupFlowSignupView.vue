@@ -17,6 +17,7 @@
 
   const emailInput = useTemplateRef<HTMLInputElement>('email');
   const nameInput = useTemplateRef<HTMLInputElement>('name');
+  const handleInput = useTemplateRef<HTMLInputElement>('handle');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
   const verificationCodeInput = useTemplateRef<HTMLInputElement>('verification-code');
   const isFetching = ref<boolean>(false);
@@ -25,10 +26,11 @@
     event.preventDefault();
 
     if (!validateInputs([
-      {element: emailInput.value, error: 'Please enter an email.'},
-      {element: nameInput.value, error: 'Please enter a name.'},
-      {element: passwordInput.value, error: 'Please enter a password.'},
-      {element: verificationCodeInput.value, error: 'Please enter a verification code.'},
+      { element: emailInput.value, error: 'Please enter an email.' },
+      { element: nameInput.value, error: 'Please enter a name.' },
+      { element: handleInput.value, error: 'Please enter a handle.' },
+      { element: passwordInput.value, error: 'Please enter a password.' },
+      { element: verificationCodeInput.value, error: 'Please enter a verification code.' },
     ]))
       return;
 
@@ -37,6 +39,7 @@
     const body: Record<string, string> = {
       email: emailInput.value!.value.trim(),
       name: nameInput.value!.value.trim(),
+      handle: handleInput.value!.value.trim(),
       password: passwordInput.value!.value,
       verificationCode: verificationCodeInput.value!.value.trim(),
     };
@@ -56,6 +59,10 @@
         reportValidity([verificationCodeInput.value]);
 
         emit('failVerification');
+      } else if (response.status === 409) {
+        handleInput.value!.setCustomValidity("Handle already in use!");
+
+        reportValidity([handleInput.value]);
       } else {
         console.log("Unknown Error");
       }
@@ -76,6 +83,11 @@
     <p>
       <label for="name">Name</label>
       <input id="name" type="text" name="name" maxlength="64" ref="name" @input="() => nameInput?.setCustomValidity('')">
+    </p>
+
+    <p>
+      <label for="handle">Handle</label>
+      <input id="handle" type="text" name="handle" maxlength="64" ref="handle" @input="() => handleInput?.setCustomValidity('')">
     </p>
 
     <p>

@@ -155,6 +155,7 @@ namespace Anatini.Server.Authentication
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignup([FromForm] SignupForm form)
         {
@@ -177,9 +178,13 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
+                var handleId = Guid.NewGuid();
+
+                await new CreateHandle(handleId, userId, form.Handle).ExecuteAsync();
+
                 var refreshToken = TokenGenerator.Get;
 
-                await new CreateUser(form.Name, form.Password, emailUser, userId, refreshToken, eventData).ExecuteAsync();
+                await new CreateUser(form.Name, form.Handle, form.Password, emailUser, userId, handleId, refreshToken, eventData).ExecuteAsync();
 
                 if (emailUser.InvitedByUserId.HasValue)
                 {
@@ -209,6 +214,18 @@ namespace Anatini.Server.Authentication
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 
                 return Ok();
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    //logger.LogError(dbUpdateException, "Exception creating user");
+                    return Problem();
+                }
             }
             catch (Exception)
             {

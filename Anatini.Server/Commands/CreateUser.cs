@@ -4,7 +4,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Commands
 {
-    internal class CreateUser(string name, string password, EmailUser email, Guid userId, string refreshToken, EventData eventData) : ICommand<int>
+    internal class CreateUser(string name, string handle, string password, EmailUser email, Guid userId, Guid handleId, string refreshToken, EventData eventData) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -27,6 +27,12 @@ namespace Anatini.Server.Commands
                 Revoked = false
             };
 
+            var userHandle = new UserHandle
+            {
+                Id = handleId,
+                Handle = handle
+            };
+
             var user = new User
             {
                 Id = userId,
@@ -34,7 +40,9 @@ namespace Anatini.Server.Commands
                 HashedPassword = null!,
                 Emails = [userEmail],
                 CreatedDateNZ = eventData.DateOnlyNZNow,
-                RefreshTokens = [userRefreshToken]
+                RefreshTokens = [userRefreshToken],
+                Handles = [userHandle],
+                DefaultHandleId = handleId
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);
