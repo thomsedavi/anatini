@@ -19,6 +19,7 @@ namespace Anatini.Server.Commands
 
             var userSession = new UserSession
             {
+                Id = Guid.NewGuid(),
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
                 IPAddress = eventData.Get("IPAddress"),

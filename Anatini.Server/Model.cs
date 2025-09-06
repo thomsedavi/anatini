@@ -29,10 +29,10 @@ namespace Anatini.Server
             var userBuilder = modelBuilder.Entity<User>();
 
             userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Emails);
-            userBuilder.OwnsMany(user => user.Sessions);
-            userBuilder.OwnsMany(user => user.Handles);
-            userBuilder.OwnsMany(user => user.Invites);
+            userBuilder.OwnsMany(user => user.Sessions, a => { a.HasKey("Id"); });
+            userBuilder.OwnsMany(user => user.Emails, a => { a.HasKey("EmailId"); });
+            userBuilder.OwnsMany(user => user.Handles, a => { a.HasKey("HandleId"); });
+            userBuilder.OwnsMany(user => user.Invites, a => { a.HasKey("InviteId"); });
 
             modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(userEvent => userEvent.UserId);
             modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(userEvent => userEvent.UserId);
@@ -83,6 +83,7 @@ namespace Anatini.Server
     [Owned]
     public class UserSession
     {
+        public required Guid Id { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
