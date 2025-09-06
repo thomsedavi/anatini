@@ -12,14 +12,13 @@ namespace Anatini.Server.Commands
 
             var userEmail = new UserEmail
             {
-                Id = email.Id,
+                EmailUserId = email.Id,
                 Email = email.Email,
                 Verified = true
             };
 
             var userRefreshToken = new UserRefreshToken
             {
-                Id = Guid.NewGuid(),
                 RefreshToken = refreshToken,
                 CreatedDateNZ = eventData.DateOnlyNZNow,
                 IPAddress = eventData.Get("IPAddress"),
@@ -29,7 +28,7 @@ namespace Anatini.Server.Commands
 
             var userHandle = new UserHandle
             {
-                Id = handleId,
+                HandleUserId = handleId,
                 Handle = handle
             };
 

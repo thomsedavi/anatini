@@ -2,7 +2,7 @@
 
 namespace Anatini.Server
 {
-    public class AnatiniContext() : DbContext
+    public class AnatiniContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<EmailUser> EmailUsers { get; set; }
@@ -26,7 +26,13 @@ namespace Anatini.Server
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().ToContainer("Users").HasPartitionKey(user => user.Id);
+            var userBuilder = modelBuilder.Entity<User>();
+
+            userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
+            userBuilder.OwnsMany(user => user.Emails);
+            userBuilder.OwnsMany(user => user.RefreshTokens);
+            userBuilder.OwnsMany(user => user.Handles);
+            userBuilder.OwnsMany(user => user.Invites);
 
             modelBuilder.Entity<UserEvent>().ToContainer("UserEvents").HasPartitionKey(userEvent => userEvent.UserId);
             modelBuilder.Entity<UserRelationship>().ToContainer("UserRelationships").HasPartitionKey(userEvent => userEvent.UserId);
@@ -43,37 +49,40 @@ namespace Anatini.Server
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
         public required DateOnly CreatedDateNZ { get ; set; }
-        public required IEnumerable<UserEmail> Emails { get; set; }
-        public required IEnumerable<UserRefreshToken> RefreshTokens { get; set; }
-        public IEnumerable<UserHandle>? Handles { get; set; }
-        public IEnumerable<UserInvite>? Invites { get; set; }
-        public Guid? DefaultHandleId { get; set; }
+        public required ICollection<UserEmail> Emails { get; set; }
+        public required ICollection<UserRefreshToken> RefreshTokens { get; set; }
+        public required ICollection<UserHandle> Handles { get; set; }
+        public ICollection<UserInvite>? Invites { get; set; }
+        public required Guid DefaultHandleId { get; set; }
     }
 
+    [Owned]
     public class UserEmail
     {
-        public required Guid Id { get; set; }
+        public required Guid EmailUserId { get; set; }
         public required string Email { get; set; }
         public required bool Verified { get; set; }
     }
 
+    [Owned]
     public class UserHandle
     {
-        public required Guid Id { get; set; }
+        public required Guid HandleUserId { get; set; }
         public required string Handle { get; set; }
     }
 
+    [Owned]
     public class UserInvite
     {
-        public required Guid Id { get; set; }
+        public required Guid CodeInviteId { get; set; }
         public required string InviteCode { get; set; }
         public required bool Used { get; set; }
         public required DateOnly CreatedDateNZ { get; set; }
     }
 
+    [Owned]
     public class UserRefreshToken
     {
-        public required Guid Id { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }

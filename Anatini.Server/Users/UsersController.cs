@@ -43,14 +43,14 @@ namespace Anatini.Server.Users
 
                     var userHandle = new UserHandle
                     {
-                        Id = handleId,
+                        HandleUserId = handleId,
                         Handle = form.Handle
                     };
 
                     handles.Add(userHandle);
                     user.Handles = handles;
 
-                    if (form.Default ?? false || !user.DefaultHandleId.HasValue)
+                    if (form.Default ?? false)
                     {
                         user.DefaultHandleId = handleId;
                     }

@@ -67,7 +67,7 @@ namespace Anatini.Server.Authentication
 
                         var userInvite = new UserInvite
                         {
-                            Id = inviteId,
+                            CodeInviteId = inviteId,
                             InviteCode = inviteCode,
                             Used = false,
                             CreatedDateNZ = eventData.DateOnlyNZNow
@@ -192,7 +192,7 @@ namespace Anatini.Server.Authentication
 
                     var invitedByUser = await new GetUser(invitedByUserId).ExecuteAsync();
 
-                    invitedByUser.Invites!.First(invite => invite.Id == emailUser.InviteId).Used = true;
+                    invitedByUser.Invites!.First(invite => invite.CodeInviteId == emailUser.InviteId).Used = true;
 
                     await new UpdateUser(invitedByUser).ExecuteAsync();
 
@@ -266,7 +266,6 @@ namespace Anatini.Server.Authentication
 
                     var userRefreshToken = new UserRefreshToken
                     {
-                        Id = Guid.NewGuid(),
                         RefreshToken = refreshToken,
                         CreatedDateNZ = eventData.DateOnlyNZNow,
                         IPAddress = eventData.Get("IPAddress"),

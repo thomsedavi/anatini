@@ -12,20 +12,20 @@
 
     internal class AccountHandleDto(UserHandle handle)
     {
-        public Guid Id { get; } = handle.Id;
+        public Guid HandleUserId { get; } = handle.HandleUserId;
         public string Handle { get; } = handle.Handle;
     }
 
     internal class AccountEmailDto(UserEmail email)
     {
-        public Guid Id { get; } = email.Id;
+        public Guid EmailUserId { get; } = email.EmailUserId;
         public string Email { get; } = email.Email;
         public bool Verified { get; } = email.Verified;
     }
 
     internal class AccountInviteDto(UserInvite invite)
     {
-        public Guid Id { get; } = invite.Id;
+        public Guid CodeInviteId { get; } = invite.CodeInviteId;
         public string InviteCode { get; } = invite.InviteCode;
         public DateOnly CreatedDateNZ { get; } = invite.CreatedDateNZ;
         public bool Used { get; } = invite.Used;
