@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum UserEventType
+    public enum EventType
     {
         InviteCodeCreated,
         EmailCreated,

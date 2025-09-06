@@ -4,35 +4,36 @@
   import { reportValidity, validateInputs } from './common/validity';
 
   type Account = {
+    id: string,
     name: string;
     defaultHandleId: string | null;
     emails: {
-      id: string;
-      email: string;
+      emailId: string;
+      value: string;
       verified: boolean;
     }[];
-    refreshTokens: {
+    sessions: {
       userAgent: string;
       revoked: boolean;
-      createdDateNZ: string;
+      createdDateUtc: string;
       ipAddress: string;
     }[];
     invites?: {
-      id: string;
-      inviteCode: string;
+      inviteId: string;
+      value: string;
       createdDateNZ: string;
       used: boolean;
     }[];
-    handles?: {
-      id: string;
-      handle: string;
+    handles: {
+      handleId: string;
+      value: string;
     }[];
   };
 
   type Events = {
     events: {
       type: string;
-      dateTimeUtc: string;
+      createdDateUtc: string;
     }[];
   };
 
@@ -168,12 +169,12 @@
     <h3>Emails</h3>
     <ul>
       <li v-for="(email, index) in account.emails" :key="'email' + index">
-        {{ email.email }}: {{ email.verified ? "Verified" : "Not Verified" }}
+        {{ email.value }}: {{ email.verified ? "Verified" : "Not Verified" }}
       </li>
     </ul>
     <h3>Sessions</h3>
     <ul>
-      <li v-for="(refreshToken, index) in account.refreshTokens" :key="'refreshToken' + index">
+      <li v-for="(refreshToken, index) in account.sessions" :key="'refreshToken' + index">
         {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
       </li>
     </ul>
@@ -182,7 +183,7 @@
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in account.invites" :key="'invite' + index">
-          {{ invite.inviteCode }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
+          {{ invite.value }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
         </li>
       </ul>
     </template>
@@ -191,7 +192,7 @@
       <h3>Events</h3>
       <ul>
         <li v-for="(event, index) in events.events" :key="'event' + index">
-          {{ event.type }}: {{ event.dateTimeUtc }}
+          {{ event.type }}: {{ event.createdDateUtc }}
         </li>
       </ul>
     </template>
@@ -210,7 +211,7 @@
       <h3>Handles</h3>
       <ul>
         <li v-for="(handle, index) in account.handles" :key="'handle' + index">
-          {{ handle.handle }}: {{ account.defaultHandleId === handle.id ? 'Default' : 'Not Default'}}
+          {{ handle.value }}: {{ account.defaultHandleId === handle.handleId ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>

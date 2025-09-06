@@ -2,20 +2,20 @@
 
 namespace Anatini.Server.Commands
 {
-    public class CreateHandle(Guid handleId, Guid userId, string handle) : ICommand<int>
+    public class CreateHandle(Guid handleId, string handleValue, Guid userId) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var handleUser = new HandleUser
+            var handle = new Handle
             {
                 Id = handleId,
+                Value = handleValue,
                 UserId = userId,
-                Handle = handle
             };
 
-            context.Add(handleUser);
+            context.Add(handle);
 
             return await context.SaveChangesAsync();
         }

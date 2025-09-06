@@ -2,13 +2,13 @@
 
 namespace Anatini.Server.Commands
 {
-    public class DeleteEmailUser(EmailUser emailUser) : ICommand<int>
+    public class DeleteEmail(Email email) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Remove(emailUser);
+            context.Remove(email);
 
             return await context.SaveChangesAsync();
         }

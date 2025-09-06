@@ -5,11 +5,11 @@ namespace Anatini.Server
     public class AnatiniContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<EmailUser> EmailUsers { get; set; }
-        public DbSet<HandleUser> HandleUsers { get; set; }
-        public DbSet<CodeInvite> CodeInvites { get; set; }
-        public DbSet<UserEvent> UserEvents { get; set; }
-        public DbSet<UserRelationship> UserRelationships { get; set; }
+        public DbSet<Email> Emails { get; set; }
+        public DbSet<Handle> Handles { get; set; }
+        public DbSet<Invite> Invites { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Relationship> Relationships { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,16 +30,16 @@ namespace Anatini.Server
 
             userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
             userBuilder.OwnsMany(user => user.Emails);
-            userBuilder.OwnsMany(user => user.RefreshTokens);
+            userBuilder.OwnsMany(user => user.Sessions);
             userBuilder.OwnsMany(user => user.Handles);
             userBuilder.OwnsMany(user => user.Invites);
 
-            modelBuilder.Entity<UserEvent>().ToContainer("UserEvents").HasPartitionKey(userEvent => userEvent.UserId);
-            modelBuilder.Entity<UserRelationship>().ToContainer("UserRelationships").HasPartitionKey(userEvent => userEvent.UserId);
+            modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(userEvent => userEvent.UserId);
+            modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(userEvent => userEvent.UserId);
 
-            modelBuilder.Entity<EmailUser>().ToContainer("EmailUsers").HasPartitionKey(user => user.Email);
-            modelBuilder.Entity<HandleUser>().ToContainer("HandleUsers").HasPartitionKey(user => user.Handle);
-            modelBuilder.Entity<CodeInvite>().ToContainer("CodeInvites").HasPartitionKey(invite => invite.InviteCode);
+            modelBuilder.Entity<Email>().ToContainer("Emails").HasPartitionKey(user => user.Value);
+            modelBuilder.Entity<Handle>().ToContainer("Handles").HasPartitionKey(user => user.Value);
+            modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(invite => invite.Value);
         }
     }
 
@@ -48,9 +48,9 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
-        public required DateOnly CreatedDateNZ { get ; set; }
+        public required DateTime CreatedDateUTC { get ; set; }
         public required ICollection<UserEmail> Emails { get; set; }
-        public required ICollection<UserRefreshToken> RefreshTokens { get; set; }
+        public required ICollection<UserSession> Sessions { get; set; }
         public required ICollection<UserHandle> Handles { get; set; }
         public ICollection<UserInvite>? Invites { get; set; }
         public required Guid DefaultHandleId { get; set; }
@@ -59,57 +59,57 @@ namespace Anatini.Server
     [Owned]
     public class UserEmail
     {
-        public required Guid EmailUserId { get; set; }
-        public required string Email { get; set; }
+        public required Guid EmailId { get; set; }
+        public required string Value { get; set; }
         public required bool Verified { get; set; }
     }
 
     [Owned]
     public class UserHandle
     {
-        public required Guid HandleUserId { get; set; }
-        public required string Handle { get; set; }
+        public required Guid HandleId { get; set; }
+        public required string Value { get; set; }
     }
 
     [Owned]
     public class UserInvite
     {
-        public required Guid CodeInviteId { get; set; }
-        public required string InviteCode { get; set; }
+        public required Guid InviteId { get; set; }
+        public required string Value { get; set; }
         public required bool Used { get; set; }
         public required DateOnly CreatedDateNZ { get; set; }
     }
 
     [Owned]
-    public class UserRefreshToken
+    public class UserSession
     {
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
-        public required DateOnly CreatedDateNZ { get; set; }
+        public required DateTime CreatedDateUtc { get; set; }
         public required bool Revoked { get; set; }
     }
 
-    public class UserEvent
+    public class Event
     {
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Type { get; set; }
-        public required DateTime DateTimeUtc { get; set; }
+        public required DateTime CreatedDateUtc { get; set; }
         public required IDictionary<string, string> Data { get; set; }
     }
 
-    public class HandleUser
+    public class Handle
     {
         public required Guid Id { get; set; }
+        public required string Value { get; set; }
         public required Guid UserId { get; set; }
-        public required string Handle { get; set; }
     }
 
-    public class EmailUser
+    public class Email
     {
         public required Guid Id { get; set; }
-        public required string Email { get; set; }
+        public required string Value { get; set; }
         public required Guid UserId { get; set; }
         public string? VerificationCode { get; set; }
         public Guid? InvitedByUserId { get; set; }
@@ -117,7 +117,7 @@ namespace Anatini.Server
         public required bool Verified { get; set; }
     }
 
-    public class UserRelationship
+    public class Relationship
     {
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
@@ -125,10 +125,10 @@ namespace Anatini.Server
         public required string Type { get; set; }
     }
 
-    public class CodeInvite
+    public class Invite
     {
         public required Guid Id { get; set; }
-        public required string InviteCode { get; set; }
+        public required string Value { get; set; }
         public required Guid NewUserId { get; set; }
         public required Guid InvitedByUserId { get; set; }
         public required DateOnly CreatedDateNZ { get; set; }

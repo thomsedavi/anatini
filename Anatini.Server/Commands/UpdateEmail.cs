@@ -2,13 +2,13 @@
 
 namespace Anatini.Server.Commands
 {
-    internal class UpdateEmailUser(EmailUser emailUser) : ICommand<int>
+    internal class UpdateEmail(Email email) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Update(emailUser);
+            context.Update(email);
 
             return await context.SaveChangesAsync();
         }

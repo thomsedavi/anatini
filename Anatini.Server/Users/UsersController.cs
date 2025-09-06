@@ -28,7 +28,14 @@ namespace Anatini.Server.Users
 
                 if (Guid.TryParse(userIdClaim, out var userId))
                 {
-                    var user = await new GetUser(userId).ExecuteAsync();
+                    var userResult = await new GetUser(userId).ExecuteAsync();
+
+                    if (userResult == null)
+                    {
+                        return Problem();
+                    }
+
+                    var user = userResult!;
 
                     var handles = (user.Handles ?? []).ToList();
 
@@ -39,12 +46,12 @@ namespace Anatini.Server.Users
 
                     var handleId = Guid.NewGuid();
 
-                    await new CreateHandle(handleId, userId, form.Handle).ExecuteAsync();
+                    await new CreateHandle(handleId, form.Handle, userId).ExecuteAsync();
 
                     var userHandle = new UserHandle
                     {
-                        HandleUserId = handleId,
-                        Handle = form.Handle
+                        HandleId = handleId,
+                        Value = form.Handle
                     };
 
                     handles.Add(userHandle);
@@ -94,9 +101,9 @@ namespace Anatini.Server.Users
 
                 if (Guid.TryParse(userIdClaim, out var userId))
                 {
-                    var userEvents = await new GetUserEvents(userId).ExecuteAsync();
+                    var events = await new GetEvents(userId).ExecuteAsync();
 
-                    return Ok(new { Events = userEvents.Select(userEvent => new UserEventDto(userEvent)) });
+                    return Ok(new { Events = events.Select(@event => new EventDto(@event)) });
                 }
                 else
                 {
@@ -121,7 +128,14 @@ namespace Anatini.Server.Users
 
                 if (Guid.TryParse(userIdClaim, out var userId))
                 {
-                    var user = await new GetUser(userId).ExecuteAsync();
+                    var userResult = await new GetUser(userId).ExecuteAsync();
+
+                    if (userResult == null)
+                    {
+                        return Problem();
+                    }
+
+                    var user = userResult!;
 
                     return Ok(new AccountDto(user));
                 }
@@ -136,24 +150,33 @@ namespace Anatini.Server.Users
             }
         }
 
-        [HttpGet("{handle}")]
+        [HttpGet("{handleValue}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(string handle)
+        public async Task<IActionResult> GetUser(string handleValue)
         {
             try
             {
-                var handleUser = await new GetHandleUser(handle).ExecuteAsync();
+                var handleResult = await new GetHandle(handleValue).ExecuteAsync();
 
-                if (handleUser == null)
+                if (handleResult == null)
                 {
                     return NotFound();
                 }
 
+                var handle = handleResult!;
+
                 // TODO return 404 if current user requires authentication
 
-                var user = await new GetUser(handleUser.UserId).ExecuteAsync();
+                var userResult = await new GetUser(handle.UserId).ExecuteAsync();
+
+                if (userResult == null)
+                {
+                    return Problem();
+                }
+
+                var user = userResult!;
 
                 return Ok(new UserDto(user));
             }

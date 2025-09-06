@@ -2,40 +2,41 @@
 {
     internal class AccountDto(User user)
     {
+        public Guid Id { get; } = user.Id;
         public string Name { get; } = user.Name;
         public IEnumerable<AccountEmailDto> Emails { get; } = user.Emails.Select(email => new AccountEmailDto(email));
         public IEnumerable<AccountInviteDto>? Invites { get; } = user.Invites?.Select(invite => new AccountInviteDto(invite));
-        public IEnumerable<AccountRefreshTokenDto> RefreshTokens { get; } = user.RefreshTokens.Select(refreshToken => new AccountRefreshTokenDto(refreshToken));
-        public IEnumerable<AccountHandleDto>? Handles { get; } = user.Handles?.Select(handle => new AccountHandleDto(handle));
+        public IEnumerable<AccountSessionDto> Sessions { get; } = user.Sessions.Select(refreshToken => new AccountSessionDto(refreshToken));
+        public IEnumerable<AccountHandleDto> Handles { get; } = user.Handles.Select(handle => new AccountHandleDto(handle));
         public Guid? DefaultHandleId { get; } = user.DefaultHandleId;
     }
 
     internal class AccountHandleDto(UserHandle handle)
     {
-        public Guid HandleUserId { get; } = handle.HandleUserId;
-        public string Handle { get; } = handle.Handle;
+        public Guid HandleId { get; } = handle.HandleId;
+        public string Value { get; } = handle.Value;
     }
 
     internal class AccountEmailDto(UserEmail email)
     {
-        public Guid EmailUserId { get; } = email.EmailUserId;
-        public string Email { get; } = email.Email;
+        public Guid EmaiId { get; } = email.EmailId;
+        public string Value { get; } = email.Value;
         public bool Verified { get; } = email.Verified;
     }
 
     internal class AccountInviteDto(UserInvite invite)
     {
-        public Guid CodeInviteId { get; } = invite.CodeInviteId;
-        public string InviteCode { get; } = invite.InviteCode;
+        public Guid InviteId { get; } = invite.InviteId;
+        public string Value { get; } = invite.Value;
         public DateOnly CreatedDateNZ { get; } = invite.CreatedDateNZ;
         public bool Used { get; } = invite.Used;
     }
 
-    internal class AccountRefreshTokenDto(UserRefreshToken refreshToken)
+    internal class AccountSessionDto(UserSession session)
     {
-        public string UserAgent { get; } = refreshToken.UserAgent;
-        public bool Revoked { get; } = refreshToken.Revoked;
-        public DateOnly CreatedDateNZ { get; } = refreshToken.CreatedDateNZ;
-        public string IPAddress { get; } = refreshToken.IPAddress;
+        public string UserAgent { get; } = session.UserAgent;
+        public bool Revoked { get; } = session.Revoked;
+        public DateTime CreatedDateUtc { get; } = session.CreatedDateUtc;
+        public string IPAddress { get; } = session.IPAddress;
     }
 }

@@ -4,22 +4,22 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Commands
 {
-    internal class CreateUserEvent(Guid userId, UserEventType type, EventData data) : ICommand<int>
+    internal class CreateEvent(Guid userId, EventType type, EventData data) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var userEvent = new UserEvent
+            var @event = new Event
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 Type = Enum.GetName(type)!,
-                DateTimeUtc = data.DateTimeUtc,
+                CreatedDateUtc = data.DateTimeUtc,
                 Data = data.ToDictionary()
             };
 
-            context.Add(userEvent);
+            context.Add(@event);
 
             return await context.SaveChangesAsync();
         }

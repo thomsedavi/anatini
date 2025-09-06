@@ -1,8 +1,9 @@
-﻿using Anatini.Server.Interfaces;
+﻿using Anatini.Server.Enums;
+using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Commands
 {
-    public class CreateUserRelationships(Guid userId, Guid toUser, params string[] types) : ICommand<int>
+    public class CreateRelationships(Guid userId, Guid toUserId, params RelationshipType[] types) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -10,15 +11,15 @@ namespace Anatini.Server.Commands
 
             foreach (var type in types)
             {
-                var userEvent = new UserRelationship
+                var relationship = new Relationship
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
-                    ToUserId = toUser,
-                    Type = type
+                    ToUserId = toUserId,
+                    Type = Enum.GetName(type)!
                 };
 
-                context.Add(userEvent);
+                context.Add(relationship);
             }
 
             return await context.SaveChangesAsync();
