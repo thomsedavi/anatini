@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Commands
 {
-    public class CreateInvite(string inviteValue, Guid userId, Guid inviteId, DateOnly createdDateNZ) : ICommand<int>
+    public class CreateInvite(string inviteValue, Guid userId, Guid inviteId, DateOnly dateNZ) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -14,7 +14,7 @@ namespace Anatini.Server.Commands
                 Value = inviteValue,
                 InvitedByUserId = userId,
                 NewUserId = Guid.NewGuid(),
-                CreatedDateNZ = createdDateNZ
+                DateNZ = dateNZ
             };
 
             context.Add(invite);

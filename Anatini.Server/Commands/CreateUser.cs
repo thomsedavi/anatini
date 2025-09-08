@@ -22,6 +22,7 @@ namespace Anatini.Server.Commands
                 SessionId = Guid.NewGuid(),
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
+                UpdatedDateUtc = eventData.DateTimeUtc,
                 IPAddress = eventData.Get("IPAddress"),
                 UserAgent = eventData.Get("UserAgent"),
                 Revoked = false
@@ -39,7 +40,6 @@ namespace Anatini.Server.Commands
                 Name = name,
                 HashedPassword = null!,
                 Emails = [userEmail],
-                CreatedDateUTC = eventData.DateTimeUtc,
                 Sessions = [userSession],
                 Handles = [userHandle],
                 DefaultHandleId = handleId

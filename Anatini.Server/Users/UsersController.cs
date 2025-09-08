@@ -46,7 +46,7 @@ namespace Anatini.Server.Users
 
                     var handleId = Guid.NewGuid();
 
-                    await new CreateHandle(handleId, form.Handle, userId).ExecuteAsync();
+                    await new CreateHandle(handleId, form.Handle, userId, user.Name).ExecuteAsync();
 
                     var userHandle = new UserHandle
                     {
@@ -116,45 +116,11 @@ namespace Anatini.Server.Users
             }
         }
 
-        [Authorize]
-        [HttpGet("account")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAccount()
-        {
-            try
-            {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (Guid.TryParse(userIdClaim, out var userId))
-                {
-                    var userResult = await new GetUser(userId).ExecuteAsync();
-
-                    if (userResult == null)
-                    {
-                        return Problem();
-                    }
-
-                    var user = userResult!;
-
-                    return Ok(new AccountDto(user));
-                }
-                else
-                {
-                    return Problem();
-                }
-            }
-            catch (Exception)
-            {
-                return Problem();
-            }
-        }
-
         [HttpGet("{handleValue}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(string handleValue)
+        public async Task<IActionResult> GetHandle(string handleValue)
         {
             try
             {
@@ -167,18 +133,9 @@ namespace Anatini.Server.Users
 
                 var handle = handleResult!;
 
-                // TODO return 404 if current user requires authentication
+                // TODO return 404 if handle requires authentication
 
-                var userResult = await new GetUser(handle.UserId).ExecuteAsync();
-
-                if (userResult == null)
-                {
-                    return Problem();
-                }
-
-                var user = userResult!;
-
-                return Ok(new UserDto(user));
+                return Ok(new HandleDto(handle));
             }
             catch (Exception)
             {

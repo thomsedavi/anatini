@@ -10,6 +10,7 @@ namespace Anatini.Server
         public DbSet<Invite> Invites { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Relationship> Relationships { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,18 +28,22 @@ namespace Anatini.Server
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var userBuilder = modelBuilder.Entity<User>();
+            var handleBuilder = modelBuilder.Entity<Handle>();
 
             userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Sessions, a => { a.HasKey("SessionId"); });
-            userBuilder.OwnsMany(user => user.Emails, a => { a.HasKey("EmailId"); });
-            userBuilder.OwnsMany(user => user.Handles, a => { a.HasKey("HandleId"); });
-            userBuilder.OwnsMany(user => user.Invites, a => { a.HasKey("InviteId"); });
+            userBuilder.OwnsMany(user => user.Sessions, session => { session.HasKey("SessionId"); });
+            userBuilder.OwnsMany(user => user.Emails, email => { email.HasKey("EmailId"); });
+            userBuilder.OwnsMany(user => user.Handles, handle => { handle.HasKey("HandleId"); });
+            userBuilder.OwnsMany(user => user.Invites, invite => { invite.HasKey("InviteId"); });
 
-            modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(userEvent => userEvent.UserId);
-            modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(userEvent => userEvent.UserId);
+            handleBuilder.ToContainer("Handles").HasPartitionKey(user => user.Value);
+            handleBuilder.OwnsMany(handle => handle.Users, user => { user.HasKey("UserId"); });
+
+            modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(@event => @event.UserId);
+            modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(relationship => relationship.UserId);
+            modelBuilder.Entity<Post>().ToContainer("Posts").HasPartitionKey(post => post.HandleId);
 
             modelBuilder.Entity<Email>().ToContainer("Emails").HasPartitionKey(user => user.Value);
-            modelBuilder.Entity<Handle>().ToContainer("Handles").HasPartitionKey(user => user.Value);
             modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(invite => invite.Value);
         }
     }
@@ -48,7 +53,6 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
-        public required DateTime CreatedDateUTC { get ; set; }
         public required ICollection<UserEmail> Emails { get; set; }
         public required ICollection<UserSession> Sessions { get; set; }
         public required ICollection<UserHandle> Handles { get; set; }
@@ -77,7 +81,7 @@ namespace Anatini.Server
         public required Guid InviteId { get; set; }
         public required string Value { get; set; }
         public required bool Used { get; set; }
-        public required DateOnly CreatedDateNZ { get; set; }
+        public required DateOnly DateNZ { get; set; }
     }
 
     [Owned]
@@ -88,7 +92,19 @@ namespace Anatini.Server
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
         public required DateTime CreatedDateUtc { get; set; }
+        public required DateTime UpdatedDateUtc { get; set; }
         public required bool Revoked { get; set; }
+    }
+
+    public class Post
+    {
+        public required Guid Id { get; set; }
+        public required Guid HandleId { get; set; }
+        public required string Title { get; set; }
+        public required DateOnly DateNZ { get; set; }
+
+        // content, an array of objects with type, value, caption, platform (youtube) etc
+        // tags
     }
 
     public class Event
@@ -96,7 +112,7 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Type { get; set; }
-        public required DateTime CreatedDateUtc { get; set; }
+        public required DateTime DateUtc { get; set; }
         public required IDictionary<string, string> Data { get; set; }
     }
 
@@ -104,7 +120,14 @@ namespace Anatini.Server
     {
         public required Guid Id { get; set; }
         public required string Value { get; set; }
+        public required ICollection<HandleUser> Users { get; set; }
+    }
+
+    [Owned]
+    public class HandleUser
+    {
         public required Guid UserId { get; set; }
+        public required string UserName { get; set; }
     }
 
     public class Email
@@ -132,6 +155,6 @@ namespace Anatini.Server
         public required string Value { get; set; }
         public required Guid NewUserId { get; set; }
         public required Guid InvitedByUserId { get; set; }
-        public required DateOnly CreatedDateNZ { get; set; }
+        public required DateOnly DateNZ { get; set; }
     }
 }

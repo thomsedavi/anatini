@@ -28,7 +28,7 @@
     {
         public Guid InviteId { get; } = invite.InviteId;
         public string Value { get; } = invite.Value;
-        public DateOnly CreatedDateNZ { get; } = invite.CreatedDateNZ;
+        public DateOnly DateNZ { get; } = invite.DateNZ;
         public bool Used { get; } = invite.Used;
     }
 
@@ -37,6 +37,7 @@
         public string UserAgent { get; } = session.UserAgent;
         public bool Revoked { get; } = session.Revoked;
         public DateTime CreatedDateUtc { get; } = session.CreatedDateUtc;
+        public DateTime UpdatedDateUtc { get; } = session.UpdatedDateUtc;
         public string IPAddress { get; } = session.IPAddress;
     }
 }

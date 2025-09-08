@@ -3,6 +3,6 @@
     internal class EventDto(Event @event)
     {
         public string Type { get; } = @event.Type;
-        public DateTime CreatedDateUtc { get; } = @event.CreatedDateUtc;
+        public DateTime DateUtc { get; } = @event.DateUtc;
     }
 }

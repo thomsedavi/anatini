@@ -16,12 +16,13 @@
       userAgent: string;
       revoked: boolean;
       createdDateUtc: string;
+      updatedDateUtc: string;
       ipAddress: string;
     }[];
     invites?: {
       inviteId: string;
       value: string;
-      createdDateNZ: string;
+      dateNZ: string;
       used: boolean;
     }[];
     handles: {
@@ -33,7 +34,7 @@
   type Events = {
     events: {
       type: string;
-      createdDateUtc: string;
+      dateUtc: string;
     }[];
   };
 
@@ -50,7 +51,7 @@
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("api/users/account", {
+    fetch("api/authentication/account", {
       method: "GET",
     }).then((response: Response) => {
       if (response.ok) {
@@ -183,7 +184,7 @@
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in account.invites" :key="'invite' + index">
-          {{ invite.value }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.createdDateNZ }}
+          {{ invite.value }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.dateNZ }}
         </li>
       </ul>
     </template>
@@ -192,7 +193,7 @@
       <h3>Events</h3>
       <ul>
         <li v-for="(event, index) in events.events" :key="'event' + index">
-          {{ event.type }}: {{ event.createdDateUtc }}
+          {{ event.type }}: {{ event.dateUtc }}
         </li>
       </ul>
     </template>

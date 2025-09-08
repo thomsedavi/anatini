@@ -43,7 +43,7 @@ namespace Anatini.Server.Authentication
 
                     var user = userResult!;
 
-                    if (user.Invites?.Any(invite => invite.CreatedDateNZ == eventData.DateOnlyNZNow) ?? false)
+                    if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
                     {
                         return Conflict();
                     }
@@ -77,7 +77,7 @@ namespace Anatini.Server.Authentication
                             InviteId = inviteId,
                             Value = inviteValue,
                             Used = false,
-                            CreatedDateNZ = eventData.DateOnlyNZNow
+                            DateNZ = eventData.DateOnlyNZNow
                         };
 
                         var invites = (user.Invites ?? []).ToList();
@@ -196,7 +196,7 @@ namespace Anatini.Server.Authentication
 
                 var handleId = Guid.NewGuid();
 
-                await new CreateHandle(handleId, form.Handle, userId).ExecuteAsync();
+                await new CreateHandle(handleId, form.Handle, userId, form.Name).ExecuteAsync();
 
                 var refreshToken = TokenGenerator.Get;
 
@@ -290,6 +290,7 @@ namespace Anatini.Server.Authentication
                     SessionId = Guid.NewGuid(),
                     RefreshToken = refreshToken,
                     CreatedDateUtc = eventData.DateTimeUtc,
+                    UpdatedDateUtc = eventData.DateTimeUtc,
                     IPAddress = eventData.Get("IPAddress"),
                     UserAgent = eventData.Get("UserAgent"),
                     Revoked = false
@@ -310,6 +311,40 @@ namespace Anatini.Server.Authentication
             catch (Exception)
             {
                 //logger.LogError(exception, "Exception logging in");
+                return Problem();
+            }
+        }
+
+        [Authorize]
+        [HttpGet("account")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAccount()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (Guid.TryParse(userIdClaim, out var userId))
+                {
+                    var userResult = await new GetUser(userId).ExecuteAsync();
+
+                    if (userResult == null)
+                    {
+                        return Problem();
+                    }
+
+                    var user = userResult!;
+
+                    return Ok(new AccountDto(user));
+                }
+                else
+                {
+                    return Problem();
+                }
+            }
+            catch (Exception)
+            {
                 return Problem();
             }
         }
