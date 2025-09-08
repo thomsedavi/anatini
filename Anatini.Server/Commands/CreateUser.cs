@@ -13,6 +13,7 @@ namespace Anatini.Server.Commands
             var userEmail = new UserEmail
             {
                 EmailId = email.Id,
+                UserId = userId,
                 Value = email.Value,
                 Verified = true
             };
@@ -20,6 +21,7 @@ namespace Anatini.Server.Commands
             var userSession = new UserSession
             {
                 SessionId = Guid.NewGuid(),
+                UserId = userId,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
                 UpdatedDateUtc = eventData.DateTimeUtc,
@@ -31,6 +33,7 @@ namespace Anatini.Server.Commands
             var userHandle = new UserHandle
             {
                 HandleId = handleId,
+                UserId = userId,
                 Value = handleValue
             };
 
@@ -42,6 +45,7 @@ namespace Anatini.Server.Commands
                 Emails = [userEmail],
                 Sessions = [userSession],
                 Handles = [userHandle],
+                Invites = [],
                 DefaultHandleId = handleId
             };
 

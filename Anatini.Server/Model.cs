@@ -31,13 +31,13 @@ namespace Anatini.Server
             var handleBuilder = modelBuilder.Entity<Handle>();
 
             userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Sessions, session => { session.HasKey("SessionId"); });
-            userBuilder.OwnsMany(user => user.Emails, email => { email.HasKey("EmailId"); });
-            userBuilder.OwnsMany(user => user.Handles, handle => { handle.HasKey("HandleId"); });
-            userBuilder.OwnsMany(user => user.Invites, invite => { invite.HasKey("InviteId"); });
+            userBuilder.OwnsMany(user => user.Sessions, session => { session.WithOwner().HasForeignKey("UserId"); session.HasKey("SessionId"); });
+            userBuilder.OwnsMany(user => user.Emails, email => { email.WithOwner().HasForeignKey("UserId"); email.HasKey("EmailId"); });
+            userBuilder.OwnsMany(user => user.Handles, handle => { handle.WithOwner().HasForeignKey("UserId"); handle.HasKey("HandleId"); });
+            userBuilder.OwnsMany(user => user.Invites, invite => { invite.WithOwner().HasForeignKey("UserId"); invite.HasKey("InviteId"); });
 
             handleBuilder.ToContainer("Handles").HasPartitionKey(user => user.Value);
-            handleBuilder.OwnsMany(handle => handle.Users, user => { user.HasKey("UserId"); });
+            handleBuilder.OwnsMany(handle => handle.Users, user => { user.WithOwner().HasForeignKey("HandleId"); user.HasKey("UserId"); });
 
             modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(@event => @event.UserId);
             modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(relationship => relationship.UserId);
@@ -56,7 +56,7 @@ namespace Anatini.Server
         public required ICollection<UserEmail> Emails { get; set; }
         public required ICollection<UserSession> Sessions { get; set; }
         public required ICollection<UserHandle> Handles { get; set; }
-        public ICollection<UserInvite>? Invites { get; set; }
+        public required ICollection<UserInvite> Invites { get; set; }
         public required Guid DefaultHandleId { get; set; }
     }
 
@@ -64,6 +64,7 @@ namespace Anatini.Server
     public class UserEmail
     {
         public required Guid EmailId { get; set; }
+        public required Guid UserId { get; set; }
         public required string Value { get; set; }
         public required bool Verified { get; set; }
     }
@@ -72,6 +73,7 @@ namespace Anatini.Server
     public class UserHandle
     {
         public required Guid HandleId { get; set; }
+        public required Guid UserId { get; set; }
         public required string Value { get; set; }
     }
 
@@ -79,6 +81,7 @@ namespace Anatini.Server
     public class UserInvite
     {
         public required Guid InviteId { get; set; }
+        public required Guid UserId { get; set; }
         public required string Value { get; set; }
         public required bool Used { get; set; }
         public required DateOnly DateNZ { get; set; }
@@ -88,6 +91,7 @@ namespace Anatini.Server
     public class UserSession
     {
         public required Guid SessionId { get; set; }
+        public required Guid UserId { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
@@ -127,6 +131,7 @@ namespace Anatini.Server
     public class HandleUser
     {
         public required Guid UserId { get; set; }
+        public required Guid HandleId { get; set; }
         public required string UserName { get; set; }
     }
 

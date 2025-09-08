@@ -5,7 +5,7 @@
         public Guid Id { get; } = user.Id;
         public string Name { get; } = user.Name;
         public IEnumerable<AccountEmailDto> Emails { get; } = user.Emails.Select(email => new AccountEmailDto(email));
-        public IEnumerable<AccountInviteDto>? Invites { get; } = user.Invites?.Select(invite => new AccountInviteDto(invite));
+        public IEnumerable<AccountInviteDto> Invites { get; } = user.Invites.Select(invite => new AccountInviteDto(invite));
         public IEnumerable<AccountSessionDto> Sessions { get; } = user.Sessions.Select(refreshToken => new AccountSessionDto(refreshToken));
         public IEnumerable<AccountHandleDto> Handles { get; } = user.Handles.Select(handle => new AccountHandleDto(handle));
         public Guid? DefaultHandleId { get; } = user.DefaultHandleId;

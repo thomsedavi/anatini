@@ -43,7 +43,7 @@ namespace Anatini.Server.Authentication
 
                     var user = userResult!;
 
-                    if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
+                    if (user.Invites.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow))
                     {
                         return Conflict();
                     }
@@ -75,14 +75,13 @@ namespace Anatini.Server.Authentication
                         var userInvite = new UserInvite
                         {
                             InviteId = inviteId,
+                            UserId = userId,
                             Value = inviteValue,
                             Used = false,
                             DateNZ = eventData.DateOnlyNZNow
                         };
 
-                        var invites = (user.Invites ?? []).ToList();
-                        invites.Add(userInvite);
-                        user.Invites = invites;
+                        user.Invites.Add(userInvite);
 
                         await new UpdateUser(user).ExecuteAsync();
                         await new CreateEvent(userId, EventType.InviteCreated, eventData).ExecuteAsync();
@@ -208,7 +207,7 @@ namespace Anatini.Server.Authentication
 
                     var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
 
-                    invitedByUser.Invites!.First(invite => invite.InviteId == email.InviteId).Used = true;
+                    invitedByUser.Invites.First(invite => invite.InviteId == email.InviteId).Used = true;
 
                     await new UpdateUser(invitedByUser).ExecuteAsync();
 
@@ -288,6 +287,7 @@ namespace Anatini.Server.Authentication
                 var userSession = new UserSession
                 {
                     SessionId = Guid.NewGuid(),
+                    UserId = user.Id,
                     RefreshToken = refreshToken,
                     CreatedDateUtc = eventData.DateTimeUtc,
                     UpdatedDateUtc = eventData.DateTimeUtc,

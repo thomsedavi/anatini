@@ -11,6 +11,7 @@ namespace Anatini.Server.Commands
             var handleUser = new HandleUser
             {
                 UserId = userId,
+                HandleId = handleId,
                 UserName = userName
             };
 

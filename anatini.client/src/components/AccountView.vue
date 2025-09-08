@@ -19,7 +19,7 @@
       updatedDateUtc: string;
       ipAddress: string;
     }[];
-    invites?: {
+    invites: {
       inviteId: string;
       value: string;
       dateNZ: string;
@@ -180,7 +180,7 @@
       </li>
     </ul>
     <button @click="createInviteCode" :disabled="isCreatingInviteCode">Create Invite Code</button>
-    <template v-if="account.invites?.length">
+    <template v-if="account.invites.length">
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in account.invites" :key="'invite' + index">

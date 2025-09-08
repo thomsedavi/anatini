@@ -37,9 +37,7 @@ namespace Anatini.Server.Users
 
                     var user = userResult!;
 
-                    var handles = (user.Handles ?? []).ToList();
-
-                    if (handles.Count >= 5)
+                    if (user.Handles.Count >= 5)
                     {
                         return Forbid();
                     }
@@ -51,11 +49,11 @@ namespace Anatini.Server.Users
                     var userHandle = new UserHandle
                     {
                         HandleId = handleId,
+                        UserId = userId,
                         Value = form.Handle
                     };
 
-                    handles.Add(userHandle);
-                    user.Handles = handles;
+                    user.Handles.Add(userHandle);
 
                     if (form.Default ?? false)
                     {
