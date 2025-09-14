@@ -8,7 +8,7 @@
   const post = ref<string | null>(null);
   const error = ref<string | null>(null);
 
-  watch([() => route.params.userHandle, () => route.params.postHandle], fetchPost, { immediate: true });
+  watch([() => route.params.userSlug, () => route.params.postSlug], fetchPost, { immediate: true });
 
   async function fetchPost(array: (() => string | string[])[]) {
     error.value = post.value = null

@@ -6,7 +6,7 @@
     submitInviteCode: [email?: string];
   }>();
 
-  const emailInput = useTemplateRef<HTMLInputElement>('email');
+  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
   const inviteCodeInput = useTemplateRef<HTMLInputElement>('invite-code');
   const isFetching = ref<boolean>(false);
 
@@ -14,7 +14,7 @@
     event.preventDefault();
 
     if (!validateInputs([
-      {element: emailInput.value, error: 'Please enter an email.'},
+      {element: emailAddressInput.value, error: 'Please enter an email address.'},
       {element: inviteCodeInput.value, error: 'Please enter an invite code.'},
     ]))
       return;
@@ -22,11 +22,11 @@
     isFetching.value = true;
 
     const body: Record<string, string> = {
-      email: emailInput.value!.value.trim(),
+      emailAddress: emailAddressInput.value!.value.trim(),
       inviteCode: inviteCodeInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/email", {
+    fetch("api/authentication/emailAddress", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -34,7 +34,7 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        emit('submitInviteCode', emailInput.value!.value);
+        emit('submitInviteCode', emailAddressInput.value!.value);
       } else if (response.status === 404) {
         inviteCodeInput.value!.setCustomValidity("Invite code not found.");
 
@@ -52,8 +52,8 @@
   <h2>SignupFlowInviteCodeView</h2>
   <form id="inviteCode" @submit="inviteCode" action="api/authentication/email" method="post">
     <p>
-      <label for="email">Email</label>
-      <input id="email" type="email" name="email" ref="email" @input="() => emailInput?.setCustomValidity('')">
+      <label for="emailAddress">Email Address</label>
+      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
     </p>
 
     <p>

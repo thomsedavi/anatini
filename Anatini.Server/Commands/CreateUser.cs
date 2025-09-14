@@ -4,24 +4,24 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Commands
 {
-    internal class CreateUser(string name, string handleValue, string password, Email email, Guid userId, Guid handleId, string refreshToken, EventData eventData) : ICommand<int>
+    internal class CreateUser(Guid id, string name, string slug, string password, Email email, Guid slugId, string refreshToken, EventData eventData) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var userEmail = new UserEmail
+            var userEmail = new UserOwnedEmail
             {
                 EmailId = email.Id,
-                UserId = userId,
-                Value = email.Value,
+                UserId = id,
+                Address = email.Address,
                 Verified = true
             };
 
-            var userSession = new UserSession
+            var userSession = new UserOwnedSession
             {
                 SessionId = Guid.NewGuid(),
-                UserId = userId,
+                UserId = id,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
                 UpdatedDateUtc = eventData.DateTimeUtc,
@@ -30,23 +30,24 @@ namespace Anatini.Server.Commands
                 Revoked = false
             };
 
-            var userHandle = new UserHandle
+            var userSlug = new UserOwnedSlug
             {
-                HandleId = handleId,
-                UserId = userId,
-                Value = handleValue
+                SlugId = slugId,
+                UserId = id,
+                Slug = slug
             };
 
             var user = new User
             {
-                Id = userId,
+                Id = id,
                 Name = name,
                 HashedPassword = null!,
                 Emails = [userEmail],
                 Sessions = [userSession],
-                Handles = [userHandle],
+                Slugs = [userSlug],
                 Invites = [],
-                DefaultHandleId = handleId
+                Channels = [],
+                DefaultSlugId = slugId
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);

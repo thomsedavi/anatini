@@ -12,7 +12,7 @@
   const error = ref<string | null>(null);
   const user = ref<User | null>(null);
 
-  watch([() => route.params.userHandle], fetchUser, { immediate: true });
+  watch([() => route.params.userSlug], fetchUser, { immediate: true });
 
   async function fetchUser(array: (() => string | string[])[]) {
     error.value = user.value = null

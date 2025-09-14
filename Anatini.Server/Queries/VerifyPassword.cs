@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Queries
 {
-    internal class VerifyPassword(string emailValue, string password) : IQuery<User?>
+    internal class VerifyPassword(string emailAddress, string password) : IQuery<User?>
     {
         public async Task<User?> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
             var userId = await context.Emails
-                .WithPartitionKey(emailValue)
-                .Where(email => email.Value == emailValue)
+                .WithPartitionKey(emailAddress)
+                .Where(email => email.Address == emailAddress)
                 .Select(email => email.UserId)
                 .FirstOrDefaultAsync();
 

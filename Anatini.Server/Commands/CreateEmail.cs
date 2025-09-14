@@ -3,7 +3,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Commands
 {
-    internal class CreateEmail(string emailValue, Guid userId) : ICommand<int>
+    internal class CreateEmail(string address, Guid userId) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -12,7 +12,7 @@ namespace Anatini.Server.Commands
             var email = new Email
             {
                 Id = Guid.NewGuid(),
-                Value = emailValue,
+                Address = address,
                 UserId = userId,
                 VerificationCode = CodeRandom.Next(),
                 Verified = false

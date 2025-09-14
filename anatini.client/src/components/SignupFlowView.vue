@@ -4,12 +4,12 @@
   import SignupFlowSignupView from './SignupFlowSignupView.vue'
 
   const page = ref<'inviteCode' | 'signup'>('inviteCode');
-  const email = ref<string | undefined>();
+  const emailAddress = ref<string | undefined>();
   const verificationFailed = ref<boolean>(false);
 
-  function submitInviteCode(resultEmail?: string) {
+  function submitInviteCode(resultEmailAddress?: string) {
     verificationFailed.value = false;
-    email.value = resultEmail;
+    emailAddress.value = resultEmailAddress;
     page.value = 'signup';
   }
 
@@ -20,5 +20,5 @@
 
 <template>
   <SignupFlowInviteCodeView v-if="page === 'inviteCode'" @submit-invite-code="submitInviteCode" />
-  <SignupFlowSignupView v-if="page === 'signup'" :email="email" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
+  <SignupFlowSignupView v-if="page === 'signup'" :email="emailAddress" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
 </template>

@@ -6,11 +6,15 @@
   type Account = {
     id: string,
     name: string;
-    defaultHandleId: string | null;
+    defaultSlugId: string | null;
     emails: {
       emailId: string;
       value: string;
       verified: boolean;
+    }[];
+    channels: {
+      channelId: string;
+      name: string;
     }[];
     sessions: {
       userAgent: string;
@@ -25,8 +29,8 @@
       dateNZ: string;
       used: boolean;
     }[];
-    handles: {
-      handleId: string;
+    slugs: {
+      slugId: string;
       value: string;
     }[];
   };
@@ -45,8 +49,8 @@
   const isFetching = ref<boolean>(false);
   const isCreatingInviteCode = ref<boolean>(false);
   const isGettingEvents = ref<boolean>(false);
-  const isCreatingHandle = ref<boolean>(false);
-  const handleInput = useTemplateRef<HTMLInputElement>('handle');
+  const isCreatingSlug = ref<boolean>(false);
+  const slugInput = useTemplateRef<HTMLInputElement>('slug');
 
   onMounted(() => {
     isFetching.value = true;
@@ -94,21 +98,21 @@
     });
   }
 
-  async function createHandle(event: Event) {
+  async function createSlug(event: Event) {
     event.preventDefault();
 
     if (!validateInputs([
-      {element: handleInput.value, error: 'Please enter a handle.'},
+      {element: slugInput.value, error: 'Please enter a slug.'},
     ]))
       return;
 
-    isCreatingHandle.value = true;
+    isCreatingSlug.value = true;
 
     const body: Record<string, string> = {
-      handle: handleInput.value!.value.trim(),
+      slug: slugInput.value!.value.trim(),
     };
 
-    fetch("api/users/handles", {
+    fetch("api/users/slugs", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -124,16 +128,16 @@
             console.log('Unknown Error');
           });
       } else if (response.status === 403) {
-        handleInput.value!.setCustomValidity("Handle limit reached!");
-        reportValidity([handleInput.value]);
+        slugInput.value!.setCustomValidity("Slug limit reached!");
+        reportValidity([slugInput.value]);
       } else if (response.status === 409) {
-        handleInput.value!.setCustomValidity("Handle already in use!");
-        reportValidity([handleInput.value]);
+        slugInput.value!.setCustomValidity("Slug already in use!");
+        reportValidity([slugInput.value]);
       } else {
         console.log("Unknown Error");
       }
     }).finally(() => {
-      isCreatingHandle.value = false;
+      isCreatingSlug.value = false;
     });
   }
 
@@ -197,22 +201,22 @@
         </li>
       </ul>
     </template>
-    <h3>Create Handle</h3>
-    <form id="createHandle" @submit="createHandle" action="???" method="post">
+    <h3>Create Slug</h3>
+    <form id="createSlug" @submit="createSlug" action="???" method="post">
       <p>
-        <label for="handle">Handle</label>
-        <input id="handle" type="text" name="handle" maxlength="64" ref="handle" @input="event => handleInput?.setCustomValidity('')">
+        <label for="slug">Slug</label>
+        <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="event => slugInput?.setCustomValidity('')">
       </p>
 
       <p>
-        <input type="submit" value="Submit" :disabled="isCreatingHandle">
+        <input type="submit" value="Submit" :disabled="isCreatingSlug">
       </p>
     </form>
-    <template v-if="account.handles?.length">
-      <h3>Handles</h3>
+    <template v-if="account.slugs?.length">
+      <h3>Slugs</h3>
       <ul>
-        <li v-for="(handle, index) in account.handles" :key="'handle' + index">
-          {{ handle.value }}: {{ account.defaultHandleId === handle.handleId ? 'Default' : 'Not Default'}}
+        <li v-for="(slug, index) in account.slugs" :key="'slug' + index">
+          {{ slug.value }}: {{ account.defaultSlugId === slug.slugId ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>

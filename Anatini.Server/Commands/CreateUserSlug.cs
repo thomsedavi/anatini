@@ -2,22 +2,21 @@
 
 namespace Anatini.Server.Commands
 {
-    public class CreateInvite(Guid id, string code, Guid userId, DateOnly dateNZ) : ICommand<int>
+    public class CreateUserSlug(Guid id, string slug, Guid userId, string userName) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var invite = new Invite
+            var userSlug = new UserSlug
             {
                 Id = id,
-                Code = code,
-                InvitedByUserId = userId,
-                NewUserId = Guid.NewGuid(),
-                DateNZ = dateNZ
+                Slug = slug,
+                UserId = userId,
+                UserName = userName
             };
 
-            context.Add(invite);
+            context.Add(userSlug);
 
             return await context.SaveChangesAsync();
         }

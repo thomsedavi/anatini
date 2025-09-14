@@ -2,10 +2,10 @@
 
 namespace Anatini.Server.Users
 {
-    public class HandleForm
+    public class SlugForm
     {
         [MaxLength(64), DataType(DataType.Text)]
-        public required string Handle { get; set; }
+        public required string Slug { get; set; }
         public bool? Default { get; set; }
     }
 }

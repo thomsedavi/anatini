@@ -3,8 +3,8 @@
   import { useRouter } from 'vue-router'
   import { reportValidity, validateInputs } from './common/validity';
 
-  const { email, verificationFailed } = defineProps<{
-    email?: string;
+  const { emailAddress, verificationFailed } = defineProps<{
+    emailAddress?: string;
     verificationFailed: boolean;
   }>();
 
@@ -15,9 +15,9 @@
   
   const router = useRouter();
 
-  const emailInput = useTemplateRef<HTMLInputElement>('email');
+  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
   const nameInput = useTemplateRef<HTMLInputElement>('name');
-  const handleInput = useTemplateRef<HTMLInputElement>('handle');
+  const slugInput = useTemplateRef<HTMLInputElement>('slug');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
   const verificationCodeInput = useTemplateRef<HTMLInputElement>('verification-code');
   const isFetching = ref<boolean>(false);
@@ -26,9 +26,9 @@
     event.preventDefault();
 
     if (!validateInputs([
-      { element: emailInput.value, error: 'Please enter an email.' },
+      { element: emailAddressInput.value, error: 'Please enter an email address.' },
       { element: nameInput.value, error: 'Please enter a name.' },
-      { element: handleInput.value, error: 'Please enter a handle.' },
+      { element: slugInput.value, error: 'Please enter a slug.' },
       { element: passwordInput.value, error: 'Please enter a password.' },
       { element: verificationCodeInput.value, error: 'Please enter a verification code.' },
     ]))
@@ -37,9 +37,9 @@
     isFetching.value = true;
 
     const body: Record<string, string> = {
-      email: emailInput.value!.value.trim(),
+      emailAddress: emailAddressInput.value!.value.trim(),
       name: nameInput.value!.value.trim(),
-      handle: handleInput.value!.value.trim(),
+      slug: slugInput.value!.value.trim(),
       password: passwordInput.value!.value,
       verificationCode: verificationCodeInput.value!.value.trim(),
     };
@@ -60,9 +60,9 @@
 
         emit('failVerification');
       } else if (response.status === 409) {
-        handleInput.value!.setCustomValidity("Handle already in use!");
+        slugInput.value!.setCustomValidity("Slug already in use!");
 
-        reportValidity([handleInput.value]);
+        reportValidity([slugInput.value]);
       } else {
         console.log("Unknown Error");
       }
@@ -76,8 +76,8 @@
   <h2>SignupView</h2>
   <form id="signup" @submit="signup" action="api/authentication/signup" method="post">
     <p>
-      <label for="email">Email</label>
-      <input id="email" type="email" name="email" ref="email" :value="email" :disabled="email !== undefined" @input="() => emailInput?.setCustomValidity('')">
+      <label for="emailAddress">Email Address</label>
+      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== undefined" @input="() => emailAddressInput?.setCustomValidity('')">
     </p>
 
     <p>
@@ -86,8 +86,8 @@
     </p>
 
     <p>
-      <label for="handle">Handle</label>
-      <input id="handle" type="text" name="handle" maxlength="64" ref="handle" @input="() => handleInput?.setCustomValidity('')">
+      <label for="slug">Slug</label>
+      <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="() => slugInput?.setCustomValidity('')">
     </p>
 
     <p>

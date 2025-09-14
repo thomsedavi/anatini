@@ -50,7 +50,7 @@ namespace Anatini.Server.Authentication
                     else
                     {
                         var inviteId = Guid.NewGuid();
-                        var inviteValue = CodeRandom.Next();
+                        var inviteCode = CodeRandom.Next();
                         var attemptCount = 0;
                         var success = false;
 
@@ -58,12 +58,12 @@ namespace Anatini.Server.Authentication
                         {
                             try
                             {
-                                await new CreateInvite(inviteValue, userId, inviteId, eventData.DateOnlyNZNow).ExecuteAsync();
+                                await new CreateInvite(inviteId, inviteCode, userId, eventData.DateOnlyNZNow).ExecuteAsync();
                                 success = true;
                             }
                             catch (Exception)
                             {
-                                inviteValue = CodeRandom.Next();
+                                inviteCode = CodeRandom.Next();
                             }
                         }
 
@@ -72,16 +72,16 @@ namespace Anatini.Server.Authentication
                             return Problem();
                         }
 
-                        var userInvite = new UserInvite
+                        var userOwnedInvite = new UserOwnedInvite
                         {
                             InviteId = inviteId,
                             UserId = userId,
-                            Value = inviteValue,
+                            Code = inviteCode,
                             Used = false,
                             DateNZ = eventData.DateOnlyNZNow
                         };
 
-                        user.Invites.Add(userInvite);
+                        user.Invites.Add(userOwnedInvite);
 
                         await new UpdateUser(user).ExecuteAsync();
                         await new CreateEvent(userId, EventType.InviteCreated, eventData).ExecuteAsync();
@@ -101,13 +101,13 @@ namespace Anatini.Server.Authentication
         }
 
 
-        [HttpPost("email")]
+        [HttpPost("emailAddress")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
-            var eventData = new EventData(HttpContext).Add("Email", form.Email);
+            var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
             var userId = Guid.Empty;
 
             try
@@ -127,11 +127,24 @@ namespace Anatini.Server.Authentication
 
                     var invite = inviteResult!;
 
+                    if (invite.EmailAddress != null)
+                    {
+                        var emailResult = await new GetEmail(invite.EmailAddress).ExecuteAsync();
+
+                        if (emailResult != null)
+                        {
+                            await new DeleteEmail(emailResult!).ExecuteAsync();
+                        }
+                    }
+
+                    invite.EmailAddress = form.EmailAddress;
+                    await new UpdateInvite(invite).ExecuteAsync();
+
                     userId = invite.NewUserId;
                     eventData.Add("InvitedByUserId", invite.InvitedByUserId.ToString());
                 }
 
-                await new CreateEmail(form.Email, userId).ExecuteAsync();
+                await new CreateEmail(form.EmailAddress, userId).ExecuteAsync();
                 await new CreateEvent(userId, EventType.EmailCreated, eventData).ExecuteAsync();
 
                 return Ok();
@@ -165,11 +178,11 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignup([FromForm] SignupForm form)
         {
-            var eventData = new EventData(HttpContext).Add("Email", form.Email).Add("Name", form.Name);
+            var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress).Add("Name", form.Name);
 
             try
             {
-                var emailResult = await new GetEmail(form.Email).ExecuteAsync();
+                var emailResult = await new GetEmail(form.EmailAddress).ExecuteAsync();
 
                 if (emailResult == null)
                 {
@@ -193,13 +206,13 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                var handleId = Guid.NewGuid();
+                var slugId = Guid.NewGuid();
 
-                await new CreateHandle(handleId, form.Handle, userId, form.Name).ExecuteAsync();
+                await new CreateUserSlug(slugId, form.Slug, userId, form.Name).ExecuteAsync();
 
                 var refreshToken = TokenGenerator.Get;
 
-                await new CreateUser(form.Name, form.Handle, form.Password, email, userId, handleId, refreshToken, eventData).ExecuteAsync();
+                await new CreateUser(userId, form.Name, form.Slug, form.Password, email, slugId, refreshToken, eventData).ExecuteAsync();
 
                 if (email.InvitedByUserId.HasValue)
                 {
@@ -267,11 +280,11 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
         {
-            var eventData = new EventData(HttpContext).Add("Email", form.Email);
+            var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
 
             try
             {
-                var userResult = await new VerifyPassword(form.Email, form.Password).ExecuteAsync();
+                var userResult = await new VerifyPassword(form.EmailAddress, form.Password).ExecuteAsync();
 
                 if (userResult == null)
                 {
@@ -284,7 +297,7 @@ namespace Anatini.Server.Authentication
 
                 var refreshToken = TokenGenerator.Get;
 
-                var userSession = new UserSession
+                var userSession = new UserOwnedSession
                 {
                     SessionId = Guid.NewGuid(),
                     UserId = user.Id,

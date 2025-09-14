@@ -6,8 +6,8 @@ namespace Anatini.Server.Authentication
     // https://learn.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-9.0#configure-formatters-2
     public class EmailForm
     {
-        [DataType(DataType.EmailAddress)]
-        public required string Email { get; set; }
+        [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
+        public required string EmailAddress { get; set; }
 
         [Display(Name = "Invite Code"), StringLength(8), DataType(DataType.Text)]
         public required string InviteCode { get; set; }
@@ -19,10 +19,10 @@ namespace Anatini.Server.Authentication
         public required string Name { get; set; }
 
         [MaxLength(64), DataType(DataType.Text)]
-        public required string Handle { get; set; }
+        public required string Slug { get; set; }
 
-        [DataType(DataType.EmailAddress)]
-        public required string Email { get; set; }
+        [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
+        public required string EmailAddress { get; set; }
 
         [DataType(DataType.Password)]
         public required string Password { get; set; }
@@ -33,8 +33,8 @@ namespace Anatini.Server.Authentication
 
     public class LoginForm
     {
-        [DataType(DataType.EmailAddress)]
-        public required string Email { get; set; }
+        [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
+        public required string EmailAddress { get; set; }
 
         [DataType(DataType.Password)]
         public required string Password { get; set; }
@@ -42,8 +42,8 @@ namespace Anatini.Server.Authentication
 
     public class VerifyEmailForm
     {
-        [DataType(DataType.EmailAddress)]
-        public required string Email { get; set; }
+        [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
+        public required string EmailAddress { get; set; }
 
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }

@@ -15,12 +15,12 @@ namespace Anatini.Server.Users
     public class UsersController : ControllerBase
     {
         [Authorize]
-        [HttpPost("handles")]
+        [HttpPost("slugs")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostHandle([FromForm] HandleForm form)
+        public async Task<IActionResult> PostSlug([FromForm] SlugForm form)
         {
             try
             {
@@ -37,27 +37,27 @@ namespace Anatini.Server.Users
 
                     var user = userResult!;
 
-                    if (user.Handles.Count >= 5)
+                    if (user.Slugs.Count >= 5)
                     {
                         return Forbid();
                     }
 
-                    var handleId = Guid.NewGuid();
+                    var slugId = Guid.NewGuid();
 
-                    await new CreateHandle(handleId, form.Handle, userId, user.Name).ExecuteAsync();
+                    await new CreateUserSlug(slugId, form.Slug, userId, user.Name).ExecuteAsync();
 
-                    var userHandle = new UserHandle
+                    var userOwnedSlug = new UserOwnedSlug
                     {
-                        HandleId = handleId,
+                        SlugId = slugId,
                         UserId = userId,
-                        Value = form.Handle
+                        Slug = form.Slug
                     };
 
-                    user.Handles.Add(userHandle);
+                    user.Slugs.Add(userOwnedSlug);
 
                     if (form.Default ?? false)
                     {
-                        user.DefaultHandleId = handleId;
+                        user.DefaultSlugId = slugId;
                     }
 
                     await new UpdateUser(user).ExecuteAsync();
@@ -114,26 +114,26 @@ namespace Anatini.Server.Users
             }
         }
 
-        [HttpGet("{handleValue}")]
+        [HttpGet("{slug}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetHandle(string handleValue)
+        public async Task<IActionResult> GetSlug(string slug)
         {
             try
             {
-                var handleResult = await new GetHandle(handleValue).ExecuteAsync();
+                var userSlugResult = await new GetUserSlug(slug).ExecuteAsync();
 
-                if (handleResult == null)
+                if (userSlugResult == null)
                 {
                     return NotFound();
                 }
 
-                var handle = handleResult!;
+                var userSlug = userSlugResult!;
 
-                // TODO return 404 if handle requires authentication
+                // TODO return 404 if slug requires authentication
 
-                return Ok(new HandleDto(handle));
+                return Ok(new UserSlugDto(userSlug));
             }
             catch (Exception)
             {

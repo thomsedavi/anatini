@@ -31,11 +31,11 @@ const routes = [
     component: AccountView,
   },
   {
-    path: '/users/:userHandle/posts/:postHandle',
+    path: '/users/:userSlug/posts/:postSlug',
     component: PostView,
   },
   {
-    path: '/users/:userHandle',
+    path: '/users/:userSlug',
     component: UserView,
   },
   {
