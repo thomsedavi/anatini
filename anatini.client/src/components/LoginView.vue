@@ -7,19 +7,19 @@
   const router = useRouter();
   const route = useRoute();
 
-  const emailInput = useTemplateRef<HTMLInputElement>('email');
+  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
   const isFetching = ref<boolean>(false);
 
   onMounted(() => {
-    emailInput.value!.focus()
+    emailAddressInput.value!.focus()
   });
 
   async function login(e: Event) {
     e.preventDefault();
 
     if (!validateInputs([
-      {element: emailInput.value, error: 'Please enter an email.'},
+      {element: emailAddressInput.value, error: 'Please enter an email address.'},
       {element: passwordInput.value, error: 'Please enter a password.'},
     ]))
       return;
@@ -27,7 +27,7 @@
     isFetching.value = true;
 
     const body: Record<string, string> = {
-      email: emailInput.value!.value.trim(),
+      emailAddress: emailAddressInput.value!.value.trim(),
       password: passwordInput.value!.value.trim(),
     };
 
@@ -65,8 +65,8 @@
   <h2>LoginView</h2>
   <form id="login" @submit="login" action="???" method="post">
     <p>
-      <label for="email">Email</label>
-      <input id="email" type="email" name="email" ref="email" @input="event => emailInput?.setCustomValidity('')">
+      <label for="emailAddress">Email Address</label>
+      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="event => emailAddressInput?.setCustomValidity('')">
     </p>
 
     <p>

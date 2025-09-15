@@ -4,9 +4,9 @@
     {
         public Guid Id { get; } = user.Id;
         public string Name { get; } = user.Name;
-        public IEnumerable<AccountChannelDto> Channels { get; } = user.Channels.Select(channel => new AccountChannelDto(channel));
+        public IEnumerable<AccountChannelDto> Channels { get; } = user.Channels?.Select(channel => new AccountChannelDto(channel)) ?? [];
         public IEnumerable<AccountEmailDto> Emails { get; } = user.Emails.Select(email => new AccountEmailDto(email));
-        public IEnumerable<AccountInviteDto> Invites { get; } = user.Invites.Select(invite => new AccountInviteDto(invite));
+        public IEnumerable<AccountInviteDto> Invites { get; } = user.Invites?.Select(invite => new AccountInviteDto(invite)) ?? [];
         public IEnumerable<AccountSessionDto> Sessions { get; } = user.Sessions.Select(refreshToken => new AccountSessionDto(refreshToken));
         public IEnumerable<AccountSlugDto> Slugs { get; } = user.Slugs.Select(slug => new AccountSlugDto(slug));
         public Guid? DefaultSlugId { get; } = user.DefaultSlugId;

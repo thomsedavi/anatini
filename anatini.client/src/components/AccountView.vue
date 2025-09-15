@@ -9,7 +9,7 @@
     defaultSlugId: string | null;
     emails: {
       emailId: string;
-      value: string;
+      address: string;
       verified: boolean;
     }[];
     channels: {
@@ -25,13 +25,13 @@
     }[];
     invites: {
       inviteId: string;
-      value: string;
+      code: string;
       dateNZ: string;
       used: boolean;
     }[];
     slugs: {
       slugId: string;
-      value: string;
+      slug: string;
     }[];
   };
 
@@ -49,8 +49,10 @@
   const isFetching = ref<boolean>(false);
   const isCreatingInviteCode = ref<boolean>(false);
   const isGettingEvents = ref<boolean>(false);
-  const isCreatingSlug = ref<boolean>(false);
-  const slugInput = useTemplateRef<HTMLInputElement>('slug');
+  const isCreatingUserSlug = ref<boolean>(false);
+  const userSlugInput = useTemplateRef<HTMLInputElement>('user-slug');
+  const isCreatingChannel = ref<boolean>(false);
+  const channelSlugInput = useTemplateRef<HTMLInputElement>('channel-slug');
 
   onMounted(() => {
     isFetching.value = true;
@@ -98,18 +100,53 @@
     });
   }
 
+  async function createChannel(event: Event) {
+    event.preventDefault();
+
+    if (!validateInputs([
+      { element: channelSlugInput.value, error: 'Please enter a channel slug.' },
+    ]))
+      return;
+
+    isCreatingChannel.value = true;
+
+    const body: Record<string, string> = {
+      name: 'Test',
+      slug: channelSlugInput.value!.value.trim(),
+    };
+
+    fetch("api/channels", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(body),
+    }).then((response: Response) => {
+      if (response.ok) {
+        console.log(response);
+      } else if (response.status === 409) {
+        channelSlugInput.value!.setCustomValidity("Slug already in use!");
+        reportValidity([channelSlugInput.value]);
+      } else {
+        console.log("Unknown Error");
+      }
+    }).finally(() => {
+      isCreatingChannel.value = false;
+    });
+  }
+
   async function createSlug(event: Event) {
     event.preventDefault();
 
     if (!validateInputs([
-      {element: slugInput.value, error: 'Please enter a slug.'},
+      {element: userSlugInput.value, error: 'Please enter a slug.'},
     ]))
       return;
 
-    isCreatingSlug.value = true;
+    isCreatingUserSlug.value = true;
 
     const body: Record<string, string> = {
-      slug: slugInput.value!.value.trim(),
+      slug: userSlugInput.value!.value.trim(),
     };
 
     fetch("api/users/slugs", {
@@ -128,16 +165,16 @@
             console.log('Unknown Error');
           });
       } else if (response.status === 403) {
-        slugInput.value!.setCustomValidity("Slug limit reached!");
-        reportValidity([slugInput.value]);
+        userSlugInput.value!.setCustomValidity("Slug limit reached!");
+        reportValidity([userSlugInput.value]);
       } else if (response.status === 409) {
-        slugInput.value!.setCustomValidity("Slug already in use!");
-        reportValidity([slugInput.value]);
+        userSlugInput.value!.setCustomValidity("Slug already in use!");
+        reportValidity([userSlugInput.value]);
       } else {
         console.log("Unknown Error");
       }
     }).finally(() => {
-      isCreatingSlug.value = false;
+      isCreatingUserSlug.value = false;
     });
   }
 
@@ -174,7 +211,7 @@
     <h3>Emails</h3>
     <ul>
       <li v-for="(email, index) in account.emails" :key="'email' + index">
-        {{ email.value }}: {{ email.verified ? "Verified" : "Not Verified" }}
+        {{ email.address }}: {{ email.verified ? "Verified" : "Not Verified" }}
       </li>
     </ul>
     <h3>Sessions</h3>
@@ -188,7 +225,7 @@
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in account.invites" :key="'invite' + index">
-          {{ invite.value }}: {{ invite.used ? "Used" : "Not Used" }}: {{  invite.dateNZ }}
+          {{ invite.code }}: {{ invite.used ? "Used" : "Not Used" }}: {{ invite.dateNZ }}
         </li>
       </ul>
     </template>
@@ -205,20 +242,30 @@
     <form id="createSlug" @submit="createSlug" action="???" method="post">
       <p>
         <label for="slug">Slug</label>
-        <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="event => slugInput?.setCustomValidity('')">
+        <input id="slug" type="text" name="slug" maxlength="64" ref="user-slug" @input="event => userSlugInput?.setCustomValidity('')">
       </p>
 
       <p>
-        <input type="submit" value="Submit" :disabled="isCreatingSlug">
+        <input type="submit" value="Submit" :disabled="isCreatingUserSlug">
       </p>
     </form>
     <template v-if="account.slugs?.length">
       <h3>Slugs</h3>
       <ul>
         <li v-for="(slug, index) in account.slugs" :key="'slug' + index">
-          {{ slug.value }}: {{ account.defaultSlugId === slug.slugId ? 'Default' : 'Not Default'}}
+          {{ slug.slug }}: {{ account.defaultSlugId === slug.slugId ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>
+    <form id="createChannel" @submit="createChannel" action="???" method="post">
+      <p>
+        <label for="channelSlug">Channel Slug</label>
+        <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
+      </p>
+
+      <p>
+        <input type="submit" value="Submit" :disabled="isCreatingChannel">
+      </p>
+    </form>
   </template>
 </template>

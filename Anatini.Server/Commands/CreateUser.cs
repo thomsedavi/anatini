@@ -45,8 +45,6 @@ namespace Anatini.Server.Commands
                 Emails = [userEmail],
                 Sessions = [userSession],
                 Slugs = [userSlug],
-                Invites = [],
-                Channels = [],
                 DefaultSlugId = slugId
             };
 

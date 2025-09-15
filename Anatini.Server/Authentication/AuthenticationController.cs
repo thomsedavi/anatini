@@ -43,7 +43,7 @@ namespace Anatini.Server.Authentication
 
                     var user = userResult!;
 
-                    if (user.Invites.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow))
+                    if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
                     {
                         return Conflict();
                     }
@@ -81,7 +81,9 @@ namespace Anatini.Server.Authentication
                             DateNZ = eventData.DateOnlyNZNow
                         };
 
-                        user.Invites.Add(userOwnedInvite);
+                        var invites = (user.Invites ?? []);
+                        invites.Add(userOwnedInvite);
+                        user.Invites = invites;
 
                         await new UpdateUser(user).ExecuteAsync();
                         await new CreateEvent(userId, EventType.InviteCreated, eventData).ExecuteAsync();
@@ -208,11 +210,7 @@ namespace Anatini.Server.Authentication
 
                 var slugId = Guid.NewGuid();
 
-                await new CreateUserSlug(slugId, form.Slug, userId, form.Name).ExecuteAsync();
-
                 var refreshToken = TokenGenerator.Get;
-
-                await new CreateUser(userId, form.Name, form.Slug, form.Password, email, slugId, refreshToken, eventData).ExecuteAsync();
 
                 if (email.InvitedByUserId.HasValue)
                 {
@@ -220,7 +218,7 @@ namespace Anatini.Server.Authentication
 
                     var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
 
-                    invitedByUser.Invites.First(invite => invite.InviteId == email.InviteId).Used = true;
+                    invitedByUser.Invites!.First(invite => invite.InviteId == email.InviteId).Used = true;
 
                     await new UpdateUser(invitedByUser).ExecuteAsync();
 
@@ -234,7 +232,8 @@ namespace Anatini.Server.Authentication
                 email.VerificationCode = null;
 
                 await new UpdateEmail(email).ExecuteAsync();
-
+                await new CreateUser(userId, form.Name, form.Slug, form.Password, email, slugId, refreshToken, eventData).ExecuteAsync();
+                await new CreateUserSlug(slugId, form.Slug, userId, form.Name).ExecuteAsync();
                 await new CreateEvent(userId, EventType.UserCreated, eventData).ExecuteAsync();
 
                 var accessToken = GetAccessToken(userId, eventData.DateTimeUtc);

@@ -65,11 +65,11 @@ namespace Anatini.Server
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
-        public required ICollection<UserOwnedChannel> Channels { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
         public required ICollection<UserOwnedSession> Sessions { get; set; }
-        public required ICollection<UserOwnedInvite> Invites { get; set; }
         public required ICollection<UserOwnedSlug> Slugs { get; set; }
+        public ICollection<UserOwnedInvite>? Invites { get; set; }
+        public ICollection<UserOwnedChannel>?  Channels { get; set; }
         public required Guid DefaultSlugId { get; set; }
     }
 
