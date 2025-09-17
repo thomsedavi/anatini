@@ -42,7 +42,7 @@ namespace Anatini.Server
             userBuilder.OwnsMany(user => user.Slugs, slug => { slug.WithOwner().HasForeignKey("UserId"); slug.HasKey("SlugId"); });
 
             channelBuilder.ToContainer("Channels").HasPartitionKey(channel => channel.Id);
-            channelBuilder.OwnsMany(channel => channel.Users, slug => { slug.WithOwner().HasForeignKey("ChannelId"); slug.HasKey("UserId"); });
+            channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey("ChannelId"); user.HasKey("UserId"); });
             channelBuilder.OwnsMany(channel => channel.Slugs, slug => { slug.WithOwner().HasForeignKey("ChannelId"); slug.HasKey("SlugId"); });
 
             postBuilder.ToContainer("Posts").HasPartitionKey(post => post.Id);

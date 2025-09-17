@@ -18,7 +18,7 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : AnatiniControllerBase
     {
         [HttpPost("inviteCode")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -28,80 +28,59 @@ namespace Anatini.Server.Authentication
         {
             var eventData = new EventData(HttpContext);
 
-            try
+            async Task<IActionResult> userFunction(User user)
             {
-                var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (Guid.TryParse(userIdClaim, out var userId))
+                if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
                 {
-                    var userResult = await new GetUser(userId).ExecuteAsync();
+                    return Conflict();
+                }
+                else
+                {
+                    var inviteId = Guid.NewGuid();
+                    var inviteCode = CodeRandom.Next();
+                    var attemptCount = 0;
+                    var success = false;
 
-                    if (userResult == null)
+                    while (attemptCount++ < 5 && !success)
+                    {
+                        try
+                        {
+                            await new CreateInvite(inviteId, inviteCode, user.Id, eventData.DateOnlyNZNow).ExecuteAsync();
+                            success = true;
+                        }
+                        catch (Exception)
+                        {
+                            inviteCode = CodeRandom.Next();
+                        }
+                    }
+
+                    if (!success)
                     {
                         return Problem();
                     }
 
-                    var user = userResult!;
-
-                    if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
+                    var userOwnedInvite = new UserOwnedInvite
                     {
-                        return Conflict();
-                    }
-                    else
-                    {
-                        var inviteId = Guid.NewGuid();
-                        var inviteCode = CodeRandom.Next();
-                        var attemptCount = 0;
-                        var success = false;
+                        InviteId = inviteId,
+                        UserId = user.Id,
+                        Code = inviteCode,
+                        Used = false,
+                        DateNZ = eventData.DateOnlyNZNow
+                    };
 
-                        while (attemptCount++ < 5 && !success)
-                        {
-                            try
-                            {
-                                await new CreateInvite(inviteId, inviteCode, userId, eventData.DateOnlyNZNow).ExecuteAsync();
-                                success = true;
-                            }
-                            catch (Exception)
-                            {
-                                inviteCode = CodeRandom.Next();
-                            }
-                        }
+                    var invites = user.Invites ?? [];
+                    invites.Add(userOwnedInvite);
+                    user.Invites = invites;
 
-                        if (!success)
-                        {
-                            return Problem();
-                        }
+                    await new UpdateUser(user).ExecuteAsync();
+                    await new CreateEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
-                        var userOwnedInvite = new UserOwnedInvite
-                        {
-                            InviteId = inviteId,
-                            UserId = userId,
-                            Code = inviteCode,
-                            Used = false,
-                            DateNZ = eventData.DateOnlyNZNow
-                        };
-
-                        var invites = (user.Invites ?? []);
-                        invites.Add(userOwnedInvite);
-                        user.Invites = invites;
-
-                        await new UpdateUser(user).ExecuteAsync();
-                        await new CreateEvent(userId, EventType.InviteCreated, eventData).ExecuteAsync();
-
-                        return Created("?", new AccountDto(user));
-                    }
-                }
-                else
-                {
-                    return Problem();
+                    return Created("?", new AccountDto(user));
                 }
             }
-            catch (Exception)
-            {
-                return Problem();
-            }
+
+            return await UsingUser(userFunction);
         }
-
 
         [HttpPost("emailAddress")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
@@ -333,32 +312,12 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAccount()
         {
-            try
+            async Task<IActionResult> userFunction(User user)
             {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (Guid.TryParse(userIdClaim, out var userId))
-                {
-                    var userResult = await new GetUser(userId).ExecuteAsync();
-
-                    if (userResult == null)
-                    {
-                        return Problem();
-                    }
-
-                    var user = userResult!;
-
-                    return Ok(new AccountDto(user));
-                }
-                else
-                {
-                    return Problem();
-                }
+                return await Task.FromResult(Ok(new AccountDto(user)));
             }
-            catch (Exception)
-            {
-                return Problem();
-            }
+
+            return await UsingUser(userFunction);
         }
 
         [Authorize]

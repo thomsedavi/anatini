@@ -1,18 +1,15 @@
-﻿using System.Net;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Anatini.Server.Commands;
 using Anatini.Server.Dtos;
 using Anatini.Server.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : AnatiniControllerBase
     {
         [Authorize]
         [HttpPost("slugs")]
@@ -22,69 +19,37 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSlug([FromForm] SlugForm form)
         {
-            try
+            async Task<IActionResult> userFunction(User user)
             {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (Guid.TryParse(userIdClaim, out var userId))
+                if (user.Slugs.Count >= 5)
                 {
-                    var userResult = await new GetUser(userId).ExecuteAsync();
-
-                    if (userResult == null)
-                    {
-                        return Problem();
-                    }
-
-                    var user = userResult!;
-
-                    if (user.Slugs.Count >= 5)
-                    {
-                        return Forbid();
-                    }
-
-                    var slugId = Guid.NewGuid();
-
-                    await new CreateUserSlug(slugId, form.Slug, userId, user.Name).ExecuteAsync();
-
-                    var userOwnedSlug = new UserOwnedSlug
-                    {
-                        SlugId = slugId,
-                        UserId = userId,
-                        Slug = form.Slug
-                    };
-
-                    user.Slugs.Add(userOwnedSlug);
-
-                    if (form.Default ?? false)
-                    {
-                        user.DefaultSlugId = slugId;
-                    }
-
-                    await new UpdateUser(user).ExecuteAsync();
-
-                    return Ok(new AccountDto(user));
+                    return Forbid();
                 }
-                else
+
+                var slugId = Guid.NewGuid();
+
+                await new CreateUserSlug(slugId, form.Slug, user.Id, user.Name).ExecuteAsync();
+
+                var userOwnedSlug = new UserOwnedSlug
                 {
-                    return Problem();
+                    SlugId = slugId,
+                    UserId = user.Id,
+                    Slug = form.Slug
+                };
+
+                user.Slugs.Add(userOwnedSlug);
+
+                if (form.Default ?? false)
+                {
+                    user.DefaultSlugId = slugId;
                 }
+
+                await new UpdateUser(user).ExecuteAsync();
+
+                return Ok(new AccountDto(user));
             }
-            catch (DbUpdateException dbUpdateException)
-            {
-                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    //logger.LogError(dbUpdateException, "Exception creating user");
-                    return Problem();
-                }
-            }
-            catch (Exception)
-            {
-                return Problem();
-            }
+
+            return await UsingUser(userFunction);
         }
 
         [Authorize]

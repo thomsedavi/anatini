@@ -1,4 +1,7 @@
 ﻿using System.Net.Mime;
+using Anatini.Server.Channels.Commands;
+using Anatini.Server.Commands;
+using Anatini.Server.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +9,7 @@ namespace Anatini.Server.Channels
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ChannelsController : ControllerBase
+    public class ChannelsController : AnatiniControllerBase
     {
         [Authorize]
         [HttpPost]
@@ -15,9 +18,33 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult PostChannel([FromForm] ChannelForm form)
+        public async Task<IActionResult> PostChannel([FromForm] ChannelForm form)
         {
-            return Ok(form);
+            async Task<IActionResult> userFunction(User user)
+            {
+                var channelId = Guid.NewGuid();
+                var slugId = Guid.NewGuid();
+
+                await new CreateChannelSlug(slugId, form.Slug, channelId, form.Name).ExecuteAsync();
+                await new CreateChannel(channelId, form.Name, user.Id, user.Name, slugId, form.Slug).ExecuteAsync();
+
+                var userOwnedChannel = new UserOwnedChannel
+                {
+                    ChannelId = channelId,
+                    UserId = user.Id,
+                    Name = form.Name
+                };
+
+                var channels = user.Channels ?? [];
+                channels.Add(userOwnedChannel);
+                user.Channels = channels;
+
+                await new UpdateUser(user).ExecuteAsync();
+
+                return Ok(new AccountDto(user));
+            }
+
+            return await UsingUser(userFunction);
         }
     }
 }

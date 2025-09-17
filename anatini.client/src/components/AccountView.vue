@@ -53,6 +53,7 @@
   const userSlugInput = useTemplateRef<HTMLInputElement>('user-slug');
   const isCreatingChannel = ref<boolean>(false);
   const channelSlugInput = useTemplateRef<HTMLInputElement>('channel-slug');
+  const channelNameInput = useTemplateRef<HTMLInputElement>('channel-name');
 
   onMounted(() => {
     isFetching.value = true;
@@ -104,6 +105,7 @@
     event.preventDefault();
 
     if (!validateInputs([
+      { element: channelNameInput.value, error: 'Please enter a channel name.' },
       { element: channelSlugInput.value, error: 'Please enter a channel slug.' },
     ]))
       return;
@@ -111,7 +113,7 @@
     isCreatingChannel.value = true;
 
     const body: Record<string, string> = {
-      name: 'Test',
+      name: channelNameInput.value!.value.trim(),
       slug: channelSlugInput.value!.value.trim(),
     };
 
@@ -258,6 +260,11 @@
       </ul>
     </template>
     <form id="createChannel" @submit="createChannel" action="???" method="post">
+      <p>
+        <label for="channelName">Channel Name</label>
+        <input id="channelName" type="text" name="channelName" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
+      </p>
+
       <p>
         <label for="channelSlug">Channel Slug</label>
         <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
