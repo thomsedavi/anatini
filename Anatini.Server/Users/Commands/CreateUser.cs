@@ -2,7 +2,7 @@
 using Anatini.Server.Interfaces;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Commands
+namespace Anatini.Server.Users.Commands
 {
     internal class CreateUser(Guid id, string name, string slug, string password, Email email, Guid slugId, string refreshToken, EventData eventData) : ICommand<int>
     {

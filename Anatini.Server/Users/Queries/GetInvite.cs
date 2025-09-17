@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anatini.Server.Queries
+namespace Anatini.Server.Users.Queries
 {
     internal class GetInvite(string inviteCode) : IQuery<Invite?>
     {

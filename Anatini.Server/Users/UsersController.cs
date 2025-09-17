@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using Anatini.Server.Commands;
 using Anatini.Server.Dtos;
-using Anatini.Server.Queries;
+using Anatini.Server.Users.Commands;
+using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

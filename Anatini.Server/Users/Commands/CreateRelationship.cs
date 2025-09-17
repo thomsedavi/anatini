@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Enums;
 using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Commands
+namespace Anatini.Server.Users.Commands
 {
     public class CreateRelationships(Guid userId, Guid toUserId, params RelationshipType[] types) : ICommand<int>
     {

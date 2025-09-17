@@ -1,6 +1,6 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Commands
+namespace Anatini.Server.Users.Commands
 {
     public class DeleteEmail(Email email) : ICommand<int>
     {

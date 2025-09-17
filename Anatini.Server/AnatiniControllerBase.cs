@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
-using Anatini.Server.Queries;
+using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Commands;
-using Anatini.Server.Commands;
 using Anatini.Server.Dtos;
+using Anatini.Server.Users.Commands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

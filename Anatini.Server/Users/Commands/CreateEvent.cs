@@ -2,7 +2,7 @@
 using Anatini.Server.Interfaces;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Commands
+namespace Anatini.Server.Users.Commands
 {
     internal class CreateEvent(Guid userId, EventType type, EventData data) : ICommand<int>
     {
