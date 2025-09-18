@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Dtos;
 using Anatini.Server.Enums;
+using Anatini.Server.Users;
 using Anatini.Server.Users.Commands;
 using Anatini.Server.Users.Queries;
 using Anatini.Server.Utils;
@@ -59,20 +60,9 @@ namespace Anatini.Server.Authentication
                         return Problem();
                     }
 
-                    var userOwnedInvite = new UserOwnedInvite
-                    {
-                        InviteId = inviteId,
-                        UserId = user.Id,
-                        Code = inviteCode,
-                        Used = false,
-                        DateNZ = eventData.DateOnlyNZNow
-                    };
-
-                    var invites = user.Invites ?? [];
-                    invites.Add(userOwnedInvite);
-                    user.Invites = invites;
-
+                    user.AddInvite(inviteId, inviteCode, eventData);
                     await new UpdateUser(user).ExecuteAsync();
+
                     await new CreateEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
                     return Created("?", new AccountDto(user));
@@ -275,22 +265,7 @@ namespace Anatini.Server.Authentication
 
                 var refreshToken = TokenGenerator.Get;
 
-                var userSession = new UserOwnedSession
-                {
-                    SessionId = Guid.NewGuid(),
-                    UserId = user.Id,
-                    RefreshToken = refreshToken,
-                    CreatedDateUtc = eventData.DateTimeUtc,
-                    UpdatedDateUtc = eventData.DateTimeUtc,
-                    IPAddress = eventData.Get("IPAddress"),
-                    UserAgent = eventData.Get("UserAgent"),
-                    Revoked = false
-                };
-
-                var sessions = user.Sessions.ToList();
-                sessions.Add(userSession);
-                user.Sessions = sessions;
-
+                user.AddSession(refreshToken, eventData);
                 await new UpdateUser(user).ExecuteAsync();
 
                 var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);

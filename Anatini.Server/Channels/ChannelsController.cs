@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Commands;
 using Anatini.Server.Dtos;
+using Anatini.Server.Users;
 using Anatini.Server.Users.Commands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,19 +27,10 @@ namespace Anatini.Server.Channels
                 var slugId = Guid.NewGuid();
 
                 await new CreateChannelSlug(slugId, form.Slug, channelId, form.Name).ExecuteAsync();
+
                 await new CreateChannel(channelId, form.Name, user.Id, user.Name, slugId, form.Slug).ExecuteAsync();
 
-                var userOwnedChannel = new UserOwnedChannel
-                {
-                    ChannelId = channelId,
-                    UserId = user.Id,
-                    Name = form.Name
-                };
-
-                var channels = user.Channels ?? [];
-                channels.Add(userOwnedChannel);
-                user.Channels = channels;
-
+                user.AddChannel(channelId, form.Name);
                 await new UpdateUser(user).ExecuteAsync();
 
                 return Ok(new AccountDto(user));
