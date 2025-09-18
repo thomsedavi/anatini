@@ -1,8 +1,9 @@
 ﻿using System.Net.Mime;
-using Anatini.Server.Channels.Commands;
+using Anatini.Server.Channels.Extensions;
+using Anatini.Server.Context;
+using Anatini.Server.Context.Commands;
 using Anatini.Server.Dtos;
-using Anatini.Server.Users;
-using Anatini.Server.Users.Commands;
+using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,19 +20,22 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] ChannelForm form)
+        public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel)
         {
             async Task<IActionResult> userFunction(User user)
             {
-                var channelId = Guid.NewGuid();
-                var slugId = Guid.NewGuid();
+                var newChannelSlug = NewChannelSlug.New(newChannel);
+                var channelSlug = newChannelSlug.Create(newChannel);
 
-                await new CreateChannelSlug(slugId, form.Slug, channelId, form.Name).ExecuteAsync();
+                // Returns Conflict if channel slug already exists
+                await new Add(channelSlug).ExecuteAsync();
 
-                await new CreateChannel(channelId, form.Name, user.Id, user.Name, slugId, form.Slug).ExecuteAsync();
+                var channel = newChannel.Create(newChannelSlug, user);
 
-                user.AddChannel(channelId, form.Name);
-                await new UpdateUser(user).ExecuteAsync();
+                user.AddChannel(channel);
+
+                await new Add(channel).ExecuteAsync();
+                await new Update(user).ExecuteAsync();
 
                 return Ok(new AccountDto(user));
             }

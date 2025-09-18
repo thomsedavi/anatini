@@ -1,14 +1,14 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Context.Commands
 {
-    internal class UpdateInvite(Invite invite) : ICommand<int>
+    public class Remove(Entity entity) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Update(invite);
+            context.Remove(entity);
 
             return await context.SaveChangesAsync();
         }

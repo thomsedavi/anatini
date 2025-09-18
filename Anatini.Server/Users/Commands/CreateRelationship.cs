@@ -1,4 +1,5 @@
-﻿using Anatini.Server.Enums;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Enums;
 using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Users.Commands

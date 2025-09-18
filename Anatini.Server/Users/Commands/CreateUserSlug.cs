@@ -1,8 +1,9 @@
-﻿using Anatini.Server.Interfaces;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Users.Commands
 {
-    public class CreateUserSlug(Guid id, string slug, Guid userId, string userName) : ICommand<int>
+    public class CreateUserSlug(NewUserSlug newSlug, User user) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -10,10 +11,10 @@ namespace Anatini.Server.Users.Commands
 
             var userSlug = new UserSlug
             {
-                Id = id,
-                Slug = slug,
-                UserId = userId,
-                UserName = userName
+                Id = newSlug.Id,
+                Slug = newSlug.Slug,
+                UserId = user.Id,
+                UserName = user.Name
             };
 
             context.Add(userSlug);

@@ -125,7 +125,13 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        console.log(response);
+        response.json()
+          .then((value: Account) => {
+            account.value = value;
+          })
+          .catch(() => {
+            console.log('Unknown Error');
+          });
       } else if (response.status === 409) {
         channelSlugInput.value!.setCustomValidity("Slug already in use!");
         reportValidity([channelSlugInput.value]);
@@ -259,6 +265,7 @@
         </li>
       </ul>
     </template>
+    <h3>Create Channel</h3>
     <form id="createChannel" @submit="createChannel" action="???" method="post">
       <p>
         <label for="channelName">Channel Name</label>
@@ -274,5 +281,13 @@
         <input type="submit" value="Submit" :disabled="isCreatingChannel">
       </p>
     </form>
+    <template v-if="account.channels?.length">
+      <h3>Slugs</h3>
+      <ul>
+        <li v-for="(channel, channelIndex) in account.channels" :key="'channel' + channelIndex">
+          {{ channel.name }}
+        </li>
+      </ul>
+    </template>
   </template>
 </template>

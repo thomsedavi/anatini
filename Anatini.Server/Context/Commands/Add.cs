@@ -1,14 +1,14 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Context.Commands
 {
-    public class DeleteEmail(Email email) : ICommand<int>
+    public class Add(Entity entity) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Remove(email);
+            context.Add(entity);
 
             return await context.SaveChangesAsync();
         }

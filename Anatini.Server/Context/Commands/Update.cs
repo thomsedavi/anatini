@@ -1,14 +1,14 @@
 ﻿using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Context.Commands
 {
-    internal class UpdateEmail(Email email) : ICommand<int>
+    public class Update(Entity entity) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            context.Update(email);
+            context.Update(entity);
 
             return await context.SaveChangesAsync();
         }

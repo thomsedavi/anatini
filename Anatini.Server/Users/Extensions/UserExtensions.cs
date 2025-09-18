@@ -1,21 +1,41 @@
-﻿using Anatini.Server.Utils;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Utils;
 
-namespace Anatini.Server.Users
+namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static User AddChannel(this User user, Guid channelId, string name)
+        public static User AddChannel(this User user, Channel channel)
         {
             var userOwnedChannel = new UserOwnedChannel
             {
-                ChannelId = channelId,
+                ChannelId = channel.Id,
                 UserId = user.Id,
-                Name = name
+                Name = channel.Name
             };
 
             var channels = user.Channels ?? [];
             channels.Add(userOwnedChannel);
             user.Channels = channels;
+
+            return user;
+        }
+
+        public static User AddSlug(this User user, NewUserSlug newSlug)
+        {
+            var userOwnedSlug = new UserOwnedSlug
+            {
+                SlugId = newSlug.Id,
+                UserId = user.Id,
+                Slug = newSlug.Slug
+            };
+
+            user.Slugs.Add(userOwnedSlug);
+
+            if (newSlug.Default ?? false)
+            {
+                user.DefaultSlugId = newSlug.Id;
+            }
 
             return user;
         }

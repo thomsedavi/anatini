@@ -20,5 +20,5 @@
 
 <template>
   <SignupFlowInviteCodeView v-if="page === 'inviteCode'" @submit-invite-code="submitInviteCode" />
-  <SignupFlowSignupView v-if="page === 'signup'" :email="emailAddress" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
+  <SignupFlowSignupView v-if="page === 'signup'" :emailAddress="emailAddress" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
 </template>

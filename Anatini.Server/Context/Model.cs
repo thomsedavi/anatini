@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Anatini.Server
+namespace Anatini.Server.Context
 {
     public class AnatiniContext : DbContext
     {
@@ -60,9 +60,8 @@ namespace Anatini.Server
         }
     }
 
-    public class User
+    public class User : Entity
     {
-        public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
@@ -121,9 +120,8 @@ namespace Anatini.Server
         public required bool Revoked { get; set; }
     }
 
-    public class Channel
+    public class Channel : Entity
     {
-        public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedSlug> Slugs { get; set; }
@@ -145,9 +143,8 @@ namespace Anatini.Server
         public required string Slug { get; set; }
     }
 
-    public class Post
+    public class Post : Entity
     {
-        public required Guid Id { get; set; }
         public required string Title { get; set; }
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }
@@ -164,18 +161,16 @@ namespace Anatini.Server
         public required string Slug { get; set; }
     }
 
-    public class Event
+    public class Event : Entity
     {
-        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Type { get; set; }
         public required DateTime DateUtc { get; set; }
         public required IDictionary<string, string> Data { get; set; }
     }
 
-    public class Email
+    public class Email : Entity
     {
-        public required Guid Id { get; set; }
         public required string Address { get; set; }
         public required Guid UserId { get; set; }
         public string? VerificationCode { get; set; }
@@ -184,17 +179,15 @@ namespace Anatini.Server
         public required bool Verified { get; set; }
     }
 
-    public class Relationship
+    public class Relationship : Entity
     {
-        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required Guid ToUserId { get; set; }
         public required string Type { get; set; }
     }
 
-    public class Invite
+    public class Invite : Entity
     {
-        public required Guid Id { get; set; }
         public required string Code { get; set; }
         public required Guid NewUserId { get; set; }
         public required Guid InvitedByUserId { get; set; }
@@ -202,28 +195,30 @@ namespace Anatini.Server
         public string? EmailAddress { get; set; }
     }
 
-    public class UserSlug
+    public class UserSlug : Entity
     {
-        public required Guid Id { get; set; }
         public required string Slug { get; set; }
         public required Guid UserId { get; set; }
         public required string UserName { get; set; }
     }
 
-    public class ChannelSlug
+    public class ChannelSlug : Entity
     {
-        public required Guid Id { get; set; }
         public required string Slug { get; set; }
         public required Guid ChannelId { get; set; }
         public required string ChannelName { get; set; }
     }
 
-    public class PostSlug
+    public class PostSlug : Entity
     {
-        public required Guid Id { get; set; }
         public required string Slug { get; set; }
         public required Guid ChannelId { get; set; }
         public required Guid PostId { get; set; }
         public required string PostName { get; set; }
+    }
+
+    public abstract class Entity
+    {
+        public Guid Id { get; set; }
     }
 }

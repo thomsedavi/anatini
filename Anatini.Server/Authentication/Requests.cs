@@ -13,7 +13,7 @@ namespace Anatini.Server.Authentication
         public required string InviteCode { get; set; }
     }
 
-    public class SignupForm
+    public class NewUser : NewEntity
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }

@@ -1,19 +1,17 @@
 ﻿using Anatini.Server.Authentication;
-using Anatini.Server.Interfaces;
+using Anatini.Server.Context;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Users.Extensions
 {
-    internal class CreateUser(Guid id, string name, string slug, string password, Email email, Guid slugId, string refreshToken, EventData eventData) : ICommand<int>
+    public static class NewUserExtensions
     {
-        public async Task<int> ExecuteAsync()
+        public static User Create(this NewUser newUser, NewUserSlug newUserSlug, Email email, string refreshToken, EventData eventData)
         {
-            using var context = new AnatiniContext();
-
             var userEmail = new UserOwnedEmail
             {
                 EmailId = email.Id,
-                UserId = id,
+                UserId = newUser.Id,
                 Address = email.Address,
                 Verified = true
             };
@@ -21,7 +19,7 @@ namespace Anatini.Server.Users.Commands
             var userSession = new UserOwnedSession
             {
                 SessionId = Guid.NewGuid(),
-                UserId = id,
+                UserId = newUser.Id,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
                 UpdatedDateUtc = eventData.DateTimeUtc,
@@ -32,27 +30,25 @@ namespace Anatini.Server.Users.Commands
 
             var userSlug = new UserOwnedSlug
             {
-                SlugId = slugId,
-                UserId = id,
-                Slug = slug
+                SlugId = newUserSlug.Id,
+                UserId = newUser.Id,
+                Slug = newUser.Slug
             };
 
             var user = new User
             {
-                Id = id,
-                Name = name,
+                Id = newUser.Id,
+                Name = newUser.Name,
                 HashedPassword = null!,
                 Emails = [userEmail],
                 Sessions = [userSession],
                 Slugs = [userSlug],
-                DefaultSlugId = slugId
+                DefaultSlugId = newUserSlug.Id
             };
 
-            user.HashedPassword = UserPasswordHasher.HashPassword(user, password);
+            user.HashedPassword = UserPasswordHasher.HashPassword(user, newUser.Password);
 
-            context.Add(user);
-
-            return await context.SaveChangesAsync();
+            return user;
         }
     }
 }

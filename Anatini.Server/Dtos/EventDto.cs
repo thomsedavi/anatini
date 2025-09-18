@@ -1,4 +1,6 @@
-﻿namespace Anatini.Server.Dtos
+﻿using Anatini.Server.Context;
+
+namespace Anatini.Server.Dtos
 {
     internal class EventDto(Event @event)
     {

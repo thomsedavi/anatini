@@ -1,4 +1,5 @@
-﻿using Anatini.Server.Interfaces;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Queries

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Anatini.Server.Context;
+using Microsoft.AspNetCore.Identity;
 
 namespace Anatini.Server.Authentication
 {

@@ -1,6 +1,9 @@
 ﻿using System.Security.Claims;
+using Anatini.Server.Context;
+using Anatini.Server.Context.Commands;
 using Anatini.Server.Dtos;
 using Anatini.Server.Users.Commands;
+using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +20,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSlug([FromForm] SlugForm form)
+        public async Task<IActionResult> PostSlug([FromForm] NewUserSlug newUserSlug)
         {
             async Task<IActionResult> userFunction(User user)
             {
@@ -26,25 +29,10 @@ namespace Anatini.Server.Users
                     return Forbid();
                 }
 
-                var slugId = Guid.NewGuid();
+                await new CreateUserSlug(newUserSlug, user).ExecuteAsync();
 
-                await new CreateUserSlug(slugId, form.Slug, user.Id, user.Name).ExecuteAsync();
-
-                var userOwnedSlug = new UserOwnedSlug
-                {
-                    SlugId = slugId,
-                    UserId = user.Id,
-                    Slug = form.Slug
-                };
-
-                user.Slugs.Add(userOwnedSlug);
-
-                if (form.Default ?? false)
-                {
-                    user.DefaultSlugId = slugId;
-                }
-
-                await new UpdateUser(user).ExecuteAsync();
+                user.AddSlug(newUserSlug);
+                await new Update(user).ExecuteAsync();
 
                 return Ok(new AccountDto(user));
             }

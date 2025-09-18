@@ -4,6 +4,7 @@ using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
+using User = Anatini.Server.Context.User;
 
 namespace Anatini.Server
 {
