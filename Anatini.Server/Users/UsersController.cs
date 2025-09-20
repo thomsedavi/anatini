@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
-using Anatini.Server.Dtos;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +34,7 @@ namespace Anatini.Server.Users
                 user.AddSlug(newUserSlug);
                 await new Update(user).ExecuteAsync();
 
-                return Ok(new AccountDto(user));
+                return Ok(user.ToAccountDto());
             }
 
             return await UsingUser(userFunction);
@@ -55,7 +54,7 @@ namespace Anatini.Server.Users
                 {
                     var events = await new GetEvents(userId).ExecuteAsync();
 
-                    return Ok(new { Events = events.Select(@event => new EventDto(@event)) });
+                    return Ok(new { Events = events.Select(@event => @event.ToEventDto()) });
                 }
                 else
                 {
@@ -87,7 +86,7 @@ namespace Anatini.Server.Users
 
                 // TODO return 404 if slug requires authentication
 
-                return Ok(new UserSlugDto(userSlug));
+                return Ok(userSlug.ToUserDto());
             }
             catch (Exception)
             {

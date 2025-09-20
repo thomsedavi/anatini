@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
+using Anatini.Server.Channels.Queries;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
-using Anatini.Server.Dtos;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,10 +36,37 @@ namespace Anatini.Server.Channels
                 await new Add(channel).ExecuteAsync();
                 await new Update(user).ExecuteAsync();
 
-                return Ok(new AccountDto(user));
+                return Ok(user.ToAccountDto());
             }
 
             return await UsingUser(userFunction);
+        }
+
+        [HttpGet("{slug}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetSlug(string slug)
+        {
+            try
+            {
+                var channelSlugResult = await new GetChannelSlug(slug).ExecuteAsync();
+
+                if (channelSlugResult == null)
+                {
+                    return NotFound();
+                }
+
+                var channelSlug = channelSlugResult!;
+
+                // TODO return 404 if slug requires authentication
+
+                return Ok(channelSlug.ToChannelDto());
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
     }
 }

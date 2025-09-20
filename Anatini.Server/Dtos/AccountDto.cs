@@ -1,52 +1,50 @@
-﻿using Anatini.Server.Context;
-
-namespace Anatini.Server.Dtos
+﻿namespace Anatini.Server.Dtos
 {
-    internal class AccountDto(User user)
+    public class AccountDto
     {
-        public Guid Id { get; } = user.Id;
-        public string Name { get; } = user.Name;
-        public IEnumerable<AccountChannelDto> Channels { get; } = user.Channels?.Select(channel => new AccountChannelDto(channel)) ?? [];
-        public IEnumerable<AccountEmailDto> Emails { get; } = user.Emails.Select(email => new AccountEmailDto(email));
-        public IEnumerable<AccountInviteDto> Invites { get; } = user.Invites?.Select(invite => new AccountInviteDto(invite)) ?? [];
-        public IEnumerable<AccountSessionDto> Sessions { get; } = user.Sessions.Select(refreshToken => new AccountSessionDto(refreshToken));
-        public IEnumerable<AccountSlugDto> Slugs { get; } = user.Slugs.Select(slug => new AccountSlugDto(slug));
-        public Guid? DefaultSlugId { get; } = user.DefaultSlugId;
+        public required Guid Id { get; set; }
+        public required string Name { get; set; }
+        public IEnumerable<AccountChannelDto>? Channels { get; set; }
+        public required IEnumerable<AccountEmailDto> Emails { get; set; }
+        public IEnumerable<AccountInviteDto>? Invites { get; set; }
+        public required IEnumerable<AccountSessionDto> Sessions { get; set; }
+        public required IEnumerable<AccountSlugDto> Slugs { get; set; }
+        public required Guid? DefaultSlugId { get; set; }
     }
 
-    internal class AccountChannelDto(UserOwnedChannel channel)
+    public class AccountChannelDto
     {
-        public Guid ChannelId { get; } = channel.ChannelId;
-        public string Name { get; } = channel.Name;
+        public required Guid ChannelId { get; set; }
+        public required string Name { get; set; }
     }
 
-    internal class AccountSlugDto(UserOwnedSlug slug)
+    public class AccountSlugDto
     {
-        public Guid SlugId { get; } = slug.SlugId;
-        public string Slug { get; } = slug.Slug;
+        public required Guid SlugId { get; set; }
+        public required string Slug { get; set; }
     }
 
-    internal class AccountEmailDto(UserOwnedEmail email)
+    public class AccountEmailDto
     {
-        public Guid EmaiId { get; } = email.EmailId;
-        public string Address { get; } = email.Address;
-        public bool Verified { get; } = email.Verified;
+        public required Guid EmaiId { get; set; }
+        public required string Address { get; set; }
+        public required bool Verified { get; set; }
     }
 
-    internal class AccountInviteDto(UserOwnedInvite invite)
+    public class AccountInviteDto
     {
-        public Guid InviteId { get; } = invite.InviteId;
-        public string Code { get; } = invite.Code;
-        public DateOnly DateNZ { get; } = invite.DateNZ;
-        public bool Used { get; } = invite.Used;
+        public required Guid InviteId { get; set; }
+        public required string Code { get; set; }
+        public required DateOnly DateNZ { get; set; }
+        public required bool Used { get; set; }
     }
 
-    internal class AccountSessionDto(UserOwnedSession session)
+    public class AccountSessionDto
     {
-        public string UserAgent { get; } = session.UserAgent;
-        public bool Revoked { get; } = session.Revoked;
-        public DateTime CreatedDateUtc { get; } = session.CreatedDateUtc;
-        public DateTime UpdatedDateUtc { get; } = session.UpdatedDateUtc;
-        public string IPAddress { get; } = session.IPAddress;
+        public required string UserAgent { get; set; }
+        public required bool Revoked { get; set; }
+        public required DateTime CreatedDateUtc { get; set; }
+        public required DateTime UpdatedDateUtc { get; set; }
+        public required string IPAddress { get; set; }
     }
 }

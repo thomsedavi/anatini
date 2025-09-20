@@ -7,6 +7,7 @@ import PostView from './components/PostView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
+import ChannelView from './components/ChannelView.vue';
 import UsersView from './components/UsersView.vue';
 
 const routes = [
@@ -37,6 +38,10 @@ const routes = [
   {
     path: '/users/:userSlug',
     component: UserView,
+  },
+  {
+    path: '/channels/:channelSlug',
+    component: ChannelView,
   },
   {
     path: '/users',

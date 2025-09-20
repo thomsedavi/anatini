@@ -1,10 +1,8 @@
-﻿using Anatini.Server.Context;
-
-namespace Anatini.Server.Dtos
+﻿namespace Anatini.Server.Dtos
 {
-    internal class EventDto(Event @event)
+    public class EventDto
     {
-        public string Type { get; } = @event.Type;
-        public DateTime DateUtc { get; } = @event.DateUtc;
+        public required string Type { get; set; }
+        public required DateTime DateUtc { get; set; }
     }
 }

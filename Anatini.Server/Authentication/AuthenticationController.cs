@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
-using Anatini.Server.Dtos;
 using Anatini.Server.Enums;
 using Anatini.Server.Users.Commands;
 using Anatini.Server.Users.Extensions;
@@ -67,7 +66,7 @@ namespace Anatini.Server.Authentication
 
                     await new CreateEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
-                    return Created("?", new AccountDto(user));
+                    return Created("?", user.ToAccountDto());
                 }
             }
 
@@ -295,7 +294,7 @@ namespace Anatini.Server.Authentication
         {
             async Task<IActionResult> userFunction(User user)
             {
-                return await Task.FromResult(Ok(new AccountDto(user)));
+                return await Task.FromResult(Ok(user.ToAccountDto()));
             }
 
             return await UsingUser(userFunction);

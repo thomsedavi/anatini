@@ -1,4 +1,5 @@
 ﻿using Anatini.Server.Context;
+using Anatini.Server.Dtos;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Users.Extensions
@@ -77,6 +78,84 @@ namespace Anatini.Server.Users.Extensions
             user.Invites = invites;
 
             return user;
+        }
+
+        public static AccountDto ToAccountDto(this User user)
+        {
+            var accountDto = new AccountDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Emails = user.Emails.Select(ToAccountEmailDto),
+                Sessions = user.Sessions.Select(ToAccountSessionDto),
+                Slugs = user.Slugs.Select(ToAccountSlugDto),
+                Channels = user.Channels?.Select(ToAccountChannelDto),
+                Invites = user.Invites?.Select(ToAccountInviteDto),
+                DefaultSlugId = user.DefaultSlugId
+            };
+
+            return accountDto;
+        }
+
+        public static AccountEmailDto ToAccountEmailDto(this UserOwnedEmail userOwnedEmail)
+        {
+            var accountEmailDto = new AccountEmailDto
+            {
+                Address = userOwnedEmail.Address,
+                EmaiId = userOwnedEmail.EmailId,
+                Verified = userOwnedEmail.Verified
+            };
+
+            return accountEmailDto;
+        }
+
+        public static AccountSessionDto ToAccountSessionDto(this UserOwnedSession userOwnedSession)
+        {
+            var accountSessionDto = new AccountSessionDto
+            {
+                UserAgent = userOwnedSession.UserAgent,
+                Revoked = userOwnedSession.Revoked,
+                CreatedDateUtc = userOwnedSession.CreatedDateUtc,
+                UpdatedDateUtc = userOwnedSession.UpdatedDateUtc,
+                IPAddress = userOwnedSession.IPAddress
+            };
+
+            return accountSessionDto;
+        }
+
+        public static AccountSlugDto ToAccountSlugDto(this UserOwnedSlug userOwnedSlug)
+        {
+            var accountSlugDto = new AccountSlugDto
+            {
+                SlugId = userOwnedSlug.SlugId,
+                Slug = userOwnedSlug.Slug
+            };
+
+            return accountSlugDto;
+        }
+
+        public static AccountChannelDto ToAccountChannelDto(this UserOwnedChannel userOwnedChannel)
+        {
+            var accountChannelDto = new AccountChannelDto
+            {
+                ChannelId = userOwnedChannel.ChannelId,
+                Name = userOwnedChannel.Name
+            };
+
+            return accountChannelDto;
+        }
+
+        public static AccountInviteDto ToAccountInviteDto(this UserOwnedInvite userOwnedInvite)
+        {
+            var accountInviteDto = new AccountInviteDto
+            {
+                InviteId = userOwnedInvite.InviteId,
+                Code = userOwnedInvite.Code,
+                DateNZ = userOwnedInvite.DateNZ,
+                Used = userOwnedInvite.Used
+            };
+
+            return accountInviteDto;
         }
     }
 }
