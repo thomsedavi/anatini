@@ -8,12 +8,5 @@ namespace Anatini.Server.Users
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
         public bool? Default { get; set; }
-
-        public static NewUserSlug New(NewUser newUser)
-        {
-            var newSlug = new NewUserSlug { Slug = newUser.Slug };
-
-            return newSlug;
-        }
     }
 }

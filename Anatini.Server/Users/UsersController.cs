@@ -2,7 +2,6 @@
 using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
 using Anatini.Server.Dtos;
-using Anatini.Server.Users.Commands;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +28,9 @@ namespace Anatini.Server.Users
                     return Forbid();
                 }
 
-                await new CreateUserSlug(newUserSlug, user).ExecuteAsync();
+                var userSlug = newUserSlug.Create(user);
+
+                await new Add(userSlug).ExecuteAsync();
 
                 user.AddSlug(newUserSlug);
                 await new Update(user).ExecuteAsync();

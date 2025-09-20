@@ -24,13 +24,12 @@ namespace Anatini.Server.Channels
         {
             async Task<IActionResult> userFunction(User user)
             {
-                var newChannelSlug = NewChannelSlug.New(newChannel);
-                var channelSlug = newChannelSlug.Create(newChannel);
+                var channelSlug = newChannel.CreateSlug();
 
                 // Returns Conflict if channel slug already exists
                 await new Add(channelSlug).ExecuteAsync();
 
-                var channel = newChannel.Create(newChannelSlug, user);
+                var channel = newChannel.Create(user);
 
                 user.AddChannel(channel);
 

@@ -29,6 +29,8 @@ namespace Anatini.Server.Authentication
 
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }
+
+        public Guid SlugId { get; set; } = Guid.NewGuid();
     }
 
     public class LoginForm

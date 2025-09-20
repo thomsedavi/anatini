@@ -7,7 +7,6 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
 using Anatini.Server.Dtos;
 using Anatini.Server.Enums;
-using Anatini.Server.Users;
 using Anatini.Server.Users.Commands;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
@@ -182,12 +181,9 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                var refreshToken = TokenGenerator.Get;
-                var newUserSlug = NewUserSlug.New(newUser);
-                var user = newUser.Create(newUserSlug, email, refreshToken, eventData);
-
                 // This will return a Conflict if user slug is already in use
-                await new CreateUserSlug(newUserSlug, user).ExecuteAsync();
+                var userSlug = newUser.CreateSlug();
+                await new Add(userSlug).ExecuteAsync();
 
                 if (email.InvitedByUserId.HasValue)
                 {
@@ -199,14 +195,17 @@ namespace Anatini.Server.Authentication
 
                     await new Update(invitedByUser).ExecuteAsync();
 
-                    await new CreateRelationships(user.Id, invitedByUserId, RelationshipType.InvitedBy, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
-                    await new CreateRelationships(invitedByUserId, user.Id, RelationshipType.Invites, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateRelationships(newUser.Id, invitedByUserId, RelationshipType.InvitedBy, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateRelationships(invitedByUserId, newUser.Id, RelationshipType.Invites, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
 
                     email.InvitedByUserId = null;
                 }
 
                 email.Verified = true;
                 email.VerificationCode = null;
+
+                var refreshToken = TokenGenerator.Get;
+                var user = newUser.Create(email, refreshToken, eventData);
 
                 await new Add(user).ExecuteAsync();
                 await new Update(email).ExecuteAsync();

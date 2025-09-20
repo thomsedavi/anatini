@@ -6,9 +6,9 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class NewUserExtensions
     {
-        public static User Create(this NewUser newUser, NewUserSlug newUserSlug, Email email, string refreshToken, EventData eventData)
+        public static User Create(this NewUser newUser, Email email, string refreshToken, EventData eventData)
         {
-            var userEmail = new UserOwnedEmail
+            var userOwnedEmail = new UserOwnedEmail
             {
                 EmailId = email.Id,
                 UserId = newUser.Id,
@@ -16,7 +16,7 @@ namespace Anatini.Server.Users.Extensions
                 Verified = true
             };
 
-            var userSession = new UserOwnedSession
+            var userOwnedSession = new UserOwnedSession
             {
                 SessionId = Guid.NewGuid(),
                 UserId = newUser.Id,
@@ -28,9 +28,9 @@ namespace Anatini.Server.Users.Extensions
                 Revoked = false
             };
 
-            var userSlug = new UserOwnedSlug
+            var userOwnedSlug = new UserOwnedSlug
             {
-                SlugId = newUserSlug.Id,
+                SlugId = newUser.SlugId,
                 UserId = newUser.Id,
                 Slug = newUser.Slug
             };
@@ -40,15 +40,28 @@ namespace Anatini.Server.Users.Extensions
                 Id = newUser.Id,
                 Name = newUser.Name,
                 HashedPassword = null!,
-                Emails = [userEmail],
-                Sessions = [userSession],
-                Slugs = [userSlug],
-                DefaultSlugId = newUserSlug.Id
+                Emails = [userOwnedEmail],
+                Sessions = [userOwnedSession],
+                Slugs = [userOwnedSlug],
+                DefaultSlugId = newUser.SlugId
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, newUser.Password);
 
             return user;
+        }
+
+        public static UserSlug CreateSlug(this NewUser newUser)
+        {
+            var userSlug = new UserSlug
+            {
+                Id = newUser.SlugId,
+                Slug = newUser.Slug,
+                UserId = newUser.Id,
+                UserName = newUser.Name
+            };
+
+            return userSlug;
         }
     }
 }

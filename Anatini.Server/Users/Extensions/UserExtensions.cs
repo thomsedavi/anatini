@@ -21,20 +21,20 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static User AddSlug(this User user, NewUserSlug newSlug)
+        public static User AddSlug(this User user, NewUserSlug newUserSlug)
         {
             var userOwnedSlug = new UserOwnedSlug
             {
-                SlugId = newSlug.Id,
+                SlugId = newUserSlug.Id,
                 UserId = user.Id,
-                Slug = newSlug.Slug
+                Slug = newUserSlug.Slug
             };
 
             user.Slugs.Add(userOwnedSlug);
 
-            if (newSlug.Default ?? false)
+            if (newUserSlug.Default ?? false)
             {
-                user.DefaultSlugId = newSlug.Id;
+                user.DefaultSlugId = newUserSlug.Id;
             }
 
             return user;
