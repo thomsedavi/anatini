@@ -10,13 +10,13 @@ namespace Anatini.Server.Channels.Extensions
             var channelOwnedPost = new ChannelOwnedPost
             {
                 Id = post.Id,
-                ChannelId = post.Id,
+                ChannelId = channel.Id,
                 Name = post.Name
             };
 
-            var channels = channel.Posts ?? [];
-            channels.Add(channelOwnedPost);
-            channel.Posts = channels;
+            var posts = channel.Posts ?? [];
+            posts.Add(channelOwnedPost);
+            channel.Posts = posts;
 
             return channel;
         }
@@ -26,10 +26,22 @@ namespace Anatini.Server.Channels.Extensions
             var channelDto = new ChannelDto
             {
                 Id = channel.Id,
-                Name = channel.Name
+                Name = channel.Name,
+                Posts = channel.Posts?.Select(ToChannelPostDto)
             };
 
             return channelDto;
+        }
+
+        public static ChannelPostDto ToChannelPostDto(this ChannelOwnedPost channelOwnedPost)
+        {
+            var channelPostDto = new ChannelPostDto
+            {
+                Id = channelOwnedPost.Id,
+                Name = channelOwnedPost.Name
+            };
+
+            return channelPostDto;
         }
     }
 }

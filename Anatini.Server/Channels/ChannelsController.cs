@@ -57,11 +57,21 @@ namespace Anatini.Server.Channels
                     return NotFound();
                 }
 
+                // TODO Channel slug should also contain eight recent posts, shouldn't need to retrieve channel
                 var channelSlug = channelSlugResult!;
+
+                var channelResult = await new GetChannel(channelSlug.ChannelId).ExecuteAsync();
+
+                if (channelResult == null)
+                {
+                    return NotFound();
+                }
+
+                var channel = channelResult!;
 
                 // TODO return 404 if slug requires authentication
 
-                return Ok(channelSlug.ToChannelDto());
+                return Ok(channel.ToChannelDto());
             }
             catch (Exception)
             {

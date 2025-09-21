@@ -262,7 +262,7 @@
       <h3>Slugs</h3>
       <ul>
         <li v-for="(slug, index) in account.slugs" :key="'slug' + index">
-          {{ slug.slug }}: {{ account.defaultSlugId === slug.slugId ? 'Default' : 'Not Default'}}
+          {{ slug.slug }}: {{ account.defaultSlugId === slug.id ? 'Default' : 'Not Default'}}
         </li>
       </ul>
     </template>
