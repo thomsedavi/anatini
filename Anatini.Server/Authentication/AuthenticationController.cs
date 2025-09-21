@@ -190,7 +190,7 @@ namespace Anatini.Server.Authentication
 
                     var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
 
-                    invitedByUser.Invites!.First(invite => invite.InviteId == email.InviteId).Used = true;
+                    invitedByUser.Invites!.First(invite => invite.Id == email.InviteId).Used = true;
 
                     await new Update(invitedByUser).ExecuteAsync();
 

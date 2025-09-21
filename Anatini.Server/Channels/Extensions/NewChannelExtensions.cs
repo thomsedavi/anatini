@@ -8,14 +8,14 @@ namespace Anatini.Server.Channels.Extensions
         {
             var channelOwnedUser = new ChannelOwnedUser
             {
-                UserId = user.Id,
-                UserName = user.Name,
+                Id = user.Id,
+                Name = user.Name,
                 ChannelId = newChannel.Id,
             };
 
             var channelOwnedSlug = new ChannelOwnedSlug
             {
-                SlugId = newChannel.SlugId,
+                Id = newChannel.SlugId,
                 Slug = newChannel.Slug,
                 ChannelId = newChannel.Id
             };

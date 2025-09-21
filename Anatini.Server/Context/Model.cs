@@ -56,7 +56,7 @@ namespace Anatini.Server.Context
 
             modelBuilder.Entity<UserSlug>().ToContainer("UserSlugs").HasPartitionKey(userSlug => userSlug.Slug);
             modelBuilder.Entity<ChannelSlug>().ToContainer("ChannelSlugs").HasPartitionKey(channelSlug => channelSlug.Slug);
-            modelBuilder.Entity<PostSlug>().ToContainer("PostSlugs").HasPartitionKey(postSlug => postSlug.ChannelId);
+            modelBuilder.Entity<PostSlug>().ToContainer("PostSlugs").HasPartitionKey(postSlug => new { postSlug.ChannelId, postSlug.Slug });
         }
     }
 
@@ -75,7 +75,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedChannel
     {
-        public required Guid ChannelId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Name { get; set; }
     }
@@ -83,7 +83,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedEmail
     {
-        public required Guid EmailId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Address { get; set; }
         public required bool Verified { get; set; }
@@ -92,7 +92,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedSlug
     {
-        public required Guid SlugId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Slug { get; set; }
     }
@@ -100,7 +100,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedInvite
     {
-        public required Guid InviteId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Code { get; set; }
         public required bool Used { get; set; }
@@ -110,7 +110,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedSession
     {
-        public required Guid SessionId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
@@ -125,27 +125,36 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedSlug> Slugs { get; set; }
+        public ICollection<ChannelOwnedPost>? Posts { get; set; }
     }
 
     [Owned]
     public class ChannelOwnedUser
     {
-        public required Guid UserId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
-        public required string UserName { get; set; }
+        public required string Name { get; set; }
     }
 
     [Owned]
     public class ChannelOwnedSlug
     {
-        public required Guid SlugId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string Slug { get; set; }
     }
 
+    [Owned]
+    public class ChannelOwnedPost
+    {
+        public required Guid Id { get; set; }
+        public required Guid ChannelId { get; set; }
+        public required string Name { get; set; }
+    }
+
     public class Post : Entity
     {
-        public required string Title { get; set; }
+        public required string Name { get; set; }
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }
 
@@ -156,7 +165,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class PostOwnedSlug
     {
-        public required Guid SlugId { get; set; }
+        public required Guid Id { get; set; }
         public required Guid PostId { get; set; }
         public required string Slug { get; set; }
     }

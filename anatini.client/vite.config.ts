@@ -62,6 +62,10 @@ export default defineConfig({
             '^/api/channels': {
                 target,
                 secure: false
+            },
+            '^/api/posts': {
+                target,
+                secure: false
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '57850'),

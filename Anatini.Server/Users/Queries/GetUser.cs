@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Queries
 {
-    internal class GetUser(Guid userId) : IQuery<User?>
+    public class GetUser(Guid userId) : IQuery<User?>
     {
         public async Task<User?> ExecuteAsync()
         {

@@ -10,7 +10,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedEmail = new UserOwnedEmail
             {
-                EmailId = email.Id,
+                Id = email.Id,
                 UserId = newUser.Id,
                 Address = email.Address,
                 Verified = true
@@ -18,7 +18,7 @@ namespace Anatini.Server.Users.Extensions
 
             var userOwnedSession = new UserOwnedSession
             {
-                SessionId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 UserId = newUser.Id,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
@@ -30,7 +30,7 @@ namespace Anatini.Server.Users.Extensions
 
             var userOwnedSlug = new UserOwnedSlug
             {
-                SlugId = newUser.SlugId,
+                Id = newUser.SlugId,
                 UserId = newUser.Id,
                 Slug = newUser.Slug
             };

@@ -8,15 +8,16 @@
     name: string;
     defaultSlugId: string | null;
     emails: {
-      emailId: string;
+      id: string;
       address: string;
       verified: boolean;
     }[];
     channels?: {
-      channelId: string;
+      id: string;
       name: string;
     }[];
     sessions: {
+      id: string;
       userAgent: string;
       revoked: boolean;
       createdDateUtc: string;
@@ -24,13 +25,13 @@
       ipAddress: string;
     }[];
     invites?: {
-      inviteId: string;
+      id: string;
       code: string;
       dateNZ: string;
       used: boolean;
     }[];
     slugs: {
-      slugId: string;
+      id: string;
       slug: string;
     }[];
   };

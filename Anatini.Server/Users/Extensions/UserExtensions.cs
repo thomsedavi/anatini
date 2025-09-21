@@ -10,7 +10,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedChannel = new UserOwnedChannel
             {
-                ChannelId = channel.Id,
+                Id = channel.Id,
                 UserId = user.Id,
                 Name = channel.Name
             };
@@ -26,7 +26,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedSlug = new UserOwnedSlug
             {
-                SlugId = newUserSlug.Id,
+                Id = newUserSlug.Id,
                 UserId = user.Id,
                 Slug = newUserSlug.Slug
             };
@@ -45,7 +45,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userSession = new UserOwnedSession
             {
-                SessionId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 UserId = user.Id,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
@@ -66,7 +66,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedInvite = new UserOwnedInvite
             {
-                InviteId = inviteId,
+                Id = inviteId,
                 UserId = user.Id,
                 Code = inviteCode,
                 Used = false,
@@ -102,7 +102,7 @@ namespace Anatini.Server.Users.Extensions
             var accountEmailDto = new AccountEmailDto
             {
                 Address = userOwnedEmail.Address,
-                EmaiId = userOwnedEmail.EmailId,
+                Id = userOwnedEmail.Id,
                 Verified = userOwnedEmail.Verified
             };
 
@@ -113,6 +113,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var accountSessionDto = new AccountSessionDto
             {
+                Id = userOwnedSession.Id,
                 UserAgent = userOwnedSession.UserAgent,
                 Revoked = userOwnedSession.Revoked,
                 CreatedDateUtc = userOwnedSession.CreatedDateUtc,
@@ -127,7 +128,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var accountSlugDto = new AccountSlugDto
             {
-                SlugId = userOwnedSlug.SlugId,
+                Id = userOwnedSlug.Id,
                 Slug = userOwnedSlug.Slug
             };
 
@@ -138,7 +139,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var accountChannelDto = new AccountChannelDto
             {
-                ChannelId = userOwnedChannel.ChannelId,
+                Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name
             };
 
@@ -149,7 +150,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var accountInviteDto = new AccountInviteDto
             {
-                InviteId = userOwnedInvite.InviteId,
+                Id = userOwnedInvite.Id,
                 Code = userOwnedInvite.Code,
                 DateNZ = userOwnedInvite.DateNZ,
                 Used = userOwnedInvite.Used
