@@ -7,13 +7,11 @@ namespace Anatini.Server.Users.Extensions
     {
         public static UserDto ToUserDto(this UserSlug userSlug)
         {
-            var userDto = new UserDto
+            return new UserDto
             {
                 Id = userSlug.UserId,
                 Name = userSlug.UserName
             };
-
-            return userDto;
         }
     }
 }

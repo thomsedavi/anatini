@@ -151,6 +151,7 @@ namespace Anatini.Server.Context
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string Name { get; set; }
+        public required string Slug { get; set; }
     }
 
     public class Post : Entity
@@ -158,6 +159,7 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }
+        public required Guid DefaultSlugId { get; set; }
 
         // content, an array of objects with type, value, caption, platform (youtube) etc
         // tags

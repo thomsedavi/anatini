@@ -14,20 +14,19 @@ namespace Anatini.Server.Channels.Extensions
                 PostId = newPost.Id
             };
 
-            var post = new Post
+            return new Post
             {
                 Id = newPost.Id,
                 Name = newPost.Name,
                 DateNZ = eventData.DateOnlyNZNow,
                 Slugs = [postOwnedSlug],
+                DefaultSlugId = newPost.SlugId
             };
-
-            return post;
         }
 
         public static PostSlug CreateSlug(this NewPost newPost, Guid channelId)
         {
-            var channelSlug = new PostSlug
+            return new PostSlug
             {
                 Id = newPost.SlugId,
                 Slug = newPost.Slug,
@@ -35,8 +34,6 @@ namespace Anatini.Server.Channels.Extensions
                 PostId = newPost.Id,
                 PostName = newPost.Name
             };
-
-            return channelSlug;
         }
     }
 }

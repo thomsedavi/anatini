@@ -20,7 +20,7 @@ namespace Anatini.Server.Channels.Extensions
                 ChannelId = newChannel.Id
             };
 
-            var channel = new Channel
+            return new Channel
             {
                 Id = newChannel.Id,
                 Name = newChannel.Name,
@@ -28,21 +28,17 @@ namespace Anatini.Server.Channels.Extensions
                 Slugs = [channelOwnedSlug],
                 DefaultSlugId = newChannel.SlugId
             };
-
-            return channel;
         }
 
         public static ChannelSlug CreateSlug(this NewChannel newChannel)
         {
-            var channelSlug = new ChannelSlug
+            return new ChannelSlug
             {
                 Id = newChannel.SlugId,
                 Slug = newChannel.Slug,
                 ChannelId = newChannel.Id,
                 ChannelName = newChannel.Name
             };
-
-            return channelSlug;
         }
     }
 }

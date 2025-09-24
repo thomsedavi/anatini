@@ -11,7 +11,8 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = post.Id,
                 ChannelId = channel.Id,
-                Name = post.Name
+                Name = post.Name,
+                Slug = post.Slugs.First(slug => slug.Id == post.DefaultSlugId).Slug
             };
 
             var posts = channel.Posts ?? [];
@@ -23,38 +24,52 @@ namespace Anatini.Server.Channels.Extensions
 
         public static ChannelDto ToChannelDto(this Channel channel)
         {
-            var channelDto = new ChannelDto
+            return new ChannelDto
             {
-                Id = channel.Id,
                 Name = channel.Name,
                 Posts = channel.Posts?.Select(ToChannelPostDto),
-                Slugs = channel.Slugs.Select(ToChannelSlugDto),
-                DefaultSlugId = channel.DefaultSlugId
+                Slug = channel.Slugs.First(slug => slug.Id == channel.DefaultSlugId).Slug
             };
-
-            return channelDto;
         }
 
         public static ChannelPostDto ToChannelPostDto(this ChannelOwnedPost channelOwnedPost)
         {
-            var channelPostDto = new ChannelPostDto
+            return new ChannelPostDto
             {
-                Id = channelOwnedPost.Id,
-                Name = channelOwnedPost.Name
+                Name = channelOwnedPost.Name,
+                Slug = channelOwnedPost.Slug
             };
-
-            return channelPostDto;
         }
 
-        public static ChannelSlugDto ToChannelSlugDto(this ChannelOwnedSlug channelOwnedSlug)
+        public static ChannelEditDto ToChannelEditDto(this Channel channel)
         {
-            var channelSlugDto = new ChannelSlugDto
+            return new ChannelEditDto
+            {
+                Id = channel.Id,
+                Name = channel.Name,
+                Posts = channel.Posts?.Select(ToChannelEditPostDto),
+                Slugs = channel.Slugs.Select(ToChannelEditSlugDto),
+                DefaultSlugId = channel.DefaultSlugId
+            };
+        }
+
+        public static ChannelEditPostDto ToChannelEditPostDto(this ChannelOwnedPost channelOwnedPost)
+        {
+            return new ChannelEditPostDto
+            {
+                Id = channelOwnedPost.Id,
+                Name = channelOwnedPost.Name,
+                Slug = channelOwnedPost.Slug
+            };
+        }
+
+        public static ChannelEditSlugDto ToChannelEditSlugDto(this ChannelOwnedSlug channelOwnedSlug)
+        {
+            return new ChannelEditSlugDto
             {
                 Id = channelOwnedSlug.Id,
                 Slug = channelOwnedSlug.Slug
             };
-
-            return channelSlugDto;
         }
     }
 }

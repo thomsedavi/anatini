@@ -7,6 +7,7 @@ import PostView from './components/PostView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
+import ChannelEditView from './components/ChannelEditView.vue';
 import ChannelView from './components/ChannelView.vue';
 import UsersView from './components/UsersView.vue';
 
@@ -38,6 +39,10 @@ const routes = [
   {
     path: '/users/:userSlug',
     component: UserView,
+  },
+  {
+    path: '/channels/:channelSlug/edit',
+    component: ChannelEditView,
   },
   {
     path: '/channels/:channelSlug',

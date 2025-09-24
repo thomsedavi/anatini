@@ -34,7 +34,7 @@ namespace Anatini.Server.Users
                 user.AddSlug(newUserSlug);
                 await new Update(user).ExecuteAsync();
 
-                return Ok(user.ToAccountDto());
+                return Ok(user.ToUserEditDto());
             }
 
             return await UsingUser(userFunction);

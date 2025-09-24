@@ -12,7 +12,7 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
-        public async Task<IActionResult> UsingChannel(string slug, Func<Channel, Task<IActionResult>> channelFunction)
+        public async Task<IActionResult> UsingChannel(string slug, bool requiresAuthorisation, Func<Channel, Task<IActionResult>> channelFunction)
         {
 
             try
@@ -43,7 +43,7 @@ namespace Anatini.Server
 
                 var channel = channelResult!;
                 
-                if (!channel.Users.Any(user => user.Id == userId))
+                if (requiresAuthorisation && !channel.Users.Any(user => user.Id == userId))
                 {
                     return Unauthorized();
                 }

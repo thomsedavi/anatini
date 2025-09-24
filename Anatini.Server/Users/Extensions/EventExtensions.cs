@@ -7,13 +7,11 @@ namespace Anatini.Server.Users.Extensions
     {
         public static EventDto ToEventDto(this Event @event)
         {
-            var eventDto = new EventDto
+            return new EventDto
             {
                 Type = @event.Type,
                 DateUtc = @event.DateUtc
             };
-
-            return eventDto;
         }
     }
 }

@@ -40,10 +40,10 @@ namespace Anatini.Server.Channels
                 await new Add(post).ExecuteAsync();
                 await new Update(channel).ExecuteAsync();
 
-                return Ok(channel.ToChannelDto());
+                return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannel(channelSlug, channelFunction);
+            return await UsingChannel(channelSlug, true, channelFunction);
         }
 
         [HttpGet("{channelSlug}/posts/{postSlug}")]
@@ -53,6 +53,21 @@ namespace Anatini.Server.Channels
         public async Task<IActionResult> GetPost(string channelSlug, string postSlug)
         {
             return await Task.FromResult(Ok(new { channelSlug, postSlug }));
+        }
+
+        [HttpGet("{channelSlug}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetChannel(string channelSlug)
+        {
+            async Task<IActionResult> channelFunction(Channel channel)
+            {
+                return await Task.FromResult(Ok(channel.ToChannelDto()));
+            }
+
+            return await UsingChannel(channelSlug, false, channelFunction);
         }
 
         [Authorize]
@@ -78,7 +93,7 @@ namespace Anatini.Server.Channels
                 await new Add(channel).ExecuteAsync();
                 await new Update(user).ExecuteAsync();
 
-                return Ok(user.ToAccountDto());
+                return Ok(user.ToUserEditDto());
             }
 
             return await UsingUser(userFunction);

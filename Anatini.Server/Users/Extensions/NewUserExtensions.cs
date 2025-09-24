@@ -53,15 +53,13 @@ namespace Anatini.Server.Users.Extensions
 
         public static UserSlug CreateSlug(this NewUser newUser)
         {
-            var userSlug = new UserSlug
+            return new UserSlug
             {
                 Id = newUser.SlugId,
                 Slug = newUser.Slug,
                 UserId = newUser.Id,
                 UserName = newUser.Name
             };
-
-            return userSlug;
         }
     }
 }

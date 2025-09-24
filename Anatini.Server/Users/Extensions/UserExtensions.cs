@@ -80,38 +80,34 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static AccountDto ToAccountDto(this User user)
+        public static UserEditDto ToUserEditDto(this User user)
         {
-            var accountDto = new AccountDto
+            return new UserEditDto
             {
                 Id = user.Id,
                 Name = user.Name,
-                Emails = user.Emails.Select(ToAccountEmailDto),
-                Sessions = user.Sessions.Select(ToAccountSessionDto),
-                Slugs = user.Slugs.Select(ToAccountSlugDto),
-                Channels = user.Channels?.Select(ToAccountChannelDto),
-                Invites = user.Invites?.Select(ToAccountInviteDto),
+                Emails = user.Emails.Select(ToUserEditEmailDto),
+                Sessions = user.Sessions.Select(ToUserEditSessionDto),
+                Slugs = user.Slugs.Select(ToUserEditSlugDto),
+                Channels = user.Channels?.Select(ToUserEditChannelDto),
+                Invites = user.Invites?.Select(ToUserEditInviteDto),
                 DefaultSlugId = user.DefaultSlugId
             };
-
-            return accountDto;
         }
 
-        public static AccountEmailDto ToAccountEmailDto(this UserOwnedEmail userOwnedEmail)
+        public static UserEditEmailDto ToUserEditEmailDto(this UserOwnedEmail userOwnedEmail)
         {
-            var accountEmailDto = new AccountEmailDto
+            return new UserEditEmailDto
             {
                 Address = userOwnedEmail.Address,
                 Id = userOwnedEmail.Id,
                 Verified = userOwnedEmail.Verified
             };
-
-            return accountEmailDto;
         }
 
-        public static AccountSessionDto ToAccountSessionDto(this UserOwnedSession userOwnedSession)
+        public static UserEditSessionDto ToUserEditSessionDto(this UserOwnedSession userOwnedSession)
         {
-            var accountSessionDto = new AccountSessionDto
+            return new UserEditSessionDto
             {
                 Id = userOwnedSession.Id,
                 UserAgent = userOwnedSession.UserAgent,
@@ -120,43 +116,35 @@ namespace Anatini.Server.Users.Extensions
                 UpdatedDateUtc = userOwnedSession.UpdatedDateUtc,
                 IPAddress = userOwnedSession.IPAddress
             };
-
-            return accountSessionDto;
         }
 
-        public static AccountSlugDto ToAccountSlugDto(this UserOwnedSlug userOwnedSlug)
+        public static UserEditSlugDto ToUserEditSlugDto(this UserOwnedSlug userOwnedSlug)
         {
-            var accountSlugDto = new AccountSlugDto
+            return new UserEditSlugDto
             {
                 Id = userOwnedSlug.Id,
                 Slug = userOwnedSlug.Slug
             };
-
-            return accountSlugDto;
         }
 
-        public static AccountChannelDto ToAccountChannelDto(this UserOwnedChannel userOwnedChannel)
+        public static UserEditChannelDto ToUserEditChannelDto(this UserOwnedChannel userOwnedChannel)
         {
-            var accountChannelDto = new AccountChannelDto
+            return new UserEditChannelDto
             {
                 Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name
             };
-
-            return accountChannelDto;
         }
 
-        public static AccountInviteDto ToAccountInviteDto(this UserOwnedInvite userOwnedInvite)
+        public static UserEditInviteDto ToUserEditInviteDto(this UserOwnedInvite userOwnedInvite)
         {
-            var accountInviteDto = new AccountInviteDto
+            return new UserEditInviteDto
             {
                 Id = userOwnedInvite.Id,
                 Code = userOwnedInvite.Code,
                 DateNZ = userOwnedInvite.DateNZ,
                 Used = userOwnedInvite.Used
             };
-
-            return accountInviteDto;
         }
     }
 }

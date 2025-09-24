@@ -66,7 +66,7 @@ namespace Anatini.Server.Authentication
 
                     await new CreateEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
-                    return Created("?", user.ToAccountDto());
+                    return Created("?", user.ToUserEditDto());
                 }
             }
 
@@ -290,11 +290,11 @@ namespace Anatini.Server.Authentication
         [HttpGet("account")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAccount()
+        public async Task<IActionResult> GetUserEdit()
         {
             async Task<IActionResult> userFunction(User user)
             {
-                return await Task.FromResult(Ok(user.ToAccountDto()));
+                return await Task.FromResult(Ok(user.ToUserEditDto()));
             }
 
             return await UsingUser(userFunction);
