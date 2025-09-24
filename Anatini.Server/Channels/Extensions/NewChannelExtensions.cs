@@ -26,6 +26,7 @@ namespace Anatini.Server.Channels.Extensions
                 Name = newChannel.Name,
                 Users = [channelOwnedUser],
                 Slugs = [channelOwnedSlug],
+                DefaultSlugId = newChannel.SlugId
             };
 
             return channel;

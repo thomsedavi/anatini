@@ -27,7 +27,9 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channel.Id,
                 Name = channel.Name,
-                Posts = channel.Posts?.Select(ToChannelPostDto)
+                Posts = channel.Posts?.Select(ToChannelPostDto),
+                Slugs = channel.Slugs.Select(ToChannelSlugDto),
+                DefaultSlugId = channel.DefaultSlugId
             };
 
             return channelDto;
@@ -42,6 +44,17 @@ namespace Anatini.Server.Channels.Extensions
             };
 
             return channelPostDto;
+        }
+
+        public static ChannelSlugDto ToChannelSlugDto(this ChannelOwnedSlug channelOwnedSlug)
+        {
+            var channelSlugDto = new ChannelSlugDto
+            {
+                Id = channelOwnedSlug.Id,
+                Slug = channelOwnedSlug.Slug
+            };
+
+            return channelSlugDto;
         }
     }
 }

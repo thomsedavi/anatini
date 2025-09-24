@@ -32,7 +32,7 @@ const routes = [
     component: AccountView,
   },
   {
-    path: '/users/:userSlug/posts/:postSlug',
+    path: '/channels/:channelSlug/posts/:postSlug',
     component: PostView,
   },
   {

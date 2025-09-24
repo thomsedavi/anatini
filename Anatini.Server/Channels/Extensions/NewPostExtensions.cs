@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Posts.Extensions
+namespace Anatini.Server.Channels.Extensions
 {
     public static class NewPostExtensions
     {
@@ -25,13 +25,13 @@ namespace Anatini.Server.Posts.Extensions
             return post;
         }
 
-        public static PostSlug CreateSlug(this NewPost newPost)
+        public static PostSlug CreateSlug(this NewPost newPost, Guid channelId)
         {
             var channelSlug = new PostSlug
             {
                 Id = newPost.SlugId,
                 Slug = newPost.Slug,
-                ChannelId = newPost.ChannelId,
+                ChannelId = channelId,
                 PostId = newPost.Id,
                 PostName = newPost.Name
             };

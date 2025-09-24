@@ -1,9 +1,9 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Channels.Queries;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Commands;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +13,48 @@ namespace Anatini.Server.Channels
     [Route("api/[controller]")]
     public class ChannelsController : AnatiniControllerBase
     {
+        [Authorize]
+        [HttpPost("{channelSlug}/posts")]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostPost(string channelSlug, [FromForm] NewPost newPost)
+        {
+            var eventData = new EventData(HttpContext);
+
+            async Task<IActionResult> channelFunction(Channel channel)
+            {
+                var postSlug = newPost.CreateSlug(channel.Id);
+
+                // Returns Conflict if channel slug already exists
+                await new Add(postSlug).ExecuteAsync();
+
+                var post = newPost.Create(eventData);
+
+                // TODO Don't actually do this yet, channel only retains the eight most recent published posts
+                channel.AddPost(post);
+
+                await new Add(post).ExecuteAsync();
+                await new Update(channel).ExecuteAsync();
+
+                return Ok(channel.ToChannelDto());
+            }
+
+            return await UsingChannel(channelSlug, channelFunction);
+        }
+
+        [HttpGet("{channelSlug}/posts/{postSlug}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPost(string channelSlug, string postSlug)
+        {
+            return await Task.FromResult(Ok(new { channelSlug, postSlug }));
+        }
+
         [Authorize]
         [HttpPost]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
@@ -40,43 +82,6 @@ namespace Anatini.Server.Channels
             }
 
             return await UsingUser(userFunction);
-        }
-
-        [HttpGet("{slug}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSlug(string slug)
-        {
-            try
-            {
-                var channelSlugResult = await new GetChannelSlug(slug).ExecuteAsync();
-
-                if (channelSlugResult == null)
-                {
-                    return NotFound();
-                }
-
-                // TODO Channel slug should also contain eight recent posts, shouldn't need to retrieve channel
-                var channelSlug = channelSlugResult!;
-
-                var channelResult = await new GetChannel(channelSlug.ChannelId).ExecuteAsync();
-
-                if (channelResult == null)
-                {
-                    return NotFound();
-                }
-
-                var channel = channelResult!;
-
-                // TODO return 404 if slug requires authentication
-
-                return Ok(channel.ToChannelDto());
-            }
-            catch (Exception)
-            {
-                return Problem();
-            }
         }
     }
 }

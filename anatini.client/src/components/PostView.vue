@@ -8,13 +8,13 @@
   const post = ref<string | null>(null);
   const error = ref<string | null>(null);
 
-  watch([() => route.params.userSlug, () => route.params.postSlug], fetchPost, { immediate: true });
+  watch([() => route.params.channelSlug, () => route.params.postSlug], fetchPost, { immediate: true });
 
   async function fetchPost(array: (() => string | string[])[]) {
     error.value = post.value = null
     loading.value = true
 
-    fetch(`/api/users/${array[0]}/posts/${array[1]}`, { method: "GET" })
+    fetch(`/api/channels/${array[0]}/posts/${array[1]}`, { method: "GET" })
       .then((value: Response) => {
         if (value.ok) {
           value.json()

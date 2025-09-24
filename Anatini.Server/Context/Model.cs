@@ -126,6 +126,7 @@ namespace Anatini.Server.Context
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedSlug> Slugs { get; set; }
         public ICollection<ChannelOwnedPost>? Posts { get; set; } // TODO only recent eight posts here
+        public required Guid DefaultSlugId { get; set; }
     }
 
     [Owned]

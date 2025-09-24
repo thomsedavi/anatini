@@ -17,4 +17,14 @@ namespace Anatini.Server.Channels
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
     }
+
+    public class NewPost : NewEntity
+    {
+        [MaxLength(64), DataType(DataType.Text)]
+        public required string Name { get; set; }
+        [MaxLength(64), DataType(DataType.Text)]
+        public required string Slug { get; set; }
+
+        public Guid SlugId { get; set; } = Guid.NewGuid();
+    }
 }

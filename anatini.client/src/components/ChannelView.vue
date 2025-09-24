@@ -6,6 +6,15 @@
   type Channel = {
     id: string;
     name: string;
+    defaultSlugId: string;
+    slugs: {
+      id: string;
+      slug: string;
+    }[];
+    posts?: {
+      id: string;
+      name: string;
+    }[];
   };
 
   const route = useRoute();
@@ -62,12 +71,11 @@
     isCreatingPost.value = true;
 
     const body: Record<string, string> = {
-      channelId: channel.value!.id,
       name: postNameInput.value!.value.trim(),
       slug: postSlugInput.value!.value.trim(),
     };
 
-    fetch("/api/posts", {
+    fetch(`/api/channels/${route.params.channelSlug}/posts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

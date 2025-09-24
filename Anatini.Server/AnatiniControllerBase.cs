@@ -12,32 +12,42 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
-        public async Task<IActionResult> UsingChannel(Guid channelId, Func<Channel, Task<IActionResult>> channelFunction)
+        public async Task<IActionResult> UsingChannel(string slug, Func<Channel, Task<IActionResult>> channelFunction)
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!Guid.TryParse(userIdClaim, out var userId))
-            {
-                // add logging
-                return Problem();
-            }
-
-            var channelResult = await new GetChannel(channelId).ExecuteAsync();
-
-            if (channelResult == null)
-            {
-                return Problem();
-            }
-
-            var channel = channelResult!;
-
-            if (!channel.Users.Any(user => user.Id == userId))
-            {
-                return Unauthorized();
-            }
 
             try
             {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                {
+                    // add logging
+                    return Problem();
+                }
+
+                var channelSlugResult = await new GetChannelSlug(slug).ExecuteAsync();
+                
+                if (channelSlugResult == null)
+                {
+                    return Problem();
+                }
+
+                var channelSlug = channelSlugResult!;
+
+                var channelResult = await new GetChannel(channelSlug.ChannelId).ExecuteAsync();
+
+                if (channelResult == null)
+                {
+                    return Problem();
+                }
+
+                var channel = channelResult!;
+                
+                if (!channel.Users.Any(user => user.Id == userId))
+                {
+                    return Unauthorized();
+                }
+
                 return await channelFunction(channel);
             }
             catch (DbUpdateException dbUpdateException)
@@ -52,7 +62,6 @@ namespace Anatini.Server
                     return Problem();
                 }
             }
-
             catch (Exception)
             {
                 // add logger
@@ -62,25 +71,26 @@ namespace Anatini.Server
 
         public async Task<IActionResult> UsingUser(Func<User, Task<IActionResult>> userFunction)
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (!Guid.TryParse(userIdClaim, out var userId))
-            {
-                // add logging
-                return Problem();
-            }
-
-            var userResult = await new GetUser(userId).ExecuteAsync();
-
-            if (userResult == null)
-            {
-                return Problem();
-            }
-
-            var user = userResult!;
-
             try
             {
+
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                {
+                    // add logging
+                    return Problem();
+                }
+
+                var userResult = await new GetUser(userId).ExecuteAsync();
+
+                if (userResult == null)
+                {
+                    return Problem();
+                }
+
+                var user = userResult!;
+
                 return await userFunction(user);
             }
             catch (DbUpdateException dbUpdateException)
@@ -95,7 +105,6 @@ namespace Anatini.Server
                     return Problem();
                 }
             }
-
             catch (Exception)
             {
                 // add logger
