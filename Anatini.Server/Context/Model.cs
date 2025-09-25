@@ -45,11 +45,11 @@ namespace Anatini.Server.Context
             channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey("ChannelId"); user.HasKey("Id"); });
             channelBuilder.OwnsMany(channel => channel.Slugs, slug => { slug.WithOwner().HasForeignKey("ChannelId"); slug.HasKey("Id"); });
 
-            postBuilder.ToContainer("Posts").HasPartitionKey(post => post.Id);
+            postBuilder.ToContainer("Posts").HasPartitionKey(post => new { post.ChannelId, post.Id });
             postBuilder.OwnsMany(post => post.Slugs, slug => { slug.WithOwner().HasForeignKey("PostId"); slug.HasKey("Id"); });
 
-            modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(@event => @event.UserId);
-            modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(relationship => relationship.UserId);
+            modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(@event => new { @event.UserId, @event.Type });
+            modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(relationship => new { relationship.UserId, relationship.Type, relationship.ToUserId });
 
             modelBuilder.Entity<Email>().ToContainer("Emails").HasPartitionKey(email => email.Address);
             modelBuilder.Entity<Invite>().ToContainer("Invites").HasPartitionKey(invite => invite.Code);
@@ -156,6 +156,7 @@ namespace Anatini.Server.Context
 
     public class Post : Entity
     {
+        public required Guid ChannelId { get; set; }
         public required string Name { get; set; }
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }
