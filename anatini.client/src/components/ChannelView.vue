@@ -3,11 +3,9 @@
   import { useRoute } from 'vue-router';
 
   type Channel = {
-    id: string;
     name: string;
-    defaultSlugId: string;
     slug: string;
-    posts?: {
+    topPosts?: {
       slug: string;
       name: string;
     }[];

@@ -11,9 +11,11 @@
       id: string;
       slug: string;
     }[];
-    posts?: {
+    topDraftPosts?: {
       id: string;
       name: string;
+      slug: string;
+      updatedDateUTC: string;
     }[];
   };
 
@@ -32,7 +34,7 @@
     error.value = channel.value = null
     loading.value = true
 
-    fetch(`/api/channels/${array[0]}`, { method: "GET" })
+    fetch(`/api/channels/${array[0]}/edit`, { method: "GET" })
       .then((value: Response) => {
         if (value.ok) {
           value.json()
@@ -81,10 +83,16 @@
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams(body),
-    }).then((response: Response) => {
-        if (response.ok) {
-          console.log(response);
-        } else if (response.status === 409) {
+    }).then((value: Response) => {
+        if (value.ok) {
+          value.json()
+            .then((value: Channel) => {
+              channel.value = value;
+            })
+            .catch(() => {
+              error.value = 'Unknown Error';
+            });
+        } else if (value.status === 409) {
           postSlugInput.value!.setCustomValidity("Slug already in use!");
           reportValidity([postSlugInput.value]);
         } else {

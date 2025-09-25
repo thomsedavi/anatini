@@ -44,6 +44,8 @@ namespace Anatini.Server.Context
             channelBuilder.ToContainer("Channels").HasPartitionKey(channel => channel.Id);
             channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey(user => user.ChannelId); user.HasKey(user => user.Id); });
             channelBuilder.OwnsMany(channel => channel.Slugs, slug => { slug.WithOwner().HasForeignKey(slug => slug.ChannelId); slug.HasKey(slug => slug.Id); });
+            channelBuilder.OwnsMany(channel => channel.TopDraftPosts, post => { post.WithOwner().HasForeignKey(post => post.ChannelId); post.HasKey(post => post.Id); });
+            channelBuilder.OwnsMany(channel => channel.TopPublishedPosts, post => { post.WithOwner().HasForeignKey(post => post.ChannelId); post.HasKey(post => post.Id); });
 
             postBuilder.ToContainer("Posts").HasPartitionKey(post => post.Id);
             postBuilder.OwnsMany(post => post.Slugs, slug => { slug.WithOwner().HasForeignKey(slug => slug.PostId); slug.HasKey(slug => slug.Id); });
@@ -125,7 +127,8 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedSlug> Slugs { get; set; }
-        public ICollection<ChannelOwnedPost>? Posts { get; set; } // TODO only recent eight posts here
+        public ICollection<ChannelOwnedPost>? TopDraftPosts { get; set; }
+        public ICollection<ChannelOwnedPost>? TopPublishedPosts { get; set; }
         public required Guid DefaultSlugId { get; set; }
     }
 
@@ -152,6 +155,7 @@ namespace Anatini.Server.Context
         public required Guid ChannelId { get; set; }
         public required string Name { get; set; }
         public required string Slug { get; set; }
+        public required DateTime UpdatedDateUTC { get; set; }
     }
 
     public class Post : Entity
@@ -160,6 +164,7 @@ namespace Anatini.Server.Context
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }
         public required Guid DefaultSlugId { get; set; }
+        public required DateTime UpdatedDateUTC { get; set; }
 
         // content, an array of objects with type, value, caption, platform (youtube) etc
         // tags

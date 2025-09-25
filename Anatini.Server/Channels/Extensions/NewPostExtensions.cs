@@ -20,7 +20,8 @@ namespace Anatini.Server.Channels.Extensions
                 Name = newPost.Name,
                 DateNZ = eventData.DateOnlyNZNow,
                 Slugs = [postOwnedSlug],
-                DefaultSlugId = newPost.SlugId
+                DefaultSlugId = newPost.SlugId,
+                UpdatedDateUTC = eventData.DateTimeUtc
             };
         }
 

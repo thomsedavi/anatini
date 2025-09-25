@@ -35,7 +35,7 @@ namespace Anatini.Server.Channels
                 var post = newPost.Create(eventData);
 
                 // TODO Don't actually do this yet, channel only retains the eight most recent published posts
-                channel.AddPost(post);
+                channel.AddDraftPost(post, eventData);
 
                 await new Add(post).ExecuteAsync();
                 await new Update(channel).ExecuteAsync();
@@ -69,6 +69,24 @@ namespace Anatini.Server.Channels
 
             return await UsingChannel(channelSlug, false, channelFunction);
         }
+
+        [Authorize]
+        [HttpGet("{channelSlug}/edit")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetChannelEdit(string channelSlug)
+        {
+            async Task<IActionResult> channelFunction(Channel channel)
+            {
+                return await Task.FromResult(Ok(channel.ToChannelEditDto()));
+            }
+
+            return await UsingChannel(channelSlug, true, channelFunction);
+        }
+
 
         [Authorize]
         [HttpPost]
