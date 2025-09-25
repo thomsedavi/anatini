@@ -35,18 +35,18 @@ namespace Anatini.Server.Context
             var postBuilder = modelBuilder.Entity<Post>();
 
             userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Sessions, session => { session.WithOwner().HasForeignKey("UserId"); session.HasKey("Id"); });
-            userBuilder.OwnsMany(user => user.Emails, email => { email.WithOwner().HasForeignKey("UserId"); email.HasKey("Id"); });
-            userBuilder.OwnsMany(user => user.Invites, invite => { invite.WithOwner().HasForeignKey("UserId"); invite.HasKey("Id"); });
-            userBuilder.OwnsMany(user => user.Channels, channel => { channel.WithOwner().HasForeignKey("UserId"); channel.HasKey("Id"); });
-            userBuilder.OwnsMany(user => user.Slugs, slug => { slug.WithOwner().HasForeignKey("UserId"); slug.HasKey("Id"); });
+            userBuilder.OwnsMany(user => user.Sessions, session => { session.WithOwner().HasForeignKey(session => session.UserId); session.HasKey(session => session.Id); });
+            userBuilder.OwnsMany(user => user.Emails, email => { email.WithOwner().HasForeignKey(email => email.UserId); email.HasKey(email => email.Id); });
+            userBuilder.OwnsMany(user => user.Invites, invite => { invite.WithOwner().HasForeignKey(invite => invite.UserId); invite.HasKey(invite => invite.Id); });
+            userBuilder.OwnsMany(user => user.Channels, channel => { channel.WithOwner().HasForeignKey(channel => channel.UserId); channel.HasKey(channel => channel.Id); });
+            userBuilder.OwnsMany(user => user.Slugs, slug => { slug.WithOwner().HasForeignKey(slug => slug.UserId); slug.HasKey(slug => slug.Id); });
 
             channelBuilder.ToContainer("Channels").HasPartitionKey(channel => channel.Id);
-            channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey("ChannelId"); user.HasKey("Id"); });
-            channelBuilder.OwnsMany(channel => channel.Slugs, slug => { slug.WithOwner().HasForeignKey("ChannelId"); slug.HasKey("Id"); });
+            channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey(user => user.ChannelId); user.HasKey(user => user.Id); });
+            channelBuilder.OwnsMany(channel => channel.Slugs, slug => { slug.WithOwner().HasForeignKey(slug => slug.ChannelId); slug.HasKey(slug => slug.Id); });
 
-            postBuilder.ToContainer("Posts").HasPartitionKey(post => new { post.ChannelId, post.Id });
-            postBuilder.OwnsMany(post => post.Slugs, slug => { slug.WithOwner().HasForeignKey("PostId"); slug.HasKey("Id"); });
+            postBuilder.ToContainer("Posts").HasPartitionKey(post => post.Id);
+            postBuilder.OwnsMany(post => post.Slugs, slug => { slug.WithOwner().HasForeignKey(slug => slug.PostId); slug.HasKey(slug => slug.Id); });
 
             modelBuilder.Entity<Event>().ToContainer("Events").HasPartitionKey(@event => new { @event.UserId, @event.Type });
             modelBuilder.Entity<Relationship>().ToContainer("Relationships").HasPartitionKey(relationship => new { relationship.UserId, relationship.Type, relationship.ToUserId });
@@ -156,7 +156,6 @@ namespace Anatini.Server.Context
 
     public class Post : Entity
     {
-        public required Guid ChannelId { get; set; }
         public required string Name { get; set; }
         public required DateOnly DateNZ { get; set; }
         public required ICollection<PostOwnedSlug> Slugs { get; set; }

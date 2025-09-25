@@ -5,7 +5,7 @@ namespace Anatini.Server.Channels.Extensions
 {
     public static class NewPostExtensions
     {
-        public static Post Create(this NewPost newPost, Guid channelId, EventData eventData)
+        public static Post Create(this NewPost newPost, EventData eventData)
         {
             var postOwnedSlug = new PostOwnedSlug
             {
@@ -17,7 +17,6 @@ namespace Anatini.Server.Channels.Extensions
             return new Post
             {
                 Id = newPost.Id,
-                ChannelId = channelId,
                 Name = newPost.Name,
                 DateNZ = eventData.DateOnlyNZNow,
                 Slugs = [postOwnedSlug],
