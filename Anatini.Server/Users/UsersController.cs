@@ -1,10 +1,9 @@
-﻿using System.Security.Claims;
-using Anatini.Server.Context;
-using Anatini.Server.Context.Commands;
+﻿using Anatini.Server.Context.Commands;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using User = Anatini.Server.Context.User;
 
 namespace Anatini.Server.Users
 {
@@ -13,25 +12,25 @@ namespace Anatini.Server.Users
     public class UsersController : AnatiniControllerBase
     {
         [Authorize]
-        [HttpPost("slugs")]
+        [HttpPost("aliases")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSlug([FromForm] NewUserSlug newUserSlug)
+        public async Task<IActionResult> PostSlug([FromForm] NewUserAlias newUserAlias)
         {
             async Task<IActionResult> userFunction(User user)
             {
-                if (user.Slugs.Count >= 5)
+                if (user.Aliases.Count >= 5)
                 {
                     return Forbid();
                 }
 
-                var userSlug = newUserSlug.Create(user);
+                var userAlias = newUserAlias.Create(user);
 
-                await new Add(userSlug).ExecuteAsync();
+                await new Add(userAlias).ExecuteAsync();
 
-                user.AddSlug(newUserSlug);
+                user.AddAlias(newUserAlias);
                 await new Update(user).ExecuteAsync();
 
                 return Ok(user.ToUserEditDto());
@@ -46,32 +45,21 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvents()
         {
-            try
+            async Task<IActionResult> userFunction(User user)
             {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userEvents = await new GetUserEvents(user.Guid).ExecuteAsync();
 
-                if (Guid.TryParse(userIdClaim, out var userId))
-                {
-                    var events = await new GetEvents(userId).ExecuteAsync();
+                return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
+            }
 
-                    return Ok(new { Events = events.Select(@event => @event.ToEventDto()) });
-                }
-                else
-                {
-                    return Problem();
-                }
-            }
-            catch (Exception)
-            {
-                return Problem();
-            }
+            return await UsingUser(userFunction);
         }
 
         [HttpGet("{slug}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSlug(string slug)
+        public async Task<IActionResult> GetAlias(string slug)
         {
             try
             {

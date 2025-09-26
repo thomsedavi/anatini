@@ -9,10 +9,10 @@ namespace Anatini.Server.Channels
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public Guid SlugId { get; set; } = Guid.NewGuid();
+        public Guid AliasGuid { get; set; } = Guid.NewGuid();
     }
 
-    public class NewChannelSlug : NewEntity
+    public class NewChannelAlias : NewEntity
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
@@ -25,6 +25,6 @@ namespace Anatini.Server.Channels
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public Guid SlugId { get; set; } = Guid.NewGuid();
+        public Guid AliasGuid { get; set; } = Guid.NewGuid();
     }
 }

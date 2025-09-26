@@ -3,22 +3,22 @@ using Anatini.Server.Interfaces;
 
 namespace Anatini.Server.Users.Commands
 {
-    public class CreateInvite(Guid id, string code, Guid userId, DateOnly dateNZ) : ICommand<int>
+    public class CreateUserInvite(Guid guid, string code, Guid userGuid, DateOnly dateNZ) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var invite = new Invite
+            var userInvite = new UserInvite
             {
-                Id = id,
+                Guid = guid,
                 Code = code,
-                InvitedByUserId = userId,
-                NewUserId = Guid.NewGuid(),
+                InvitedByUserGuid = userGuid,
+                NewUserGuid = Guid.NewGuid(),
                 DateNZ = dateNZ
             };
 
-            context.Add(invite);
+            context.Add(userInvite);
 
             return await context.SaveChangesAsync();
         }

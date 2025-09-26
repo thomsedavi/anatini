@@ -6,20 +6,20 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class NewUserExtensions
     {
-        public static User Create(this NewUser newUser, Email email, string refreshToken, EventData eventData)
+        public static User Create(this NewUser newUser, UserEmail userEmail, string refreshToken, EventData eventData)
         {
             var userOwnedEmail = new UserOwnedEmail
             {
-                Id = email.Id,
-                UserId = newUser.Id,
-                Address = email.Address,
+                Guid = userEmail.Guid,
+                UserGuid = newUser.Guid,
+                Address = userEmail.Address,
                 Verified = true
             };
 
             var userOwnedSession = new UserOwnedSession
             {
-                Id = Guid.NewGuid(),
-                UserId = newUser.Id,
+                Guid = Guid.NewGuid(),
+                UserGuid = newUser.Guid,
                 RefreshToken = refreshToken,
                 CreatedDateUtc = eventData.DateTimeUtc,
                 UpdatedDateUtc = eventData.DateTimeUtc,
@@ -28,22 +28,22 @@ namespace Anatini.Server.Users.Extensions
                 Revoked = false
             };
 
-            var userOwnedSlug = new UserOwnedSlug
+            var userOwnedSlug = new UserOwnedAlias
             {
-                Id = newUser.SlugId,
-                UserId = newUser.Id,
+                Guid = newUser.SlugId,
+                UserGuid = newUser.Guid,
                 Slug = newUser.Slug
             };
 
             var user = new User
             {
-                Id = newUser.Id,
+                Guid = newUser.Guid,
                 Name = newUser.Name,
                 HashedPassword = null!,
                 Emails = [userOwnedEmail],
                 Sessions = [userOwnedSession],
-                Slugs = [userOwnedSlug],
-                DefaultSlugId = newUser.SlugId
+                Aliases = [userOwnedSlug],
+                DefaultAliasGuid = newUser.SlugId
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, newUser.Password);
@@ -51,13 +51,13 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static UserSlug CreateSlug(this NewUser newUser)
+        public static UserAlias CreateSlug(this NewUser newUser)
         {
-            return new UserSlug
+            return new UserAlias
             {
-                Id = newUser.SlugId,
+                Guid = newUser.SlugId,
                 Slug = newUser.Slug,
-                UserId = newUser.Id,
+                UserGuid = newUser.Guid,
                 UserName = newUser.Name
             };
         }

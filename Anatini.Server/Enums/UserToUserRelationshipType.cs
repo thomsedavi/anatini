@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum RelationshipType
+    public enum UserToUserRelationshipType
     {
         Invites,
         InvitedBy,

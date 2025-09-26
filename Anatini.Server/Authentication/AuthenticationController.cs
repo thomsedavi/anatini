@@ -38,7 +38,7 @@ namespace Anatini.Server.Authentication
                 }
                 else
                 {
-                    var inviteId = Guid.NewGuid();
+                    var inviteGuid = Guid.NewGuid();
                     var inviteCode = CodeRandom.Next();
                     var attemptCount = 0;
                     var success = false;
@@ -47,7 +47,7 @@ namespace Anatini.Server.Authentication
                     {
                         try
                         {
-                            await new CreateInvite(inviteId, inviteCode, user.Id, eventData.DateOnlyNZNow).ExecuteAsync();
+                            await new CreateUserInvite(inviteGuid, inviteCode, user.Guid, eventData.DateOnlyNZNow).ExecuteAsync();
                             success = true;
                         }
                         catch (Exception)
@@ -61,10 +61,10 @@ namespace Anatini.Server.Authentication
                         return Problem();
                     }
 
-                    user.AddInvite(inviteId, inviteCode, eventData);
+                    user.AddInvite(inviteGuid, inviteCode, eventData);
                     await new Update(user).ExecuteAsync();
 
-                    await new CreateEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
+                    await new CreateUserEvent(user.Guid, EventType.InviteCreated, eventData).ExecuteAsync();
 
                     return Created("?", user.ToUserEditDto());
                 }
@@ -80,17 +80,17 @@ namespace Anatini.Server.Authentication
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
             var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
-            var userId = Guid.Empty;
+            var userGuid = Guid.Empty;
 
             try
             {
                 if (form.InviteCode == "zzzzzzzz")
                 {
-                    userId = Guid.NewGuid();
+                    userGuid = Guid.NewGuid();
                 }
                 else
                 {
-                    var inviteResult = await new GetInvite(form.InviteCode).ExecuteAsync();
+                    var inviteResult = await new GetUserInvite(form.InviteCode).ExecuteAsync();
 
                     if (inviteResult == null)
                     {
@@ -101,12 +101,12 @@ namespace Anatini.Server.Authentication
 
                     if (invite.EmailAddress != null)
                     {
-                        var emailResult = await new GetEmail(invite.EmailAddress).ExecuteAsync();
+                        var emailResult = await new GetUserEmail(invite.EmailAddress).ExecuteAsync();
 
                         if (emailResult != null)
                         {
                             // Delete existing email result
-                            // TODO maybe just update existing email with new details
+                            // TODO maybe just update existing email with new details?
                             await new Remove(emailResult!).ExecuteAsync();
                         }
                     }
@@ -114,12 +114,12 @@ namespace Anatini.Server.Authentication
                     invite.EmailAddress = form.EmailAddress;
                     await new Update(invite).ExecuteAsync();
 
-                    userId = invite.NewUserId;
-                    eventData.Add("InvitedByUserId", invite.InvitedByUserId.ToString());
+                    userGuid = invite.NewUserGuid;
+                    eventData.Add("InvitedByUserId", invite.InvitedByUserGuid.ToString());
                 }
 
-                await new CreateEmail(form.EmailAddress, userId).ExecuteAsync();
-                await new CreateEvent(userId, EventType.EmailCreated, eventData).ExecuteAsync();
+                await new CreateUserEmail(form.EmailAddress, userGuid).ExecuteAsync();
+                await new CreateUserEvent(userGuid, EventType.EmailCreated, eventData).ExecuteAsync();
 
                 return Ok();
             }
@@ -127,7 +127,7 @@ namespace Anatini.Server.Authentication
             {
                 if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                 {
-                    await new CreateEvent(userId, EventType.EmailConflict, eventData).ExecuteAsync();
+                    await new CreateUserEvent(userGuid, EventType.EmailConflict, eventData).ExecuteAsync();
                     return Ok();
                 }
                 else
@@ -156,7 +156,7 @@ namespace Anatini.Server.Authentication
 
             try
             {
-                var emailResult = await new GetEmail(newUser.EmailAddress).ExecuteAsync();
+                var emailResult = await new GetUserEmail(newUser.EmailAddress).ExecuteAsync();
 
                 if (emailResult == null)
                 {
@@ -170,12 +170,12 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                newUser.Id = email.UserId;
+                newUser.Guid = email.UserGuid;
 
                 if (email.VerificationCode != newUser.VerificationCode)
                 {
                     await new Remove(email).ExecuteAsync();
-                    await new CreateEvent(newUser.Id, EventType.VerificationBad, eventData).ExecuteAsync();
+                    await new CreateUserEvent(newUser.Guid, EventType.VerificationBad, eventData).ExecuteAsync();
 
                     return NotFound();
                 }
@@ -184,20 +184,20 @@ namespace Anatini.Server.Authentication
                 var userSlug = newUser.CreateSlug();
                 await new Add(userSlug).ExecuteAsync();
 
-                if (email.InvitedByUserId.HasValue)
+                if (email.InvitedByUserGuid.HasValue)
                 {
-                    var invitedByUserId = email.InvitedByUserId.Value;
+                    var invitedByUserGuid = email.InvitedByUserGuid.Value;
 
-                    var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
+                    var invitedByUser = (await new GetUser(invitedByUserGuid).ExecuteAsync())!;
 
-                    invitedByUser.Invites!.First(invite => invite.Id == email.InviteId).Used = true;
+                    invitedByUser.Invites!.First(invite => invite.Guid == email.InviteGuid).Used = true;
 
                     await new Update(invitedByUser).ExecuteAsync();
 
-                    await new CreateRelationships(newUser.Id, invitedByUserId, RelationshipType.InvitedBy, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
-                    await new CreateRelationships(invitedByUserId, newUser.Id, RelationshipType.Invites, RelationshipType.Trusts, RelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateUserToUserRelationships(newUser.Guid, invitedByUserGuid, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateUserToUserRelationships(invitedByUserGuid, newUser.Guid, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
 
-                    email.InvitedByUserId = null;
+                    email.InvitedByUserGuid = null;
                 }
 
                 email.Verified = true;
@@ -208,9 +208,9 @@ namespace Anatini.Server.Authentication
 
                 await new Add(user).ExecuteAsync();
                 await new Update(email).ExecuteAsync();
-                await new CreateEvent(user.Id, EventType.UserCreated, eventData).ExecuteAsync();
+                await new CreateUserEvent(user.Guid, EventType.UserCreated, eventData).ExecuteAsync();
 
-                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
+                var accessToken = GetAccessToken(user.Guid, eventData.DateTimeUtc);
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 
@@ -266,14 +266,14 @@ namespace Anatini.Server.Authentication
 
                 var user = userResult!;
 
-                await new CreateEvent(user.Id, EventType.LoginOk, eventData).ExecuteAsync();
+                await new CreateUserEvent(user.Guid, EventType.LoginOk, eventData).ExecuteAsync();
 
                 var refreshToken = TokenGenerator.Get;
 
                 user.AddSession(refreshToken, eventData);
                 await new Update(user).ExecuteAsync();
 
-                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
+                var accessToken = GetAccessToken(user.Guid, eventData.DateTimeUtc);
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 

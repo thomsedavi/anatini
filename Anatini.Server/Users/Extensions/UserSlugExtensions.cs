@@ -5,12 +5,12 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class UserSlugExtensions
     {
-        public static UserDto ToUserDto(this UserSlug userSlug)
+        public static UserDto ToUserDto(this UserAlias userAlias)
         {
             return new UserDto
             {
-                Id = userSlug.UserId,
-                Name = userSlug.UserName
+                Id = userAlias.UserGuid,
+                Name = userAlias.UserName
             };
         }
     }

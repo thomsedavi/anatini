@@ -5,34 +5,35 @@ namespace Anatini.Server.Channels.Extensions
 {
     public static class NewPostExtensions
     {
-        public static Post Create(this NewPost newPost, EventData eventData)
+        public static Post Create(this NewPost newPost, Guid channelGuid, EventData eventData)
         {
-            var postOwnedSlug = new PostOwnedSlug
+            var postOwnedSlug = new PostOwnedAlias
             {
-                Id = newPost.SlugId,
+                Guid = newPost.AliasGuid,
                 Slug = newPost.Slug,
-                PostId = newPost.Id
+                PostGuid = newPost.Guid
             };
 
             return new Post
             {
-                Id = newPost.Id,
+                Guid = newPost.Guid,
+                ChannelGuid = channelGuid,
                 Name = newPost.Name,
                 DateNZ = eventData.DateOnlyNZNow,
-                Slugs = [postOwnedSlug],
-                DefaultSlugId = newPost.SlugId,
+                Aliases = [postOwnedSlug],
+                DefaultAliasGuid = newPost.AliasGuid,
                 UpdatedDateUTC = eventData.DateTimeUtc
             };
         }
 
-        public static PostSlug CreateSlug(this NewPost newPost, Guid channelId)
+        public static PostAlias CreateAlias(this NewPost newPost, Guid channelGuid)
         {
-            return new PostSlug
+            return new PostAlias
             {
-                Id = newPost.SlugId,
+                Guid = newPost.AliasGuid,
                 Slug = newPost.Slug,
-                ChannelId = channelId,
-                PostId = newPost.Id,
+                ChannelGuid = channelGuid,
+                PostGuid = newPost.Guid,
                 PostName = newPost.Name
             };
         }

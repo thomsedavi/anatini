@@ -6,26 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Queries
 {
-    internal class VerifyPassword(string emailAddress, string password) : IQuery<User?>
+    internal class VerifyPassword(string address, string password) : IQuery<User?>
     {
         public async Task<User?> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var userId = await context.Emails
-                .WithPartitionKey(emailAddress)
-                .Where(email => email.Address == emailAddress)
-                .Select(email => email.UserId)
+            var userGuid = await context.UserEmails
+                .WithPartitionKey(address)
+                .Where(email => email.Address == address)
+                .Select(email => email.UserGuid)
                 .FirstOrDefaultAsync();
 
-            if (userId == Guid.Empty)
+            if (userGuid == Guid.Empty)
             {
                 return null;
             }
 
             var userResult = await context.Users
-                .WithPartitionKey(userId)
-                .FirstOrDefaultAsync(user => user.Id == userId);
+                .WithPartitionKey(userGuid)
+                .FirstOrDefaultAsync(user => user.Guid == userGuid);
 
             if (userResult == null)
             {
@@ -38,7 +38,7 @@ namespace Anatini.Server.Users.Queries
 
             if (result == PasswordVerificationResult.Success)
             {
-                return userResult;
+                return user;
             }
             else
             {

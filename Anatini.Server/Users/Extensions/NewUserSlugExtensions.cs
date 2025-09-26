@@ -1,17 +1,16 @@
-﻿using Anatini.Server.Authentication;
-using Anatini.Server.Context;
+﻿using Anatini.Server.Context;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class NewUserSlugExtensions
     {
-        public static UserSlug Create(this NewUserSlug newUserSlug, User user)
+        public static UserAlias Create(this NewUserAlias newUserSlug, User user)
         {
-            return new UserSlug
+            return new UserAlias
             {
-                Id = newUserSlug.Id,
+                Guid = newUserSlug.Guid,
                 Slug = newUserSlug.Slug,
-                UserId = user.Id,
+                UserGuid = user.Guid,
                 UserName = user.Name
             };
         }

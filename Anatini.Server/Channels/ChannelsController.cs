@@ -27,12 +27,12 @@ namespace Anatini.Server.Channels
 
             async Task<IActionResult> channelFunction(Channel channel)
             {
-                var postSlug = newPost.CreateSlug(channel.Id);
+                var postSlug = newPost.CreateAlias(channel.Guid);
 
                 // Returns Conflict if channel slug already exists
                 await new Add(postSlug).ExecuteAsync();
 
-                var post = newPost.Create(eventData);
+                var post = newPost.Create(channel.Guid, eventData);
 
                 // TODO Don't actually do this yet, channel only retains the eight most recent published posts
                 channel.AddDraftPost(post, eventData);

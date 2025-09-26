@@ -17,24 +17,16 @@ namespace Anatini.Server
 
             try
             {
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (!Guid.TryParse(userIdClaim, out var userId))
-                {
-                    // add logging
-                    return Problem();
-                }
-
-                var channelSlugResult = await new GetChannelSlug(slug).ExecuteAsync();
+                var channelAliasResult = await new GetChannelAlias(slug).ExecuteAsync();
                 
-                if (channelSlugResult == null)
+                if (channelAliasResult == null)
                 {
                     return Problem();
                 }
 
-                var channelSlug = channelSlugResult!;
+                var channelAlias = channelAliasResult!;
 
-                var channelResult = await new GetChannel(channelSlug.ChannelId).ExecuteAsync();
+                var channelResult = await new GetChannel(channelAlias.ChannelGuid).ExecuteAsync();
 
                 if (channelResult == null)
                 {
@@ -42,10 +34,15 @@ namespace Anatini.Server
                 }
 
                 var channel = channelResult!;
-                
-                if (requiresAuthorisation && !channel.Users.Any(user => user.Id == userId))
+
+                if (requiresAuthorisation)
                 {
-                    return Unauthorized();
+                    var userGuidClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+ 
+                    if (!Guid.TryParse(userGuidClaim, out var userGuid) || !channel.Users.Any(user => user.Guid == userGuid))
+                    {
+                        return Unauthorized();
+                    }
                 }
 
                 return await channelFunction(channel);
@@ -74,15 +71,15 @@ namespace Anatini.Server
             try
             {
 
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userGuidClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (!Guid.TryParse(userIdClaim, out var userId))
+                if (!Guid.TryParse(userGuidClaim, out var userGuid))
                 {
                     // add logging
                     return Problem();
                 }
 
-                var userResult = await new GetUser(userId).ExecuteAsync();
+                var userResult = await new GetUser(userGuid).ExecuteAsync();
 
                 if (userResult == null)
                 {

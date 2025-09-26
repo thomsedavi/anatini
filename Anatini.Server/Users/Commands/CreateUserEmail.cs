@@ -4,22 +4,22 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Users.Commands
 {
-    internal class CreateEmail(string address, Guid userId) : ICommand<int>
+    internal class CreateUserEmail(string address, Guid userId) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            var email = new Email
+            var userEmail = new UserEmail
             {
-                Id = Guid.NewGuid(),
+                Guid = Guid.NewGuid(),
                 Address = address,
-                UserId = userId,
+                UserGuid = userId,
                 VerificationCode = CodeRandom.Next(),
                 Verified = false
             };
 
-            context.Add(email);
+            context.Add(userEmail);
 
             return await context.SaveChangesAsync();
         }

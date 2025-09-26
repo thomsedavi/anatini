@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Queries
 {
-    public class GetUserSlug(string slug) : IQuery<UserSlug?>
+    public class GetUserSlug(string slug) : IQuery<UserAlias?>
     {
-        public async Task<UserSlug?> ExecuteAsync()
+        public async Task<UserAlias?> ExecuteAsync()
         {
             using var context = new AnatiniContext();
 
-            return await context.UserSlugs.WithPartitionKey(slug).FirstOrDefaultAsync(userSlug => userSlug.Slug == slug);
+            return await context.UserAliases.WithPartitionKey(slug).FirstOrDefaultAsync(userAlias => userAlias.Slug == slug);
         }
     }
 }
