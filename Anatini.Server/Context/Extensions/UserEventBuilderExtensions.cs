@@ -7,7 +7,8 @@ namespace Anatini.Server.Context.Extensions
     {
         public static void Configure(this EntityTypeBuilder<UserEvent> userEventBuilder)
         {
-            userEventBuilder.ToContainer("UserEvents").HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.EventType });
+            userEventBuilder.ToContainer("UserEvents");
+            userEventBuilder.HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.EventType });
             userEventBuilder.Property(userEvent => userEvent.Id).ToJsonProperty("id");
             userEventBuilder.Property(userEvent => userEvent.EventType).ToJsonProperty("eventType");
             userEventBuilder.Property(userEvent => userEvent.UserId).ToJsonProperty("userId");

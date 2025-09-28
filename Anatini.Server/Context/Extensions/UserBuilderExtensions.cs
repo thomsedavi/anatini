@@ -7,13 +7,62 @@ namespace Anatini.Server.Context.Extensions
     {
         public static void Configure(this EntityTypeBuilder<User> userBuilder)
         {
-            userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Sessions, session => { session.WithOwner().HasForeignKey(session => session.UserId); session.HasKey(session => session.Id); });
-            userBuilder.OwnsMany(user => user.Emails, email => { email.WithOwner().HasForeignKey(email => email.UserId); email.HasKey(email => email.Address); });
-            userBuilder.OwnsMany(user => user.Invites, invite => { invite.WithOwner().HasForeignKey(invite => invite.UserId); invite.HasKey(invite => invite.Code); });
-            userBuilder.OwnsMany(user => user.Channels, channel => { channel.WithOwner().HasForeignKey(channel => channel.UserId); channel.HasKey(channel => channel.Id); });
-            userBuilder.OwnsMany(user => user.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => alias.UserId); alias.HasKey(alias => alias.Slug); });
+            userBuilder.ToContainer("Users");
+            userBuilder.HasPartitionKey(user => user.Id);
             userBuilder.Property(user => user.Id).ToJsonProperty("id");
+            userBuilder.Property(user => user.Name).ToJsonProperty("name");
+            userBuilder.Property(user => user.DefaultSlug).ToJsonProperty("defaultSlug");
+            userBuilder.Property(user => user.HashedPassword).ToJsonProperty("hashedPassword");
+            userBuilder.OwnsMany(user => user.Sessions, ConfigureSessions);
+            userBuilder.OwnsMany(user => user.Emails, ConfigureEmails);
+            userBuilder.OwnsMany(user => user.Invites, ConfigureInvites);
+            userBuilder.OwnsMany(user => user.Channels, ConfigureChannels);
+            userBuilder.OwnsMany(user => user.Aliases, ConfigureAliases);
+        }
+
+        private static void ConfigureSessions(OwnedNavigationBuilder<User, UserOwnedSession> sessionsBuilder)
+        {
+            sessionsBuilder.ToJsonProperty("sessions");
+            sessionsBuilder.Property(session => session.Id).ToJsonProperty("id");
+            sessionsBuilder.Property(session => session.UserId).ToJsonProperty("userId");
+            sessionsBuilder.Property(session => session.IPAddress).ToJsonProperty("ipAddress");
+            sessionsBuilder.Property(session => session.UserAgent).ToJsonProperty("userAgent");
+            sessionsBuilder.Property(session => session.RefreshToken).ToJsonProperty("refreshToken");
+            sessionsBuilder.Property(session => session.Revoked).ToJsonProperty("revoked");
+            sessionsBuilder.Property(session => session.CreatedDateTimeUtc).ToJsonProperty("createdDateTimeUtc");
+            sessionsBuilder.Property(session => session.UpdatedDateTimeUtc).ToJsonProperty("updatedDateTimeUtc");
+        }
+
+        private static void ConfigureEmails(OwnedNavigationBuilder<User, UserOwnedEmail> emailsBuilder)
+        {
+            emailsBuilder.ToJsonProperty("emails");
+            emailsBuilder.Property(email => email.Address).ToJsonProperty("id");
+            emailsBuilder.Property(email => email.UserId).ToJsonProperty("userId");
+            emailsBuilder.Property(email => email.Verified).ToJsonProperty("verified");
+        }
+
+        private static void ConfigureInvites(OwnedNavigationBuilder<User, UserOwnedInvite> invitesBuilder)
+        {
+            invitesBuilder.ToJsonProperty("invites");
+            invitesBuilder.Property(invite => invite.Code).ToJsonProperty("id");
+            invitesBuilder.Property(invite => invite.UserId).ToJsonProperty("userId");
+            invitesBuilder.Property(invite => invite.Used).ToJsonProperty("used");
+            invitesBuilder.Property(invite => invite.DateOnlyNZ).ToJsonProperty("dateOnlyNZ");
+        }
+
+        private static void ConfigureChannels(OwnedNavigationBuilder<User, UserOwnedChannel> channelsBuilder)
+        {
+            channelsBuilder.ToJsonProperty("channels");
+            channelsBuilder.Property(channel => channel.Id).ToJsonProperty("id");
+            channelsBuilder.Property(channel => channel.UserId).ToJsonProperty("userId");
+            channelsBuilder.Property(channel => channel.Name).ToJsonProperty("name");
+        }
+
+        private static void ConfigureAliases(OwnedNavigationBuilder<User, UserOwnedAlias> aliasesBuilder)
+        {
+            aliasesBuilder.ToJsonProperty("aliases");
+            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("id");
+            aliasesBuilder.Property(alias => alias.UserId).ToJsonProperty("userId");
         }
     }
 }

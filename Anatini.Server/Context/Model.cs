@@ -168,7 +168,7 @@ namespace Anatini.Server.Context
     {
         public required Guid Id { get; set; }
         public required Guid ToUserId { get; set; }
-        public required string Type { get; set; }
+        public required string RelationshipType { get; set; }
     }
 
     public class UserInvite : Entity

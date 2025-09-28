@@ -7,10 +7,24 @@ namespace Anatini.Server.Context.Extensions
     {
         public static void Configure(this EntityTypeBuilder<Post> postBuilder)
         {
-            postBuilder.ToContainer("Posts").HasPartitionKey(post => new { post.ChannelId, post.Id });
-            postBuilder.OwnsMany(post => post.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => new { alias.ChannelId, alias.PostId }); alias.HasKey(alias => alias.Slug); });
+            postBuilder.ToContainer("Posts");
+            postBuilder.HasPartitionKey(post => new { post.ChannelId, post.Id });
             postBuilder.Property(post => post.Id).ToJsonProperty("id");
+            postBuilder.Property(post => post.ChannelId).ToJsonProperty("channelId");
             postBuilder.Property(post => post.Name).ToJsonProperty("name");
+            postBuilder.Property(post => post.DateOnlyNZ).ToJsonProperty("dateOnlyNZ");
+            postBuilder.Property(post => post.UpdatedDateTimeUTC).ToJsonProperty("updatedDateTimeUTC");
+            postBuilder.Property(post => post.DefaultSlug).ToJsonProperty("defaultSlug");
+            postBuilder.OwnsMany(post => post.Aliases, ConfigureAliases);
+        }
+
+        private static void ConfigureAliases(OwnedNavigationBuilder<Post, PostOwnedAlias> aliasesBuilder)
+        {
+            aliasesBuilder.ToJsonProperty("aliases");
+            aliasesBuilder.WithOwner().HasForeignKey(alias => new { alias.ChannelId, alias.PostId });
+            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("id");
+            aliasesBuilder.Property(alias => alias.ChannelId).ToJsonProperty("channelId");
+            aliasesBuilder.Property(alias => alias.PostId).ToJsonProperty("postId");
         }
     }
 }
