@@ -13,10 +13,10 @@ namespace Anatini.Server.Users.Commands
 
             var userEvent = new UserEvent
             {
-                Guid = Guid.NewGuid(),
-                UserGuid = userId,
+                Id = Guid.NewGuid(),
+                UserId = userId,
                 Type = Enum.GetName(type)!,
-                DateUtc = data.DateTimeUtc,
+                DateTimeUtc = data.DateTimeUtc,
                 Data = data.ToDictionary()
             };
 

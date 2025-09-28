@@ -10,16 +10,16 @@ namespace Anatini.Server.Channels.Extensions
         {
             var channelOwnedPost = new ChannelOwnedPost
             {
-                Guid = post.Guid,
-                ChannelGuid = channel.Guid,
+                Id = post.Id,
+                ChannelId = channel.Id,
                 Name = post.Name,
-                Slug = post.Aliases.First(alias => alias.Guid == post.DefaultAliasGuid).Slug,
-                UpdatedDateUTC = eventData.DateTimeUtc
+                DefaultSlug = post.DefaultSlug,
+                UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
             var topDraftPosts = channel.TopDraftPosts ?? [];
             topDraftPosts.Add(channelOwnedPost);
-            channel.TopDraftPosts = [.. topDraftPosts.OrderByDescending(post => post.UpdatedDateUTC).Take(8)];
+            channel.TopDraftPosts = [.. topDraftPosts.OrderByDescending(post => post.UpdatedDateTimeUTC).Take(8)];
 
             return channel;
         }
@@ -28,11 +28,11 @@ namespace Anatini.Server.Channels.Extensions
         {
             var channelOwnedPost = new ChannelOwnedPost
             {
-                Guid = post.Guid,
-                ChannelGuid = channel.Guid,
+                Id = post.Id,
+                ChannelId = channel.Id,
                 Name = post.Name,
-                Slug = post.Aliases.First(alias => alias.Guid == post.DefaultAliasGuid).Slug,
-                UpdatedDateUTC = eventData.DateTimeUtc
+                DefaultSlug = post.DefaultSlug,
+                UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
             // TODO top 8
@@ -49,7 +49,7 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Name = channel.Name,
                 TopPosts = channel.TopPublishedPosts?.Select(ToChannelPostDto),
-                Slug = channel.Aliases.First(alias => alias.Guid == channel.DefaultAliasGuid).Slug
+                DefaultSlug = channel.DefaultSlug
             };
         }
 
@@ -58,7 +58,7 @@ namespace Anatini.Server.Channels.Extensions
             return new ChannelPostDto
             {
                 Name = channelOwnedPost.Name,
-                Slug = channelOwnedPost.Slug
+                DefaultSlug = channelOwnedPost.DefaultSlug
             };
         }
 
@@ -66,11 +66,11 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelEditDto
             {
-                Guid = channel.Guid,
+                Id = channel.Id,
                 Name = channel.Name,
                 TopDraftPosts = channel.TopDraftPosts?.Select(ToChannelEditPostDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
-                DefaultAliasGuid = channel.DefaultAliasGuid
+                DefaultSlug = channel.DefaultSlug
             };
         }
 
@@ -78,10 +78,10 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelEditPostDto
             {
-                Guid = channelOwnedPost.Guid,
+                Id = channelOwnedPost.Id,
                 Name = channelOwnedPost.Name,
-                Slug = channelOwnedPost.Slug,
-                UpdatedDateUTC = channelOwnedPost.UpdatedDateUTC
+                DefaultSlug = channelOwnedPost.DefaultSlug,
+                UpdatedDateTimeUTC = channelOwnedPost.UpdatedDateTimeUTC
             };
         }
 
@@ -89,7 +89,6 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelEditAliasDto
             {
-                Guid = channelOwnedAlias.Guid,
                 Slug = channelOwnedAlias.Slug
             };
         }

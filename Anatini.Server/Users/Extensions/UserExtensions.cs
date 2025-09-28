@@ -10,8 +10,8 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedChannel = new UserOwnedChannel
             {
-                Guid = channel.Guid,
-                UserGuid = user.Guid,
+                Id = channel.Id,
+                UserId = user.Id,
                 Name = channel.Name
             };
 
@@ -26,8 +26,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedAlias = new UserOwnedAlias
             {
-                Guid = newUserAlias.Guid,
-                UserGuid = user.Guid,
+                UserId = user.Id,
                 Slug = newUserAlias.Slug
             };
 
@@ -35,7 +34,7 @@ namespace Anatini.Server.Users.Extensions
 
             if (newUserAlias.Default ?? false)
             {
-                user.DefaultAliasGuid = newUserAlias.Guid;
+                user.DefaultSlug = newUserAlias.Slug;
             }
 
             return user;
@@ -45,11 +44,11 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedSession = new UserOwnedSession
             {
-                Guid = Guid.NewGuid(),
-                UserGuid = user.Guid,
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
                 RefreshToken = refreshToken,
-                CreatedDateUtc = eventData.DateTimeUtc,
-                UpdatedDateUtc = eventData.DateTimeUtc,
+                CreatedDateTimeUtc = eventData.DateTimeUtc,
+                UpdatedDateTimeUtc = eventData.DateTimeUtc,
                 IPAddress = eventData.Get("IPAddress"),
                 UserAgent = eventData.Get("UserAgent"),
                 Revoked = false
@@ -62,15 +61,14 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static User AddInvite(this User user, Guid inviteId, string inviteCode, EventData eventData)
+        public static User AddInvite(this User user, string inviteCode, EventData eventData)
         {
             var userOwnedInvite = new UserOwnedInvite
             {
-                Guid = inviteId,
-                UserGuid = user.Guid,
                 Code = inviteCode,
+                UserId = user.Id,
                 Used = false,
-                DateNZ = eventData.DateOnlyNZNow
+                DateOnlyNZ = eventData.DateOnlyNZNow
             };
 
             var invites = user.Invites ?? [];
@@ -84,14 +82,14 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditDto
             {
-                Id = user.Guid,
+                Id = user.Id,
                 Name = user.Name,
                 Emails = user.Emails.Select(ToUserEditEmailDto),
                 Sessions = user.Sessions.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
                 Invites = user.Invites?.Select(ToUserEditInviteDto),
-                DefaultAliasId = user.DefaultAliasGuid
+                DefaultSlug = user.DefaultSlug
             };
         }
 
@@ -99,7 +97,6 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditEmailDto
             {
-                Guid = userOwnedEmail.Guid,
                 Address = userOwnedEmail.Address,
                 Verified = userOwnedEmail.Verified
             };
@@ -109,11 +106,11 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditSessionDto
             {
-                Guid = userOwnedSession.Guid,
+                Id = userOwnedSession.Id,
                 UserAgent = userOwnedSession.UserAgent,
                 Revoked = userOwnedSession.Revoked,
-                CreatedDateUtc = userOwnedSession.CreatedDateUtc,
-                UpdatedDateUtc = userOwnedSession.UpdatedDateUtc,
+                CreatedDateTimeUtc = userOwnedSession.CreatedDateTimeUtc,
+                UpdatedDateTimeUtc = userOwnedSession.UpdatedDateTimeUtc,
                 IPAddress = userOwnedSession.IPAddress
             };
         }
@@ -122,7 +119,6 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditAliasDto
             {
-                Guid = userOwnedAlias.Guid,
                 Slug = userOwnedAlias.Slug
             };
         }
@@ -131,7 +127,7 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditChannelDto
             {
-                Guid = userOwnedChannel.Guid,
+                Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name
             };
         }
@@ -140,9 +136,8 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditInviteDto
             {
-                Guid = userOwnedInvite.Guid,
                 Code = userOwnedInvite.Code,
-                DateNZ = userOwnedInvite.DateNZ,
+                DateOnlyNZ = userOwnedInvite.DateOnlyNZ,
                 Used = userOwnedInvite.Used
             };
         }

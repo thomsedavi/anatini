@@ -8,35 +8,33 @@ namespace Anatini.Server.Channels.Extensions
         {
             var channelOwnedUser = new ChannelOwnedUser
             {
-                Guid = user.Guid,
+                Id = user.Id,
                 Name = user.Name,
-                ChannelGuid = newChannel.Guid,
+                ChannelId = newChannel.Id,
             };
 
             var channelOwnedAlias = new ChannelOwnedAlias
             {
-                Guid = newChannel.AliasGuid,
                 Slug = newChannel.Slug,
-                ChannelGuid = newChannel.Guid
+                ChannelId = newChannel.Id
             };
 
             return new Channel
             {
-                Guid = newChannel.Guid,
+                Id = newChannel.Id,
                 Name = newChannel.Name,
                 Users = [channelOwnedUser],
                 Aliases = [channelOwnedAlias],
-                DefaultAliasGuid = newChannel.AliasGuid
+                DefaultSlug = newChannel.Slug
             };
         }
 
-        public static ChannelAlias CreateSlug(this NewChannel newChannel)
+        public static ChannelAlias CreateAlias(this NewChannel newChannel)
         {
             return new ChannelAlias
             {
-                Guid = newChannel.AliasGuid,
                 Slug = newChannel.Slug,
-                ChannelGuid = newChannel.Guid,
+                ChannelId = newChannel.Id,
                 ChannelName = newChannel.Name
             };
         }

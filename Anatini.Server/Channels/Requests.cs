@@ -2,29 +2,29 @@
 
 namespace Anatini.Server.Channels
 {
-    public class NewChannel : NewEntity
+    public class NewChannel
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public Guid AliasGuid { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 
-    public class NewChannelAlias : NewEntity
+    public class NewChannelAlias
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
     }
 
-    public class NewPost : NewEntity
+    public class NewPost
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public Guid AliasGuid { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

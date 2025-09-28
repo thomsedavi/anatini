@@ -10,19 +10,18 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedEmail = new UserOwnedEmail
             {
-                Guid = userEmail.Guid,
-                UserGuid = newUser.Guid,
                 Address = userEmail.Address,
+                UserId = newUser.Id,
                 Verified = true
             };
 
             var userOwnedSession = new UserOwnedSession
             {
-                Guid = Guid.NewGuid(),
-                UserGuid = newUser.Guid,
+                Id = Guid.NewGuid(),
+                UserId = newUser.Id,
                 RefreshToken = refreshToken,
-                CreatedDateUtc = eventData.DateTimeUtc,
-                UpdatedDateUtc = eventData.DateTimeUtc,
+                CreatedDateTimeUtc = eventData.DateTimeUtc,
+                UpdatedDateTimeUtc = eventData.DateTimeUtc,
                 IPAddress = eventData.Get("IPAddress"),
                 UserAgent = eventData.Get("UserAgent"),
                 Revoked = false
@@ -30,20 +29,19 @@ namespace Anatini.Server.Users.Extensions
 
             var userOwnedSlug = new UserOwnedAlias
             {
-                Guid = newUser.SlugId,
-                UserGuid = newUser.Guid,
-                Slug = newUser.Slug
+                Slug = newUser.Slug,
+                UserId = newUser.Id
             };
 
             var user = new User
             {
-                Guid = newUser.Guid,
+                Id = newUser.Id,
                 Name = newUser.Name,
                 HashedPassword = null!,
                 Emails = [userOwnedEmail],
                 Sessions = [userOwnedSession],
                 Aliases = [userOwnedSlug],
-                DefaultAliasGuid = newUser.SlugId
+                DefaultSlug = newUser.Slug
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, newUser.Password);
@@ -55,9 +53,8 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserAlias
             {
-                Guid = newUser.SlugId,
                 Slug = newUser.Slug,
-                UserGuid = newUser.Guid,
+                UserId = newUser.Id,
                 UserName = newUser.Name
             };
         }

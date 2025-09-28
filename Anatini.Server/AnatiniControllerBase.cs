@@ -26,7 +26,7 @@ namespace Anatini.Server
 
                 var channelAlias = channelAliasResult!;
 
-                var channelResult = await new GetChannel(channelAlias.ChannelGuid).ExecuteAsync();
+                var channelResult = await new GetChannel(channelAlias.ChannelId).ExecuteAsync();
 
                 if (channelResult == null)
                 {
@@ -37,9 +37,9 @@ namespace Anatini.Server
 
                 if (requiresAuthorisation)
                 {
-                    var userGuidClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
  
-                    if (!Guid.TryParse(userGuidClaim, out var userGuid) || !channel.Users.Any(user => user.Guid == userGuid))
+                    if (!Guid.TryParse(userIdClaim, out var userId) || !channel.Users.Any(user => user.Id == userId))
                     {
                         return Unauthorized();
                     }
@@ -71,9 +71,9 @@ namespace Anatini.Server
             try
             {
 
-                var userGuidClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (!Guid.TryParse(userGuidClaim, out var userGuid))
+                if (!Guid.TryParse(userIdClaim, out var userGuid))
                 {
                     // add logging
                     return Problem();

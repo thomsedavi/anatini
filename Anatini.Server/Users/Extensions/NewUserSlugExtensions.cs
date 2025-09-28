@@ -8,9 +8,8 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserAlias
             {
-                Guid = newUserSlug.Guid,
                 Slug = newUserSlug.Slug,
-                UserGuid = user.Guid,
+                UserId = user.Id,
                 UserName = user.Name
             };
         }

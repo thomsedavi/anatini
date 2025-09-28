@@ -2,7 +2,6 @@
 using Anatini.Server.Context;
 using Anatini.Server.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Queries
 {
@@ -12,20 +11,14 @@ namespace Anatini.Server.Users.Queries
         {
             using var context = new AnatiniContext();
 
-            var userGuid = await context.UserEmails
-                .WithPartitionKey(address)
-                .Where(email => email.Address == address)
-                .Select(email => email.UserGuid)
-                .FirstOrDefaultAsync();
+            var userId = (await context.UserEmails.FindAsync(address))?.UserId;
 
-            if (userGuid == Guid.Empty)
+            if (!userId.HasValue)
             {
                 return null;
             }
 
-            var userResult = await context.Users
-                .WithPartitionKey(userGuid)
-                .FirstOrDefaultAsync(user => user.Guid == userGuid);
+            var userResult = await context.Users.FindAsync(userId.Value);
 
             if (userResult == null)
             {

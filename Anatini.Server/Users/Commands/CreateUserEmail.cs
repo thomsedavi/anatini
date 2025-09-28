@@ -12,9 +12,8 @@ namespace Anatini.Server.Users.Commands
 
             var userEmail = new UserEmail
             {
-                Guid = Guid.NewGuid(),
                 Address = address,
-                UserGuid = userId,
+                UserId = userId,
                 VerificationCode = CodeRandom.Next(),
                 Verified = false
             };

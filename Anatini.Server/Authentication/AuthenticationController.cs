@@ -32,13 +32,12 @@ namespace Anatini.Server.Authentication
 
             async Task<IActionResult> userFunction(User user)
             {
-                if (user.Invites?.Any(invite => invite.DateNZ == eventData.DateOnlyNZNow) ?? false)
+                if (user.Invites?.Any(invite => invite.DateOnlyNZ == eventData.DateOnlyNZNow) ?? false)
                 {
                     return Conflict();
                 }
                 else
                 {
-                    var inviteGuid = Guid.NewGuid();
                     var inviteCode = CodeRandom.Next();
                     var attemptCount = 0;
                     var success = false;
@@ -47,7 +46,7 @@ namespace Anatini.Server.Authentication
                     {
                         try
                         {
-                            await new CreateUserInvite(inviteGuid, inviteCode, user.Guid, eventData.DateOnlyNZNow).ExecuteAsync();
+                            await new CreateUserInvite(inviteCode, user.Id, eventData.DateOnlyNZNow).ExecuteAsync();
                             success = true;
                         }
                         catch (Exception)
@@ -61,10 +60,10 @@ namespace Anatini.Server.Authentication
                         return Problem();
                     }
 
-                    user.AddInvite(inviteGuid, inviteCode, eventData);
+                    user.AddInvite(inviteCode, eventData);
                     await new Update(user).ExecuteAsync();
 
-                    await new CreateUserEvent(user.Guid, EventType.InviteCreated, eventData).ExecuteAsync();
+                    await new CreateUserEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
                     return Created("?", user.ToUserEditDto());
                 }
@@ -80,13 +79,13 @@ namespace Anatini.Server.Authentication
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
             var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
-            var userGuid = Guid.Empty;
+            var userId = Guid.Empty;
 
             try
             {
                 if (form.InviteCode == "zzzzzzzz")
                 {
-                    userGuid = Guid.NewGuid();
+                    userId = Guid.NewGuid();
                 }
                 else
                 {
@@ -114,12 +113,12 @@ namespace Anatini.Server.Authentication
                     invite.EmailAddress = form.EmailAddress;
                     await new Update(invite).ExecuteAsync();
 
-                    userGuid = invite.NewUserGuid;
-                    eventData.Add("InvitedByUserId", invite.InvitedByUserGuid.ToString());
+                    userId = invite.NewUserId;
+                    eventData.Add("InvitedByUserId", invite.InvitedByUserId.ToString());
                 }
 
-                await new CreateUserEmail(form.EmailAddress, userGuid).ExecuteAsync();
-                await new CreateUserEvent(userGuid, EventType.EmailCreated, eventData).ExecuteAsync();
+                await new CreateUserEmail(form.EmailAddress, userId).ExecuteAsync();
+                await new CreateUserEvent(userId, EventType.EmailCreated, eventData).ExecuteAsync();
 
                 return Ok();
             }
@@ -127,7 +126,7 @@ namespace Anatini.Server.Authentication
             {
                 if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                 {
-                    await new CreateUserEvent(userGuid, EventType.EmailConflict, eventData).ExecuteAsync();
+                    await new CreateUserEvent(userId, EventType.EmailConflict, eventData).ExecuteAsync();
                     return Ok();
                 }
                 else
@@ -170,12 +169,12 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                newUser.Guid = email.UserGuid;
+                newUser.Id = email.UserId;
 
                 if (email.VerificationCode != newUser.VerificationCode)
                 {
                     await new Remove(email).ExecuteAsync();
-                    await new CreateUserEvent(newUser.Guid, EventType.VerificationBad, eventData).ExecuteAsync();
+                    await new CreateUserEvent(newUser.Id, EventType.VerificationBad, eventData).ExecuteAsync();
 
                     return NotFound();
                 }
@@ -184,20 +183,20 @@ namespace Anatini.Server.Authentication
                 var userSlug = newUser.CreateSlug();
                 await new Add(userSlug).ExecuteAsync();
 
-                if (email.InvitedByUserGuid.HasValue)
+                if (email.InvitedByUserId.HasValue)
                 {
-                    var invitedByUserGuid = email.InvitedByUserGuid.Value;
+                    var invitedByUserId = email.InvitedByUserId.Value;
 
-                    var invitedByUser = (await new GetUser(invitedByUserGuid).ExecuteAsync())!;
+                    var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
 
-                    invitedByUser.Invites!.First(invite => invite.Guid == email.InviteGuid).Used = true;
+                    invitedByUser.Invites!.First(invite => invite.Code == email.InviteCode).Used = true;
 
                     await new Update(invitedByUser).ExecuteAsync();
 
-                    await new CreateUserToUserRelationships(newUser.Guid, invitedByUserGuid, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
-                    await new CreateUserToUserRelationships(invitedByUserGuid, newUser.Guid, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateUserToUserRelationships(newUser.Id, invitedByUserId, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
+                    await new CreateUserToUserRelationships(invitedByUserId, newUser.Id, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
 
-                    email.InvitedByUserGuid = null;
+                    email.InvitedByUserId = null;
                 }
 
                 email.Verified = true;
@@ -208,9 +207,9 @@ namespace Anatini.Server.Authentication
 
                 await new Add(user).ExecuteAsync();
                 await new Update(email).ExecuteAsync();
-                await new CreateUserEvent(user.Guid, EventType.UserCreated, eventData).ExecuteAsync();
+                await new CreateUserEvent(user.Id, EventType.UserCreated, eventData).ExecuteAsync();
 
-                var accessToken = GetAccessToken(user.Guid, eventData.DateTimeUtc);
+                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 
@@ -266,14 +265,14 @@ namespace Anatini.Server.Authentication
 
                 var user = userResult!;
 
-                await new CreateUserEvent(user.Guid, EventType.LoginOk, eventData).ExecuteAsync();
+                await new CreateUserEvent(user.Id, EventType.LoginOk, eventData).ExecuteAsync();
 
                 var refreshToken = TokenGenerator.Get;
 
                 user.AddSession(refreshToken, eventData);
                 await new Update(user).ExecuteAsync();
 
-                var accessToken = GetAccessToken(user.Guid, eventData.DateTimeUtc);
+                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 

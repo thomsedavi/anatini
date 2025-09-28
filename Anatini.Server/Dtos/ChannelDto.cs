@@ -4,12 +4,12 @@
     {
         public required string Name { get; set; }
         public IEnumerable<ChannelPostDto>? TopPosts { get; set; }
-        public required string Slug { get; set; }
+        public required string DefaultSlug { get; set; }
     }
 
     public class ChannelPostDto
     {
-        public required string Slug { get; set; }
+        public required string DefaultSlug { get; set; }
         public required string Name { get; set; }
     }
 }

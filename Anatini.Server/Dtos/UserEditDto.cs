@@ -9,43 +9,40 @@
         public IEnumerable<UserEditInviteDto>? Invites { get; set; }
         public required IEnumerable<UserEditSessionDto> Sessions { get; set; }
         public required IEnumerable<UserEditAliasDto> Aliases { get; set; }
-        public required Guid? DefaultAliasId { get; set; }
+        public required string DefaultSlug { get; set; }
     }
 
     public class UserEditChannelDto
     {
-        public required Guid Guid { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
     }
 
     public class UserEditAliasDto
     {
-        public required Guid Guid { get; set; }
         public required string Slug { get; set; }
     }
 
     public class UserEditEmailDto
     {
-        public required Guid Guid { get; set; }
         public required string Address { get; set; }
         public required bool Verified { get; set; }
     }
 
     public class UserEditInviteDto
     {
-        public required Guid Guid { get; set; }
         public required string Code { get; set; }
-        public required DateOnly DateNZ { get; set; }
+        public required DateOnly DateOnlyNZ { get; set; }
         public required bool Used { get; set; }
     }
 
     public class UserEditSessionDto
     {
-        public required Guid Guid { get; set; }
+        public required Guid Id { get; set; }
         public required string UserAgent { get; set; }
         public required bool Revoked { get; set; }
-        public required DateTime CreatedDateUtc { get; set; }
-        public required DateTime UpdatedDateUtc { get; set; }
+        public required DateTime CreatedDateTimeUtc { get; set; }
+        public required DateTime UpdatedDateTimeUtc { get; set; }
         public required string IPAddress { get; set; }
     }
 }

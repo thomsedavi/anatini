@@ -10,7 +10,7 @@ namespace Anatini.Server.Users.Extensions
             return new UserEventDto
             {
                 Type = userEvent.Type,
-                DateUtc = userEvent.DateUtc
+                DateTimeUtc = userEvent.DateTimeUtc
             };
         }
     }

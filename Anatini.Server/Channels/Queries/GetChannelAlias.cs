@@ -1,6 +1,5 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Channels.Queries
 {
@@ -10,7 +9,7 @@ namespace Anatini.Server.Channels.Queries
         {
             using var context = new AnatiniContext();
 
-            return await context.ChannelAliases.WithPartitionKey(slug).FirstOrDefaultAsync(channelSlug => channelSlug.Slug == slug);
+            return await context.ChannelAliases.FindAsync(slug);
         }
     }
 }

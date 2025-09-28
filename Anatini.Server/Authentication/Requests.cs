@@ -13,7 +13,7 @@ namespace Anatini.Server.Authentication
         public required string InviteCode { get; set; }
     }
 
-    public class NewUser : NewEntity
+    public class NewUser
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
@@ -30,7 +30,7 @@ namespace Anatini.Server.Authentication
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }
 
-        public Guid SlugId { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 
     public class LoginForm

@@ -17,7 +17,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSlug([FromForm] NewUserAlias newUserAlias)
+        public async Task<IActionResult> PostAlias([FromForm] NewUserAlias newUserAlias)
         {
             async Task<IActionResult> userFunction(User user)
             {
@@ -47,7 +47,7 @@ namespace Anatini.Server.Users
         {
             async Task<IActionResult> userFunction(User user)
             {
-                var userEvents = await new GetUserEvents(user.Guid).ExecuteAsync();
+                var userEvents = await new GetUserEvents(user.Id).ExecuteAsync();
 
                 return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
             }
@@ -63,18 +63,18 @@ namespace Anatini.Server.Users
         {
             try
             {
-                var userSlugResult = await new GetUserSlug(slug).ExecuteAsync();
+                var userAliasResult = await new GetUserAlias(slug).ExecuteAsync();
 
-                if (userSlugResult == null)
+                if (userAliasResult == null)
                 {
                     return NotFound();
                 }
 
-                var userSlug = userSlugResult!;
+                var userAlias = userAliasResult!;
 
                 // TODO return 404 if slug requires authentication
 
-                return Ok(userSlug.ToUserDto());
+                return Ok(userAlias.ToUserDto());
             }
             catch (Exception)
             {

@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Users
 {
-    public class NewUserAlias : NewEntity
+    public class NewUserAlias
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }

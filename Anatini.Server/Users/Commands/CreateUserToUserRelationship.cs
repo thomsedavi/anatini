@@ -14,9 +14,9 @@ namespace Anatini.Server.Users.Commands
             {
                 var userToUserRelationship = new UserToUserRelationship
                 {
-                    Guid = Guid.NewGuid(),
-                    UserGuid = userId,
-                    ToUserGuid = toUserId,
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    ToUserId = toUserId,
                     Type = Enum.GetName(type)!
                 };
 
