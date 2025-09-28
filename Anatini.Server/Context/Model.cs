@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Anatini.Server.Context.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Context
 {
@@ -30,76 +31,16 @@ namespace Anatini.Server.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var userBuilder = modelBuilder.Entity<User>();
-            var channelBuilder = modelBuilder.Entity<Channel>();
-            var postBuilder = modelBuilder.Entity<Post>();
-            var userEmailBuilder = modelBuilder.Entity<UserEmail>();
-            var userEventBuilder = modelBuilder.Entity<UserEvent>();
-            var userToUserRelationshipBuilder = modelBuilder.Entity<UserToUserRelationship>();
-            var userInviteBuilder = modelBuilder.Entity<UserInvite>();
-            var userAliasBuilder = modelBuilder.Entity<UserAlias>();
-            var channelAliasBuilder = modelBuilder.Entity<ChannelAlias>();
-            var postAliasBuilder = modelBuilder.Entity<PostAlias>();
-
-            userBuilder.ToContainer("Users").HasPartitionKey(user => user.Id);
-            userBuilder.OwnsMany(user => user.Sessions, session => { session.WithOwner().HasForeignKey(session => session.UserId); session.HasKey(session => session.Id); });
-            userBuilder.OwnsMany(user => user.Emails, email => { email.WithOwner().HasForeignKey(email => email.UserId); email.HasKey(email => email.Address); });
-            userBuilder.OwnsMany(user => user.Invites, invite => { invite.WithOwner().HasForeignKey(invite => invite.UserId); invite.HasKey(invite => invite.Code); });
-            userBuilder.OwnsMany(user => user.Channels, channel => { channel.WithOwner().HasForeignKey(channel => channel.UserId); channel.HasKey(channel => channel.Id); });
-            userBuilder.OwnsMany(user => user.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => alias.UserId); alias.HasKey(alias => alias.Slug); });
-            userBuilder.Property(user => user.Id).ToJsonProperty("id");
-
-            channelBuilder.ToContainer("Channels").HasPartitionKey(channel => channel.Id);
-            channelBuilder.OwnsMany(channel => channel.Users, user => { user.WithOwner().HasForeignKey(user => user.ChannelId); user.HasKey(user => user.Id); });
-            channelBuilder.OwnsMany(channel => channel.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => alias.ChannelId); alias.HasKey(alias => alias.Slug); });
-            channelBuilder.OwnsMany(channel => channel.TopDraftPosts, post => { post.WithOwner().HasForeignKey(post => post.ChannelId); post.HasKey(post => post.Id); });
-            channelBuilder.OwnsMany(channel => channel.TopPublishedPosts, post => { post.WithOwner().HasForeignKey(post => post.ChannelId); post.HasKey(post => post.Id); });
-            channelBuilder.Property(channel => channel.Id).ToJsonProperty("id");
-
-            postBuilder.ToContainer("Posts").HasPartitionKey(post => new { post.ChannelId, post.Id });
-            postBuilder.OwnsMany(post => post.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => new { alias.ChannelId, alias.PostId }); alias.HasKey(alias => alias.Slug); });
-            postBuilder.Property(post => post.Id).ToJsonProperty("id");
-            postBuilder.Property(post => post.Name).ToJsonProperty("name");
-
-            userEventBuilder.ToContainer("UserEvents").HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.EventType });
-            userEventBuilder.Property(userEvent => userEvent.Id).ToJsonProperty("id");
-            userEventBuilder.Property(userEvent => userEvent.EventType).ToJsonProperty("eventType");
-            userEventBuilder.Property(userEvent => userEvent.UserId).ToJsonProperty("userId");
-            userEventBuilder.Property(userEvent => userEvent.DateTimeUtc).ToJsonProperty("dateTimeUtc");
-            userEventBuilder.Property(userEvent => userEvent.Data).ToJsonProperty("data");
-
-            userToUserRelationshipBuilder.ToContainer("UserToUserRelationships").HasPartitionKey(userToUserRelationship => new { userToUserRelationship.UserId, userToUserRelationship.Type, userToUserRelationship.ToUserId });
-            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.Id).ToJsonProperty("id");
-
-            userInviteBuilder.ToContainer("UserInvites");
-            userInviteBuilder.HasKey(userInvite => userInvite.Code);
-            userInviteBuilder.HasPartitionKey(userInvite => userInvite.Code);
-            userInviteBuilder.Property(userInvite => userInvite.Code).ToJsonProperty("id");
-
-            userEmailBuilder.ToContainer("UserEmails");
-            userEmailBuilder.HasKey(emailAddress => emailAddress.Address);
-            userEmailBuilder.HasPartitionKey(userEmail => userEmail.Address);
-            userEmailBuilder.Property(userEmail => userEmail.Address).ToJsonProperty("id");
-            userEmailBuilder.Property(userEmail => userEmail.UserId).ToJsonProperty("userId");
-            userEmailBuilder.Property(userEmail => userEmail.InvitedByUserId).ToJsonProperty("invitedByUserId");
-            userEmailBuilder.Property(userEmail => userEmail.InviteCode).ToJsonProperty("inviteCode");
-            userEmailBuilder.Property(userEmail => userEmail.VerificationCode).ToJsonProperty("verificationCode");
-            userEmailBuilder.Property(userEmail => userEmail.Verified).ToJsonProperty("verified");
-
-            userAliasBuilder.ToContainer("UserAliases");
-            userAliasBuilder.HasKey(userAlias => userAlias.Slug);
-            userAliasBuilder.HasPartitionKey(userAlias => userAlias.Slug);
-            userAliasBuilder.Property(userAlias => userAlias.Slug).ToJsonProperty("id");
-
-            channelAliasBuilder.ToContainer("ChannelAliases");
-            channelAliasBuilder.HasKey(channelAlias => channelAlias.Slug);
-            channelAliasBuilder.HasPartitionKey(channelAlias => channelAlias.Slug);
-            channelAliasBuilder.Property(channelAlias => channelAlias.Slug).ToJsonProperty("id");
-
-            postAliasBuilder.HasKey(postAlias => postAlias.Slug);
-            postAliasBuilder.ToContainer("PostAliases");
-            postAliasBuilder.HasPartitionKey(postAlias => new { postAlias.ChannelId, postAlias.Slug });
-            postAliasBuilder.Property(postAlias => postAlias.Slug).ToJsonProperty("id");
+            modelBuilder.Entity<User>().Configure();
+            modelBuilder.Entity<Channel>().Configure();
+            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<UserEmail>().Configure();
+            modelBuilder.Entity<UserEvent>().Configure();
+            modelBuilder.Entity<UserToUserRelationship>().Configure();
+            modelBuilder.Entity<UserInvite>().Configure();
+            modelBuilder.Entity<UserAlias>().Configure();
+            modelBuilder.Entity<ChannelAlias>().Configure();
+            modelBuilder.Entity<PostAlias>().Configure();
         }
     }
 
