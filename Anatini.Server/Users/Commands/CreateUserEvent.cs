@@ -5,7 +5,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Users.Commands
 {
-    internal class CreateUserEvent(Guid userId, EventType type, EventData data) : ICommand<int>
+    internal class CreateUserEvent(Guid userId, EventType eventType, EventData data) : ICommand<int>
     {
         public async Task<int> ExecuteAsync()
         {
@@ -15,7 +15,7 @@ namespace Anatini.Server.Users.Commands
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                Type = Enum.GetName(type)!,
+                EventType = Enum.GetName(eventType)!,
                 DateTimeUtc = data.DateTimeUtc,
                 Data = data.ToDictionary()
             };

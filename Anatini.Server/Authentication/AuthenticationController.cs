@@ -78,7 +78,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
-            var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
+            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
             var userId = Guid.Empty;
 
             try
@@ -114,7 +114,7 @@ namespace Anatini.Server.Authentication
                     await new Update(invite).ExecuteAsync();
 
                     userId = invite.NewUserId;
-                    eventData.Add("InvitedByUserId", invite.InvitedByUserId.ToString());
+                    eventData.Add("invitedByUserId", invite.InvitedByUserId.ToString());
                 }
 
                 await new CreateUserEmail(form.EmailAddress, userId).ExecuteAsync();
@@ -151,7 +151,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignup([FromForm] NewUser newUser)
         {
-            var eventData = new EventData(HttpContext).Add("EmailAddress", newUser.EmailAddress).Add("Name", newUser.Name);
+            var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
 
             try
             {
@@ -252,7 +252,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
         {
-            var eventData = new EventData(HttpContext).Add("EmailAddress", form.EmailAddress);
+            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
 
             try
             {

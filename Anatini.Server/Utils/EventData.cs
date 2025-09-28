@@ -9,8 +9,8 @@
 
         public EventData(HttpContext httpContext)
         {
-            Dictionary["IPAddress"] = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            Dictionary["UserAgent"] = httpContext.Request.Headers.UserAgent.ToString();
+            Dictionary["ipAddress"] = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            Dictionary["userAgent"] = httpContext.Request.Headers.UserAgent.ToString();
 
             DateTimeUtc = DateTime.UtcNow;
 

@@ -2,7 +2,7 @@
 {
     public class UserEventDto
     {
-        public required string Type { get; set; }
+        public required string EventType { get; set; }
         public required DateTime DateTimeUtc { get; set; }
     }
 }

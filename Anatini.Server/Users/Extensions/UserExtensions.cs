@@ -49,8 +49,8 @@ namespace Anatini.Server.Users.Extensions
                 RefreshToken = refreshToken,
                 CreatedDateTimeUtc = eventData.DateTimeUtc,
                 UpdatedDateTimeUtc = eventData.DateTimeUtc,
-                IPAddress = eventData.Get("IPAddress"),
-                UserAgent = eventData.Get("UserAgent"),
+                IPAddress = eventData.Get("ipAddress"),
+                UserAgent = eventData.Get("userAgent"),
                 Revoked = false
             };
 

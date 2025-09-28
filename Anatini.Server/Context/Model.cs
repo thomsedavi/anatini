@@ -59,9 +59,14 @@ namespace Anatini.Server.Context
             postBuilder.ToContainer("Posts").HasPartitionKey(post => new { post.ChannelId, post.Id });
             postBuilder.OwnsMany(post => post.Aliases, alias => { alias.WithOwner().HasForeignKey(alias => new { alias.ChannelId, alias.PostId }); alias.HasKey(alias => alias.Slug); });
             postBuilder.Property(post => post.Id).ToJsonProperty("id");
+            postBuilder.Property(post => post.Name).ToJsonProperty("name");
 
-            userEventBuilder.ToContainer("UserEvents").HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.Type });
+            userEventBuilder.ToContainer("UserEvents").HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.EventType });
             userEventBuilder.Property(userEvent => userEvent.Id).ToJsonProperty("id");
+            userEventBuilder.Property(userEvent => userEvent.EventType).ToJsonProperty("eventType");
+            userEventBuilder.Property(userEvent => userEvent.UserId).ToJsonProperty("userId");
+            userEventBuilder.Property(userEvent => userEvent.DateTimeUtc).ToJsonProperty("dateTimeUtc");
+            userEventBuilder.Property(userEvent => userEvent.Data).ToJsonProperty("data");
 
             userToUserRelationshipBuilder.ToContainer("UserToUserRelationships").HasPartitionKey(userToUserRelationship => new { userToUserRelationship.UserId, userToUserRelationship.Type, userToUserRelationship.ToUserId });
             userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.Id).ToJsonProperty("id");
@@ -75,6 +80,11 @@ namespace Anatini.Server.Context
             userEmailBuilder.HasKey(emailAddress => emailAddress.Address);
             userEmailBuilder.HasPartitionKey(userEmail => userEmail.Address);
             userEmailBuilder.Property(userEmail => userEmail.Address).ToJsonProperty("id");
+            userEmailBuilder.Property(userEmail => userEmail.UserId).ToJsonProperty("userId");
+            userEmailBuilder.Property(userEmail => userEmail.InvitedByUserId).ToJsonProperty("invitedByUserId");
+            userEmailBuilder.Property(userEmail => userEmail.InviteCode).ToJsonProperty("inviteCode");
+            userEmailBuilder.Property(userEmail => userEmail.VerificationCode).ToJsonProperty("verificationCode");
+            userEmailBuilder.Property(userEmail => userEmail.Verified).ToJsonProperty("verified");
 
             userAliasBuilder.ToContainer("UserAliases");
             userAliasBuilder.HasKey(userAlias => userAlias.Slug);
@@ -199,7 +209,7 @@ namespace Anatini.Server.Context
     public class UserEvent : UserEntity
     {
         public required Guid Id { get; set; }
-        public required string Type { get; set; }
+        public required string EventType { get; set; }
         public required DateTime DateTimeUtc { get; set; }
         public required IDictionary<string, string> Data { get; set; }
     }
