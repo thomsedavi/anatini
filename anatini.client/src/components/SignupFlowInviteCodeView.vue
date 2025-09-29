@@ -26,7 +26,7 @@
       inviteCode: inviteCodeInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/emailAddress", {
+    fetch("api/authentication/email", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

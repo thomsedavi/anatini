@@ -13,7 +13,7 @@
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("api/authentication/isAuthenticated", {
+    fetch("api/authentication/is-authenticated", {
       method: "GET",
     }).then((response: Response) => {
       if (response.ok) {

@@ -42,7 +42,7 @@
   async function createInviteCode() {
     isCreatingInviteCode.value = true;
 
-    fetch("api/authentication/inviteCode", {
+    fetch("api/authentication/invite", {
       method: "POST",
     }).then((response: Response) => {
       if (response.ok) {
