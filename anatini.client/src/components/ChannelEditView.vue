@@ -2,28 +2,13 @@
   import { ref, watch, useTemplateRef } from 'vue';
   import { useRoute } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
-
-  type Channel = {
-    id: string;
-    name: string;
-    defaultSlugId: string;
-    slugs: {
-      id: string;
-      slug: string;
-    }[];
-    topDraftPosts?: {
-      id: string;
-      name: string;
-      slug: string;
-      updatedDateUTC: string;
-    }[];
-  };
+  import type { ChannelEdit } from '@/types';
 
   const route = useRoute();
 
   const loading = ref<boolean>(false);
   const error = ref<string | null>(null);
-  const channel = ref<Channel | null>(null);
+  const channel = ref<ChannelEdit | null>(null);
   const isCreatingPost = ref<boolean>(false);
   const postSlugInput = useTemplateRef<HTMLInputElement>('post-slug');
   const postNameInput = useTemplateRef<HTMLInputElement>('post-name');
@@ -38,7 +23,7 @@
       .then((value: Response) => {
         if (value.ok) {
           value.json()
-            .then((value: Channel) => {
+            .then((value: ChannelEdit) => {
               channel.value = value;
             })
             .catch(() => {
@@ -86,7 +71,7 @@
     }).then((value: Response) => {
         if (value.ok) {
           value.json()
-            .then((value: Channel) => {
+            .then((value: ChannelEdit) => {
               channel.value = value;
             })
             .catch(() => {

@@ -2,49 +2,10 @@
   import { ref, onMounted, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
-
-  type Account = {
-    id: string,
-    name: string;
-    defaultSlugId: string | null;
-    emails: {
-      id: string;
-      address: string;
-      verified: boolean;
-    }[];
-    channels?: {
-      id: string;
-      name: string;
-    }[];
-    sessions: {
-      id: string;
-      userAgent: string;
-      revoked: boolean;
-      createdDateUtc: string;
-      updatedDateUtc: string;
-      ipAddress: string;
-    }[];
-    invites?: {
-      id: string;
-      code: string;
-      dateNZ: string;
-      used: boolean;
-    }[];
-    slugs: {
-      id: string;
-      slug: string;
-    }[];
-  };
-
-  type Events = {
-    events: {
-      type: string;
-      dateUtc: string;
-    }[];
-  };
+  import type { UserEdit, Events } from '@/types';
 
   const router = useRouter();
-  const account = ref<Account | null>(null);
+  const account = ref<UserEdit | null>(null);
   const events = ref<Events | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
@@ -64,7 +25,7 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: Account) => {
+          .then((value: UserEdit) => {
             account.value = value;
           })
           .catch(() => {
@@ -86,7 +47,7 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: Account) => {
+          .then((value: UserEdit) => {
             account.value = value;
           })
           .catch(() => {
@@ -127,7 +88,7 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: Account) => {
+          .then((value: UserEdit) => {
             account.value = value;
           })
           .catch(() => {
@@ -167,7 +128,7 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: Account) => {
+          .then((value: UserEdit) => {
             account.value = value;
           })
           .catch(() => {
@@ -234,7 +195,7 @@
       <h3>Invites</h3>
       <ul>
         <li v-for="(invite, index) in account.invites" :key="'invite' + index">
-          {{ invite.code }}: {{ invite.used ? "Used" : "Not Used" }}: {{ invite.dateNZ }}
+          {{ invite.code }}: {{ invite.used ? "Used" : "Not Used" }}: {{ invite.dateOnlyNZ }}
         </li>
       </ul>
     </template>
@@ -243,7 +204,7 @@
       <h3>Events</h3>
       <ul>
         <li v-for="(event, index) in events.events" :key="'event' + index">
-          {{ event.type }}: {{ event.dateUtc }}
+          {{ event.type }}: {{ event.dateTimeUtc }}
         </li>
       </ul>
     </template>
@@ -258,14 +219,12 @@
         <input type="submit" value="Submit" :disabled="isCreatingUserSlug">
       </p>
     </form>
-    <template v-if="account.slugs?.length">
-      <h3>Slugs</h3>
-      <ul>
-        <li v-for="(slug, index) in account.slugs" :key="'slug' + index">
-          {{ slug.slug }}: {{ account.defaultSlugId === slug.id ? 'Default' : 'Not Default'}}
-        </li>
-      </ul>
-    </template>
+    <h3>Slugs</h3>
+    <ul>
+      <li v-for="(alias, index) in account.aliases" :key="'slug' + index">
+        {{ alias.slug }}: {{ account.defaultSlug === alias.slug ? 'Default' : 'Not Default'}}
+      </li>
+    </ul>
     <h3>Create Channel</h3>
     <form id="createChannel" @submit="createChannel" action="???" method="post">
       <p>

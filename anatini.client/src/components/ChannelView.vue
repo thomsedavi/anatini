@@ -1,16 +1,8 @@
 <script setup lang="ts">
+  import type { Channel } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-
-  type Channel = {
-    name: string;
-    slug: string;
-    topPosts?: {
-      slug: string;
-      name: string;
-    }[];
-  };
-
+  
   const route = useRoute();
 
   const loading = ref<boolean>(false);

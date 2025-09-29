@@ -22,11 +22,11 @@ namespace Anatini.Server.Authentication
     [Route("api/[controller]")]
     public class AuthenticationController : AnatiniControllerBase
     {
-        [HttpPost("inviteCode")]
+        [HttpPost("invite")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostInviteCode()
+        public async Task<IActionResult> PostInvite()
         {
             var eventData = new EventData(HttpContext);
 
@@ -72,7 +72,7 @@ namespace Anatini.Server.Authentication
             return await UsingUser(userFunction);
         }
 
-        [HttpPost("emailAddress")]
+        [HttpPost("email")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -300,7 +300,7 @@ namespace Anatini.Server.Authentication
         }
 
         [Authorize]
-        [HttpPost("verifyEmail")]
+        [HttpPost("email/verify")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult PostVerifyEmail([FromForm] VerifyEmailForm request)
@@ -308,7 +308,7 @@ namespace Anatini.Server.Authentication
             return Problem();
         }
 
-        [HttpGet("isAuthenticated")]
+        [HttpGet("is-authenticated")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetIsAuthenticated()
         {

@@ -1,10 +1,7 @@
 <script setup lang="ts">
+  import type { User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-
-  type User = {
-    name: string;
-  };
 
   const route = useRoute();
 

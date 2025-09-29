@@ -9,7 +9,6 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserDto
             {
-                Id = userAlias.UserId,
                 Name = userAlias.UserName
             };
         }
