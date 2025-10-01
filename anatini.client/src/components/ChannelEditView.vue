@@ -91,20 +91,27 @@
 
 <template>
   <h2>ChannelView</h2>
-  <h3 v-if="channel">{{ channel.name }}</h3>
-  <form id="createPost" @submit="createPost" action="???" method="post">
-    <p>
-      <label for="postName">Post Name</label>
-      <input id="postName" type="text" name="postName" maxlength="64" ref="post-name" @input="event => postNameInput?.setCustomValidity('')">
-    </p>
+  <template v-if="channel">
+    <h3>{{ channel.name }}</h3>
+    <form id="createPost" @submit="createPost" action="???" method="post">
+      <p>
+        <label for="postName">Post Name</label>
+        <input id="postName" type="text" name="postName" maxlength="64" ref="post-name" @input="event => postNameInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="postSlug">Post Slug</label>
-      <input id="postSlug" type="text" name="postSlug" maxlength="64" ref="post-slug" @input="event => postSlugInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="postSlug">Post Slug</label>
+        <input id="postSlug" type="text" name="postSlug" maxlength="64" ref="post-slug" @input="event => postSlugInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <input type="submit" value="Submit" :disabled="isCreatingPost">
-    </p>
-  </form>
+      <p>
+        <input type="submit" value="Submit" :disabled="isCreatingPost">
+      </p>
+    </form>
+    <template v-if="channel.topDraftPosts?.length">
+      <div v-for="(post, index) in channel.topDraftPosts" :key="'topDraftPost' + index">
+        <RouterLink :to="{ name: 'postEdit', params: { channelSlug: route.params.channelSlug, postSlug: post.defaultSlug }}">{{ post.name }}</RouterLink>
+      </div>
+    </template>
+  </template>
 </template>

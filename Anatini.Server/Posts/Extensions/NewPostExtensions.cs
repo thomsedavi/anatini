@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Channels.Extensions
+namespace Anatini.Server.Posts.Extensions
 {
     public static class NewPostExtensions
     {

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Anatini.Server.Channels
+namespace Anatini.Server.Posts
 {
-    public class NewChannel
+    public class NewPost
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
@@ -10,11 +10,5 @@ namespace Anatini.Server.Channels
         public required string Slug { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();
-    }
-
-    public class NewChannelAlias
-    {
-        [MaxLength(64), DataType(DataType.Text)]
-        public required string Slug { get; set; }
     }
 }

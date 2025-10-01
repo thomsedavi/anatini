@@ -33,8 +33,14 @@ const routes = [
     component: AccountView,
   },
   {
+    path: '/channels/:channelSlug/posts/:postSlug/edit',
+    component: PostEditView, // todo (obviously)
+    name: 'postEdit',
+  },
+  {
     path: '/channels/:channelSlug/posts/:postSlug',
     component: PostView,
+    name: 'post',
   },
   {
     path: '/users/:userSlug',
