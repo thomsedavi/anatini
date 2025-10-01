@@ -8,6 +8,7 @@ namespace Anatini.Server.Context.Extensions
         public static void Configure(this EntityTypeBuilder<Post> postBuilder)
         {
             postBuilder.ToContainer("Posts");
+            postBuilder.HasKey(post => new { post.ChannelId, post.Id });
             postBuilder.HasPartitionKey(post => new { post.ChannelId, post.Id });
             postBuilder.Property(post => post.Id).ToJsonProperty("id");
             postBuilder.Property(post => post.ChannelId).ToJsonProperty("channelId");
