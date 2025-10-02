@@ -1,15 +1,12 @@
 ﻿using Anatini.Server.Context;
-using Anatini.Server.Interfaces;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Users.Extensions
 {
-    internal class CreateUserEmail(string address, Guid userId) : ICommand<int>
+    public static class UserEmailExtensions
     {
-        public async Task<int> ExecuteAsync()
+        public static AnatiniContext AddUserEmail(this AnatiniContext context, string address, Guid userId)
         {
-            using var context = new AnatiniContext();
-
             var userEmail = new UserEmail
             {
                 Address = address,
@@ -20,7 +17,7 @@ namespace Anatini.Server.Users.Commands
 
             context.Add(userEmail);
 
-            return await context.SaveChangesAsync();
+            return context;
         }
     }
 }

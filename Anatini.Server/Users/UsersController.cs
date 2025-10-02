@@ -1,8 +1,8 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Users.Extensions;
-using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using User = Anatini.Server.Context.User;
 
 namespace Anatini.Server.Users
@@ -44,14 +44,15 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvents()
         {
-            async Task<IActionResult> userFunction(User user)
+            async Task<IActionResult> userContextFunction(User user, AnatiniContext context)
             {
-                var userEvents = await new GetUserEvents(user.Id).ExecuteAsync();
+                // is 'WithPartitionKey' useful here?
+                var userEvents = await context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
 
                 return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserContextAsync(userContextFunction);
         }
 
         [HttpGet("{slug}")]
@@ -60,25 +61,21 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAlias(string slug)
         {
-            try
+            async Task<IActionResult> contextFunction(AnatiniContext context)
             {
-                var userAliasResult = await new GetUserAlias(slug).ExecuteAsync();
+                var userAlias = await context.UserAliases.FindAsync(slug);
 
-                if (userAliasResult == null)
+                if (userAlias == null)
                 {
                     return NotFound();
                 }
-
-                var userAlias = userAliasResult!;
 
                 // TODO return 404 if slug requires authentication
 
                 return Ok(userAlias.ToUserDto());
             }
-            catch (Exception)
-            {
-                return Problem();
-            }
+
+            return await UsingContextAsync(contextFunction);
         }
     }
 }

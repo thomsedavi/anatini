@@ -4,11 +4,8 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Context;
-using Anatini.Server.Context.Commands;
 using Anatini.Server.Enums;
-using Anatini.Server.Users.Commands;
 using Anatini.Server.Users.Extensions;
-using Anatini.Server.Users.Queries;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +25,10 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostInvite()
         {
-            var eventData = new EventData(HttpContext);
-
             async Task<IActionResult> userContextFunction(User user, AnatiniContext context)
             {
+                var eventData = new EventData(HttpContext);
+
                 if (user.Invites?.Any(invite => invite.DateOnlyNZ == eventData.DateOnlyNZNow) ?? false)
                 {
                     return Conflict();
@@ -46,7 +43,8 @@ namespace Anatini.Server.Authentication
                     {
                         try
                         {
-                            await new CreateUserInvite(inviteCode, user.Id, eventData.DateOnlyNZNow).ExecuteAsync();
+                            context.AddUserInvite(inviteCode, user.Id, eventData.DateOnlyNZNow);
+                            await context.SaveChangesAsync();
                             success = true;
                         }
                         catch (Exception)
@@ -63,7 +61,7 @@ namespace Anatini.Server.Authentication
                     user.AddInvite(inviteCode, eventData);
                     context.Update(user);
 
-                    await new CreateUserEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
+                    context.AddUserEvent(user.Id, EventType.InviteCreated, eventData);
 
                     return Created("?", user.ToUserEditDto());
                 }
@@ -78,68 +76,64 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
-            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-            var userId = Guid.Empty;
-
-            try
+            async Task<IActionResult> contextFunction(AnatiniContext context)
             {
+                var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
+                var userId = Guid.Empty;
+
                 if (form.InviteCode == "zzzzzzzz")
                 {
                     userId = Guid.NewGuid();
                 }
                 else
                 {
-                    var inviteResult = await new GetUserInvite(form.InviteCode).ExecuteAsync();
+                    var invite = await context.UserInvites.FindAsync(form.InviteCode);
 
-                    if (inviteResult == null)
+                    if (invite == null)
                     {
                         return Ok();
                     }
 
-                    var invite = inviteResult!;
-
                     if (invite.EmailAddress != null)
                     {
-                        var emailResult = await new GetUserEmail(invite.EmailAddress).ExecuteAsync();
+                        var email = await context.UserEmails.FindAsync(invite.EmailAddress);
 
-                        if (emailResult != null)
+                        if (email != null)
                         {
                             // Delete existing email result
                             // TODO maybe just update existing email with new details?
-                            await new Remove(emailResult!).ExecuteAsync();
+                            context.Remove(email);
                         }
                     }
 
                     invite.EmailAddress = form.EmailAddress;
-                    await new Update(invite).ExecuteAsync();
+                    context.Update(invite);
 
                     userId = invite.NewUserId;
                     eventData.Add("invitedByUserId", invite.InvitedByUserId.ToString());
                 }
 
-                await new CreateUserEmail(form.EmailAddress, userId).ExecuteAsync();
-                await new CreateUserEvent(userId, EventType.EmailCreated, eventData).ExecuteAsync();
+                context.AddUserEmail(form.EmailAddress, userId);
+                context.AddUserEvent(userId, EventType.EmailCreated, eventData);
 
                 return Ok();
             }
-            catch (DbUpdateException dbUpdateException)
+
+            IActionResult onDbUpdateException(DbUpdateException dbUpdateException, IActionResult defaultResult)
             {
                 if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                 {
-                    await new CreateUserEvent(userId, EventType.EmailConflict, eventData).ExecuteAsync();
+                    // neither confirm nor deny that this email address already exists
                     return Ok();
                 }
                 else
                 {
-                    //logger.LogError(dbUpdateException, "Exception creating user");
-                    return Problem();
+                    return defaultResult;
                 }
             }
-            catch (Exception)
-            {
-                //logger.LogError(exception, "Exception creating user");
-                return Problem();
-            }
+            ;
+
+            return await UsingContextAsync(contextFunction, onDbUpdateException);
         }
 
         [HttpPost("signup")]
@@ -151,18 +145,16 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignup([FromForm] NewUser newUser)
         {
-            var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
-
-            try
+            async Task<IActionResult> contextFunction(AnatiniContext context)
             {
-                var emailResult = await new GetUserEmail(newUser.EmailAddress).ExecuteAsync();
+                var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
 
-                if (emailResult == null)
+                var email = await context.UserEmails.FindAsync(newUser.EmailAddress);
+
+                if (email == null)
                 {
                     return NotFound();
                 }
-
-                var email = emailResult!;
 
                 if (email.Verified)
                 {
@@ -173,28 +165,24 @@ namespace Anatini.Server.Authentication
 
                 if (email.VerificationCode != newUser.VerificationCode)
                 {
-                    await new Remove(email).ExecuteAsync();
-                    await new CreateUserEvent(newUser.Id, EventType.VerificationBad, eventData).ExecuteAsync();
+                    context.Remove(email);
+                    context.AddUserEvent(newUser.Id, EventType.VerificationBad, eventData);
 
                     return NotFound();
                 }
-
-                // This will return a Conflict if user slug is already in use
-                var userSlug = newUser.CreateSlug();
-                await new Add(userSlug).ExecuteAsync();
 
                 if (email.InvitedByUserId.HasValue)
                 {
                     var invitedByUserId = email.InvitedByUserId.Value;
 
-                    var invitedByUser = (await new GetUser(invitedByUserId).ExecuteAsync())!;
+                    var invitedByUser = (await context.Users.FindAsync(invitedByUserId));
 
-                    invitedByUser.Invites!.First(invite => invite.Code == email.InviteCode).Used = true;
+                    invitedByUser!.Invites!.First(invite => invite.Code == email.InviteCode).Used = true;
 
-                    await new Update(invitedByUser).ExecuteAsync();
+                    context.Update(invitedByUser);
 
-                    await new CreateUserToUserRelationships(newUser.Id, invitedByUserId, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
-                    await new CreateUserToUserRelationships(invitedByUserId, newUser.Id, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy).ExecuteAsync();
+                    context.AddUserToUserRelationships(newUser.Id, invitedByUserId, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy);
+                    context.AddUserToUserRelationships(invitedByUserId, newUser.Id, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy);
 
                     email.InvitedByUserId = null;
                 }
@@ -203,11 +191,13 @@ namespace Anatini.Server.Authentication
                 email.VerificationCode = null;
 
                 var refreshToken = TokenGenerator.Get;
-                var user = newUser.Create(email, refreshToken, eventData);
 
-                await new Add(user).ExecuteAsync();
-                await new Update(email).ExecuteAsync();
-                await new CreateUserEvent(user.Id, EventType.UserCreated, eventData).ExecuteAsync();
+                var user = newUser.Create(email, refreshToken, eventData);
+                var userSlug = newUser.CreateSlug();
+
+                context.AddRange(user, userSlug);
+                context.Update(email);
+                context.AddUserEvent(user.Id, EventType.UserCreated, eventData);
 
                 var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
 
@@ -215,23 +205,8 @@ namespace Anatini.Server.Authentication
 
                 return Ok();
             }
-            catch (DbUpdateException dbUpdateException)
-            {
-                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    //logger.LogError(dbUpdateException, "Exception creating user");
-                    return Problem();
-                }
-            }
-            catch (Exception)
-            {
-                //logger.LogError(exception, "Exception creating user");
-                return Problem();
-            }
+
+            return await UsingContextAsync(contextFunction);
         }
 
         [Authorize]
@@ -252,25 +227,23 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
         {
-            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-
-            try
+            async Task<IActionResult> contextFunction(AnatiniContext context)
             {
-                var userResult = await new VerifyPassword(form.EmailAddress, form.Password).ExecuteAsync();
+                var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
 
-                if (userResult == null)
+                var user = await context.VerifyPassword(form.EmailAddress, form.Password);
+
+                if (user == null)
                 {
                     return NotFound();
                 }
 
-                var user = userResult!;
-
-                await new CreateUserEvent(user.Id, EventType.LoginOk, eventData).ExecuteAsync();
+                context.AddUserEvent(user.Id, EventType.LoginOk, eventData);
 
                 var refreshToken = TokenGenerator.Get;
 
                 user.AddSession(refreshToken, eventData);
-                await new Update(user).ExecuteAsync();
+                context.Update(user);
 
                 var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
 
@@ -278,11 +251,8 @@ namespace Anatini.Server.Authentication
 
                 return Ok();
             }
-            catch (Exception)
-            {
-                //logger.LogError(exception, "Exception logging in");
-                return Problem();
-            }
+
+            return await UsingContextAsync(contextFunction);
         }
 
         [Authorize]

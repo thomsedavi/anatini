@@ -1,15 +1,12 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Enums;
-using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Users.Extensions
 {
-    public class CreateUserToUserRelationships(Guid userId, Guid toUserId, params UserToUserRelationshipType[] relationshipTypes) : ICommand<int>
+    public static class UserToUserRelationshipExtensions
     {
-        public async Task<int> ExecuteAsync()
+        public static AnatiniContext AddUserToUserRelationships(this AnatiniContext context, Guid userId, Guid toUserId, params UserToUserRelationshipType[] relationshipTypes)
         {
-            using var context = new AnatiniContext();
-
             foreach (var relationshipType in relationshipTypes)
             {
                 var userToUserRelationship = new UserToUserRelationship
@@ -23,7 +20,7 @@ namespace Anatini.Server.Users.Commands
                 context.Add(userToUserRelationship);
             }
 
-            return await context.SaveChangesAsync();
+            return context;
         }
     }
 }

@@ -1,14 +1,11 @@
 ﻿using Anatini.Server.Context;
-using Anatini.Server.Interfaces;
 
-namespace Anatini.Server.Users.Commands
+namespace Anatini.Server.Users.Extensions
 {
-    public class CreateUserInvite(string code, Guid userId, DateOnly dateOnlyNZ) : ICommand<int>
+    public static class UserInviteExtensions
     {
-        public async Task<int> ExecuteAsync()
+        public static AnatiniContext AddUserInvite(this AnatiniContext context, string code, Guid userId, DateOnly dateOnlyNZ)
         {
-            using var context = new AnatiniContext();
-
             var userInvite = new UserInvite
             {
                 Code = code,
@@ -19,7 +16,7 @@ namespace Anatini.Server.Users.Commands
 
             context.Add(userInvite);
 
-            return await context.SaveChangesAsync();
+            return context;
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
-using Anatini.Server.Channels.Queries;
 using Anatini.Server.Context;
-using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +10,28 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
+        public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction, Func<DbUpdateException, IActionResult, IActionResult>? onDbUpdateException = null)
+        {
+            try
+            {
+                using var context = new AnatiniContext();
+
+                var result = await contextFunction(context);
+
+                await context.SaveChangesAsync();
+
+                return result;
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                return onDbUpdateException != null ? onDbUpdateException(dbUpdateException, DbUpdateExceptionResult(dbUpdateException)) : DbUpdateExceptionResult(dbUpdateException);
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
+        }
+
         public async Task<IActionResult> UsingChannelContext(string slug, bool requiresAuthorisation, Func<Channel, AnatiniContext, IActionResult> channelContextFunction)
         {
             async Task<IActionResult> channelFunction(Channel channel)
@@ -49,23 +69,21 @@ namespace Anatini.Server
 
             try
             {
-                var channelAliasResult = await new GetChannelAlias(slug).ExecuteAsync();
+                using var context = new AnatiniContext();
+
+                var channelAlias = await context.ChannelAliases.FindAsync(slug);
                 
-                if (channelAliasResult == null)
+                if (channelAlias == null)
                 {
                     return Problem();
                 }
 
-                var channelAlias = channelAliasResult!;
+                var channel = await context.Channels.FindAsync(channelAlias.ChannelId);
 
-                var channelResult = await new GetChannel(channelAlias.ChannelId).ExecuteAsync();
-
-                if (channelResult == null)
+                if (channel == null)
                 {
                     return Problem();
                 }
-
-                var channel = channelResult!;
 
                 if (requiresAuthorisation)
                 {
@@ -81,19 +99,10 @@ namespace Anatini.Server
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    // add logger
-                    return Problem();
-                }
+                return DbUpdateExceptionResult(dbUpdateException);
             }
             catch (Exception)
             {
-                // add logger
                 return Problem();
             }
         }
@@ -134,41 +143,42 @@ namespace Anatini.Server
         {
             try
             {
+                using var context = new AnatiniContext();
 
                 var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (!Guid.TryParse(userIdClaim, out var userGuid))
                 {
-                    // add logging
                     return Problem();
                 }
 
-                var userResult = await new GetUser(userGuid).ExecuteAsync();
+                var user = await context.Users.FindAsync(userGuid);
 
-                if (userResult == null)
+                if (user == null)
                 {
                     return Problem();
                 }
-
-                var user = userResult!;
 
                 return await userFunction(user);
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    // add logger
-                    return Problem();
-                }
+                return DbUpdateExceptionResult(dbUpdateException);
             }
             catch (Exception)
             {
-                // add logger
+                return Problem();
+            }
+        }
+
+        private IActionResult DbUpdateExceptionResult(DbUpdateException dbUpdateException)
+        {
+            if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
+            {
+                return Conflict();
+            }
+            else
+            {
                 return Problem();
             }
         }
