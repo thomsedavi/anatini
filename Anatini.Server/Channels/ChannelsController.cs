@@ -1,7 +1,6 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context;
-using Anatini.Server.Context.Commands;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,24 +53,19 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel)
         {
-            async Task<IActionResult> userFunction(User user)
+            IActionResult userContextFunction(User user, AnatiniContext context)
             {
-                var channelAlias = newChannel.CreateAlias();
-
-                // Returns Conflict if channel slug already exists
-                await new Add(channelAlias).ExecuteAsync();
-
                 var channel = newChannel.Create(user);
+                var channelAlias = newChannel.CreateAlias();
+                context.AddRange(channel, channelAlias);
 
                 user.AddChannel(channel);
-
-                await new Add(channel).ExecuteAsync();
-                await new Update(user).ExecuteAsync();
+                context.Update(user);
 
                 return Ok(user.ToUserEditDto());
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserContext(userContextFunction);
         }
     }
 }

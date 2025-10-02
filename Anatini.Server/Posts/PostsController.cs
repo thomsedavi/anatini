@@ -1,7 +1,6 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context;
-using Anatini.Server.Context.Commands;
 using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -25,24 +24,19 @@ namespace Anatini.Server.Posts
         {
             var eventData = new EventData(HttpContext);
 
-            async Task<IActionResult> channelFunction(Channel channel)
+            IActionResult channelContextFunction(Channel channel, AnatiniContext context)
             {
-                var postAlias = newPost.CreateAlias(channel.Id);
-
-                // Returns Conflict if channel slug already exists
-                await new Add(postAlias).ExecuteAsync();
-
                 var post = newPost.Create(channel.Id, eventData);
+                var postAlias = newPost.CreateAlias(channel.Id);
+                context.AddRange(post, postAlias);
 
                 channel.AddDraftPost(post, eventData);
-
-                await new Add(post).ExecuteAsync();
-                await new Update(channel).ExecuteAsync();
+                context.Update(channel);
 
                 return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannel(channelSlug, true, channelFunction);
+            return await UsingChannelContext(channelSlug, true, channelContextFunction);
         }
 
         [HttpGet("{postSlug}")]

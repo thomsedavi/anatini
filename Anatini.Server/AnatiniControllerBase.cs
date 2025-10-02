@@ -12,6 +12,38 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
+        public async Task<IActionResult> UsingChannelContext(string slug, bool requiresAuthorisation, Func<Channel, AnatiniContext, IActionResult> channelContextFunction)
+        {
+            async Task<IActionResult> channelFunction(Channel channel)
+            {
+                using var context = new AnatiniContext();
+
+                var result = channelContextFunction(channel, context);
+
+                await context.SaveChangesAsync();
+
+                return result;
+            }
+
+            return await UsingChannel(slug, requiresAuthorisation, channelFunction);
+        }
+
+        public async Task<IActionResult> UsingChannelContextAsync(string slug, bool requiresAuthorisation, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction)
+        {
+            async Task<IActionResult> channelFunction(Channel channel)
+            {
+                using var context = new AnatiniContext();
+
+                var result = await channelContextFunction(channel, context);
+
+                await context.SaveChangesAsync();
+
+                return result;
+            }
+
+            return await UsingChannel(slug, requiresAuthorisation, channelFunction);
+        }
+
         public async Task<IActionResult> UsingChannel(string slug, bool requiresAuthorisation, Func<Channel, Task<IActionResult>> channelFunction)
         {
 
@@ -64,6 +96,38 @@ namespace Anatini.Server
                 // add logger
                 return Problem();
             }
+        }
+
+        public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext,IActionResult> userContextFunction)
+        {
+            async Task<IActionResult> userFunction(User user)
+            {
+                using var context = new AnatiniContext();
+
+                var result = userContextFunction(user, context);
+
+                await context.SaveChangesAsync();
+
+                return result;
+            }
+
+            return await UsingUser(userFunction);
+        }
+
+        public async Task<IActionResult> UsingUserContextAsync(Func<User, AnatiniContext, Task<IActionResult>> userContextFunction)
+        {
+            async Task<IActionResult> userFunction(User user)
+            {
+                using var context = new AnatiniContext();
+
+                var result = await userContextFunction(user, context);
+
+                await context.SaveChangesAsync();
+
+                return result;
+            }
+
+            return await UsingUser(userFunction);
         }
 
         public async Task<IActionResult> UsingUser(Func<User, Task<IActionResult>> userFunction)

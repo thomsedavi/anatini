@@ -4,6 +4,7 @@ import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import PostView from './components/PostView.vue';
+import PostEditView from './components/PostEditView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
@@ -34,7 +35,7 @@ const routes = [
   },
   {
     path: '/channels/:channelSlug/posts/:postSlug/edit',
-    component: PostEditView, // todo (obviously)
+    component: PostEditView,
     name: 'postEdit',
   },
   {

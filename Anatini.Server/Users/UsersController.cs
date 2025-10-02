@@ -1,4 +1,4 @@
-﻿using Anatini.Server.Context.Commands;
+﻿using Anatini.Server.Context;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Users.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +19,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAlias([FromForm] NewUserAlias newUserAlias)
         {
-            async Task<IActionResult> userFunction(User user)
+            IActionResult userContextFunction(User user, AnatiniContext context)
             {
                 if (user.Aliases.Count >= 5)
                 {
@@ -27,16 +27,15 @@ namespace Anatini.Server.Users
                 }
 
                 var userAlias = newUserAlias.Create(user);
-
-                await new Add(userAlias).ExecuteAsync();
+                context.Add(userAlias);
 
                 user.AddAlias(newUserAlias);
-                await new Update(user).ExecuteAsync();
+                context.Update(user);
 
                 return Ok(user.ToUserEditDto());
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserContext(userContextFunction);
         }
 
         [Authorize]

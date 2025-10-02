@@ -30,7 +30,7 @@ namespace Anatini.Server.Authentication
         {
             var eventData = new EventData(HttpContext);
 
-            async Task<IActionResult> userFunction(User user)
+            async Task<IActionResult> userContextFunction(User user, AnatiniContext context)
             {
                 if (user.Invites?.Any(invite => invite.DateOnlyNZ == eventData.DateOnlyNZNow) ?? false)
                 {
@@ -61,7 +61,7 @@ namespace Anatini.Server.Authentication
                     }
 
                     user.AddInvite(inviteCode, eventData);
-                    await new Update(user).ExecuteAsync();
+                    context.Update(user);
 
                     await new CreateUserEvent(user.Id, EventType.InviteCreated, eventData).ExecuteAsync();
 
@@ -69,7 +69,7 @@ namespace Anatini.Server.Authentication
                 }
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserContextAsync(userContextFunction);
         }
 
         [HttpPost("email")]
