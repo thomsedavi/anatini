@@ -22,10 +22,10 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost(string channelSlug, [FromForm] NewPost newPost)
         {
-            var eventData = new EventData(HttpContext);
-
             IActionResult channelContextFunction(Channel channel, AnatiniContext context)
             {
+                var eventData = new EventData(HttpContext);
+
                 var post = newPost.Create(channel.Id, eventData);
                 var postAlias = newPost.CreateAlias(channel.Id);
                 context.AddRange(post, postAlias);
@@ -36,16 +36,22 @@ namespace Anatini.Server.Posts
                 return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannelContext(channelSlug, true, channelContextFunction);
+            return await UsingChannelContext(channelSlug, channelContextFunction, requiresAuthorisation: true);
         }
 
         [HttpGet("{postSlug}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPost(string channelSlug, string postSlug)
         {
-            return await Task.FromResult(Ok(new { channelSlug, postSlug }));
+            IActionResult postFunction(Post post)
+            {
+                return Ok(post.ToPostDto());
+            }
+
+            return await UsingPost(channelSlug, postSlug, postFunction);
         }
     }
 }

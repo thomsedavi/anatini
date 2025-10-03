@@ -61,7 +61,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAlias(string slug)
         {
-            async Task<IActionResult> contextFunction(AnatiniContext context)
+            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var userAlias = await context.UserAliases.FindAsync(slug);
 
@@ -75,7 +75,7 @@ namespace Anatini.Server.Users
                 return Ok(userAlias.ToUserDto());
             }
 
-            return await UsingContextAsync(contextFunction);
+            return await UsingContextAsync(contextFunctionAsync);
         }
     }
 }

@@ -36,12 +36,12 @@ const routes = [
   {
     path: '/channels/:channelSlug/posts/:postSlug/edit',
     component: PostEditView,
-    name: 'postEdit',
+    name: 'PostEdit',
   },
   {
     path: '/channels/:channelSlug/posts/:postSlug',
     component: PostView,
-    name: 'post',
+    name: 'Post',
   },
   {
     path: '/users/:userSlug',
@@ -50,10 +50,12 @@ const routes = [
   {
     path: '/channels/:channelSlug/edit',
     component: ChannelEditView,
+    name: 'ChannelEdit',
   },
   {
     path: '/channels/:channelSlug',
     component: ChannelView,
+    name: 'Channel',
   },
   {
     path: '/users',

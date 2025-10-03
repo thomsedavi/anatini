@@ -242,12 +242,10 @@
       </p>
     </form>
     <template v-if="account.channels?.length">
-      <h3>Slugs</h3>
-      <ul>
-        <li v-for="(channel, channelIndex) in account.channels" :key="'channel' + channelIndex">
-          {{ channel.name }}
-        </li>
-      </ul>
+      <h3>Channels</h3>
+      <div v-for="(channel, index) in account.channels" :key="'channel' + index">
+        <RouterLink :to="{ name: 'ChannelEdit', params: { channelSlug: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
+      </div>
     </template>
   </template>
 </template>

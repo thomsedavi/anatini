@@ -10,6 +10,7 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
+        [NonAction]
         public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction, Func<DbUpdateException, IActionResult, IActionResult>? onDbUpdateException = null)
         {
             try
@@ -32,9 +33,10 @@ namespace Anatini.Server
             }
         }
 
-        public async Task<IActionResult> UsingChannelContext(string slug, bool requiresAuthorisation, Func<Channel, AnatiniContext, IActionResult> channelContextFunction)
+        [NonAction]
+        public async Task<IActionResult> UsingChannelContext(string slug, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> channelFunction(Channel channel)
+            async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
                 using var context = new AnatiniContext();
 
@@ -45,12 +47,13 @@ namespace Anatini.Server
                 return result;
             }
 
-            return await UsingChannel(slug, requiresAuthorisation, channelFunction);
+            return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
         }
 
-        public async Task<IActionResult> UsingChannelContextAsync(string slug, bool requiresAuthorisation, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction)
+        [NonAction]
+        public async Task<IActionResult> UsingChannelContextAsync(string slug, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> channelFunction(Channel channel)
+            async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
                 using var context = new AnatiniContext();
 
@@ -61,21 +64,93 @@ namespace Anatini.Server
                 return result;
             }
 
-            return await UsingChannel(slug, requiresAuthorisation, channelFunction);
+            return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
         }
 
-        public async Task<IActionResult> UsingChannel(string slug, bool requiresAuthorisation, Func<Channel, Task<IActionResult>> channelFunction)
+        [NonAction]
+        public async Task<IActionResult> UsingPost(string channelSlug, string postSlug, Func<Post, IActionResult> postFunction, bool requiresAuthorisation = false)
+        {
+            async Task<IActionResult> postFunctionAsync(Post post)
+            {
+                var result = postFunction(post);
+
+                return await Task.FromResult(result);
+            }
+
+            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, requiresAuthorisation);
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannel(string channelSlug, Func<Channel, IActionResult> channelFunction, bool requiresAuthorisation = false)
+        {
+            async Task<IActionResult> channelFunctionAsync(Channel channel)
+            {
+                var result = channelFunction(channel);
+
+                return await Task.FromResult(result);
+            }
+
+            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingPostAsync(string channelSlug, string postSlug, Func<Post, Task<IActionResult>> postFunctionAsync, bool _ = false)
+        {
+            try
+            {
+                using var context = new AnatiniContext();
+
+                var channelAlias = await context.ChannelAliases.FindAsync(channelSlug);
+
+                if (channelAlias == null)
+                {
+                    return NotFound();
+                }
+
+                // TODO why can't this find the post alias?
+                // Also according this I should be using SingleAsync
+                // https://learn.microsoft.com/en-us/ef/core/providers/cosmos/querying#findasync
+                var postAlias = await context.PostAliases.FindAsync(channelAlias.ChannelId, postSlug);
+
+                if (postAlias == null)
+                {
+                    return NotFound();
+                }
+
+                var post = await context.Posts.FindAsync(postAlias.PostId);
+
+                if (post == null)
+                {
+                    return Problem();
+                }
+
+                // add if requiresAuthorisation
+
+                return await postFunctionAsync(post);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                return DbUpdateExceptionResult(dbUpdateException);
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannelAsync(string channelSlug, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAuthorisation = false)
         {
 
             try
             {
                 using var context = new AnatiniContext();
 
-                var channelAlias = await context.ChannelAliases.FindAsync(slug);
+                var channelAlias = await context.ChannelAliases.FindAsync(channelSlug);
                 
                 if (channelAlias == null)
                 {
-                    return Problem();
+                    return NotFound();
                 }
 
                 var channel = await context.Channels.FindAsync(channelAlias.ChannelId);
@@ -95,7 +170,7 @@ namespace Anatini.Server
                     }
                 }
 
-                return await channelFunction(channel);
+                return await channelFunctionAsync(channel);
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -107,6 +182,7 @@ namespace Anatini.Server
             }
         }
 
+        [NonAction]
         public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext,IActionResult> userContextFunction)
         {
             async Task<IActionResult> userFunction(User user)
@@ -123,6 +199,7 @@ namespace Anatini.Server
             return await UsingUser(userFunction);
         }
 
+        [NonAction]
         public async Task<IActionResult> UsingUserContextAsync(Func<User, AnatiniContext, Task<IActionResult>> userContextFunction)
         {
             async Task<IActionResult> userFunction(User user)
@@ -139,6 +216,7 @@ namespace Anatini.Server
             return await UsingUser(userFunction);
         }
 
+        [NonAction]
         public async Task<IActionResult> UsingUser(Func<User, Task<IActionResult>> userFunction)
         {
             try
@@ -171,6 +249,7 @@ namespace Anatini.Server
             }
         }
 
+        [NonAction]
         private IActionResult DbUpdateExceptionResult(DbUpdateException dbUpdateException)
         {
             if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)

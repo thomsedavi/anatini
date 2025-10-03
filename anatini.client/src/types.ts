@@ -13,6 +13,7 @@ export type UserEdit = {
   channels?: {
     id: string;
     name: string;
+    defaultSlug: string;
   }[];
   sessions: {
     id: string;
@@ -38,6 +39,10 @@ export type Events = {
     dateTimeUtc: string;
   }[];
 };
+
+export type Post = {
+  name: string;
+}
 
 export type Channel = {
   name: string;

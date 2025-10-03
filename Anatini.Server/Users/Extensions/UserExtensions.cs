@@ -42,7 +42,8 @@ namespace Anatini.Server.Users.Extensions
             {
                 Id = channel.Id,
                 UserId = user.Id,
-                Name = channel.Name
+                Name = channel.Name,
+                DefaultSlug = channel.DefaultSlug
             };
 
             var channels = user.Channels ?? [];
@@ -158,7 +159,8 @@ namespace Anatini.Server.Users.Extensions
             return new UserEditChannelDto
             {
                 Id = userOwnedChannel.Id,
-                Name = userOwnedChannel.Name
+                Name = userOwnedChannel.Name,
+                DefaultSlug = userOwnedChannel.DefaultSlug
             };
         }
 

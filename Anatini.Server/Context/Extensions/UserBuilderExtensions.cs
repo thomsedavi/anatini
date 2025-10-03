@@ -56,6 +56,7 @@ namespace Anatini.Server.Context.Extensions
             channelsBuilder.Property(channel => channel.Id).ToJsonProperty("id");
             channelsBuilder.Property(channel => channel.UserId).ToJsonProperty("userId");
             channelsBuilder.Property(channel => channel.Name).ToJsonProperty("name");
+            channelsBuilder.Property(channel => channel.DefaultSlug).ToJsonProperty("defaultSlug");
         }
 
         private static void ConfigureAliases(OwnedNavigationBuilder<User, UserOwnedAlias> aliasesBuilder)

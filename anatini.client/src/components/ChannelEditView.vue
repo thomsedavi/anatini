@@ -110,7 +110,7 @@
     </form>
     <template v-if="channel.topDraftPosts?.length">
       <div v-for="(post, index) in channel.topDraftPosts" :key="'topDraftPost' + index">
-        <RouterLink :to="{ name: 'postEdit', params: { channelSlug: route.params.channelSlug, postSlug: post.defaultSlug }}">{{ post.name }}</RouterLink>
+        <RouterLink :to="{ name: 'PostEdit', params: { channelSlug: route.params.channelSlug, postSlug: post.defaultSlug }}">{{ post.name }}</RouterLink>
       </div>
     </template>
   </template>

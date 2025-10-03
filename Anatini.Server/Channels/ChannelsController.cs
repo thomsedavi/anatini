@@ -18,12 +18,12 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetChannel(string channelSlug)
         {
-            async Task<IActionResult> channelFunction(Channel channel)
+            IActionResult channelFunction(Channel channel)
             {
-                return await Task.FromResult(Ok(channel.ToChannelDto()));
+                return Ok(channel.ToChannelDto());
             }
 
-            return await UsingChannel(channelSlug, false, channelFunction);
+            return await UsingChannel(channelSlug, channelFunction);
         }
 
         [Authorize]
@@ -35,12 +35,12 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetChannelEdit(string channelSlug)
         {
-            async Task<IActionResult> channelFunction(Channel channel)
+            IActionResult channelFunction(Channel channel)
             {
-                return await Task.FromResult(Ok(channel.ToChannelEditDto()));
+                return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannel(channelSlug, true, channelFunction);
+            return await UsingChannel(channelSlug, channelFunction, requiresAuthorisation: true);
         }
 
 
