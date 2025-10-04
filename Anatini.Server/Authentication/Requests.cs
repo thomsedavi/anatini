@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Authentication
 {
@@ -30,7 +31,7 @@ namespace Anatini.Server.Authentication
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = IdGenerator.Get();
     }
 
     public class LoginForm

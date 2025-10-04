@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Posts
 {
@@ -9,6 +10,6 @@ namespace Anatini.Server.Posts
         [MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = IdGenerator.Get();
     }
 }

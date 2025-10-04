@@ -107,9 +107,6 @@ namespace Anatini.Server
                     return NotFound();
                 }
 
-                // TODO why can't this find the post alias?
-                // Also according this I should be using SingleAsync
-                // https://learn.microsoft.com/en-us/ef/core/providers/cosmos/querying#findasync
                 var postAlias = await context.PostAliases.FindAsync(channelAlias.ChannelId, postSlug);
 
                 if (postAlias == null)
@@ -117,7 +114,7 @@ namespace Anatini.Server
                     return NotFound();
                 }
 
-                var post = await context.Posts.FindAsync(postAlias.PostId);
+                var post = await context.Posts.FindAsync(channelAlias.ChannelId, postAlias.PostId);
 
                 if (post == null)
                 {
@@ -162,9 +159,9 @@ namespace Anatini.Server
 
                 if (requiresAuthorisation)
                 {
-                    var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
  
-                    if (!Guid.TryParse(userIdClaim, out var userId) || !channel.Users.Any(user => user.Id == userId))
+                    if (!channel.Users.Any(user => user.Id == userId))
                     {
                         return Unauthorized();
                     }
@@ -185,7 +182,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext,IActionResult> userContextFunction)
         {
-            async Task<IActionResult> userFunction(User user)
+            async Task<IActionResult> userFunctionAsync(User user)
             {
                 using var context = new AnatiniContext();
 
@@ -196,13 +193,13 @@ namespace Anatini.Server
                 return result;
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserAsync(userFunctionAsync);
         }
 
         [NonAction]
         public async Task<IActionResult> UsingUserContextAsync(Func<User, AnatiniContext, Task<IActionResult>> userContextFunction)
         {
-            async Task<IActionResult> userFunction(User user)
+            async Task<IActionResult> userFunctionAsync(User user)
             {
                 using var context = new AnatiniContext();
 
@@ -213,24 +210,19 @@ namespace Anatini.Server
                 return result;
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserAsync(userFunctionAsync);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUser(Func<User, Task<IActionResult>> userFunction)
+        public async Task<IActionResult> UsingUserAsync(Func<User, Task<IActionResult>> userFunction)
         {
             try
             {
                 using var context = new AnatiniContext();
 
-                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                if (!Guid.TryParse(userIdClaim, out var userGuid))
-                {
-                    return Problem();
-                }
-
-                var user = await context.Users.FindAsync(userGuid);
+                var user = await context.Users.FindAsync(userId);
 
                 if (user == null)
                 {

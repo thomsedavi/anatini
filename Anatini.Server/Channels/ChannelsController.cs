@@ -55,9 +55,9 @@ namespace Anatini.Server.Channels
         {
             IActionResult userContextFunction(User user, AnatiniContext context)
             {
-                var channel = newChannel.Create(user);
                 var channelAlias = newChannel.CreateAlias();
-                context.AddRange(channel, channelAlias);
+                var channel = newChannel.Create(user);
+                context.AddRange(channelAlias, channel);
 
                 user.AddChannel(channel);
                 context.Update(user);

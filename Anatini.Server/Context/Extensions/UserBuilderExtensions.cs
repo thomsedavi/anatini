@@ -8,6 +8,7 @@ namespace Anatini.Server.Context.Extensions
         public static void Configure(this EntityTypeBuilder<User> userBuilder)
         {
             userBuilder.ToContainer("Users");
+            userBuilder.HasKey(user => user.Id);
             userBuilder.HasPartitionKey(user => user.Id);
             userBuilder.Property(user => user.Id).ToJsonProperty("id");
             userBuilder.Property(user => user.Name).ToJsonProperty("name");
@@ -36,7 +37,7 @@ namespace Anatini.Server.Context.Extensions
         private static void ConfigureEmails(OwnedNavigationBuilder<User, UserOwnedEmail> emailsBuilder)
         {
             emailsBuilder.ToJsonProperty("emails");
-            emailsBuilder.Property(email => email.Address).ToJsonProperty("id");
+            emailsBuilder.Property(email => email.Address).ToJsonProperty("address");
             emailsBuilder.Property(email => email.UserId).ToJsonProperty("userId");
             emailsBuilder.Property(email => email.Verified).ToJsonProperty("verified");
         }
@@ -44,7 +45,7 @@ namespace Anatini.Server.Context.Extensions
         private static void ConfigureInvites(OwnedNavigationBuilder<User, UserOwnedInvite> invitesBuilder)
         {
             invitesBuilder.ToJsonProperty("invites");
-            invitesBuilder.Property(invite => invite.Code).ToJsonProperty("id");
+            invitesBuilder.Property(invite => invite.Code).ToJsonProperty("code");
             invitesBuilder.Property(invite => invite.UserId).ToJsonProperty("userId");
             invitesBuilder.Property(invite => invite.Used).ToJsonProperty("used");
             invitesBuilder.Property(invite => invite.DateOnlyNZ).ToJsonProperty("dateOnlyNZ");
@@ -62,7 +63,7 @@ namespace Anatini.Server.Context.Extensions
         private static void ConfigureAliases(OwnedNavigationBuilder<User, UserOwnedAlias> aliasesBuilder)
         {
             aliasesBuilder.ToJsonProperty("aliases");
-            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("id");
+            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("slug");
             aliasesBuilder.Property(alias => alias.UserId).ToJsonProperty("userId");
         }
     }

@@ -33,6 +33,7 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelAlias
             {
+                Id = newChannel.Slug,
                 Slug = newChannel.Slug,
                 ChannelId = newChannel.Id,
                 ChannelName = newChannel.Name

@@ -8,8 +8,10 @@ namespace Anatini.Server.Context.Extensions
         public static void Configure(this EntityTypeBuilder<Channel> channelBuilder)
         {
             channelBuilder.ToContainer("Channels");
+            channelBuilder.HasKey(channel => channel.Id);
             channelBuilder.HasPartitionKey(channel => channel.Id);
             channelBuilder.Property(channel => channel.Id).ToJsonProperty("id");
+            channelBuilder.Property(channel => channel.Name).ToJsonProperty("name");
             channelBuilder.OwnsMany(channel => channel.Users, ConfigureUsers);
             channelBuilder.OwnsMany(channel => channel.Aliases, ConfigureAliases);
             channelBuilder.OwnsMany(channel => channel.TopDraftPosts, ConfigureTopDraftPosts);
@@ -27,7 +29,7 @@ namespace Anatini.Server.Context.Extensions
         private static void ConfigureAliases(OwnedNavigationBuilder<Channel, ChannelOwnedAlias> aliasesBuilder)
         {
             aliasesBuilder.ToJsonProperty("aliases");
-            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("id");
+            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("slug");
             aliasesBuilder.Property(alias => alias.ChannelId).ToJsonProperty("channelId");
         }
 

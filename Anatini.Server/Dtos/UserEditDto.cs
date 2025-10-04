@@ -2,7 +2,7 @@
 {
     public class UserEditDto
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
         public IEnumerable<UserEditChannelDto>? Channels { get; set; }
@@ -14,7 +14,7 @@
 
     public class UserEditChannelDto
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
     }
@@ -39,7 +39,7 @@
 
     public class UserEditSessionDto
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string UserAgent { get; set; }
         public required bool Revoked { get; set; }
         public required DateTime CreatedDateTimeUtc { get; set; }

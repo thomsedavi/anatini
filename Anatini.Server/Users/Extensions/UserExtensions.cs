@@ -12,12 +12,12 @@ namespace Anatini.Server.Users.Extensions
         {
             var userId = (await context.UserEmails.FindAsync(address))?.UserId;
 
-            if (!userId.HasValue)
+            if (userId == null)
             {
                 return null;
             }
 
-            var user = await context.Users.FindAsync(userId.Value);
+            var user = await context.Users.FindAsync(userId);
 
             if (user == null)
             {
@@ -57,8 +57,8 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedAlias = new UserOwnedAlias
             {
-                UserId = user.Id,
-                Slug = newUserAlias.Slug
+                Slug = newUserAlias.Slug,
+                UserId = user.Id
             };
 
             user.Aliases.Add(userOwnedAlias);
@@ -75,7 +75,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedSession = new UserOwnedSession
             {
-                Id = Guid.NewGuid(),
+                Id = IdGenerator.Get(),
                 UserId = user.Id,
                 RefreshToken = refreshToken,
                 CreatedDateTimeUtc = eventData.DateTimeUtc,

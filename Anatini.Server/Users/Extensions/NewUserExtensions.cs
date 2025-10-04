@@ -17,7 +17,7 @@ namespace Anatini.Server.Users.Extensions
 
             var userOwnedSession = new UserOwnedSession
             {
-                Id = Guid.NewGuid(),
+                Id = IdGenerator.Get(),
                 UserId = newUser.Id,
                 RefreshToken = refreshToken,
                 CreatedDateTimeUtc = eventData.DateTimeUtc,
@@ -53,6 +53,7 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserAlias
             {
+                Id = newUser.Slug,
                 Slug = newUser.Slug,
                 UserId = newUser.Id,
                 UserName = newUser.Name

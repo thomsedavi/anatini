@@ -7,11 +7,11 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class UserEventExtensions
     {
-        public static AnatiniContext AddUserEvent(this AnatiniContext context, Guid userId, EventType eventType, EventData data)
+        public static AnatiniContext AddUserEvent(this AnatiniContext context, string userId, EventType eventType, EventData data)
         {
             var userEvent = new UserEvent
             {
-                Id = Guid.NewGuid(),
+                Id = IdGenerator.Get(),
                 UserId = userId,
                 EventType = Enum.GetName(eventType)!,
                 DateTimeUtc = data.DateTimeUtc,

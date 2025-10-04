@@ -5,10 +5,11 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class UserEmailExtensions
     {
-        public static AnatiniContext AddUserEmail(this AnatiniContext context, string address, Guid userId)
+        public static AnatiniContext AddUserEmail(this AnatiniContext context, string address, string userId)
         {
             var userEmail = new UserEmail
             {
+                Id = address,
                 Address = address,
                 UserId = userId,
                 VerificationCode = CodeRandom.Next(),

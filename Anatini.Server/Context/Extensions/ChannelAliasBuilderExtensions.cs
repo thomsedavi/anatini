@@ -8,9 +8,10 @@ namespace Anatini.Server.Context.Extensions
         public static void Configure(this EntityTypeBuilder<ChannelAlias> channelAliasBuilder)
         {
             channelAliasBuilder.ToContainer("ChannelAliases");
-            channelAliasBuilder.HasKey(channelAlias => channelAlias.Slug);
-            channelAliasBuilder.HasPartitionKey(channelAlias => channelAlias.Slug);
-            channelAliasBuilder.Property(channelAlias => channelAlias.Slug).ToJsonProperty("id");
+            channelAliasBuilder.HasKey(channelAlias => channelAlias.Id);
+            channelAliasBuilder.HasPartitionKey(channelAlias => channelAlias.Id);
+            channelAliasBuilder.Property(channelAlias => channelAlias.Id).ToJsonProperty("id");
+            channelAliasBuilder.Property(channelAlias => channelAlias.Slug).ToJsonProperty("slug");
             channelAliasBuilder.Property(channelAlias => channelAlias.ChannelId).ToJsonProperty("channelId");
             channelAliasBuilder.Property(channelAlias => channelAlias.ChannelName).ToJsonProperty("channelName");
         }

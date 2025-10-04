@@ -23,7 +23,7 @@ namespace Anatini.Server.Context.Extensions
         {
             aliasesBuilder.ToJsonProperty("aliases");
             aliasesBuilder.WithOwner().HasForeignKey(alias => new { alias.ChannelId, alias.PostId });
-            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("id");
+            aliasesBuilder.Property(alias => alias.Slug).ToJsonProperty("slug");
             aliasesBuilder.Property(alias => alias.ChannelId).ToJsonProperty("channelId");
             aliasesBuilder.Property(alias => alias.PostId).ToJsonProperty("postId");
         }

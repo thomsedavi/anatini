@@ -26,9 +26,9 @@ namespace Anatini.Server.Posts
             {
                 var eventData = new EventData(HttpContext);
 
-                var post = newPost.Create(channel.Id, eventData);
                 var postAlias = newPost.CreateAlias(channel.Id);
-                context.AddRange(post, postAlias);
+                var post = newPost.Create(channel.Id, eventData);
+                context.AddRange(postAlias, post);
 
                 channel.AddDraftPost(post, eventData);
                 context.Update(channel);

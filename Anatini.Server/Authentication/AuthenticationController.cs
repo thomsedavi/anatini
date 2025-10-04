@@ -76,14 +76,14 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
-            async Task<IActionResult> contextFunction(AnatiniContext context)
+            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-                var userId = Guid.Empty;
+                string userId;
 
                 if (form.InviteCode == "zzzzzzzz")
                 {
-                    userId = Guid.NewGuid();
+                    userId = IdGenerator.Get();
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Anatini.Server.Authentication
                     context.Update(invite);
 
                     userId = invite.NewUserId;
-                    eventData.Add("invitedByUserId", invite.InvitedByUserId.ToString());
+                    eventData.Add("invitedByUserId", invite.UserId);
                 }
 
                 context.AddUserEmail(form.EmailAddress, userId);
@@ -133,7 +133,7 @@ namespace Anatini.Server.Authentication
             }
             ;
 
-            return await UsingContextAsync(contextFunction, onDbUpdateException);
+            return await UsingContextAsync(contextFunctionAsync, onDbUpdateException);
         }
 
         [HttpPost("signup")]
@@ -145,7 +145,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignup([FromForm] NewUser newUser)
         {
-            async Task<IActionResult> contextFunction(AnatiniContext context)
+            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
 
@@ -171,9 +171,22 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                if (email.InvitedByUserId.HasValue)
+                var refreshToken = TokenGenerator.Get;
+
+                var userSlug = newUser.CreateSlug();
+                var user = newUser.Create(email, refreshToken, eventData);
+
+                context.AddRange(userSlug, user);
+
+                email.Verified = true;
+                email.VerificationCode = null;
+
+                context.Update(email);
+                context.AddUserEvent(user.Id, EventType.UserCreated, eventData);
+
+                if (email.InvitedByUserId != null)
                 {
-                    var invitedByUserId = email.InvitedByUserId.Value;
+                    var invitedByUserId = email.InvitedByUserId;
 
                     var invitedByUser = (await context.Users.FindAsync(invitedByUserId));
 
@@ -187,18 +200,6 @@ namespace Anatini.Server.Authentication
                     email.InvitedByUserId = null;
                 }
 
-                email.Verified = true;
-                email.VerificationCode = null;
-
-                var refreshToken = TokenGenerator.Get;
-
-                var user = newUser.Create(email, refreshToken, eventData);
-                var userSlug = newUser.CreateSlug();
-
-                context.AddRange(user, userSlug);
-                context.Update(email);
-                context.AddUserEvent(user.Id, EventType.UserCreated, eventData);
-
                 var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
@@ -206,7 +207,7 @@ namespace Anatini.Server.Authentication
                 return Ok();
             }
 
-            return await UsingContextAsync(contextFunction);
+            return await UsingContextAsync(contextFunctionAsync);
         }
 
         [Authorize]
@@ -227,7 +228,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
         {
-            async Task<IActionResult> contextFunction(AnatiniContext context)
+            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
 
@@ -252,7 +253,7 @@ namespace Anatini.Server.Authentication
                 return Ok();
             }
 
-            return await UsingContextAsync(contextFunction);
+            return await UsingContextAsync(contextFunctionAsync);
         }
 
         [Authorize]
@@ -266,7 +267,7 @@ namespace Anatini.Server.Authentication
                 return await Task.FromResult(Ok(user.ToUserEditDto()));
             }
 
-            return await UsingUser(userFunction);
+            return await UsingUserAsync(userFunction);
         }
 
         [Authorize]
@@ -285,11 +286,11 @@ namespace Anatini.Server.Authentication
             return Ok(new { User.Identity?.IsAuthenticated });
         }
 
-        private static string GetAccessToken(Guid userId, DateTime dateTimeUTC)
+        private static string GetAccessToken(string userId, DateTime dateTimeUTC)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, userId.ToString()),
+                new(ClaimTypes.NameIdentifier, userId),
                 new(ClaimTypes.Role, "Verified?")
             };
 
