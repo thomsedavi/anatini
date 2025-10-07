@@ -163,7 +163,7 @@ namespace Anatini.Server.Authentication
                     return NotFound();
                 }
 
-                var userSlug = context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
+                var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
 
                 newUser.Id = email.UserId;
 
