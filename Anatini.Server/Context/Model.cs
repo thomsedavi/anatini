@@ -1,9 +1,40 @@
-﻿using Anatini.Server.Context.Extensions;
+﻿using Anatini.Server.Context.BuilderExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Context
 {
-    public class AnatiniContext : DbContext
+    public class AnatiniContext(ContextBase context)
+    {
+        public ContextBase Context => context;
+
+        public async Task<int> Update(Entity entity)
+        {
+            context.Update(entity);
+
+            return await context.SaveChangesAsync();
+        }
+
+        public async Task<int> Add(Entity entity)
+        {
+            context.Add(entity);
+
+            return await context.SaveChangesAsync();
+        }
+
+        internal async Task<int> Remove(Entity entity)
+        {
+            context.Remove(entity);
+
+            return await context.SaveChangesAsync();
+        }
+
+        internal async Task<TEntity?> FindAsync<TEntity>(params object?[]? keyValues) where TEntity : Entity
+        {
+            return await context.FindAsync<TEntity>(keyValues);
+        }
+    }
+
+    public class ContextBase : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<UserEmail> UserEmails { get; set; }
@@ -44,7 +75,7 @@ namespace Anatini.Server.Context
         }
     }
 
-    public class User : Entity
+    public class User : BaseEntity
     {
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
@@ -97,7 +128,7 @@ namespace Anatini.Server.Context
         public required bool Revoked { get; set; }
     }
 
-    public class Channel : Entity
+    public class Channel : BaseEntity
     {
         public required string Name { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
@@ -129,7 +160,7 @@ namespace Anatini.Server.Context
         public required DateTime UpdatedDateTimeUTC { get; set; }
     }
 
-    public class Post : Entity
+    public class Post : BaseEntity
     {
         public required string ChannelId { get; set; }
         public required string Name { get; set; }
@@ -198,6 +229,11 @@ namespace Anatini.Server.Context
     }
 
     public abstract class Entity
+    {
+        public required string ItemId { get; set; }
+    }
+
+    public abstract class BaseEntity  : Entity
     {
         public required string Id { get; set; }
     }

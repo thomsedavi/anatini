@@ -1,0 +1,82 @@
+﻿using Anatini.Server.Authentication;
+using Anatini.Server.Utils;
+using Microsoft.AspNetCore.Identity;
+
+namespace Anatini.Server.Context.EntityExtensions
+{
+    public static class UserContextExtensions
+    {
+        public static async Task<User> AddUserAsync(this AnatiniContext context, string id, string name, string slug, string password, string address, string refreshToken, EventData eventData)
+        {
+            var userOwnedAlias = new UserOwnedAlias
+            {
+                UserId = id,
+                Slug = slug
+            };
+
+            var userOwnedEmail = new UserOwnedEmail {
+                UserId= id,
+                Address = address,
+                Verified = true
+            };
+
+            var userOwnedSession = new UserOwnedSession
+            {
+                Id = IdGenerator.Get(),
+                UserId = id,
+                RefreshToken = refreshToken,
+                CreatedDateTimeUtc = eventData.DateTimeUtc,
+                UpdatedDateTimeUtc = eventData.DateTimeUtc,
+                IPAddress = eventData.Get("ipAddress"),
+                UserAgent = eventData.Get("userAgent"),
+                Revoked = false
+            };
+
+            var user = new User
+            {
+                ItemId = id,
+                Id = id,
+                Name = name,
+                DefaultSlug = slug,
+                Aliases = [userOwnedAlias],
+                HashedPassword = null!,
+                Emails = [userOwnedEmail],
+                Sessions = [userOwnedSession]
+            };
+
+            user.HashedPassword = UserPasswordHasher.HashPassword(user, password);
+
+            await context.Add(user);
+
+            return user;
+        }
+
+        public static async Task<User?> VerifyPassword(this AnatiniContext context, string address, string password)
+        {
+            var userId = (await context.FindAsync<UserEmail>(address))?.UserId;
+
+            if (userId == null)
+            {
+                return null;
+            }
+
+            var user = await context.FindAsync<User>(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var result = UserPasswordHasher.VerifyHashedPassword(user, password);
+
+            if (result == PasswordVerificationResult.Success)
+            {
+                return user;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+}

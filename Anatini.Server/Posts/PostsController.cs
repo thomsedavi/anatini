@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context;
+using Anatini.Server.Context.EntityExtensions;
 using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -22,21 +23,20 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost(string channelSlug, [FromForm] NewPost newPost)
         {
-            IActionResult channelContextFunction(Channel channel, AnatiniContext context)
+            async Task<IActionResult> channelContextFunctionAsync(Channel channel, AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext);
 
-                var postAlias = newPost.CreateAlias(channel.Id);
-                var post = newPost.Create(channel.Id, eventData);
-                context.AddRange(postAlias, post);
+                var postAlias = await context.AddPostAliasAsync(newPost.Id, channel.Id, newPost.Slug, newPost.Name);
+                var post = await context.AddPostAsync(newPost.Id, newPost.Name, newPost.Slug, channel.Id, eventData);
 
                 channel.AddDraftPost(post, eventData);
-                context.Update(channel);
+                await context.Update(channel);
 
                 return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannelContext(channelSlug, channelContextFunction, requiresAuthorisation: true);
+            return await UsingChannelContextAsync(channelSlug, channelContextFunctionAsync, requiresAuthorisation: true);
         }
 
         [HttpGet("{postSlug}")]

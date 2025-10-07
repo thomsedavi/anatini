@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Anatini.Server.Context.Extensions
+namespace Anatini.Server.Context.BuilderExtensions
 {
     public static class UserToUserRelationshipBuilderExtensions
     {
@@ -10,10 +10,7 @@ namespace Anatini.Server.Context.Extensions
             userToUserRelationshipBuilder.ToContainer("UserToUserRelationships");
             userToUserRelationshipBuilder.HasKey(userToUserRelationship => new { userToUserRelationship.UserId, userToUserRelationship.RelationshipType, userToUserRelationship.ToUserId });
             userToUserRelationshipBuilder.HasPartitionKey(userToUserRelationship => new { userToUserRelationship.UserId, userToUserRelationship.RelationshipType, userToUserRelationship.ToUserId });
-            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.Id).ToJsonProperty("id");
-            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.UserId).ToJsonProperty("userId");
-            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.RelationshipType).ToJsonProperty("relationshipType");
-            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.ToUserId).ToJsonProperty("toUserId");
+            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.ItemId).ToJsonProperty("id");
         }
     }
 }

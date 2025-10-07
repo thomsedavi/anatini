@@ -11,21 +11,19 @@ namespace Anatini.Server
     public class AnatiniControllerBase : ControllerBase
     {
         [NonAction]
-        public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction, Func<DbUpdateException, IActionResult, IActionResult>? onDbUpdateException = null)
+        public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction)
         {
             try
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var result = await contextFunction(context);
-
-                await context.SaveChangesAsync();
+                var result = await contextFunction(new AnatiniContext(innerContext));
 
                 return result;
             }
             catch (DbUpdateException dbUpdateException)
             {
-                return onDbUpdateException != null ? onDbUpdateException(dbUpdateException, DbUpdateExceptionResult(dbUpdateException)) : DbUpdateExceptionResult(dbUpdateException);
+                return DbUpdateExceptionResult(dbUpdateException);
             }
             catch (Exception)
             {
@@ -38,13 +36,11 @@ namespace Anatini.Server
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var result = channelContextFunction(channel, context);
+                var result = channelContextFunction(channel, new AnatiniContext(innerContext));
 
-                await context.SaveChangesAsync();
-
-                return result;
+                return await Task.FromResult(result);
             }
 
             return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
@@ -55,13 +51,9 @@ namespace Anatini.Server
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var result = await channelContextFunction(channel, context);
-
-                await context.SaveChangesAsync();
-
-                return result;
+                return await channelContextFunction(channel, new AnatiniContext(innerContext));
             }
 
             return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
@@ -98,23 +90,23 @@ namespace Anatini.Server
         {
             try
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var channelAlias = await context.ChannelAliases.FindAsync(channelSlug);
+                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
 
                 if (channelAlias == null)
                 {
                     return NotFound();
                 }
 
-                var postAlias = await context.PostAliases.FindAsync(channelAlias.ChannelId, postSlug);
+                var postAlias = await innerContext.PostAliases.FindAsync(channelAlias.ChannelId, postSlug);
 
                 if (postAlias == null)
                 {
                     return NotFound();
                 }
 
-                var post = await context.Posts.FindAsync(channelAlias.ChannelId, postAlias.PostId);
+                var post = await innerContext.Posts.FindAsync(channelAlias.ChannelId, postAlias.PostId);
 
                 if (post == null)
                 {
@@ -141,16 +133,16 @@ namespace Anatini.Server
 
             try
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var channelAlias = await context.ChannelAliases.FindAsync(channelSlug);
+                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
                 
                 if (channelAlias == null)
                 {
                     return NotFound();
                 }
 
-                var channel = await context.Channels.FindAsync(channelAlias.ChannelId);
+                var channel = await innerContext.Channels.FindAsync(channelAlias.ChannelId);
 
                 if (channel == null)
                 {
@@ -180,17 +172,15 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext,IActionResult> userContextFunction)
+        public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext, IActionResult> userContextFunction)
         {
             async Task<IActionResult> userFunctionAsync(User user)
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var result = userContextFunction(user, context);
+                var result = userContextFunction(user, new AnatiniContext(innerContext));
 
-                await context.SaveChangesAsync();
-
-                return result;
+                return await Task.FromResult(result);
             }
 
             return await UsingUserAsync(userFunctionAsync);
@@ -201,13 +191,9 @@ namespace Anatini.Server
         {
             async Task<IActionResult> userFunctionAsync(User user)
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
-                var result = await userContextFunction(user, context);
-
-                await context.SaveChangesAsync();
-
-                return result;
+                return await userContextFunction(user, new AnatiniContext(innerContext));
             }
 
             return await UsingUserAsync(userFunctionAsync);
@@ -218,11 +204,11 @@ namespace Anatini.Server
         {
             try
             {
-                using var context = new AnatiniContext();
+                using var innerContext = new ContextBase();
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var user = await context.Users.FindAsync(userId);
+                var user = await innerContext.Users.FindAsync(userId);
 
                 if (user == null)
                 {

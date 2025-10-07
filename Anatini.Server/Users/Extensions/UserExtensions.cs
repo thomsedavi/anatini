@@ -1,41 +1,11 @@
-﻿using Anatini.Server.Authentication;
-using Anatini.Server.Context;
+﻿using Anatini.Server.Context;
 using Anatini.Server.Dtos;
 using Anatini.Server.Utils;
-using Microsoft.AspNetCore.Identity;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static async Task<User?> VerifyPassword(this AnatiniContext context, string address, string password)
-        {
-            var userId = (await context.UserEmails.FindAsync(address))?.UserId;
-
-            if (userId == null)
-            {
-                return null;
-            }
-
-            var user = await context.Users.FindAsync(userId);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var result = UserPasswordHasher.VerifyHashedPassword(user, password);
-
-            if (result == PasswordVerificationResult.Success)
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static User AddChannel(this User user, Channel channel)
         {
             var userOwnedChannel = new UserOwnedChannel
@@ -53,19 +23,19 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static User AddAlias(this User user, NewUserAlias newUserAlias)
+        public static User AddAlias(this User user, UserAlias userAlias, bool? @default)
         {
             var userOwnedAlias = new UserOwnedAlias
             {
-                Slug = newUserAlias.Slug,
+                Slug = userAlias.Slug,
                 UserId = user.Id
             };
 
             user.Aliases.Add(userOwnedAlias);
 
-            if (newUserAlias.Default ?? false)
+            if (@default ?? false)
             {
-                user.DefaultSlug = newUserAlias.Slug;
+                user.DefaultSlug = userAlias.Slug;
             }
 
             return user;
