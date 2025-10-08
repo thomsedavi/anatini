@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-
-namespace Anatini.Server.Utils
+﻿namespace Anatini.Server.Utils
 {
     public static class IdGenerator
     {
@@ -8,12 +6,7 @@ namespace Anatini.Server.Utils
         {
             if (ids.Length == 0)
             {
-                var guid = Guid.NewGuid();
-
-                Span<byte> bytes = stackalloc byte[16];
-                guid.TryWriteBytes(bytes);
-
-                return WebEncoders.Base64UrlEncode(bytes);
+                return Guid.NewGuid().ToString();
             }
             else
             {

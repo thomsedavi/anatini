@@ -19,7 +19,7 @@ namespace Anatini.Server.Authentication
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
 
-        [MaxLength(64), DataType(DataType.Text)]
+        [Slug, MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
         [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]

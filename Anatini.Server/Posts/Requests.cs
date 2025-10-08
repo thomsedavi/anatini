@@ -7,7 +7,7 @@ namespace Anatini.Server.Posts
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
-        [MaxLength(64), DataType(DataType.Text)]
+        [Slug, MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
         public string Id { get; set; } = IdGenerator.Get();
