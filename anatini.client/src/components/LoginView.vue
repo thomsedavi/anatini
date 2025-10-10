@@ -3,6 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { store } from '../store.ts';
   import { reportValidity, validateInputs } from './common/validity.ts';
+  import type { IsAuthenticated } from '@/types';
 
   const router = useRouter();
   const route = useRoute();
@@ -39,15 +40,22 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        store.isLoggedIn = true;
+        response.json()
+          .then((value: IsAuthenticated) => {
+            store.isLoggedIn = value.isAuthenticated;
+            store.expiresUtc = value.expiresUtc;
 
-        let path = '/';
+            let path = '/';
 
-        if (typeof route.query.redirect === 'string') {
-          path = route.query.redirect;
-        }
+            if (typeof route.query.redirect === 'string') {
+              path = route.query.redirect;
+            }
 
-        router.replace({ path: path });
+            router.replace({ path: path });
+          })
+          .catch(() => {
+            store.isLoggedIn = false;
+          });
       } else if (response.status === 401) {
         passwordInput.value!.setCustomValidity("Incorrect password");
 

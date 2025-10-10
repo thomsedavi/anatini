@@ -2,6 +2,7 @@
 {
     public class IsAuthenticatedResponse
     {
-        public bool IsAuthenticated { get; set; }
+        public required bool IsAuthenticated { get; set; }
+        public DateTime? ExpiresUtc { get; set; }
     }
 }

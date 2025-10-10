@@ -53,7 +53,7 @@ export type Channel = {
   }[];
 };
 
-export  type ChannelEdit = {
+export type ChannelEdit = {
   id: string;
   name: string;
   defaultSlug: string;
@@ -67,3 +67,8 @@ export  type ChannelEdit = {
     updatedDateTimeUTC: string;
   }[];
 };
+
+export type IsAuthenticated = {
+  isAuthenticated: boolean;
+  expiresUtc?: string;
+}

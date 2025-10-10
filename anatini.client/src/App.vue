@@ -2,10 +2,7 @@
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { store } from './store.ts';
-
-  type IsAuthenticatedJson = {
-    isAuthenticated: boolean;
-  }
+  import type { IsAuthenticated } from '@/types';
 
   const router = useRouter();
   const isFetching = ref<boolean>(false);
@@ -18,8 +15,9 @@
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
-          .then((value: IsAuthenticatedJson) => {
+          .then((value: IsAuthenticated) => {
             store.isLoggedIn = value.isAuthenticated;
+            store.expiresUtc = value.expiresUtc;
           })
           .catch(() => {
             store.isLoggedIn = false;

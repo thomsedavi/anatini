@@ -2,6 +2,8 @@
   import { ref, useTemplateRef } from 'vue';
   import { useRouter } from 'vue-router'
   import { reportValidity, validateInputs } from './common/validity';
+  import { store } from '@/store.ts';
+  import type { IsAuthenticated } from '@/types';
 
   const { emailAddress, verificationFailed } = defineProps<{
     emailAddress?: string;
@@ -52,7 +54,16 @@
       body: new URLSearchParams(body),
     }).then((response: Response) => {
       if (response.ok) {
-        router.replace({ path: '/account' });
+        response.json()
+          .then((value: IsAuthenticated) => {
+            store.isLoggedIn = value.isAuthenticated;
+            store.expiresUtc = value.expiresUtc;
+
+            router.replace({ path: '/account' });
+          })
+          .catch(() => {
+            store.isLoggedIn = false;
+          });
       } else if (response.status === 404) {
         verificationCodeInput.value!.setCustomValidity("Verification code does not match, please go back and resend email.");
 

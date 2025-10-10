@@ -206,7 +206,7 @@ namespace Anatini.Server.Authentication
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 
-                return Ok();
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.AddHours(1) });
             }
 
             return await UsingContextAsync(contextFunctionAsync);
@@ -252,7 +252,7 @@ namespace Anatini.Server.Authentication
 
                 AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
 
-                return Ok();
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.AddHours(1) });
             }
 
             return await UsingContextAsync(contextFunctionAsync);
@@ -335,7 +335,7 @@ namespace Anatini.Server.Authentication
 
                     AppendCookies(accessToken, userSession.RefreshToken, utcNow);
 
-                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = true });
+                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = utcNow.AddHours(1) });
                 }
 
                 var userId = Guid.TryParse(token.Claims.FirstOrDefault(a => a.Type == "nameid")?.Value, out Guid id) ? id : Guid.Empty;
@@ -351,7 +351,7 @@ namespace Anatini.Server.Authentication
                 return await UsingUserContextAsync(userId, userFunctionAsync);
             }
 
-            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = true });
+            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = true, ExpiresUtc = expiresDateTime });
         }
 
         private static string GetAccessToken(Guid userId, DateTime dateTimeUTC)
