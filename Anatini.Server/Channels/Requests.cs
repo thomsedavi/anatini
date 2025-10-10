@@ -10,7 +10,7 @@ namespace Anatini.Server.Channels
         [Slug, MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }
 
-        public string Id { get; set; } = IdGenerator.Get();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 
     public class NewChannelAlias

@@ -31,7 +31,7 @@ namespace Anatini.Server.Authentication
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }
 
-        public string Id { get; set; } = IdGenerator.Get();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 
     public class LoginForm

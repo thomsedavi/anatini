@@ -31,6 +31,13 @@
             return this;
         }
 
+        internal EventData Add(string key, Guid value)
+        {
+            Dictionary[key] = value.ToString();
+
+            return this;
+        }
+
         internal IDictionary<string, string> ToDictionary()
         {
             return Dictionary;

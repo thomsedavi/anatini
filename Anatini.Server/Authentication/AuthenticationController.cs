@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
+using Anatini.Server.Authentication.Responses;
 using Anatini.Server.Context;
 using Anatini.Server.Context.EntityExtensions;
 using Anatini.Server.Enums;
@@ -67,7 +68,7 @@ namespace Anatini.Server.Authentication
                 }
             }
 
-            return await UsingUserContextAsync(userContextFunctionAsync);
+            return await UsingUserContextAsync(UserId, userContextFunctionAsync);
         }
 
         [HttpPost("email")]
@@ -79,11 +80,11 @@ namespace Anatini.Server.Authentication
             async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-                string userId;
+                Guid userId;
 
                 if (form.InviteCode == "zzzzzzzz")
                 {
-                    userId = IdGenerator.Get();
+                    userId = Guid.NewGuid();
                 }
                 else
                 {
@@ -185,9 +186,9 @@ namespace Anatini.Server.Authentication
                 await context.Update(email);
                 await context.AddUserEventAsync(user.Id, EventType.UserCreated, eventData);
 
-                if (email.InvitedByUserId != null)
+                if (email.InvitedByUserId.HasValue)
                 {
-                    var invitedByUserId = email.InvitedByUserId;
+                    var invitedByUserId = email.InvitedByUserId.Value;
 
                     var invitedByUser = (await context.FindAsync<User>(invitedByUserId));
 
@@ -215,8 +216,8 @@ namespace Anatini.Server.Authentication
         [HttpPost("logout")]
         public IActionResult PostLogout()
         {
-            Response.Cookies.Delete("access_token");
-            Response.Cookies.Delete("refresh_token");
+            DeleteCookie("access_token");
+            DeleteCookie("refresh_token");
 
             return Ok();
         }
@@ -268,7 +269,7 @@ namespace Anatini.Server.Authentication
                 return await Task.FromResult(Ok(user.ToUserEditDto()));
             }
 
-            return await UsingUserAsync(userFunctionAsync);
+            return await UsingUserAsync(UserId, userFunctionAsync);
         }
 
         [Authorize]
@@ -282,16 +283,82 @@ namespace Anatini.Server.Authentication
 
         [HttpGet("is-authenticated")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetIsAuthenticated()
+        public async Task<IActionResult> GetIsAuthenticated()
         {
-            return Ok(new { User.Identity?.IsAuthenticated });
+            var accessToken = CookieValue("access_token");
+
+            if (accessToken == null)
+            {
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+            var exp = token.Claims.FirstOrDefault(a => a.Type == "exp")?.Value;
+
+            DateTime expiresDateTime;
+
+            if (exp != null && long.TryParse(exp, out long seconds))
+            {
+                expiresDateTime = DateTimeOffset.FromUnixTimeSeconds(seconds).UtcDateTime;
+            }
+            else
+            {
+                DeleteCookie("access_token");
+                DeleteCookie("refresh_token");
+
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+            }
+
+            if (expiresDateTime < DateTime.UtcNow)
+            {
+                async Task<IActionResult> userFunctionAsync(User user, AnatiniContext context)
+                {
+                    var refreshToken = CookieValue("refresh_token");
+
+                    var userSession = user.Sessions.FirstOrDefault(session => session.RefreshToken == refreshToken);
+
+                    if (userSession == null)
+                    {
+                        DeleteCookie("access_token");
+                        DeleteCookie("refresh_token");
+
+                        return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+                    }
+
+                    userSession.RefreshToken = TokenGenerator.Get;
+                    await context.Update(user);
+
+                    var utcNow = DateTime.UtcNow;
+
+                    var accessToken = GetAccessToken(user.Id, utcNow);
+
+                    AppendCookies(accessToken, userSession.RefreshToken, utcNow);
+
+                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = true });
+                }
+
+                var userId = Guid.TryParse(token.Claims.FirstOrDefault(a => a.Type == "nameid")?.Value, out Guid id) ? id : Guid.Empty;
+
+                if (userId == Guid.Empty)
+                {
+                    DeleteCookie("access_token");
+                    DeleteCookie("refresh_token");
+
+                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+                }
+
+                return await UsingUserContextAsync(userId, userFunctionAsync);
+            }
+
+            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = true });
         }
 
-        private static string GetAccessToken(string userId, DateTime dateTimeUTC)
+        private static string GetAccessToken(Guid userId, DateTime dateTimeUTC)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, userId),
+                new(ClaimTypes.NameIdentifier, userId.ToString()),
                 new(ClaimTypes.Role, "Verified?")
             };
 

@@ -90,7 +90,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedChannel : UserOwnedEntity
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
     }
@@ -119,7 +119,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class UserOwnedSession : UserOwnedEntity
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
@@ -141,7 +141,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class ChannelOwnedUser : ChannelOwnedEntity
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
     }
 
@@ -154,7 +154,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class ChannelOwnedPost : ChannelOwnedEntity
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
@@ -162,7 +162,7 @@ namespace Anatini.Server.Context
 
     public class Post : BaseEntity
     {
-        public required string ChannelId { get; set; }
+        public required Guid ChannelId { get; set; }
         public required string Name { get; set; }
         public required DateOnly DateOnlyNZ { get; set; }
         public required ICollection<PostOwnedAlias> Aliases { get; set; }
@@ -190,41 +190,41 @@ namespace Anatini.Server.Context
     {
         public required string Address { get; set; }
         public string? VerificationCode { get; set; }
-        public string? InvitedByUserId { get; set; }
+        public Guid? InvitedByUserId { get; set; }
         public string? InviteCode { get; set; }
         public required bool Verified { get; set; }
     }
 
     public class UserToUserRelationship : UserEntity
     {
-        public required string ToUserId { get; set; }
+        public required Guid ToUserId { get; set; }
         public required string RelationshipType { get; set; }
     }
 
     public class UserInvite : UserEntity
     {
         public required string Code { get; set; }
-        public required string NewUserId { get; set; }
+        public required Guid NewUserId { get; set; }
         public required DateOnly DateOnlyNZ { get; set; }
         public string? EmailAddress { get; set; }
     }
 
     public class UserAlias : AliasEntity
     {
-        public required string UserId { get; set; }
+        public required Guid UserId { get; set; }
         public required string UserName { get; set; }
     }
 
     public class ChannelAlias : AliasEntity
     {
-        public required string ChannelId { get; set; }
+        public required Guid ChannelId { get; set; }
         public required string ChannelName { get; set; }
     }
 
     public class PostAlias : AliasEntity
     {
-        public required string ChannelId { get; set; }
-        public required string PostId { get; set; }
+        public required Guid ChannelId { get; set; }
+        public required Guid PostId { get; set; }
         public required string PostName { get; set; }
     }
 
@@ -235,12 +235,12 @@ namespace Anatini.Server.Context
 
     public abstract class BaseEntity  : Entity
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
     }
 
     public abstract class UserEntity : Entity
     {
-        public required string UserId { get; set; }
+        public required Guid UserId { get; set; }
     }
 
     public abstract class AliasEntity : Entity
@@ -250,17 +250,17 @@ namespace Anatini.Server.Context
 
     public abstract class UserOwnedEntity
     {
-        public required string UserId { get; set; }
+        public required Guid UserId { get; set; }
     }
 
     public abstract class ChannelOwnedEntity
     {
-        public required string ChannelId { get; set; }
+        public required Guid ChannelId { get; set; }
     }
 
     public abstract class PostOwnedEntity
     {
-        public required string ChannelId { get; set; }
-        public required string PostId { get; set; }
+        public required Guid ChannelId { get; set; }
+        public required Guid PostId { get; set; }
     }
 }

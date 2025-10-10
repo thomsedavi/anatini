@@ -10,6 +10,10 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
+        public string? CookieValue(string key) => Request.Cookies.FirstOrDefault(cookie => cookie.Key == key).Value;
+        public void DeleteCookie(string key) => Response.Cookies.Delete(key);
+        public Guid UserId => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out Guid userId) ? userId : Guid.Empty;
+
         [NonAction]
         public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction)
         {
@@ -151,9 +155,7 @@ namespace Anatini.Server
 
                 if (requiresAuthorisation)
                 {
-                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
- 
-                    if (!channel.Users.Any(user => user.Id == userId))
+                    if (!channel.Users.Any(user => user.Id == UserId))
                     {
                         return Unauthorized();
                     }
@@ -172,7 +174,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContext(Func<User, AnatiniContext, IActionResult> userContextFunction)
+        public async Task<IActionResult> UsingUserContext(Guid userId, Func<User, AnatiniContext, IActionResult> userContextFunction)
         {
             async Task<IActionResult> userFunctionAsync(User user)
             {
@@ -183,11 +185,11 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingUserAsync(userFunctionAsync);
+            return await UsingUserAsync(userId, userFunctionAsync);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContextAsync(Func<User, AnatiniContext, Task<IActionResult>> userContextFunction)
+        public async Task<IActionResult> UsingUserContextAsync(Guid userId, Func<User, AnatiniContext, Task<IActionResult>> userContextFunction)
         {
             async Task<IActionResult> userFunctionAsync(User user)
             {
@@ -196,17 +198,15 @@ namespace Anatini.Server
                 return await userContextFunction(user, new AnatiniContext(innerContext));
             }
 
-            return await UsingUserAsync(userFunctionAsync);
+            return await UsingUserAsync(userId, userFunctionAsync);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserAsync(Func<User, Task<IActionResult>> userFunction)
+        public async Task<IActionResult> UsingUserAsync(Guid userId, Func<User, Task<IActionResult>> userFunction)
         {
             try
             {
                 using var innerContext = new ContextBase();
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var user = await innerContext.Users.FindAsync(userId);
 

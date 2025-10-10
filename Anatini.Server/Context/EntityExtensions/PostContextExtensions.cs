@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class PostContextExtensions
     {
-        public static async Task<Post> AddPostAsync(this AnatiniContext context, string id, string name, string slug, string channelId, EventData eventData)
+        public static async Task<Post> AddPostAsync(this AnatiniContext context, Guid id, string name, string slug, Guid channelId, EventData eventData)
         {
             var postOwnedSlug = new PostOwnedAlias
             {
@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.EntityExtensions
 
             var post = new Post
             {
-                ItemId = IdGenerator.Get(channelId, id),
+                ItemId = ItemId.Get(channelId, id),
                 Id = id,
                 ChannelId = channelId,
                 Name = name,

@@ -5,11 +5,11 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class UserEventContextExtensions
     {
-        public static async Task<UserEvent> AddUserEventAsync(this AnatiniContext context, string userId, EventType eventType, EventData data)
+        public static async Task<UserEvent> AddUserEventAsync(this AnatiniContext context, Guid userId, EventType eventType, EventData data)
         {
             var userEvent = new UserEvent
             {
-                ItemId = IdGenerator.Get(),
+                ItemId = ItemId.Get(Guid.NewGuid()),
                 UserId = userId,
                 EventType = Enum.GetName(eventType)!,
                 DateTimeUtc = data.DateTimeUtc,

@@ -34,7 +34,7 @@ namespace Anatini.Server.Users
                 return Ok(user.ToUserEditDto());
             }
 
-            return await UsingUserContextAsync(userContextFunctionAsync);
+            return await UsingUserContextAsync(UserId, userContextFunctionAsync);
         }
 
         //[Authorize]

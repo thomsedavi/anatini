@@ -1,8 +1,10 @@
-﻿namespace Anatini.Server.Context.EntityExtensions
+﻿using Anatini.Server.Utils;
+
+namespace Anatini.Server.Context.EntityExtensions
 {
     public static class ChannelContextExtensions
     {
-        public static async Task<Channel> AddChannelAsync(this AnatiniContext context, string id, string name, string slug, string userId, string userName)
+        public static async Task<Channel> AddChannelAsync(this AnatiniContext context, Guid id, string name, string slug, Guid userId, string userName)
         {
             var channelOwnedUser = new ChannelOwnedUser
             {
@@ -19,7 +21,7 @@
 
             var channel = new Channel
             {
-                ItemId = id,
+                ItemId = ItemId.Get(id),
                 Id = id,
                 Name = name,
                 DefaultSlug = slug,

@@ -4,11 +4,11 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class UserEmailContextExtensions
     {
-        public static async Task<int> AddUserEmailAsync(this AnatiniContext context, string address, string userId)
+        public static async Task<int> AddUserEmailAsync(this AnatiniContext context, string address, Guid userId)
         {
             var userEmail = new UserEmail
             {
-                ItemId = address,
+                ItemId = ItemId.Get(address),
                 Address = address,
                 UserId = userId,
                 VerificationCode = CodeRandom.Next(),

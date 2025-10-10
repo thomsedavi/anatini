@@ -1,12 +1,14 @@
-﻿namespace Anatini.Server.Context.EntityExtensions
+﻿using Anatini.Server.Utils;
+
+namespace Anatini.Server.Context.EntityExtensions
 {
     public static class ChannelAliasContextExtensions
     {
-        public static async Task<ChannelAlias> AddChannelAliasAsync(this AnatiniContext context, string slug, string channelId, string channelName)
+        public static async Task<ChannelAlias> AddChannelAliasAsync(this AnatiniContext context, string slug, Guid channelId, string channelName)
         {
             var channelAlias = new ChannelAlias
             {
-                ItemId = slug,
+                ItemId = ItemId.Get(slug),
                 Slug = slug,
                 ChannelId = channelId,
                 ChannelName = channelName

@@ -4,14 +4,14 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class UserInviteContextExtensions
     {
-        public static async Task<UserInvite> AddUserInviteAsync(this AnatiniContext context, string code, string userId, DateOnly dateOnlyNZ)
+        public static async Task<UserInvite> AddUserInviteAsync(this AnatiniContext context, string code, Guid userId, DateOnly dateOnlyNZ)
         {
             var userInvite = new UserInvite
             {
-                ItemId = code,
+                ItemId = ItemId.Get(code),
                 Code = code,
                 UserId = userId,
-                NewUserId = IdGenerator.Get(),
+                NewUserId = Guid.NewGuid(),
                 DateOnlyNZ = dateOnlyNZ
             };
 
