@@ -3,6 +3,7 @@ using Anatini.Server.Context.EntityExtensions;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using User = Anatini.Server.Context.User;
 
 namespace Anatini.Server.Users
@@ -37,21 +38,21 @@ namespace Anatini.Server.Users
             return await UsingUserContextAsync(UserId, userContextFunctionAsync);
         }
 
-        //[Authorize]
-        //[HttpGet("events")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetEvents()
-        //{
-        //    async Task<IActionResult> userContextFunction(User user, AnatiniContext context)
-        //    {
-        //        var userEvents = await context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
-        //
-        //        return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
-        //    }
-        //
-        //    return await UsingUserContextAsync(userContextFunction);
-        //}
+        [Authorize]
+        [HttpGet("events")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetEvents()
+        {
+            async Task<IActionResult> userContextFunction(User user, AnatiniContext context)
+            {
+                var userEvents = await context.Context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
+        
+                return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
+            }
+        
+            return await UsingUserContextAsync(UserId, userContextFunction);
+        }
 
         [HttpGet("{slug}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

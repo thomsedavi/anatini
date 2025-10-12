@@ -51,7 +51,7 @@
 
 <template>
   <template v-if="store.isLoggedIn !== undefined">
-    <h1>Anatini!</h1>
+    <h1>Anatini! Session expires ({{ store.expiresUtc }}) now ({{ new Date().toISOString() }})</h1>
     <nav>
       <RouterLink to="/">Go to Home</RouterLink>
       <RouterLink to="/about">Go to About</RouterLink>

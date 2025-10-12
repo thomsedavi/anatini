@@ -3,6 +3,7 @@
   import { useRouter } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
   import type { UserEdit, Events } from '@/types';
+  import { apiFetch } from './common/apiFetch';
 
   const router = useRouter();
   const account = ref<UserEdit | null>(null);
@@ -151,23 +152,15 @@
   async function getEvents() {
     isGettingEvents.value = true;
 
-    fetch("api/users/events", {
-      method: "GET"
-    }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
-          .then((value: Events) => {
-            events.value = value;
-          })
-          .catch(() => {
-            console.log('Unknown Error');
-          });
-      } else {
-        console.log("Unknown Error");
-      }
-    }).finally(() => {
+    const onfulfilled = (value: Events) => {
+      events.value = value;
+    };
+
+    const onfinally = () => {
       isGettingEvents.value = false;
-    });
+    };
+
+    await apiFetch("users/events", onfulfilled, onfinally);
   }
 </script>
 

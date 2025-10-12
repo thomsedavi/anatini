@@ -202,11 +202,13 @@ namespace Anatini.Server.Authentication
                     email.InvitedByUserId = null;
                 }
 
-                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
+                var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
 
-                AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
+                AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
 
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.AddHours(1) });
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
             }
 
             return await UsingContextAsync(contextFunctionAsync);
@@ -216,10 +218,32 @@ namespace Anatini.Server.Authentication
         [HttpPost("logout")]
         public IActionResult PostLogout()
         {
-            DeleteCookie("access_token");
-            DeleteCookie("refresh_token");
+            DeleteCookie(Constants.AccessToken);
+            DeleteCookie(Constants.RefreshToken);
 
             return Ok();
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            try
+            {
+                var eventData = new EventData(HttpContext);
+
+                var refreshTokenString = CookieValue(Constants.RefreshToken);
+
+                if (refreshTokenString == null)
+                {
+                    return Unauthorized();
+                }
+
+                return await GetRefreshToken(refreshTokenString, eventData);
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
 
         [HttpPost("login")]
@@ -248,11 +272,13 @@ namespace Anatini.Server.Authentication
                 user.AddSession(refreshToken, eventData);
                 await context.Update(user);
 
-                var accessToken = GetAccessToken(user.Id, eventData.DateTimeUtc);
+                var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
 
-                AppendCookies(accessToken, refreshToken, eventData.DateTimeUtc);
+                AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
 
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.AddHours(1) });
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
             }
 
             return await UsingContextAsync(contextFunctionAsync);
@@ -285,16 +311,26 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIsAuthenticated()
         {
-            var accessToken = CookieValue("access_token");
+            var eventData = new EventData(HttpContext);
 
-            if (accessToken == null)
+            var refreshTokenString = CookieValue(Constants.RefreshToken);
+
+            if (refreshTokenString == null)
             {
                 return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
             }
 
+            var accessTokenString = CookieValue(Constants.AccessToken);
+
+            if (accessTokenString == null)
+            {
+                return await GetRefreshToken(refreshTokenString, eventData);
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-            var exp = token.Claims.FirstOrDefault(a => a.Type == "exp")?.Value;
+            var accessToken = tokenHandler.ReadJwtToken(accessTokenString);
+
+            var exp = accessToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Exp)?.Value;
 
             DateTime expiresDateTime;
 
@@ -304,70 +340,73 @@ namespace Anatini.Server.Authentication
             }
             else
             {
-                DeleteCookie("access_token");
-                DeleteCookie("refresh_token");
+                DeleteCookie(Constants.AccessToken);
+                DeleteCookie(Constants.RefreshToken);
 
                 return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
             }
 
-            if (expiresDateTime < DateTime.UtcNow)
+            if (expiresDateTime < DateTime.UtcNow) // TODO refresh if ten mins remaining
             {
-                async Task<IActionResult> userFunctionAsync(User user, AnatiniContext context)
-                {
-                    var refreshToken = CookieValue("refresh_token");
-
-                    var userSession = user.Sessions.FirstOrDefault(session => session.RefreshToken == refreshToken);
-
-                    if (userSession == null)
-                    {
-                        DeleteCookie("access_token");
-                        DeleteCookie("refresh_token");
-
-                        return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
-                    }
-
-                    userSession.RefreshToken = TokenGenerator.Get;
-                    await context.Update(user);
-
-                    var utcNow = DateTime.UtcNow;
-
-                    var accessToken = GetAccessToken(user.Id, utcNow);
-
-                    AppendCookies(accessToken, userSession.RefreshToken, utcNow);
-
-                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = utcNow.AddHours(1) });
-                }
-
-                var userId = Guid.TryParse(token.Claims.FirstOrDefault(a => a.Type == "nameid")?.Value, out Guid id) ? id : Guid.Empty;
-
-                if (userId == Guid.Empty)
-                {
-                    DeleteCookie("access_token");
-                    DeleteCookie("refresh_token");
-
-                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
-                }
-
-                return await UsingUserContextAsync(userId, userFunctionAsync);
+                return await GetRefreshToken(refreshTokenString, eventData);
             }
 
             return Ok(new IsAuthenticatedResponse{ IsAuthenticated = true, ExpiresUtc = expiresDateTime });
         }
 
-        private static string GetAccessToken(Guid userId, DateTime dateTimeUTC)
+        private async Task<IActionResult> GetRefreshToken(string refreshTokenString, EventData eventData)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var refreshToken = tokenHandler.ReadJwtToken(refreshTokenString);
+
+            var refreshTokenKey = refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Jti)?.Value ?? throw new Exception();
+            var userId = Guid.TryParse(refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.NameId)?.Value, out Guid id) ? id : throw new Exception();
+
+            async Task<IActionResult> userContextFunctionAsync(User user, AnatiniContext context)
+            {
+                var userSession = user.Sessions.FirstOrDefault(session => session.RefreshToken == refreshTokenKey);
+
+                if (userSession == null)
+                {
+                    DeleteCookie(Constants.AccessToken);
+                    DeleteCookie(Constants.RefreshToken);
+
+                    return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+                }
+
+                userSession.RefreshToken = TokenGenerator.Get;
+                await context.Update(user);
+
+                var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), userSession.RefreshToken);
+
+                AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
+                AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
+
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
+            }
+
+            return await UsingUserContextAsync(userId, userContextFunctionAsync);
+        }
+
+        private static string GetTokenCookie(Guid userId, DateTime expires, string? value = null)
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, userId.ToString()),
-                new(ClaimTypes.Role, "Verified?")
+                new(JwtRegisteredClaimNames.NameId, userId.ToString())
             };
+
+            if (value != null)
+            {
+                claims.Add(new(JwtRegisteredClaimNames.Jti, value));
+            }
 
             var key = Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = dateTimeUTC.AddHours(1),
+                Expires = expires,
                 Issuer = "https://id.anatini.com",
                 Audience = "https://api.anatini.com",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -380,26 +419,17 @@ namespace Anatini.Server.Authentication
             return tokenHandler.WriteToken(token);
         }
 
-        private void AppendCookies(string accessToken, string refreshToken, DateTime dateTimeUtc)
+        private void AppendCookie(string key, string value, DateTime expires)
         {
-            var accessTokenCookieOptions = new CookieOptions
+            var options = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = dateTimeUtc.AddHours(1)
+                Expires = expires
             };
 
-            var refreshTokenCookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Lax,
-                Expires = dateTimeUtc.AddDays(28)
-            };
-
-            Response.Cookies.Append("access_token", accessToken, accessTokenCookieOptions);
-            Response.Cookies.Append("refresh_token", refreshToken, refreshTokenCookieOptions);
+            Response.Cookies.Append(key, value, options);
         }
     }
 }

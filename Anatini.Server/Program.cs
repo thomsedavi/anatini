@@ -1,4 +1,5 @@
 using System.Text;
+using Anatini.Server;
 using Anatini.Server.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ builder.Services.AddAuthentication()
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["access_token"];
+                context.Token = context.Request.Cookies[Constants.AccessToken];
                 return Task.CompletedTask;
             }
         };
