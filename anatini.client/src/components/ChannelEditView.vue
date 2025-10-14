@@ -3,6 +3,7 @@
   import { useRoute } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
   import type { ChannelEdit } from '@/types';
+  import { apiFetch } from './common/apiFetch';
 
   const route = useRoute();
 
@@ -53,7 +54,9 @@
       { element: postNameInput.value, error: 'Please enter a post name.' },
       { element: postSlugInput.value, error: 'Please enter a post slug.' },
     ]))
+    {
       return;
+    }
 
     isCreatingPost.value = true;
 
@@ -62,30 +65,24 @@
       slug: postSlugInput.value!.value.trim(),
     };
 
-    fetch(`/api/channels/${route.params.channelSlug}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
-    }).then((value: Response) => {
-        if (value.ok) {
-          value.json()
-            .then((value: ChannelEdit) => {
-              channel.value = value;
-            })
-            .catch(() => {
-              error.value = 'Unknown Error';
-            });
-        } else if (value.status === 409) {
-          postSlugInput.value!.setCustomValidity("Slug already in use!");
-          reportValidity([postSlugInput.value]);
-        } else {
-          console.log("Unknown Error");
-        }
-      }).finally(() => {
-        isCreatingPost.value = false;
-      });
+    const onfulfilled = (value: ChannelEdit) => {
+      channel.value = value;
+    };
+
+    const onfinally = () => {
+      isCreatingPost.value = false;
+    };
+
+    const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body) };
+
+    const statusActions = {
+      409: () => {
+        postSlugInput.value!.setCustomValidity("Slug already in use!");
+        reportValidity([postSlugInput.value]);
+      }
+    };
+
+    apiFetch(`channels/${route.params.channelSlug}/posts`, onfulfilled, onfinally, init, statusActions);
   }
 </script>
 

@@ -32,7 +32,7 @@
       password: passwordInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/login", {
+    fetch("/api/authentication/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

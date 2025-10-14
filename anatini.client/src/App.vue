@@ -10,7 +10,7 @@
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("api/authentication/is-authenticated", {
+    fetch("/api/authentication/is-authenticated", {
       method: "GET",
     }).then((response: Response) => {
       if (response.ok) {
@@ -33,7 +33,7 @@
   });
 
   async function logout() {
-    fetch("api/authentication/logout", {
+    fetch("/api/authentication/logout", {
       method: "POST",
     }).then((response: Response) => {
       if (response.ok) {
@@ -55,9 +55,6 @@
     <nav>
       <RouterLink to="/">Go to Home</RouterLink>
       <RouterLink to="/about">Go to About</RouterLink>
-      <RouterLink to="/channels/david/posts/post-1">Post 1</RouterLink>
-      <RouterLink to="/channels/david/posts/post-2">Post 2</RouterLink>
-      <RouterLink to="/users/david">David</RouterLink>
       <RouterLink v-if="!store.isLoggedIn" to="/signup">Signup</RouterLink>
       <RouterLink v-if="!store.isLoggedIn" to="/login">Login</RouterLink>
       <RouterLink v-if="store.isLoggedIn" to="/account">Account</RouterLink>

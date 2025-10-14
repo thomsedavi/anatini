@@ -26,7 +26,7 @@
       inviteCode: inviteCodeInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/email", {
+    fetch("/api/authentication/email", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -50,7 +50,7 @@
 
 <template>
   <h2>SignupFlowInviteCodeView</h2>
-  <form id="inviteCode" @submit="inviteCode" action="api/authentication/email" method="post">
+  <form id="inviteCode" @submit="inviteCode" action="/api/authentication/email" method="post">
     <p>
       <label for="emailAddress">Email Address</label>
       <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">

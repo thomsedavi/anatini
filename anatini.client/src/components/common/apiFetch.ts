@@ -1,7 +1,7 @@
 import { store } from "@/store";
 import type { IsAuthenticated } from "@/types";
 
-export async function apiFetch<Type>(input: RequestInfo | URL, onfulfilled: (value: Type) => void, onfinally: () => void, init?: RequestInit): Promise<void> {
+export async function apiFetch<Type>(input: RequestInfo | URL, onfulfilled: (value: Type) => void, onfinally: () => void, init?: RequestInit, statusActions?: {[id: number]: () => void}): Promise<void> {
   if (store.expiresUtc == undefined) {
     return;
   }
@@ -25,11 +25,13 @@ export async function apiFetch<Type>(input: RequestInfo | URL, onfulfilled: (val
     });
   }
 
-  fetch(`api/${input}`, init).then((response: Response) => {
+  fetch(`/api/${input}`, init).then((response: Response) => {
     if (response.ok) {
       response.json()
         .then(onfulfilled)
         .catch(() => { console.log('Unknown Error'); });
+    } else if (statusActions?.[response.status]) {
+      statusActions[response.status]();
     } else {
       console.log("Unknown Error");
     }

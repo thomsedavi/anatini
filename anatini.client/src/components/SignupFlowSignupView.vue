@@ -85,7 +85,7 @@
 
 <template>
   <h2>SignupView</h2>
-  <form id="signup" @submit="signup" action="api/authentication/signup" method="post">
+  <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
     <p>
       <label for="emailAddress">Email Address</label>
       <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== undefined" @input="() => emailAddressInput?.setCustomValidity('')">

@@ -21,7 +21,7 @@
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("api/authentication/account", {
+    fetch("/api/authentication/account", {
       method: "GET",
     }).then((response: Response) => {
       if (response.ok) {
@@ -43,7 +43,7 @@
   async function createInviteCode() {
     isCreatingInviteCode.value = true;
 
-    fetch("api/authentication/invite", {
+    fetch("/api/authentication/invite", {
       method: "POST",
     }).then((response: Response) => {
       if (response.ok) {
@@ -80,7 +80,7 @@
       slug: channelSlugInput.value!.value.trim(),
     };
 
-    fetch("api/channels", {
+    fetch("/api/channels", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -120,7 +120,7 @@
       slug: userSlugInput.value!.value.trim(),
     };
 
-    fetch("api/users/slugs", {
+    fetch("/api/users/slugs", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
