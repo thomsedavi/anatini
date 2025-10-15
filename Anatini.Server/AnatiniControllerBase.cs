@@ -36,7 +36,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContext(string slug, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelContext(string channelSlug, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
@@ -47,11 +47,11 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
+            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string slug, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelContextAsync(string channelSlug, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
@@ -60,7 +60,20 @@ namespace Anatini.Server
                 return await channelContextFunction(channel, new AnatiniContext(innerContext));
             }
 
-            return await UsingChannelAsync(slug, channelFunctionAsync, requiresAuthorisation);
+            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingPostContextAsync(string channelSlug, string postSlug, Func<Post, AnatiniContext, Task<IActionResult>> postContextFunction, bool requiresAuthorisation = false)
+        {
+            async Task<IActionResult> postFunctionAsync(Post post)
+            {
+                using var innerContext = new ContextBase();
+
+                return await postContextFunction(post, new AnatiniContext(innerContext));
+            }
+
+            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, requiresAuthorisation);
         }
 
         [NonAction]
@@ -124,6 +137,10 @@ namespace Anatini.Server
             catch (DbUpdateException dbUpdateException)
             {
                 return DbUpdateExceptionResult(dbUpdateException);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return ValidationProblem(statusCode: 416);
             }
             catch (Exception)
             {

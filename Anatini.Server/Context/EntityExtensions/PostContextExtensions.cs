@@ -9,7 +9,7 @@ namespace Anatini.Server.Context.EntityExtensions
             var postOwnedSlug = new PostOwnedAlias
             {
                 Slug = slug,
-                ChannelId = channelId,
+                PostChannelId = channelId,
                 PostId = id
             };
 

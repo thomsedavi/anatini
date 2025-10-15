@@ -260,7 +260,7 @@ namespace Anatini.Server.Context
 
     public abstract class PostOwnedEntity
     {
-        public required Guid ChannelId { get; set; }
+        public required Guid PostChannelId { get; set; }
         public required Guid PostId { get; set; }
     }
 }

@@ -53,5 +53,21 @@ namespace Anatini.Server.Posts
 
             return await UsingPost(channelSlug, postSlug, postFunction);
         }
+
+        [HttpGet("{postSlug}/edit")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPostEdit(string channelSlug, string postSlug)
+        {
+            IActionResult postFunction(Post post)
+            {
+                return Ok(post.ToPostEditDto());
+            }
+
+            return await UsingPost(channelSlug, postSlug, postFunction, requiresAuthorisation: true);
+        }
     }
 }

@@ -25,7 +25,7 @@ export async function apiFetch<Type>(input: RequestInfo | URL, onfulfilled: (val
     });
   }
 
-  fetch(`/api/${input}`, init).then((response: Response) => {
+  await fetch(`/api/${input}`, init).then((response: Response) => {
     if (response.ok) {
       response.json()
         .then(onfulfilled)
