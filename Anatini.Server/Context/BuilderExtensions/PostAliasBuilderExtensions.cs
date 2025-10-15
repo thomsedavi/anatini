@@ -8,8 +8,8 @@ namespace Anatini.Server.Context.BuilderExtensions
         public static void Configure(this EntityTypeBuilder<PostAlias> postAliasBuilder)
         {
             postAliasBuilder.ToContainer("PostAliases");
-            postAliasBuilder.HasKey(postAlias => new { postAlias.ChannelId, postAlias.Slug });
-            postAliasBuilder.HasPartitionKey(postAlias => new { postAlias.ChannelId, postAlias.Slug });
+            postAliasBuilder.HasKey(postAlias => new { postAlias.PostChannelId, postAlias.Slug });
+            postAliasBuilder.HasPartitionKey(postAlias => new { postAlias.PostChannelId, postAlias.Slug });
             postAliasBuilder.Property(postAlias => postAlias.ItemId).ToJsonProperty("id");
         }
     }

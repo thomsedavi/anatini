@@ -166,6 +166,7 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required DateOnly DateOnlyNZ { get; set; }
         public required ICollection<PostOwnedAlias> Aliases { get; set; }
+        public IList<PostOwnedElement>? Elements { get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
 
@@ -177,6 +178,13 @@ namespace Anatini.Server.Context
     public class PostOwnedAlias : PostOwnedEntity
     {
         public required string Slug { get; set; }
+    }
+
+    [Owned]
+    public class PostOwnedElement : PostOwnedEntity
+    {
+        public required string Tag { get; set; }
+        public string? Content { get; set; }
     }
 
     public class UserEvent : UserEntity
@@ -223,7 +231,7 @@ namespace Anatini.Server.Context
 
     public class PostAlias : AliasEntity
     {
-        public required Guid ChannelId { get; set; }
+        public required Guid PostChannelId { get; set; }
         public required Guid PostId { get; set; }
         public required string PostName { get; set; }
     }

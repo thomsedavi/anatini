@@ -10,7 +10,7 @@ namespace Anatini.Server.Context.EntityExtensions
             {
                 ItemId = ItemId.Get(channelId, slug),
                 Slug = slug,
-                ChannelId = channelId,
+                PostChannelId = channelId,
                 PostId = postId,
                 PostName = postName
             };
