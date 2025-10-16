@@ -166,11 +166,10 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required DateOnly DateOnlyNZ { get; set; }
         public required ICollection<PostOwnedAlias> Aliases { get; set; }
-        public IList<PostOwnedElement>? Elements { get; set; }
+        public required ICollection<PostOwnedElement> Elements { get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
 
-        // content, an array of objects with type, value, caption, platform (youtube) etc
         // tags
     }
 
@@ -183,6 +182,7 @@ namespace Anatini.Server.Context
     [Owned]
     public class PostOwnedElement : PostOwnedEntity
     {
+        public required int Index { get; set; }
         public required string Tag { get; set; }
         public string? Content { get; set; }
     }

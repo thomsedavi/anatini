@@ -21,6 +21,7 @@ namespace Anatini.Server.Context.EntityExtensions
                 Name = name,
                 DateOnlyNZ = eventData.DateOnlyNZNow,
                 Aliases = [postOwnedSlug],
+                Elements = [],
                 DefaultSlug = slug,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };

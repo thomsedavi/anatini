@@ -138,10 +138,6 @@ namespace Anatini.Server
             {
                 return DbUpdateExceptionResult(dbUpdateException);
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                return ValidationProblem(statusCode: 416);
-            }
             catch (Exception)
             {
                 return Problem();
