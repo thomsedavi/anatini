@@ -64,7 +64,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPostContextAsync(string channelSlug, string postSlug, Func<Post, AnatiniContext, Task<IActionResult>> postContextFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingPostContextAsync(string channelSlug, string postSlug, Func<Post, AnatiniContext, Task<IActionResult>> postContextFunction, string? eTag = null, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> postFunctionAsync(Post post)
             {
@@ -73,11 +73,11 @@ namespace Anatini.Server
                 return await postContextFunction(post, new AnatiniContext(innerContext));
             }
 
-            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, requiresAuthorisation);
+            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, eTag, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPost(string channelSlug, string postSlug, Func<Post, IActionResult> postFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingPost(string channelSlug, string postSlug, Func<Post, IActionResult> postFunction, string? eTag = null, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> postFunctionAsync(Post post)
             {
@@ -86,7 +86,7 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, requiresAuthorisation);
+            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, eTag, requiresAuthorisation);
         }
 
         [NonAction]
@@ -103,7 +103,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPostAsync(string channelSlug, string postSlug, Func<Post, Task<IActionResult>> postFunctionAsync, bool _ = false)
+        public async Task<IActionResult> UsingPostAsync(string channelSlug, string postSlug, Func<Post, Task<IActionResult>> postFunctionAsync, string? eTag = null, bool _ = false)
         {
             try
             {
@@ -128,6 +128,11 @@ namespace Anatini.Server
                 if (post == null)
                 {
                     return Problem();
+                }
+
+                if (eTag != null && eTag != post.ETag)
+                {
+                    return ValidationProblem(statusCode: 412);
                 }
 
                 // add if requiresAuthorisation

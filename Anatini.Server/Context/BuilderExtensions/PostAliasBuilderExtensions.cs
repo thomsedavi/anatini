@@ -11,6 +11,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             postAliasBuilder.HasKey(postAlias => new { postAlias.PostChannelId, postAlias.Slug });
             postAliasBuilder.HasPartitionKey(postAlias => new { postAlias.PostChannelId, postAlias.Slug });
             postAliasBuilder.Property(postAlias => postAlias.ItemId).ToJsonProperty("id");
+            postAliasBuilder.Property(postAlias => postAlias.ETag).ToJsonProperty("_etag");
         }
     }
 }

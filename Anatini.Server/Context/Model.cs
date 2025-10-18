@@ -239,6 +239,7 @@ namespace Anatini.Server.Context
     public abstract class Entity
     {
         public required string ItemId { get; set; }
+        public string? ETag { get; set; }
     }
 
     public abstract class BaseEntity  : Entity

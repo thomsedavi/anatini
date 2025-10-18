@@ -11,6 +11,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             postBuilder.HasKey(post => new { post.ChannelId, post.Id });
             postBuilder.HasPartitionKey(post => new { post.ChannelId, post.Id });
             postBuilder.Property(post => post.ItemId).ToJsonProperty("id");
+            postBuilder.Property(post => post.ETag).ToJsonProperty("_etag");
             postBuilder.OwnsMany(post => post.Aliases, buildAction => { buildAction.HasKey(postOwnedAlias => postOwnedAlias.Slug); });
             postBuilder.OwnsMany(post => post.Elements, buildAction => { buildAction.HasKey(postOwnedElement => postOwnedElement.Index); });
         }

@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userBuilder.HasPartitionKey(user => user.Id);
             userBuilder.Property(user => user.ItemId).ToJsonProperty("id");
             userBuilder.Property(user => user.Id).ToJsonProperty("Id");
+            userBuilder.Property(user => user.ETag).ToJsonProperty("_etag");
             userBuilder.OwnsMany(user => user.Aliases, buildAction => { buildAction.HasKey(userOwnedAlias => userOwnedAlias.Slug); });
             userBuilder.OwnsMany(user => user.Emails, buildAction => { buildAction.HasKey(userOwnedEmail => userOwnedEmail.Address); });
             userBuilder.OwnsMany(user => user.Invites, buildAction => { buildAction.HasKey(userOwnedInvite => userOwnedInvite.Code); });

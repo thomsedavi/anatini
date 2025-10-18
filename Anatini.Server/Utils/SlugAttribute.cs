@@ -19,9 +19,11 @@ namespace Anatini.Server.Utils
                 {
                     return new ValidationResult("Slug cannot be a Guid?");
                 }
+
+                return ValidationResult.Success;
             }
 
-            return ValidationResult.Success;
+            return new ValidationResult("Slug must be a string");
         }
     }
 }

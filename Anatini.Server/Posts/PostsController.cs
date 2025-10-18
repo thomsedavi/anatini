@@ -64,6 +64,8 @@ namespace Anatini.Server.Posts
         {
             IActionResult postFunction(Post post)
             {
+                Response.Headers.ETag = post.ETag;
+
                 return Ok(post.ToPostEditDto());
             }
 

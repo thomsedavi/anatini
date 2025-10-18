@@ -11,6 +11,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userAliasBuilder.HasKey(userAlias => userAlias.Slug);
             userAliasBuilder.HasPartitionKey(userAlias => userAlias.Slug);
             userAliasBuilder.Property(userAlias => userAlias.ItemId).ToJsonProperty("id");
+            userAliasBuilder.Property(userAlias => userAlias.ETag).ToJsonProperty("_etag");
             userAliasBuilder.Property(userAlias => userAlias.Slug).ToJsonProperty("Slug");
         }
     }

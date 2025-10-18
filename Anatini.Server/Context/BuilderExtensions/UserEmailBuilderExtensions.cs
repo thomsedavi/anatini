@@ -11,6 +11,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userEmailBuilder.HasKey(userEmail => userEmail.Address);
             userEmailBuilder.HasPartitionKey(userEmail => userEmail.Address);
             userEmailBuilder.Property(userEmail => userEmail.ItemId).ToJsonProperty("id");
+            userEmailBuilder.Property(userEmail => userEmail.ETag).ToJsonProperty("_etag");
             userEmailBuilder.Property(user => user.Address).ToJsonProperty("Address");
         }
     }

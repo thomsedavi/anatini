@@ -12,4 +12,13 @@ namespace Anatini.Server.Posts
 
         public Guid Id { get; set; } = Guid.NewGuid();
     }
+
+    public class NewElement
+    {
+        public required int InsertAfter { get; set; }
+        [Tag, DataType(DataType.Text)]
+        public required string Tag { get; set; }
+        [DataType(DataType.Text)]
+        public string? Content { get; set; }
+    }
 }

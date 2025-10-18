@@ -11,6 +11,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userEventBuilder.HasKey(userEvent => userEvent.ItemId);
             userEventBuilder.HasPartitionKey(userEvent => new { userEvent.UserId, userEvent.EventType });
             userEventBuilder.Property(userEvent => userEvent.ItemId).ToJsonProperty("id");
+            userEventBuilder.Property(userEvent => userEvent.ETag).ToJsonProperty("_etag");
         }
     }
 }
