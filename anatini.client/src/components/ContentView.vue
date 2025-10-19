@@ -5,21 +5,21 @@
   const route = useRoute();
 
   const loading = ref<boolean>(false);
-  const post = ref<string | null>(null);
+  const content = ref<string | null>(null);
   const error = ref<string | null>(null);
 
-  watch([() => route.params.channelSlug, () => route.params.postSlug], fetchPost, { immediate: true });
+  watch([() => route.params.channelId, () => route.params.contentId], fetchContent, { immediate: true });
 
-  async function fetchPost(array: (() => string | string[])[]) {
-    error.value = post.value = null
+  async function fetchContent(array: (() => string | string[])[]) {
+    error.value = content.value = null
     loading.value = true
 
-    fetch(`/api/channels/${array[0]}/posts/${array[1]}`, { method: "GET" })
+    fetch(`/api/channels/${array[0]}/contents/${array[1]}`, { method: "GET" })
       .then((value: Response) => {
         if (value.ok) {
           value.json()
             .then(value => {
-              post.value = value.post;
+              content.value = value.content;
             })
             .catch(() => {
               error.value = 'Unknown Error';
@@ -40,9 +40,9 @@
 </script>
 
 <template>
-  <h2>PostView</h2>
+  <h2>ContentView</h2>
   <p>Current route path: {{ $route.fullPath }}</p>
   <p v-if="loading">Loading...</p>
   <p v-if="error">{{ error }}</p>
-  <p v-if="post">{{ post }}</p>
+  <p v-if="content">{{ content }}</p>
 </template>

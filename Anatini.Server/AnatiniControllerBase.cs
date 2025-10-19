@@ -36,7 +36,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContext(string channelSlug, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelContext(string channelId, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
@@ -47,11 +47,11 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
+            return await UsingChannelAsync(channelId, channelFunctionAsync, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string channelSlug, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelContextAsync(string channelId, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
@@ -60,37 +60,37 @@ namespace Anatini.Server
                 return await channelContextFunction(channel, new AnatiniContext(innerContext));
             }
 
-            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
+            return await UsingChannelAsync(channelId, channelFunctionAsync, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPostContextAsync(string channelSlug, string postSlug, Func<Post, AnatiniContext, Task<IActionResult>> postContextFunction, string? eTag = null, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> postFunctionAsync(Post post)
+            async Task<IActionResult> contentFunctionAsync(Content content)
             {
                 using var innerContext = new ContextBase();
 
-                return await postContextFunction(post, new AnatiniContext(innerContext));
+                return await contentContextFunction(content, new AnatiniContext(innerContext));
             }
 
-            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, eTag, requiresAuthorisation);
+            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPost(string channelSlug, string postSlug, Func<Post, IActionResult> postFunction, string? eTag = null, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> postFunctionAsync(Post post)
+            async Task<IActionResult> contentFunctionAsync(Content content)
             {
-                var result = postFunction(post);
+                var result = contentFunction(content);
 
                 return await Task.FromResult(result);
             }
 
-            return await UsingPostAsync(channelSlug, postSlug, postFunctionAsync, eTag, requiresAuthorisation);
+            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannel(string channelSlug, Func<Channel, IActionResult> channelFunction, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannel(string channelId, Func<Channel, IActionResult> channelFunction, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> channelFunctionAsync(Channel channel)
             {
@@ -99,45 +99,55 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingChannelAsync(channelSlug, channelFunctionAsync, requiresAuthorisation);
+            return await UsingChannelAsync(channelId, channelFunctionAsync, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPostAsync(string channelSlug, string postSlug, Func<Post, Task<IActionResult>> postFunctionAsync, string? eTag = null, bool _ = false)
+        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool _ = false)
         {
             try
             {
                 using var innerContext = new ContextBase();
 
-                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
-
-                if (channelAlias == null)
+                if (!Guid.TryParse(channelId, out Guid _))
                 {
-                    return NotFound();
+                    var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
+
+                    if (channelAlias == null)
+                    {
+                        return NotFound();
+                    }
+
+                    channelId = channelAlias.ChannelId.ToString();
                 }
 
-                var postAlias = await innerContext.PostAliases.FindAsync(channelAlias.ChannelId, postSlug);
-
-                if (postAlias == null)
+                if (!Guid.TryParse(contentId, out Guid _))
                 {
-                    return NotFound();
+                    var contentAlias = await innerContext.ContentAliases.FindAsync(new Guid(channelId), contentId);
+
+                    if (contentAlias == null)
+                    {
+                        return NotFound();
+                    }
+
+                    contentId = contentAlias.ContentId.ToString();
                 }
 
-                var post = await innerContext.Posts.FindAsync(channelAlias.ChannelId, postAlias.PostId);
+                var content = await innerContext.Contents.FindAsync(new Guid(channelId), new Guid(contentId));
 
-                if (post == null)
+                if (content == null)
                 {
                     return Problem();
                 }
 
-                if (eTag != null && eTag != post.ETag)
+                if (eTag != null && eTag != content.ETag)
                 {
                     return ValidationProblem(statusCode: 412);
                 }
 
                 // add if requiresAuthorisation
 
-                return await postFunctionAsync(post);
+                return await contentFunctionAsync(content);
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -150,21 +160,26 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAsync(string channelSlug, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelAsync(string channelId, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAuthorisation = false)
         {
 
             try
             {
                 using var innerContext = new ContextBase();
 
-                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
-                
-                if (channelAlias == null)
+                if (!Guid.TryParse(channelId, out Guid _))
                 {
-                    return NotFound();
+                    var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
+
+                    if (channelAlias == null)
+                    {
+                        return NotFound();
+                    }
+
+                    channelId = channelAlias.ChannelId.ToString();
                 }
 
-                var channel = await innerContext.Channels.FindAsync(channelAlias.ChannelId);
+                var channel = await innerContext.Channels.FindAsync(new Guid(channelId));
 
                 if (channel == null)
                 {

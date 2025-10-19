@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Dtos
 {
-    public class PostEditDto
+    public class ContentDto
     {
         public required string Name { get; set; }
     }

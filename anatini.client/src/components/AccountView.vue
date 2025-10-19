@@ -237,7 +237,7 @@
     <template v-if="account.channels?.length">
       <h3>Channels</h3>
       <div v-for="(channel, index) in account.channels" :key="'channel' + index">
-        <RouterLink :to="{ name: 'ChannelEdit', params: { channelSlug: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
+        <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
       </div>
     </template>
   </template>

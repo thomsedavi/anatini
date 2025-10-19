@@ -3,11 +3,11 @@
     public class ChannelDto
     {
         public required string Name { get; set; }
-        public IEnumerable<ChannelPostDto>? TopPosts { get; set; }
+        public IEnumerable<ChannelContentDto>? TopContents { get; set; }
         public required string DefaultSlug { get; set; }
     }
 
-    public class ChannelPostDto
+    public class ChannelContentDto
     {
         public required string DefaultSlug { get; set; }
         public required string Name { get; set; }

@@ -4,7 +4,7 @@ namespace Anatini.Server.Utils
 {
     public class TagAttribute : ValidationAttribute
     {
-        private readonly List<string> _tags = ["h1"];
+        private readonly List<string> _tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p"];
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {

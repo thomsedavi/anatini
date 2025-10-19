@@ -1,4 +1,4 @@
-﻿using Anatini.Server.Posts.Extensions;
+﻿using Anatini.Server.Contents.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,9 +8,9 @@ namespace Anatini.Server.Utils
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var ifMatch = context.HttpContext.Request.ETagHeader();
+            var eTag = context.HttpContext.Request.ETagHeader();
 
-            if (ifMatch == null)
+            if (string.IsNullOrEmpty(eTag))
             {
                 context.Result = new StatusCodeResult(428);
 

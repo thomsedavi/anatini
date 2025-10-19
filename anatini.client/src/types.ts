@@ -40,14 +40,14 @@ export type Events = {
   }[];
 };
 
-export type Post = {
+export type Content = {
   name: string;
 }
 
 export type Channel = {
   name: string;
   slug: string;
-  topPosts?: {
+  topContents?: {
     defaultSlug: string;
     name: string;
   }[];
@@ -60,13 +60,20 @@ export type ChannelEdit = {
   aliases: {
     slug: string;
   }[];
-  topDraftPosts?: {
+  topDraftContents?: {
     id: string;
     defaultSlug: string;
     name: string;
     updatedDateTimeUTC: string;
   }[];
 };
+
+export type ContentEdit = {
+  id: string;
+  channelId: string;
+  name: string;
+  defaultSlug: string;
+}
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;

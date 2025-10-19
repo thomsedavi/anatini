@@ -6,39 +6,39 @@ namespace Anatini.Server.Channels.Extensions
 {
     public static class ChannelExtensions
     {
-        public static Channel AddDraftPost(this Channel channel, Post post, EventData eventData)
+        public static Channel AddDraftContent(this Channel channel, Content content, EventData eventData)
         {
-            var channelOwnedPost = new ChannelOwnedPost
+            var channelOwnedContent = new ChannelOwnedContent
             {
-                Id = post.Id,
+                Id = content.Id,
                 ChannelId = channel.Id,
-                Name = post.Name,
-                DefaultSlug = post.DefaultSlug,
+                Name = content.DraftVersion.Name,
+                DefaultSlug = content.DefaultSlug,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
-            var topDraftPosts = channel.TopDraftPosts ?? [];
-            topDraftPosts.Add(channelOwnedPost);
-            channel.TopDraftPosts = [.. topDraftPosts.OrderByDescending(post => post.UpdatedDateTimeUTC).Take(8)];
+            var topDraftContents = channel.TopDraftContents ?? [];
+            topDraftContents.Add(channelOwnedContent);
+            channel.TopDraftContents = [.. topDraftContents.OrderByDescending(content => content.UpdatedDateTimeUTC).Take(8)];
 
             return channel;
         }
 
-        public static Channel AddPublishedPost(this Channel channel, Post post, EventData eventData)
+        public static Channel AddPublishedContent(this Channel channel, Content content, EventData eventData)
         {
-            var channelOwnedPost = new ChannelOwnedPost
+            var channelOwnedContent = new ChannelOwnedContent
             {
-                Id = post.Id,
+                Id = content.Id,
                 ChannelId = channel.Id,
-                Name = post.Name,
-                DefaultSlug = post.DefaultSlug,
+                Name = content.PublishedVersion?.Name ?? "(unknown)",
+                DefaultSlug = content.DefaultSlug,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
             // TODO top 8
-            var topPublishedPosts = channel.TopPublishedPosts ?? [];
-            topPublishedPosts.Add(channelOwnedPost);
-            channel.TopPublishedPosts = topPublishedPosts;
+            var topPublishedContents = channel.TopPublishedContents ?? [];
+            topPublishedContents.Add(channelOwnedContent);
+            channel.TopPublishedContents = topPublishedContents;
 
             return channel;
         }
@@ -48,17 +48,17 @@ namespace Anatini.Server.Channels.Extensions
             return new ChannelDto
             {
                 Name = channel.Name,
-                TopPosts = channel.TopPublishedPosts?.Select(ToChannelPostDto),
+                TopContents = channel.TopPublishedContents?.Select(ToChannelContentDto),
                 DefaultSlug = channel.DefaultSlug
             };
         }
 
-        public static ChannelPostDto ToChannelPostDto(this ChannelOwnedPost channelOwnedPost)
+        public static ChannelContentDto ToChannelContentDto(this ChannelOwnedContent channelOwnedContent)
         {
-            return new ChannelPostDto
+            return new ChannelContentDto
             {
-                Name = channelOwnedPost.Name,
-                DefaultSlug = channelOwnedPost.DefaultSlug
+                Name = channelOwnedContent.Name,
+                DefaultSlug = channelOwnedContent.DefaultSlug
             };
         }
 
@@ -68,20 +68,20 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channel.Id,
                 Name = channel.Name,
-                TopDraftPosts = channel.TopDraftPosts?.Select(ToChannelEditPostDto),
+                TopDraftContents = channel.TopDraftContents?.Select(ToChannelEditContentDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
                 DefaultSlug = channel.DefaultSlug
             };
         }
 
-        public static ChannelEditPostDto ToChannelEditPostDto(this ChannelOwnedPost channelOwnedPost)
+        public static ChannelEditContentDto ToChannelEditContentDto(this ChannelOwnedContent channelOwnedContent)
         {
-            return new ChannelEditPostDto
+            return new ChannelEditContentDto
             {
-                Id = channelOwnedPost.Id,
-                Name = channelOwnedPost.Name,
-                DefaultSlug = channelOwnedPost.DefaultSlug,
-                UpdatedDateTimeUTC = channelOwnedPost.UpdatedDateTimeUTC
+                Id = channelOwnedContent.Id,
+                Name = channelOwnedContent.Name,
+                DefaultSlug = channelOwnedContent.DefaultSlug,
+                UpdatedDateTimeUTC = channelOwnedContent.UpdatedDateTimeUTC
             };
         }
 

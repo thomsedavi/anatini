@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Posts
+namespace Anatini.Server.Contents
 {
-    public class NewPost
+    public class NewContent
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }

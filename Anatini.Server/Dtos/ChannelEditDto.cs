@@ -4,12 +4,12 @@
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public IEnumerable<ChannelEditPostDto>? TopDraftPosts { get; set; }
+        public IEnumerable<ChannelEditContentDto>? TopDraftContents { get; set; }
         public required IEnumerable<ChannelEditAliasDto> Aliases { get; set; }
         public required string DefaultSlug { get; set; }
     }
 
-    public class ChannelEditPostDto
+    public class ChannelEditContentDto
     {
         public required Guid Id { get; set; }
         public required string DefaultSlug { get; set; }

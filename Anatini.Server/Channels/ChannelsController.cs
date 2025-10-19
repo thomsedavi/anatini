@@ -12,36 +12,36 @@ namespace Anatini.Server.Channels
     [Route("api/[controller]")]
     public class ChannelsController : AnatiniControllerBase
     {
-        [HttpGet("{channelSlug}")]
+        [HttpGet("{channelId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannel(string channelSlug)
+        public async Task<IActionResult> GetChannel(string channelId)
         {
             IActionResult channelFunction(Channel channel)
             {
                 return Ok(channel.ToChannelDto());
             }
 
-            return await UsingChannel(channelSlug, channelFunction);
+            return await UsingChannel(channelId, channelFunction);
         }
 
         [Authorize]
-        [HttpGet("{channelSlug}/edit")]
+        [HttpGet("{channelId}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannelEdit(string channelSlug)
+        public async Task<IActionResult> GetChannelEdit(string channelId)
         {
             IActionResult channelFunction(Channel channel)
             {
                 return Ok(channel.ToChannelEditDto());
             }
 
-            return await UsingChannel(channelSlug, channelFunction, requiresAuthorisation: true);
+            return await UsingChannel(channelId, channelFunction, requiresAuthorisation: true);
         }
 
 

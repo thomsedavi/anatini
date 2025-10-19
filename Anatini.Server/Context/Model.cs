@@ -42,10 +42,10 @@ namespace Anatini.Server.Context
         public DbSet<UserEvent> UserEvents { get; set; }
         public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<Post> Posts { get; set; }
+        public DbSet<Content> Contents { get; set; }
         public DbSet<UserAlias> UserAliases { get; set; }
         public DbSet<ChannelAlias> ChannelAliases { get; set; }
-        public DbSet<PostAlias> PostAliases { get; set; }
+        public DbSet<ContentAlias> ContentAliases { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,14 +64,14 @@ namespace Anatini.Server.Context
         {
             modelBuilder.Entity<User>().Configure();
             modelBuilder.Entity<Channel>().Configure();
-            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<Content>().Configure();
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();
             modelBuilder.Entity<UserInvite>().Configure();
             modelBuilder.Entity<UserAlias>().Configure();
             modelBuilder.Entity<ChannelAlias>().Configure();
-            modelBuilder.Entity<PostAlias>().Configure();
+            modelBuilder.Entity<ContentAlias>().Configure();
         }
     }
 
@@ -133,8 +133,8 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedAlias> Aliases { get; set; }
-        public ICollection<ChannelOwnedPost>? TopDraftPosts { get; set; }
-        public ICollection<ChannelOwnedPost>? TopPublishedPosts { get; set; }
+        public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
+        public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
         public required string DefaultSlug { get; set; }
     }
 
@@ -152,7 +152,7 @@ namespace Anatini.Server.Context
     }
 
     [Owned]
-    public class ChannelOwnedPost : ChannelOwnedEntity
+    public class ChannelOwnedContent : ChannelOwnedEntity
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
@@ -160,13 +160,15 @@ namespace Anatini.Server.Context
         public required DateTime UpdatedDateTimeUTC { get; set; }
     }
 
-    public class Post : BaseEntity
+    public class Content : BaseEntity
     {
         public required Guid ChannelId { get; set; }
-        public required string Name { get; set; }
+        public required string Status { get; set; }
+        public required string ContentType { get; set; }
         public required DateOnly DateOnlyNZ { get; set; }
-        public required ICollection<PostOwnedAlias> Aliases { get; set; }
-        public required ICollection<PostOwnedElement> Elements { get; set; }
+        public required ICollection<ContentOwnedAlias> Aliases { get; set; }
+        public required ContentOwnedVersion DraftVersion {  get; set; }
+        public ContentOwnedVersion? PublishedVersion {  get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
 
@@ -174,16 +176,25 @@ namespace Anatini.Server.Context
     }
 
     [Owned]
-    public class PostOwnedAlias : PostOwnedEntity
+    public class ContentOwnedVersion : ContentOwnedEntity
+    {
+        public required string Name { get; set; }
+        public ICollection<ContentOwnedElement>? Elements { get; set; }
+    }
+
+    [Owned]
+    public class ContentOwnedAlias : ContentOwnedEntity
     {
         public required string Slug { get; set; }
     }
 
     [Owned]
-    public class PostOwnedElement : PostOwnedEntity
+    public class ContentOwnedElement
     {
         public required int Index { get; set; }
         public required string Tag { get; set; }
+        public required Guid ContentOwnedVersionContentId { get; set; }
+        public required Guid ContentOwnedVersionContentChannelId { get; set; }
         public string? Content { get; set; }
     }
 
@@ -229,11 +240,11 @@ namespace Anatini.Server.Context
         public required string ChannelName { get; set; }
     }
 
-    public class PostAlias : AliasEntity
+    public class ContentAlias : AliasEntity
     {
-        public required Guid PostChannelId { get; set; }
-        public required Guid PostId { get; set; }
-        public required string PostName { get; set; }
+        public required Guid ContentChannelId { get; set; }
+        public required Guid ContentId { get; set; }
+        public required string ContentName { get; set; }
     }
 
     public abstract class Entity
@@ -267,9 +278,9 @@ namespace Anatini.Server.Context
         public required Guid ChannelId { get; set; }
     }
 
-    public abstract class PostOwnedEntity
+    public abstract class ContentOwnedEntity
     {
-        public required Guid PostChannelId { get; set; }
-        public required Guid PostId { get; set; }
+        public required Guid ContentChannelId { get; set; }
+        public required Guid ContentId { get; set; }
     }
 }

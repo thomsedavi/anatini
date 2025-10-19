@@ -9,7 +9,7 @@
   const error = ref<string | null>(null);
   const channel = ref<Channel | null>(null);
 
-  watch([() => route.params.channelSlug], fetchChannel, { immediate: true });
+  watch([() => route.params.channelId], fetchChannel, { immediate: true });
 
   async function fetchChannel(array: (() => string | string[])[]) {
     error.value = channel.value = null

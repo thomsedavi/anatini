@@ -63,7 +63,7 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/api/posts': {
+            '^/api/contents': {
                 target,
                 secure: false
             }

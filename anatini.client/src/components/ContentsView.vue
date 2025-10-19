@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <h2>PostsView</h2>
+  <h2>ContentsView</h2>
 </template>

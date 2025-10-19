@@ -3,8 +3,8 @@ import { createWebHistory, createRouter } from 'vue-router'
 import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
-import PostView from './components/PostView.vue';
-import PostEditView from './components/PostEditView.vue';
+import ContentView from './components/ContentView.vue';
+import ContentEditView from './components/ContentEditView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
@@ -34,26 +34,26 @@ const routes = [
     component: AccountView,
   },
   {
-    path: '/channels/:channelSlug/posts/:postSlug/edit',
-    component: PostEditView,
-    name: 'PostEdit',
+    path: '/channels/:channelId/contents/:contentId/edit',
+    component: ContentEditView,
+    name: 'ContentEdit',
   },
   {
-    path: '/channels/:channelSlug/posts/:postSlug',
-    component: PostView,
-    name: 'Post',
+    path: '/channels/:channelId/contents/:contentId',
+    component: ContentView,
+    name: 'Content',
   },
   {
-    path: '/users/:userSlug',
+    path: '/users/:userId',
     component: UserView,
   },
   {
-    path: '/channels/:channelSlug/edit',
+    path: '/channels/:channelId/edit',
     component: ChannelEditView,
     name: 'ChannelEdit',
   },
   {
-    path: '/channels/:channelSlug',
+    path: '/channels/:channelId',
     component: ChannelView,
     name: 'Channel',
   },
