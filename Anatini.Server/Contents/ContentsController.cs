@@ -54,35 +54,57 @@ namespace Anatini.Server.Contents
         {
             async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
             {
-                //var draftElement = new ContentOwnedElement
-                //{
-                //    ContentOwnedVersionContentChannelId = content.ChannelId,
-                //    ContentOwnedVersionContentId = content.Id,
-                //    Index = content.DraftVersion.Elements?.Count + 5 ?? 0,
-                //    Tag = "h1"
-                //};
+                var elements = content.DraftVersion.Elements ?? [];
+                int? index = null;
 
-                //content.DraftVersion.Elements?.Add(draftElement);
+                if (elements.Count == 0)
+                {
+                    index = int.MaxValue / 2;
+                }
+                else
+                {
+                    var nextElements = elements.Where(element => element.Index > newElement.InsertAfter).OrderBy(element => element.Index).ToList();
 
-                //await context.Update(content);
+                    int? diff = null;
 
-                //var something = content.Aliases.First("slug");
+                    if (nextElements.Count == 0)
+                    {
+                        diff = int.MaxValue - newElement.InsertAfter;
+                    }
+                    else
+                    {
+                        var nextElement = nextElements.First();
+                        diff = nextElement.Index - newElement.InsertAfter;
+                    }
 
-                //await context.Update(content);
+                    if (diff >= 2)
+                    {
+                        index = newElement.InsertAfter + (diff / 2);
+                    }
+                }
 
-                //return await Task.FromResult(Ok());
-                //var elements = content.Elements ?? [];
-                //
-                //elements.Add(new ContentOwnedElement { Index = 1, ContentChannelId = content.ChannelId, contentId = content.Id, Tag = "h1", Content = "Hello World" });
-                //
-                //content.Elements = elements;
-                //
-                //await context.Update(content);
+                if (!index.HasValue)
+                {
+                    // TODO not enough space, spread the other Contents out
+                    return Problem();
+                }
 
-                return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, newElement)); // value should be the created element
+                var element = new ContentOwnedElement
+                {
+                    Index = index.Value,
+                    Tag = newElement.Tag,
+                    Content = newElement.Content,
+                    ContentOwnedVersionContentChannelId = content.ChannelId,
+                    ContentOwnedVersionContentId = content.Id
+                };
+
+                content.DraftVersion.Elements!.Add(element);
+                await context.Update(content);
+
+                return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
             }
 
-            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), requiresAuthorisation: true);
+            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
         }
 
         [HttpGet("{contentId}")]
@@ -110,8 +132,6 @@ namespace Anatini.Server.Contents
         {
             IActionResult contentFunction(Content content)
             {
-                Response.Headers.ETag = content.ETag;
-
                 return Ok(content.ToContentEditDto());
             }
 

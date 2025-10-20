@@ -68,11 +68,22 @@ export type ChannelEdit = {
   }[];
 };
 
+export type ContentElement = {
+  index: number;
+  tag: string;
+  content?: string;
+}
+
+export type ContentVersion = {
+  name: string;
+  elements?: ContentElement[];
+}
+
 export type ContentEdit = {
   id: string;
   channelId: string;
-  name: string;
   defaultSlug: string;
+  draftVersion: ContentVersion;
 }
 
 export type IsAuthenticated = {

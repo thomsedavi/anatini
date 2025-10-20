@@ -4,7 +4,13 @@
     {
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
-        public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
+        public required ContentVersionDto DraftVersion { get; set; }
+    }
+
+    public class ContentVersionDto
+    {
+        public required string Name { get; set; }
+        public IEnumerable<ContentElementDto>? Elements { get; set; }
     }
 }

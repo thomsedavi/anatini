@@ -64,7 +64,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> contentFunctionAsync(Content content)
             {
@@ -73,11 +73,11 @@ namespace Anatini.Server
                 return await contentContextFunction(content, new AnatiniContext(innerContext));
             }
 
-            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, requiresAuthorisation);
+            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, refreshETag, requiresAuthorisation);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
             async Task<IActionResult> contentFunctionAsync(Content content)
             {
@@ -86,7 +86,7 @@ namespace Anatini.Server
                 return await Task.FromResult(result);
             }
 
-            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, requiresAuthorisation);
+            return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, refreshETag, requiresAuthorisation);
         }
 
         [NonAction]
@@ -103,7 +103,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool _ = false)
+        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool _ = false)
         {
             try
             {
@@ -147,7 +147,22 @@ namespace Anatini.Server
 
                 // add if requiresAuthorisation
 
-                return await contentFunctionAsync(content);
+                var result = await contentFunctionAsync(content);
+
+                if (refreshETag)
+                {
+                    using var newInnerContext = new ContextBase();
+
+                    var newContent = await newInnerContext.Contents.FindAsync(new Guid(channelId), new Guid(contentId));
+
+                    Response.Headers.ETag = newContent!.ETag;
+                }
+                else
+                {
+                    Response.Headers.ETag = content.ETag;
+                }
+
+                return result;
             }
             catch (DbUpdateException dbUpdateException)
             {

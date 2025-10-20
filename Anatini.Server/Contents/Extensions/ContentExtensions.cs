@@ -19,8 +19,27 @@ namespace Anatini.Server.Contents.Extensions
             {
                 Id = content.Id,
                 ChannelId = content.ChannelId,
-                Name = content.DraftVersion.Name,
-                DefaultSlug = content.DefaultSlug
+                DefaultSlug = content.DefaultSlug,
+                DraftVersion = content.DraftVersion.ToContentVersionDto()
+            };
+        }
+
+        public static ContentVersionDto ToContentVersionDto(this ContentOwnedVersion contentOwnedVersion)
+        {
+            return new ContentVersionDto
+            {
+                Name = contentOwnedVersion.Name,
+                Elements = contentOwnedVersion.Elements?.Select(ToContentElementDto),
+            };
+        }
+
+        public static ContentElementDto ToContentElementDto(this ContentOwnedElement contentOwnedElement)
+        {
+            return new ContentElementDto
+            {
+                Tag = contentOwnedElement.Tag,
+                Index = contentOwnedElement.Index,
+                Content = contentOwnedElement.Content
             };
         }
     }
