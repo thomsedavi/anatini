@@ -55,6 +55,12 @@ namespace Anatini.Server.Contents
             async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
             {
                 var elements = content.DraftVersion.Elements ?? [];
+
+                if (elements.Count >= 512)
+                {
+                    return Forbid();
+                }
+
                 int? index = null;
 
                 if (elements.Count == 0)
@@ -85,7 +91,34 @@ namespace Anatini.Server.Contents
 
                 if (!index.HasValue)
                 {
-                    // TODO not enough space, spread the other Contents out
+                    var orderedElements = elements.OrderBy(element => element.Index).ToList();
+                    var gap = int.MaxValue / (orderedElements.Count + 1);
+                    var respaceIndex = 1;
+
+                    if (newElement.InsertAfter == 0)
+                    {
+                        index = gap * respaceIndex++;
+                    }
+
+                    for (var i = 0; i < orderedElements.Count; i++)
+                    {
+                        if (orderedElements[i].Index == newElement.InsertAfter)
+                        {
+                            orderedElements[i].Index = gap * respaceIndex++;
+
+                            index = gap * respaceIndex++;
+                        }
+                        else
+                        {
+                            orderedElements[i].Index = gap * respaceIndex++;
+                        }
+                    }
+
+                    content.DraftVersion.Elements = orderedElements;
+                }
+
+                if (!index.HasValue)
+                {
                     return Problem();
                 }
 

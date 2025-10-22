@@ -11,10 +11,19 @@
   const error = ref<string | null>(null);
   const eTag = ref<string | null>(null);
 
-  watch([() => route.params.channelId, () => route.params.contentId], fetchContent, { immediate: true });
+  watch([() => route.params.channelId, () => route.params.contentId], watchCallback, { immediate: true });
 
-  async function fetchContent(array: (() => string | string[])[]) {
-    error.value = content.value = null;
+  async function watchCallback(array: (() => string | string[])[]) {
+    content.value = null;
+
+    const channelId = typeof array[0] === 'string' ? array[0] : array[0]();
+    const contentId = typeof array[1] === 'string' ? array[1] : array[1]();
+
+    await fetchContent(channelId, contentId);
+  }
+
+  async function fetchContent(channelId: string | string[], contentId: string | string[]) {
+    error.value = null;
     loading.value = true;
 
     const onfulfilled = (value: ContentEdit) => {
@@ -35,7 +44,7 @@
       }
     };
 
-    await apiFetch(`channels/${array[0]}/contents/${array[1]}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
+    await apiFetch(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
   }
 
   async function contentElement(tag: string, insertAfter: number) {
@@ -43,12 +52,17 @@
       return;
     }
 
-    const onfulfilled = (value: ContentElement) => {
-      const elements = content.value!.draftVersion.elements ?? [];
+    const onfulfilled = async (value: ContentElement) => {
+      if (content.value?.draftVersion.elements?.some(element => (element.index === value.index + 1) || (element.index === value.index - 1))) {
+        // reload the content because it will have been respaced
+        await fetchContent(route.params.channelId, route.params.contentId);
+      } else {
+        const elements = content.value!.draftVersion.elements ?? [];
 
-      elements.push(value);
+        elements.push(value);
 
-      content.value!.draftVersion.elements = elements;
+        content.value!.draftVersion.elements = elements;
+      }
     };
 
     const onfinally = () => {
