@@ -40,13 +40,12 @@ namespace Anatini.Server.Contents
             return await UsingChannelContextAsync(channelId, channelContextFunctionAsync, requiresAuthorisation: true);
         }
 
-        // add ETag headers
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag
         [Authorize]
         [HttpPost("{contentId}/elements")]
         [ETagRequired]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -149,7 +148,14 @@ namespace Anatini.Server.Contents
         {
             IActionResult contentFunction(Content content)
             {
-                return Ok(content.ToContentDto());
+                var version = content.ToContentDto();
+
+                if (version == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(version);
             }
 
             return await UsingContent(channelId, contentId, contentFunction);
@@ -159,6 +165,7 @@ namespace Anatini.Server.Contents
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetContentEdit(string channelId, string contentId)
@@ -166,6 +173,23 @@ namespace Anatini.Server.Contents
             IActionResult contentFunction(Content content)
             {
                 return Ok(content.ToContentEditDto());
+            }
+
+            return await UsingContent(channelId, contentId, contentFunction, requiresAuthorisation: true);
+        }
+
+        [HttpGet("{contentId}/preview")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetContentPreview(string channelId, string contentId)
+        {
+            IActionResult contentFunction(Content content)
+            {
+                return Ok(content.ToContentDto(usePreview: true));
             }
 
             return await UsingContent(channelId, contentId, contentFunction, requiresAuthorisation: true);

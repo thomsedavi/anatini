@@ -15,7 +15,6 @@ namespace Anatini.Server.Context.BuilderExtensions
             userBuilder.Property(user => user.ETag).ToJsonProperty("_etag");
             userBuilder.OwnsMany(user => user.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(userOwnedAlias => userOwnedAlias.Slug); });
             userBuilder.OwnsMany(user => user.Emails, emailBuildAction => { emailBuildAction.HasKey(userOwnedEmail => userOwnedEmail.Address); });
-            userBuilder.OwnsMany(user => user.Invites, inviteBuildAction => { inviteBuildAction.HasKey(userOwnedInvite => userOwnedInvite.Code); });
             userBuilder.OwnsMany(user => user.Channels, channelBuildAction => { channelBuildAction.HasKey(userOwnedChannel => userOwnedChannel.Id); });
             userBuilder.OwnsMany(user => user.Sessions, sessionsBuildAction => { sessionsBuildAction.HasKey(userOwnedSession => userOwnedSession.Id); });
         }

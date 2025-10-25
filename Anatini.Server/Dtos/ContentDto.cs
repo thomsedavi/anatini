@@ -2,6 +2,6 @@
 {
     public class ContentDto
     {
-        public required string Name { get; set; }
+        public required ContentVersionDto Version { get; set; }
     }
 }

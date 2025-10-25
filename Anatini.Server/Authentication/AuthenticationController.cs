@@ -21,56 +21,6 @@ namespace Anatini.Server.Authentication
     [Route("api/[controller]")]
     public class AuthenticationController : AnatiniControllerBase
     {
-        [HttpPost("invite")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostInvite()
-        {
-            async Task<IActionResult> userContextFunctionAsync(User user, AnatiniContext context)
-            {
-                var eventData = new EventData(HttpContext);
-
-                if (user.Invites?.Any(invite => invite.DateOnlyNZ == eventData.DateOnlyNZNow) ?? false)
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    var inviteCode = CodeRandom.Next();
-                    var attemptCount = 0;
-                    var success = false;
-
-                    while (attemptCount++ < 5 && !success)
-                    {
-                        try
-                        {
-                            await context.AddUserInviteAsync(inviteCode, user.Id, eventData.DateOnlyNZNow);
-                            success = true;
-                        }
-                        catch (Exception)
-                        {
-                            inviteCode = CodeRandom.Next();
-                        }
-                    }
-
-                    if (!success)
-                    {
-                        return Problem();
-                    }
-
-                    user.AddInvite(inviteCode, eventData);
-                    await context.Update(user);
-
-                    await context.AddUserEventAsync(user.Id, EventType.InviteCreated, eventData);
-
-                    return Created("?", user.ToUserEditDto());
-                }
-            }
-
-            return await UsingUserContextAsync(UserId, userContextFunctionAsync);
-        }
-
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -80,41 +30,8 @@ namespace Anatini.Server.Authentication
             async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-                Guid userId;
+                var userId = Guid.NewGuid();
 
-                if (form.InviteCode == "zzzzzzzz")
-                {
-                    userId = Guid.NewGuid();
-                }
-                else
-                {
-                    var invite = await context.FindAsync<UserInvite>(form.InviteCode);
-
-                    if (invite == null)
-                    {
-                        return Ok();
-                    }
-
-                    if (invite.EmailAddress != null)
-                    {
-                        var email = await context.FindAsync<UserEmail>(invite.EmailAddress);
-
-                        if (email != null)
-                        {
-                            // Delete existing email result
-                            // TODO maybe just update existing email with new details?
-                            await context.Remove(email);
-                        }
-                    }
-
-                    invite.EmailAddress = form.EmailAddress;
-                    await context.Update(invite);
-
-                    userId = invite.NewUserId;
-                    eventData.Add("invitedByUserId", invite.UserId);
-                }
-
-                // TODO make sure it's okay that the email and invite get deleted before this point
                 try
                 {
                     await context.AddUserEmailAsync(form.EmailAddress, userId);
@@ -185,22 +102,6 @@ namespace Anatini.Server.Authentication
 
                 await context.Update(email);
                 await context.AddUserEventAsync(user.Id, EventType.UserCreated, eventData);
-
-                if (email.InvitedByUserId.HasValue)
-                {
-                    var invitedByUserId = email.InvitedByUserId.Value;
-
-                    var invitedByUser = (await context.FindAsync<User>(invitedByUserId));
-
-                    invitedByUser!.Invites!.First(invite => invite.Code == email.InviteCode).Used = true;
-
-                    await context.Update(invitedByUser);
-
-                    await context.AddUserToUserRelationshipsAsync(newUser.Id, invitedByUserId, UserToUserRelationshipType.InvitedBy, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy);
-                    await context.AddUserToUserRelationshipsAsync(invitedByUserId, newUser.Id, UserToUserRelationshipType.Invites, UserToUserRelationshipType.Trusts, UserToUserRelationshipType.TrustedBy);
-
-                    email.InvitedByUserId = null;
-                }
 
                 var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
                 var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);

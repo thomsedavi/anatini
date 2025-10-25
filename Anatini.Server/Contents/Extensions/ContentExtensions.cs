@@ -5,11 +5,24 @@ namespace Anatini.Server.Contents.Extensions
 {
     public static class ContentExtensions
     {
-        public static ContentDto ToContentDto(this Content content)
+        public static ContentDto? ToContentDto(this Content content, bool usePreview = false)
         {
+            if (usePreview)
+            {
+                return new ContentDto
+                {
+                    Version = content.DraftVersion.ToContentVersionDto()
+                };
+            }
+
+            if (content.PublishedVersion == null)
+            {
+                return null;
+            }
+
             return new ContentDto
             {
-                Name = content.PublishedVersion?.Name ?? "(unknown)"
+                Version = content.PublishedVersion.ToContentVersionDto()
             };
         }
 
@@ -20,7 +33,7 @@ namespace Anatini.Server.Contents.Extensions
                 Id = content.Id,
                 ChannelId = content.ChannelId,
                 DefaultSlug = content.DefaultSlug,
-                DraftVersion = content.DraftVersion.ToContentVersionDto()
+                Version = content.DraftVersion.ToContentVersionDto()
             };
         }
 

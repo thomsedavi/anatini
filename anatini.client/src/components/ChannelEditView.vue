@@ -107,7 +107,8 @@
     </form>
     <template v-if="channel.topDraftContents?.length">
       <div v-for="(content, index) in channel.topDraftContents" :key="'topDraftContent' + index">
-        <RouterLink :to="{ name: 'ContentEdit', params: { channelId: route.params.channelId, contentId: content.defaultSlug }}">{{ content.name }}</RouterLink>
+        <RouterLink :to="{ name: 'ContentEdit', params: { channelId: route.params.channelId, contentId: content.defaultSlug }}">{{ content.name }}: Edit</RouterLink>
+        <RouterLink :to="{ name: 'ContentPreview', params: { channelId: route.params.channelId, contentId: content.defaultSlug }}">{{ content.name }}: Preview</RouterLink>
       </div>
     </template>
   </template>

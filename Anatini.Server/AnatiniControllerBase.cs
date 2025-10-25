@@ -103,7 +103,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool _ = false)
+        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
             try
             {
@@ -119,6 +119,21 @@ namespace Anatini.Server
                     }
 
                     channelId = channelAlias.ChannelId.ToString();
+                }
+
+                if (requiresAuthorisation)
+                {
+                    var channel = await innerContext.Channels.FindAsync(new Guid(channelId));
+
+                    if (channel == null)
+                    {
+                        return Problem();
+                    }
+
+                    if (!channel.Users.Any(user => user.Id == UserId))
+                    {
+                        return Forbid();
+                    }
                 }
 
                 if (!Guid.TryParse(contentId, out Guid _))
@@ -144,8 +159,6 @@ namespace Anatini.Server
                 {
                     return ValidationProblem(statusCode: 412);
                 }
-
-                // add if requiresAuthorisation
 
                 var result = await contentFunctionAsync(content);
 
@@ -205,7 +218,7 @@ namespace Anatini.Server
                 {
                     if (!channel.Users.Any(user => user.Id == UserId))
                     {
-                        return Unauthorized();
+                        return Forbid();
                     }
                 }
 

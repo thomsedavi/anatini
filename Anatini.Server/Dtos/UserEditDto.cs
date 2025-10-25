@@ -7,7 +7,6 @@
         public required string DefaultSlug { get; set; }
         public IEnumerable<UserEditChannelDto>? Channels { get; set; }
         public required IEnumerable<UserEditEmailDto> Emails { get; set; }
-        public IEnumerable<UserEditInviteDto>? Invites { get; set; }
         public required IEnumerable<UserEditSessionDto> Sessions { get; set; }
         public required IEnumerable<UserEditAliasDto> Aliases { get; set; }
     }
@@ -28,13 +27,6 @@
     {
         public required string Address { get; set; }
         public required bool Verified { get; set; }
-    }
-
-    public class UserEditInviteDto
-    {
-        public required string Code { get; set; }
-        public required DateOnly DateOnlyNZ { get; set; }
-        public required bool Used { get; set; }
     }
 
     public class UserEditSessionDto

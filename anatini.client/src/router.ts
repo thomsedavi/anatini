@@ -5,6 +5,7 @@ import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import ContentView from './components/ContentView.vue';
 import ContentEditView from './components/ContentEditView.vue';
+import ContentPreviewView from './components/ContentPreviewView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
@@ -37,6 +38,11 @@ const routes = [
     path: '/channels/:channelId/contents/:contentId/edit',
     component: ContentEditView,
     name: 'ContentEdit',
+  },
+  {
+    path: '/channels/:channelId/contents/:contentId/preview',
+    component: ContentPreviewView,
+    name: 'ContentPreview',
   },
   {
     path: '/channels/:channelId/contents/:contentId',

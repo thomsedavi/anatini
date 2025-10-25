@@ -2,8 +2,6 @@
 {
     public enum UserToUserRelationshipType
     {
-        Invites,
-        InvitedBy,
         Trusts,
         TrustedBy
     }

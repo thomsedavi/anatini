@@ -53,15 +53,15 @@
     }
 
     const onfulfilled = async (value: ContentElement) => {
-      if (content.value?.draftVersion.elements?.some(element => (element.index === value.index + 1) || (element.index === value.index - 1))) {
+      if (content.value?.version.elements?.some(element => (element.index === value.index + 1) || (element.index === value.index - 1))) {
         // reload the content because it will have been respaced
         await fetchContent(route.params.channelId, route.params.contentId);
       } else {
-        const elements = content.value!.draftVersion.elements ?? [];
+        const elements = content.value!.version.elements ?? [];
 
         elements.push(value);
 
-        content.value!.draftVersion.elements = elements;
+        content.value!.version.elements = elements;
       }
     };
 
@@ -86,12 +86,12 @@
 </script>
 
 <template>
-  <h2>ContetnView</h2>
+  <h2>ContentEditView</h2>
   <p>Current route path: {{ $route.fullPath }}</p>
   <p v-if="loading">Loading...</p>
   <p v-if="error">{{ error }}</p>
   <template v-if="content">
-    <h1>{{ content.draftVersion.name }}</h1>
+    <h1>{{ content.version.name }}</h1>
     <button @click="() => contentElement('h1', 0)">Add Header 1</button>
     <button @click="() => contentElement('h2', 0)">Add Header 2</button>
     <button @click="() => contentElement('h3', 0)">Add Header 3</button>
@@ -99,8 +99,8 @@
     <button @click="() => contentElement('h5', 0)">Add Header 5</button>
     <button @click="() => contentElement('h6', 0)">Add Header 6</button>
     <button @click="() => contentElement('p', 0)">Add Paragraph</button>
-    <template v-if="content.draftVersion.elements">
-      <template v-for="element in content.draftVersion.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
+    <template v-if="content.version.elements">
+      <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
         <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
         <h2 v-if="element.tag == 'h2'">{{ element.content ?? "(unknown)" }}</h2>
         <h3 v-if="element.tag == 'h3'">{{ element.content ?? "(unknown)" }}</h3>

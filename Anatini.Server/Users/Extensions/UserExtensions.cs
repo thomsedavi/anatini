@@ -62,23 +62,6 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static User AddInvite(this User user, string inviteCode, EventData eventData)
-        {
-            var userOwnedInvite = new UserOwnedInvite
-            {
-                Code = inviteCode,
-                UserId = user.Id,
-                Used = false,
-                DateOnlyNZ = eventData.DateOnlyNZNow
-            };
-
-            var invites = user.Invites ?? [];
-            invites.Add(userOwnedInvite);
-            user.Invites = invites;
-
-            return user;
-        }
-
         public static UserEditDto ToUserEditDto(this User user)
         {
             return new UserEditDto
@@ -89,7 +72,6 @@ namespace Anatini.Server.Users.Extensions
                 Sessions = user.Sessions.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
-                Invites = user.Invites?.Select(ToUserEditInviteDto),
                 DefaultSlug = user.DefaultSlug
             };
         }
@@ -131,16 +113,6 @@ namespace Anatini.Server.Users.Extensions
                 Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name,
                 DefaultSlug = userOwnedChannel.DefaultSlug
-            };
-        }
-
-        public static UserEditInviteDto ToUserEditInviteDto(this UserOwnedInvite userOwnedInvite)
-        {
-            return new UserEditInviteDto
-            {
-                Code = userOwnedInvite.Code,
-                DateOnlyNZ = userOwnedInvite.DateOnlyNZ,
-                Used = userOwnedInvite.Used
             };
         }
     }

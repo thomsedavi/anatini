@@ -38,7 +38,6 @@ namespace Anatini.Server.Context
     {
         public DbSet<User> Users { get; set; }
         public DbSet<UserEmail> UserEmails { get; set; }
-        public DbSet<UserInvite> UserInvites { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
         public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
         public DbSet<Channel> Channels { get; set; }
@@ -68,7 +67,6 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();
-            modelBuilder.Entity<UserInvite>().Configure();
             modelBuilder.Entity<UserAlias>().Configure();
             modelBuilder.Entity<ChannelAlias>().Configure();
             modelBuilder.Entity<ContentAlias>().Configure();
@@ -82,7 +80,6 @@ namespace Anatini.Server.Context
         public required ICollection<UserOwnedEmail> Emails { get; set; }
         public required ICollection<UserOwnedSession> Sessions { get; set; }
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
-        public ICollection<UserOwnedInvite>? Invites { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public required string DefaultSlug { get; set; }
     }
@@ -106,14 +103,6 @@ namespace Anatini.Server.Context
     public class UserOwnedAlias : UserOwnedEntity
     {
         public required string Slug { get; set; }
-    }
-
-    [Owned]
-    public class UserOwnedInvite : UserOwnedEntity
-    {
-        public required string Code { get; set; }
-        public required bool Used { get; set; }
-        public required DateOnly DateOnlyNZ { get; set; }
     }
 
     [Owned]
@@ -209,8 +198,6 @@ namespace Anatini.Server.Context
     {
         public required string Address { get; set; }
         public string? VerificationCode { get; set; }
-        public Guid? InvitedByUserId { get; set; }
-        public string? InviteCode { get; set; }
         public required bool Verified { get; set; }
     }
 
@@ -218,14 +205,6 @@ namespace Anatini.Server.Context
     {
         public required Guid ToUserId { get; set; }
         public required string RelationshipType { get; set; }
-    }
-
-    public class UserInvite : UserEntity
-    {
-        public required string Code { get; set; }
-        public required Guid NewUserId { get; set; }
-        public required DateOnly DateOnlyNZ { get; set; }
-        public string? EmailAddress { get; set; }
     }
 
     public class UserAlias : AliasEntity

@@ -9,9 +9,6 @@ namespace Anatini.Server.Authentication
     {
         [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
         public required string EmailAddress { get; set; }
-
-        [Display(Name = "Invite Code"), StringLength(8), DataType(DataType.Text)]
-        public required string InviteCode { get; set; }
     }
 
     public class NewUser

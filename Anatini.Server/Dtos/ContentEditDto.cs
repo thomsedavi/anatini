@@ -5,7 +5,7 @@
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string DefaultSlug { get; set; }
-        public required ContentVersionDto DraftVersion { get; set; }
+        public required ContentVersionDto Version { get; set; }
     }
 
     public class ContentVersionDto

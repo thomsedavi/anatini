@@ -10,7 +10,6 @@
   const events = ref<Events | null>(null);
   const error = ref<string | null>(null);
   const isFetching = ref<boolean>(false);
-  const isCreatingInviteCode = ref<boolean>(false);
   const isGettingEvents = ref<boolean>(false);
   const isCreatingUserSlug = ref<boolean>(false);
   const userSlugInput = useTemplateRef<HTMLInputElement>('user-slug');
@@ -39,30 +38,6 @@
       isFetching.value = false;
     });
   });
-
-  async function createInviteCode() {
-    isCreatingInviteCode.value = true;
-
-    fetch("/api/authentication/invite", {
-      method: "POST",
-    }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
-          .then((value: UserEdit) => {
-            account.value = value;
-          })
-          .catch(() => {
-            console.log('Unknown Error');
-          });
-      } else if (response.status === 409) {
-        alert("Already made one today!");
-      } else {
-        console.log("Unknown Error");
-      }
-    }).finally(() => {
-      isCreatingInviteCode.value = false;
-    });
-  }
 
   async function createChannel(event: Event) {
     event.preventDefault();
@@ -183,15 +158,6 @@
         {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
       </li>
     </ul>
-    <button @click="createInviteCode" :disabled="isCreatingInviteCode">Create Invite Code</button>
-    <template v-if="account.invites?.length">
-      <h3>Invites</h3>
-      <ul>
-        <li v-for="(invite, index) in account.invites" :key="'invite' + index">
-          {{ invite.code }}: {{ invite.used ? "Used" : "Not Used" }}: {{ invite.dateOnlyNZ }}
-        </li>
-      </ul>
-    </template>
     <button @click="getEvents" :disabled="isGettingEvents">Get Events</button>
     <template v-if="events">
       <h3>Events</h3>

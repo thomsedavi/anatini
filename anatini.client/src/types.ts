@@ -23,11 +23,6 @@ export type UserEdit = {
     updatedDateTimeUtc: string;
     ipAddress: string;
   }[];
-  invites?: {
-    code: string;
-    dateOnlyNZ: string;
-    used: boolean;
-  }[];
   aliases: {
     slug: string;
   }[];
@@ -39,10 +34,6 @@ export type Events = {
     dateTimeUtc: string;
   }[];
 };
-
-export type Content = {
-  name: string;
-}
 
 export type Channel = {
   name: string;
@@ -83,7 +74,11 @@ export type ContentEdit = {
   id: string;
   channelId: string;
   defaultSlug: string;
-  draftVersion: ContentVersion;
+  version: ContentVersion;
+}
+
+export type Content = {
+  version: ContentVersion;
 }
 
 export type IsAuthenticated = {
