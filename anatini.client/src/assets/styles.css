@@ -1,13 +1,63 @@
-nav, main {
-  border: 2px solid #000;
-  margin-bottom: 10px;
-  padding: 10px;
+:root {
+  --white: #fffaf0;
+  --grey: #567;
+  --black: #123;
+  --red: #721;
+  --yellow: #883;
 }
 
-nav > a + a {
-  margin-left: 10px;
+body {
+  background-color: var(--white);
+  margin: 0;
+  overflow: scroll;
 }
 
-input:invalid {
-    border-color: red;
+nav {
+  background-color: var(--black);;
+  overflow: hidden;
+}
+
+nav a {
+  float: left;
+  display: block;
+  color: var(--white);
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+nav a:hover {
+  background-color: var(--grey);
+}
+
+nav > svg {
+  display: none;
+
+  > rect {
+    fill: var(--black);;
+
+    &:hover {
+      fill: var(--grey);
+    }
+  }
+
+  > g > rect {
+    fill: var(--white);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  nav {
+    position: relative;
+  }
+
+  nav svg {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  nav a {
+    float: none;
+  }
 }

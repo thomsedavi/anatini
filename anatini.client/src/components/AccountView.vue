@@ -140,11 +140,10 @@
 </script>
 
 <template>
-  <h2>AccountView</h2>
+  <h1>Account</h1>
   <p v-if="isFetching">Loading...</p>
   <p v-if="error">{{ error }}</p>
   <template v-if="account">
-    <h3>Name</h3>
     <p>{{ account.name }}</p>
     <h3>Emails</h3>
     <ul>
