@@ -16,8 +16,10 @@
 </script>
 
 <template>
-  <h2>AboutView</h2>
-  <label>
-    Search: <input v-model.trim="search" maxlength="20">
-  </label>
+  <main>
+    <h2>AboutView</h2>
+    <label>
+      Search: <input v-model.trim="search" maxlength="20">
+    </label>
+  </main>
 </template>

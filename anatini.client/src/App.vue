@@ -96,9 +96,7 @@
         </g>
       </svg>
     </nav>
-    <main>
-      <RouterView />
-    </main>
+    <RouterView />
     <footer>
       Footer
     </footer>

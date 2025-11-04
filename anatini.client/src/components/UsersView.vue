@@ -3,5 +3,7 @@
 </script>
 
 <template>
-  <h2>UsersView</h2>
+  <main>
+    <h2>UsersView</h2>
+  </main>
 </template>

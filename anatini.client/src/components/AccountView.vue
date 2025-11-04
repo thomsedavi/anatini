@@ -140,70 +140,72 @@
 </script>
 
 <template>
-  <h1>Account</h1>
-  <p v-if="isFetching">Loading...</p>
-  <p v-if="error">{{ error }}</p>
-  <template v-if="account">
-    <p>{{ account.name }}</p>
-    <h3>Emails</h3>
-    <ul>
-      <li v-for="(email, index) in account.emails" :key="'email' + index">
-        {{ email.address }}: {{ email.verified ? "Verified" : "Not Verified" }}
-      </li>
-    </ul>
-    <h3>Sessions</h3>
-    <ul>
-      <li v-for="(refreshToken, index) in account.sessions" :key="'refreshToken' + index">
-        {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
-      </li>
-    </ul>
-    <button @click="getEvents" :disabled="isGettingEvents">Get Events</button>
-    <template v-if="events">
-      <h3>Events</h3>
+  <main>
+    <h1>Account</h1>
+    <p v-if="isFetching">Loading...</p>
+    <p v-if="error">{{ error }}</p>
+    <template v-if="account">
+      <p>{{ account.name }}</p>
+      <h3>Emails</h3>
       <ul>
-        <li v-for="(event, index) in events.events" :key="'event' + index">
-          {{ event.type }}: {{ event.dateTimeUtc }}
+        <li v-for="(email, index) in account.emails" :key="'email' + index">
+          {{ email.address }}: {{ email.verified ? "Verified" : "Not Verified" }}
         </li>
       </ul>
+      <h3>Sessions</h3>
+      <ul>
+        <li v-for="(refreshToken, index) in account.sessions" :key="'refreshToken' + index">
+          {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
+        </li>
+      </ul>
+      <button @click="getEvents" :disabled="isGettingEvents">Get Events</button>
+      <template v-if="events">
+        <h3>Events</h3>
+        <ul>
+          <li v-for="(event, index) in events.events" :key="'event' + index">
+            {{ event.type }}: {{ event.dateTimeUtc }}
+          </li>
+        </ul>
+      </template>
+      <h3>Create Slug</h3>
+      <form id="createSlug" @submit="createSlug" action="???" method="post">
+        <p>
+          <label for="slug">Slug</label>
+          <input id="slug" type="text" name="slug" maxlength="64" ref="user-slug" @input="event => userSlugInput?.setCustomValidity('')">
+        </p>
+
+        <p>
+          <input type="submit" value="Submit" :disabled="isCreatingUserSlug">
+        </p>
+      </form>
+      <h3>Slugs</h3>
+      <ul>
+        <li v-for="(alias, index) in account.aliases" :key="'slug' + index">
+          {{ alias.slug }}: {{ account.defaultSlug === alias.slug ? 'Default' : 'Not Default'}}
+        </li>
+      </ul>
+      <h3>Create Channel</h3>
+      <form id="createChannel" @submit="createChannel" action="???" method="post">
+        <p>
+          <label for="channelName">Channel Name</label>
+          <input id="channelName" type="text" name="channelName" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
+        </p>
+
+        <p>
+          <label for="channelSlug">Channel Slug</label>
+          <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
+        </p>
+
+        <p>
+          <input type="submit" value="Submit" :disabled="isCreatingChannel">
+        </p>
+      </form>
+      <template v-if="account.channels?.length">
+        <h3>Channels</h3>
+        <div v-for="(channel, index) in account.channels" :key="'channel' + index">
+          <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
+        </div>
+      </template>
     </template>
-    <h3>Create Slug</h3>
-    <form id="createSlug" @submit="createSlug" action="???" method="post">
-      <p>
-        <label for="slug">Slug</label>
-        <input id="slug" type="text" name="slug" maxlength="64" ref="user-slug" @input="event => userSlugInput?.setCustomValidity('')">
-      </p>
-
-      <p>
-        <input type="submit" value="Submit" :disabled="isCreatingUserSlug">
-      </p>
-    </form>
-    <h3>Slugs</h3>
-    <ul>
-      <li v-for="(alias, index) in account.aliases" :key="'slug' + index">
-        {{ alias.slug }}: {{ account.defaultSlug === alias.slug ? 'Default' : 'Not Default'}}
-      </li>
-    </ul>
-    <h3>Create Channel</h3>
-    <form id="createChannel" @submit="createChannel" action="???" method="post">
-      <p>
-        <label for="channelName">Channel Name</label>
-        <input id="channelName" type="text" name="channelName" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
-      </p>
-
-      <p>
-        <label for="channelSlug">Channel Slug</label>
-        <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
-      </p>
-
-      <p>
-        <input type="submit" value="Submit" :disabled="isCreatingChannel">
-      </p>
-    </form>
-    <template v-if="account.channels?.length">
-      <h3>Channels</h3>
-      <div v-for="(channel, index) in account.channels" :key="'channel' + index">
-        <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
-      </div>
-    </template>
-  </template>
+  </main>
 </template>

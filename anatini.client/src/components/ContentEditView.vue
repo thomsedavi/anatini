@@ -87,38 +87,40 @@
 </script>
 
 <template>
-  <h2>ContentEditView</h2>
-  <p>Current route path: {{ $route.fullPath }}</p>
-  <p v-if="loading">Loading...</p>
-  <p v-if="error">{{ error }}</p>
-  <template v-if="content">
-    <h1>{{ content.version.name }}</h1>
-    <input v-model="input" placeholder="add a single line" />
-    <br>
-    <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
-    <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
-    <button @click="() => contentElement('h3', input, 0)">Add Header 3</button>
-    <button @click="() => contentElement('h4', input, 0)">Add Header 4</button>
-    <button @click="() => contentElement('h5', input, 0)">Add Header 5</button>
-    <button @click="() => contentElement('h6', input, 0)">Add Header 6</button>
-    <button @click="() => contentElement('p', input, 0)">Add Paragraph</button>
-    <template v-if="content.version.elements">
-      <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
-        <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
-        <h2 v-if="element.tag == 'h2'">{{ element.content ?? "(unknown)" }}</h2>
-        <h3 v-if="element.tag == 'h3'">{{ element.content ?? "(unknown)" }}</h3>
-        <h4 v-if="element.tag == 'h4'">{{ element.content ?? "(unknown)" }}</h4>
-        <h5 v-if="element.tag == 'h5'">{{ element.content ?? "(unknown)" }}</h5>
-        <h6 v-if="element.tag == 'h6'">{{ element.content ?? "(unknown)" }}</h6>
-        <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}</p>
-        <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
-        <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
-        <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
-        <button @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
-        <button @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
-        <button @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
-        <button @click="() => contentElement('p', input, element.index)">Add Paragraph</button>
+  <main>
+    <h2>ContentEditView</h2>
+    <p>Current route path: {{ $route.fullPath }}</p>
+    <p v-if="loading">Loading...</p>
+    <p v-if="error">{{ error }}</p>
+    <template v-if="content">
+      <h1>{{ content.version.name }}</h1>
+      <input v-model="input" placeholder="add a single line" />
+      <br>
+      <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
+      <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
+      <button @click="() => contentElement('h3', input, 0)">Add Header 3</button>
+      <button @click="() => contentElement('h4', input, 0)">Add Header 4</button>
+      <button @click="() => contentElement('h5', input, 0)">Add Header 5</button>
+      <button @click="() => contentElement('h6', input, 0)">Add Header 6</button>
+      <button @click="() => contentElement('p', input, 0)">Add Paragraph</button>
+      <template v-if="content.version.elements">
+        <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
+          <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
+          <h2 v-if="element.tag == 'h2'">{{ element.content ?? "(unknown)" }}</h2>
+          <h3 v-if="element.tag == 'h3'">{{ element.content ?? "(unknown)" }}</h3>
+          <h4 v-if="element.tag == 'h4'">{{ element.content ?? "(unknown)" }}</h4>
+          <h5 v-if="element.tag == 'h5'">{{ element.content ?? "(unknown)" }}</h5>
+          <h6 v-if="element.tag == 'h6'">{{ element.content ?? "(unknown)" }}</h6>
+          <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}</p>
+          <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
+          <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
+          <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
+          <button @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
+          <button @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
+          <button @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
+          <button @click="() => contentElement('p', input, element.index)">Add Paragraph</button>
+        </template>
       </template>
     </template>
-  </template>
+  </main>
 </template>

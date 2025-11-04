@@ -41,6 +41,8 @@
 </script>
 
 <template>
-  <h2>UserView</h2>
-  <h3 v-if="user">{{ user.name }}</h3>
+  <main>
+    <h2>UserView</h2>
+    <h3 v-if="user">{{ user.name }}</h3>
+  </main>
 </template>

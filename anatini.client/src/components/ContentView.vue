@@ -40,9 +40,11 @@
 </script>
 
 <template>
-  <h2>ContentView</h2>
-  <p>Current route path: {{ $route.fullPath }}</p>
-  <p v-if="loading">Loading...</p>
-  <p v-if="error">{{ error }}</p>
-  <p v-if="content">{{ content }}</p>
+  <main>
+    <h2>ContentView</h2>
+    <p>Current route path: {{ $route.fullPath }}</p>
+    <p v-if="loading">Loading...</p>
+    <p v-if="error">{{ error }}</p>
+    <p v-if="content">{{ content }}</p>
+  </main>
 </template>

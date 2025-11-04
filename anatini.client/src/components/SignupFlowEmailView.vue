@@ -42,16 +42,18 @@
 </script>
 
 <template>
-  <h2>SignupFlowEmailView</h2>
-  <form id="email" @submit="email" action="/api/authentication/email" method="post">
-    <p>
-      <label for="emailAddress">Email Address</label>
-      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
-    </p>
+  <main>
+    <h2>SignupFlowEmailView</h2>
+    <form id="email" @submit="email" action="/api/authentication/email" method="post">
+      <p>
+        <label for="emailAddress">Email Address</label>
+        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <input type="submit" value="Submit" :disabled="isFetching">
-    </p>
-  </form>
-  <button @click="emit('submitEmail')">I have an email verification code already</button>
+      <p>
+        <input type="submit" value="Submit" :disabled="isFetching">
+      </p>
+    </form>
+    <button @click="emit('submitEmail')">I have an email verification code already</button>
+  </main>
 </template>

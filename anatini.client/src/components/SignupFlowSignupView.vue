@@ -84,36 +84,38 @@
 </script>
 
 <template>
-  <h2>SignupView</h2>
-  <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
-    <p>
-      <label for="emailAddress">Email Address</label>
-      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== undefined" @input="() => emailAddressInput?.setCustomValidity('')">
-    </p>
+  <main>
+    <h2>SignupView</h2>
+    <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
+      <p>
+        <label for="emailAddress">Email Address</label>
+        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== undefined" @input="() => emailAddressInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="name">Name</label>
-      <input id="name" type="text" name="name" maxlength="64" ref="name" @input="() => nameInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="name">Name</label>
+        <input id="name" type="text" name="name" maxlength="64" ref="name" @input="() => nameInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="slug">Slug</label>
-      <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="() => slugInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="slug">Slug</label>
+        <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="() => slugInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="password">Password</label>
-      <input id="password" type="password" name="password" ref="password" @input="() => passwordInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" ref="password" @input="() => passwordInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="verificationCode">Verification Code</label>
-      <input id="verificationCode" type="text" name="verificationCode" ref="verification-code" @input="() => verificationCodeInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="verificationCode">Verification Code</label>
+        <input id="verificationCode" type="text" name="verificationCode" ref="verification-code" @input="() => verificationCodeInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
-    </p>
-  </form>
-  <button v-if="verificationFailed" @click="emit('goBack')">Go Back</button>
+      <p>
+        <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
+      </p>
+    </form>
+    <button v-if="verificationFailed" @click="emit('goBack')">Go Back</button>
+  </main>
 </template>

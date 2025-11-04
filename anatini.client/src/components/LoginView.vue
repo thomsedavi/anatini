@@ -70,20 +70,22 @@
 </script>
 
 <template>
-  <h2>LoginView</h2>
-  <form id="login" @submit="login" action="???" method="post">
-    <p>
-      <label for="emailAddress">Email Address</label>
-      <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="event => emailAddressInput?.setCustomValidity('')">
-    </p>
+  <main>
+    <h2>LoginView</h2>
+    <form id="login" @submit="login" action="???" method="post">
+      <p>
+        <label for="emailAddress">Email Address</label>
+        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="event => emailAddressInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <label for="password">Password</label>
-      <input id="password" type="password" name="password" ref="password" @input="event => passwordInput?.setCustomValidity('')">
-    </p>
+      <p>
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" ref="password" @input="event => passwordInput?.setCustomValidity('')">
+      </p>
 
-    <p>
-      <input type="submit" value="Submit" :disabled="isFetching">
-    </p>
-  </form>
+      <p>
+        <input type="submit" value="Submit" :disabled="isFetching">
+      </p>
+    </form>
+  </main>
 </template>
