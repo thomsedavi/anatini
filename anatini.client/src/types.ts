@@ -62,7 +62,7 @@ export type ChannelEdit = {
 export type ContentElement = {
   index: number;
   tag: string;
-  content?: string;
+  content: string | null;
 }
 
 export type ContentVersion = {

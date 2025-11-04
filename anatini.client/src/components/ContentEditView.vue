@@ -10,6 +10,7 @@
   const content = ref<ContentEdit | null>(null);
   const error = ref<string | null>(null);
   const eTag = ref<string | null>(null);
+  const input = ref<string>('');
 
   watch([() => route.params.channelId, () => route.params.contentId], watchCallback, { immediate: true });
 
@@ -47,7 +48,7 @@
     await apiFetch(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
   }
 
-  async function contentElement(tag: string, insertAfter: number) {
+  async function contentElement(tag: string, element: string, insertAfter: number) {
     if (eTag.value == null || content.value == null) {
       return;
     }
@@ -76,7 +77,7 @@
     const body: Record<string, string> = {
       insertAfter: insertAfter.toString(),
       tag: tag,
-      content: tag
+      content: element
     };
 
     const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
@@ -92,13 +93,15 @@
   <p v-if="error">{{ error }}</p>
   <template v-if="content">
     <h1>{{ content.version.name }}</h1>
-    <button @click="() => contentElement('h1', 0)">Add Header 1</button>
-    <button @click="() => contentElement('h2', 0)">Add Header 2</button>
-    <button @click="() => contentElement('h3', 0)">Add Header 3</button>
-    <button @click="() => contentElement('h4', 0)">Add Header 4</button>
-    <button @click="() => contentElement('h5', 0)">Add Header 5</button>
-    <button @click="() => contentElement('h6', 0)">Add Header 6</button>
-    <button @click="() => contentElement('p', 0)">Add Paragraph</button>
+    <input v-model="input" placeholder="add a single line" />
+    <br>
+    <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
+    <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
+    <button @click="() => contentElement('h3', input, 0)">Add Header 3</button>
+    <button @click="() => contentElement('h4', input, 0)">Add Header 4</button>
+    <button @click="() => contentElement('h5', input, 0)">Add Header 5</button>
+    <button @click="() => contentElement('h6', input, 0)">Add Header 6</button>
+    <button @click="() => contentElement('p', input, 0)">Add Paragraph</button>
     <template v-if="content.version.elements">
       <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
         <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
@@ -108,13 +111,13 @@
         <h5 v-if="element.tag == 'h5'">{{ element.content ?? "(unknown)" }}</h5>
         <h6 v-if="element.tag == 'h6'">{{ element.content ?? "(unknown)" }}</h6>
         <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}</p>
-        <button @click="() => contentElement('h1', element.index)">Add Header 1</button>
-        <button @click="() => contentElement('h2', element.index)">Add Header 2</button>
-        <button @click="() => contentElement('h3', element.index)">Add Header 3</button>
-        <button @click="() => contentElement('h4', element.index)">Add Header 4</button>
-        <button @click="() => contentElement('h5', element.index)">Add Header 5</button>
-        <button @click="() => contentElement('h6', element.index)">Add Header 6</button>
-        <button @click="() => contentElement('p', element.index)">Add Paragraph</button>
+        <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
+        <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
+        <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
+        <button @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
+        <button @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
+        <button @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
+        <button @click="() => contentElement('p', input, element.index)">Add Paragraph</button>
       </template>
     </template>
   </template>
