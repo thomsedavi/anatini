@@ -31,13 +31,62 @@
       .replace(/>/g, '&gt;');
   }
 
+  function formatParagraph(elementContent: string): string {
+    let result = '';
+
+    const lines = elementContent.split('\n');
+
+    const paragraphs: string[][] = [];
+
+    let paragraph: string[] = [];
+
+    lines.forEach(line => {
+      const cleanedLine = line.replace(/\s+/g, ' ').trim();
+
+      if (cleanedLine.length > 0) {
+        paragraph.push(cleanedLine);
+      } else {
+        if (paragraph.length > 0) {
+          paragraphs.push(paragraph);
+        }
+
+        paragraph = [];
+      }
+    });
+
+    paragraphs.push(paragraph);
+
+    paragraphs.forEach(paragraphLines => {
+      result += '<p>';
+
+      paragraphLines.forEach((paragraphLine, index) => {
+        result += paragraphLine;
+
+        if (index !== paragraphLines.length - 1) {
+          result += '<br>';
+        }
+      })
+
+      result += '</p>';
+    });
+
+    return result;
+  }
+
   function getContents(elements: ContentElement[]): string {
     let result = '';
 
     elements.sort((a, b) => a.index - b.index).forEach(element => {
       if (element.content !== null)
       {
-        result += `<${element.tag}>${sanitizeElementContent(element.content)}</${element.tag}>`;
+        const elementContent = sanitizeElementContent(element.content);
+
+        if (element.tag == 'p') {
+          result += formatParagraph(elementContent);
+        }
+        else {
+          result += `<${element.tag}>${elementContent}</${element.tag}>`;
+        }
       }
     });
 

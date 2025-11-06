@@ -11,6 +11,7 @@
   const error = ref<string | null>(null);
   const eTag = ref<string | null>(null);
   const input = ref<string>('');
+  const textarea = ref<string>('');
 
   watch([() => route.params.channelId, () => route.params.contentId], watchCallback, { immediate: true });
 
@@ -95,6 +96,7 @@
     <template v-if="content">
       <h1>{{ content.version.name }}</h1>
       <input v-model="input" placeholder="add a single line" />
+      <textarea v-model="textarea" placeholder="add multiple line"></textarea>
       <br>
       <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
       <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
@@ -102,7 +104,7 @@
       <button @click="() => contentElement('h4', input, 0)">Add Header 4</button>
       <button @click="() => contentElement('h5', input, 0)">Add Header 5</button>
       <button @click="() => contentElement('h6', input, 0)">Add Header 6</button>
-      <button @click="() => contentElement('p', input, 0)">Add Paragraph</button>
+      <button @click="() => contentElement('p', textarea, 0)">Add Paragraph</button>
       <template v-if="content.version.elements">
         <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
           <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
@@ -118,7 +120,7 @@
           <button @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
           <button @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
           <button @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
-          <button @click="() => contentElement('p', input, element.index)">Add Paragraph</button>
+          <button @click="() => contentElement('p', textarea, element.index)">Add Paragraph</button>
         </template>
       </template>
     </template>
