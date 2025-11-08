@@ -44,7 +44,30 @@
       const cleanedLine = line.replace(/\s+/g, ' ').trim();
 
       if (cleanedLine.length > 0) {
-        paragraph.push(cleanedLine);
+        let emStrongIndexes = [...cleanedLine.matchAll(/\*\*\*/g)];
+        
+        if (emStrongIndexes.length % 2 == 1) {
+          emStrongIndexes = emStrongIndexes.slice(0, emStrongIndexes.length - 1);
+        }
+
+        const cleanedLineSegments: string[] = [cleanedLine.substring(0, emStrongIndexes[0]?.index ?? cleanedLine.length)];
+
+        emStrongIndexes.forEach((emStrongIndex, index) => {
+          cleanedLineSegments.push(cleanedLine.substring(emStrongIndex.index + 3, emStrongIndexes[index + 1]?.index ?? cleanedLine.length));
+        });
+
+        let emStrongLine: string = '';
+
+        cleanedLineSegments.forEach((lineSegment, index) => {
+          if (index % 2 == 0) {
+            emStrongLine += lineSegment;
+          }
+          else {
+            emStrongLine += `<em><strong>${lineSegment.trim()}</strong></em>`;
+          }
+        });
+
+        paragraph.push(emStrongLine);
       } else {
         if (paragraph.length > 0) {
           paragraphs.push(paragraph);

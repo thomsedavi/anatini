@@ -16,7 +16,7 @@ export async function apiFetch<Type>(
   const secondsRemaining = Math.abs(new Date(store.expiresUtc).valueOf() - Date.now().valueOf()) / 1000;
 
   if (secondsRemaining < 600) {
-    await fetch("api/authentication/refresh-token", { method: "POST" }).then((response: Response) => {
+    await fetch("/api/authentication/refresh-token", { method: "POST" }).then((response: Response) => {
       if (response.ok) {
         response.json()
           .then((value: IsAuthenticated) => {
