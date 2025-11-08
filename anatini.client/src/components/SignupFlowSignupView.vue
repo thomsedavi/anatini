@@ -46,7 +46,7 @@
       verificationCode: verificationCodeInput.value!.value.trim(),
     };
 
-    fetch("api/authentication/signup", {
+    fetch("/api/authentication/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
