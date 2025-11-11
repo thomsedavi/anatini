@@ -27,7 +27,7 @@ namespace Anatini.Server.Context.EntityExtensions
                 Status = "Draft",
                 ContentType = "Post",
                 ChannelId = channelId,
-                DateOnlyNZ = eventData.DateOnlyNZNow,
+                DateNZ = eventData.DateOnlyNZNow,
                 Aliases = [channelOwnedAlias],
                 DefaultSlug = slug,
                 DraftVersion = channelOwnedDraftVersion,

@@ -154,7 +154,7 @@ namespace Anatini.Server.Context
         public required Guid ChannelId { get; set; }
         public required string Status { get; set; }
         public required string ContentType { get; set; }
-        public required DateOnly DateOnlyNZ { get; set; }
+        public required DateOnly DateNZ { get; set; }
         public required ICollection<ContentOwnedAlias> Aliases { get; set; }
         public required ContentOwnedVersion DraftVersion {  get; set; }
         public ContentOwnedVersion? PublishedVersion {  get; set; }

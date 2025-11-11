@@ -74,6 +74,7 @@ export type ContentEdit = {
   id: string;
   channelId: string;
   defaultSlug: string;
+  dateNZ: string;
   version: ContentVersion;
 }
 

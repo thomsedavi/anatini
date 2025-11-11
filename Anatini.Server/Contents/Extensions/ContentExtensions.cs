@@ -33,6 +33,7 @@ namespace Anatini.Server.Contents.Extensions
                 Id = content.Id,
                 ChannelId = content.ChannelId,
                 DefaultSlug = content.DefaultSlug,
+                DateNZ = content.DateNZ,
                 Version = content.DraftVersion.ToContentVersionDto()
             };
         }

@@ -23,7 +23,7 @@ namespace Anatini.Server.Authentication
     {
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
         {
@@ -40,7 +40,7 @@ namespace Anatini.Server.Authentication
                 {
                     if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                     {
-                        return Ok();
+                        return NoContent();
                     }
                     else
                     {
@@ -50,7 +50,7 @@ namespace Anatini.Server.Authentication
 
                 await context.AddUserEventAsync(userId, EventType.EmailCreated, eventData);
 
-                return Ok();
+                return NoContent();
             }
 
             return await UsingContextAsync(contextFunctionAsync);
@@ -117,12 +117,13 @@ namespace Anatini.Server.Authentication
 
         [Authorize]
         [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult PostLogout()
         {
             DeleteCookie(Constants.AccessToken);
             DeleteCookie(Constants.RefreshToken);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("refresh-token")]

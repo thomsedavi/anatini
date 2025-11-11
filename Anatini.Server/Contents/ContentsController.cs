@@ -21,14 +21,14 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostContent(string channelId, [FromForm] NewContent newContent)
+        public async Task<IActionResult> PostContent(string channelId, [FromForm] CreateContent createContent)
         {
             async Task<IActionResult> channelContextFunctionAsync(Channel channel, AnatiniContext context)
             {
                 var eventData = new EventData(HttpContext);
 
-                var contentAlias = await context.AddContentAliasAsync(newContent.Id, channel.Id, newContent.Slug, newContent.Name);
-                var content = await context.AddContentAsync(newContent.Id, newContent.Name, newContent.Slug, channel.Id, eventData);
+                var contentAlias = await context.AddContentAliasAsync(createContent.Id, channel.Id, createContent.Slug, createContent.Name);
+                var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Slug, channel.Id, eventData);
 
                 channel.AddDraftContent(content, eventData);
                 await context.Update(channel);
@@ -41,15 +41,49 @@ namespace Anatini.Server.Contents
         }
 
         [Authorize]
-        [HttpPost("{contentId}/elements")]
+        [HttpPut("{contentId}/elements")]
         [ETagRequired]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] NewElement newElement)
+        public async Task<IActionResult> PutElement(string channelId, string contentId, [FromForm] UpdateElement updateElement)
+        {
+            async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
+            {
+                var element = content.DraftVersion.Elements?.FirstOrDefault(element => element.Index == updateElement.Index);
+
+                if (element == null)
+                {
+                    return NotFound();
+                }
+
+                element.Content = updateElement.Content;
+
+                await context.Update(content);
+
+                return NoContent();
+            }
+
+            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
+        }
+
+        [Authorize]
+        [HttpPost("{contentId}/elements")]
+        [ETagRequired]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] CreateElement createElement)
         {
             async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
             {
@@ -68,23 +102,23 @@ namespace Anatini.Server.Contents
                 }
                 else
                 {
-                    var nextElements = elements.Where(element => element.Index > newElement.InsertAfter).OrderBy(element => element.Index).ToList();
+                    var nextElements = elements.Where(element => element.Index > createElement.InsertAfter).OrderBy(element => element.Index).ToList();
 
                     int? diff = null;
 
                     if (nextElements.Count == 0)
                     {
-                        diff = int.MaxValue - newElement.InsertAfter;
+                        diff = int.MaxValue - createElement.InsertAfter;
                     }
                     else
                     {
                         var nextElement = nextElements.First();
-                        diff = nextElement.Index - newElement.InsertAfter;
+                        diff = nextElement.Index - createElement.InsertAfter;
                     }
 
                     if (diff >= 2)
                     {
-                        index = newElement.InsertAfter + (diff / 2);
+                        index = createElement.InsertAfter + (diff / 2);
                     }
                 }
 
@@ -94,14 +128,14 @@ namespace Anatini.Server.Contents
                     var gap = int.MaxValue / (orderedElements.Count + 1);
                     var respaceIndex = 1;
 
-                    if (newElement.InsertAfter == 0)
+                    if (createElement.InsertAfter == 0)
                     {
                         index = gap * respaceIndex++;
                     }
 
                     for (var i = 0; i < orderedElements.Count; i++)
                     {
-                        if (orderedElements[i].Index == newElement.InsertAfter)
+                        if (orderedElements[i].Index == createElement.InsertAfter)
                         {
                             orderedElements[i].Index = gap * respaceIndex++;
 
@@ -124,8 +158,8 @@ namespace Anatini.Server.Contents
                 var element = new ContentOwnedElement
                 {
                     Index = index.Value,
-                    Tag = newElement.Tag,
-                    Content = newElement.Content,
+                    Tag = createElement.Tag,
+                    Content = createElement.Content,
                     ContentOwnedVersionContentChannelId = content.ChannelId,
                     ContentOwnedVersionContentId = content.Id
                 };
@@ -134,6 +168,38 @@ namespace Anatini.Server.Contents
                 await context.Update(content);
 
                 return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
+            }
+
+            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
+        }
+
+        [Authorize]
+        [HttpPatch("{contentId}")]
+        [ETagRequired]
+        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchContent(string channelId, string contentId, [FromForm] UpdateContent updateContent)
+        {
+            async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
+            {
+                if (updateContent.DateNZ.HasValue)
+                {
+                    content.DateNZ = updateContent.DateNZ.Value;
+                }
+
+                if (!string.IsNullOrEmpty(updateContent.Name))
+                {
+                    content.DraftVersion.Name = updateContent.Name;
+                }
+
+                await context.Update(content);
+
+                return NoContent();
             }
 
             return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
