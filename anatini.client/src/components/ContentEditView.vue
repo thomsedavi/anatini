@@ -49,6 +49,85 @@
     await apiFetch(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
   }
 
+  async function editElement(index: number) {
+    if (eTag.value == null || content.value == null) {
+      return;
+    }
+
+    const onfulfilled = async (value: string) => {
+      console.log(value);
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    const handleResponse = (response: Response) => {
+      eTag.value = response.headers.get("ETag");
+    }
+
+    const body: Record<string, string> = {
+      index: index.toString(),
+      content: ' this  '
+    };
+
+    const init = { method: "PUT", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+
+    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
+  }
+
+  async function updateName() {
+    if (eTag.value == null || content.value == null) {
+      return;
+    }
+
+    const onfulfilled = async (value: string) => {
+      console.log(value);
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    const handleResponse = (response: Response) => {
+      eTag.value = response.headers.get("ETag");
+    }
+
+    const body: Record<string, string> = {
+      name: input.value
+    };
+
+    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+
+    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+  }
+
+  async function updateDate() {
+    if (eTag.value == null || content.value == null) {
+      return;
+    }
+
+    const onfulfilled = async (value: string) => {
+      console.log(value);
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    const handleResponse = (response: Response) => {
+      eTag.value = response.headers.get("ETag");
+    }
+
+    const body: Record<string, string> = {
+      dateNZ: input.value
+    };
+
+    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+
+    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+  }
+
   async function contentElement(tag: string, element: string, insertAfter: number) {
     if (eTag.value == null || content.value == null) {
       return;
@@ -95,8 +174,17 @@
     <p v-if="error">{{ error }}</p>
     <template v-if="content">
       <h1>{{ content.version.name }}</h1>
+      <p>{{ content.dateNZ }}</p>
+      <p>{{ new Date(content.dateNZ).getFullYear() }}</p>
+      <p>{{ new Date(content.dateNZ).getMonth() + 1 }}</p>
+      <p>{{ new Date(content.dateNZ).getDate() }}</p>
       <input v-model="input" placeholder="add a single line" />
       <textarea v-model="textarea" placeholder="add multiple line"></textarea>
+      <br>
+      <br>
+      <button @click="() => updateDate()">Update Date</button>
+      <button @click="() => updateName()">Update Name</button>
+      <br>
       <br>
       <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
       <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
@@ -113,7 +201,7 @@
           <h4 v-if="element.tag == 'h4'">{{ element.content ?? "(unknown)" }}</h4>
           <h5 v-if="element.tag == 'h5'">{{ element.content ?? "(unknown)" }}</h5>
           <h6 v-if="element.tag == 'h6'">{{ element.content ?? "(unknown)" }}</h6>
-          <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}</p>
+          <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}<button @click="() => editElement(element.index)">Edit</button></p>
           <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
           <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
           <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
