@@ -18,6 +18,7 @@ namespace Anatini.Server.Contents
         [MaxLength(64), DataType(DataType.Text)]
         public string? Name { get; set; }
         public DateOnly? DateNZ { get; set; }
+        public string? Status { get; set; }
     }
 
     public class CreateElement

@@ -197,6 +197,42 @@ namespace Anatini.Server.Contents
                     content.DraftVersion.Name = updateContent.Name;
                 }
 
+                if (updateContent.Status == "Published")
+                {
+                    var publishedVersion = new ContentOwnedVersion
+                    {
+                        Name = content.DraftVersion.Name,
+                        ContentId = content.Id,
+                        ContentChannelId = content.ChannelId
+                    };
+
+                    var draftElements = content.DraftVersion.Elements?.OrderBy(element => element.Index).ToList();
+
+                    if (draftElements != null)
+                    {
+                        var publishedElements = new List<ContentOwnedElement>();
+
+                        for (var index = 0; index < draftElements.Count; index++)
+                        {
+                            var draftElement = draftElements[index];
+
+                            publishedElements.Add(new ContentOwnedElement
+                            {
+                                Index = index,
+                                Tag = draftElement.Tag,
+                                Content = draftElement.Content,
+                                ContentOwnedVersionContentId = draftElement.ContentOwnedVersionContentId,
+                                ContentOwnedVersionContentChannelId = draftElement.ContentOwnedVersionContentChannelId
+                            });
+                        }
+
+                        publishedVersion.Elements = publishedElements;
+                    }
+
+                    content.Status = updateContent.Status;
+                    content.PublishedVersion = publishedVersion;
+                }
+
                 await context.Update(content);
 
                 return NoContent();

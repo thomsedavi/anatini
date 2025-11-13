@@ -76,6 +76,32 @@
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
+  async function publish() {
+    if (eTag.value == null || content.value == null) {
+      return;
+    }
+
+    const onfulfilled = async (value: string) => {
+      console.log(value);
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    const handleResponse = (response: Response) => {
+      eTag.value = response.headers.get("ETag");
+    }
+
+    const body: Record<string, string> = {
+      status: 'Published'
+    };
+
+    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+
+    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+  }
+
   async function updateName() {
     if (eTag.value == null || content.value == null) {
       return;
@@ -184,6 +210,7 @@
       <br>
       <button @click="() => updateDate()">Update Date</button>
       <button @click="() => updateName()">Update Name</button>
+      <button @click="() => publish()">Publish</button>
       <br>
       <br>
       <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
