@@ -18,8 +18,8 @@ body {
 }
 
 main {
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 0.83em;
+  padding-right: 0.83em;
 }
 
 nav {
@@ -31,7 +31,7 @@ nav a {
   float: left;
   display: block;
   color: var(--white);
-  padding: 10px 16px;
+  padding: 0.83em 0.83em;
   text-decoration: none;
 }
 
@@ -40,18 +40,22 @@ nav a:hover {
 }
 
 nav > svg {
-  display: none;
+  cursor: pointer;
 
   > rect {
-    fill: var(--black);;
-
-    &:hover {
-      fill: var(--grey);
-    }
+    fill: var(--black);
   }
 
-  > g > rect {
-    fill: var(--white);
+  > path {
+    stroke: var(--white);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+
+  &:hover {
+    > rect {
+      fill: var(--grey);
+    }
   }
 }
 

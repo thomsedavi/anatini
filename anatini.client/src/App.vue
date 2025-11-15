@@ -8,11 +8,12 @@
 
   const isCollapsed = ref<boolean>(true);
   const isFetching = ref<boolean>(false);
+  const isMobile = ref<boolean>(false);
 
   function onResize() {
-    if (window.innerWidth >= 601) {
-      isCollapsed.value = false;
-    } else if (window.innerWidth <= 600) {
+    isMobile.value = window.innerWidth <= 600;
+
+    if (!isCollapsed.value && window.innerWidth >= 601) {
       isCollapsed.value = true;
     }
   }
@@ -24,7 +25,7 @@
   onMounted(() => {
     window.addEventListener('resize', onResize);
 
-    isCollapsed.value = window.innerWidth <= 600;
+    isMobile.value = window.innerWidth <= 600;
     isFetching.value = true;
 
     fetch("/api/authentication/is-authenticated", {
@@ -64,17 +65,19 @@
       router.replace({ path: '/' });
     });
   }
-
-  function toggleIsCollapsed() {
-    isCollapsed.value = !isCollapsed.value;
-  }
 </script>
 
 <template>
   <template v-if="store.isLoggedIn !== undefined">
-    <nav>
+    <nav v-if="isMobile">
       <template v-if="isCollapsed">
         <RouterLink to="/">Home</RouterLink>
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.15em" height="3.15em" @click="isCollapsed = false">
+          <rect width="100" height="100" />
+          <path d="M 32.5 32.5 L 67.5 32.5" />
+          <path d="M 32.5 50 L 67.5 50" />
+          <path d="M 32.5 67.7 L 67.5 67.5" />
+        </svg>
       </template>
       <template v-else>
         <RouterLink to="/">Home</RouterLink>
@@ -87,19 +90,26 @@
           <RouterLink to="/account">Account</RouterLink>
           <a @click="logout">Log Out</a>
         </template>
-      </template>
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="40" height="40" @click="toggleIsCollapsed">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.15em" height="3.15em" @click="isCollapsed = true">
         <rect width="100" height="100" />
-        <g>
-          <rect x="10" y="20" width="80" height="15" rx="10" />
-          <rect x="10" y="60" width="80" height="15" rx="10" />
-        </g>
-      </svg>
+        <path d="M 32.5 32.5 L 67.5 67.5" />
+        <path d="M 32.5 67.7 L 67.5 32.5" />
+        </svg>
+      </template>
+    </nav>
+    <nav v-else>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/about">Go to About</RouterLink>
+      <template v-if="!store.isLoggedIn">
+        <RouterLink to="/signup">Signup</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
+      </template>
+      <template v-else>
+        <RouterLink to="/account">Account</RouterLink>
+        <a @click="logout">Log Out</a>
+      </template>
     </nav>
     <RouterView />
-    <footer>
-      Footer
-    </footer>
   </template>
   <template v-else>
     <p>...</p>
