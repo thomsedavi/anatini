@@ -190,10 +190,10 @@ namespace Anatini.Server.Context
     public class AttributeContent : ContentEntity
     {
         public required string Value { get; set; }
-        public required string ValueType { get; set; }
         public required string ContentSlug { get; set; }
         public required string ContentChannelSlug { get; set; }
         public required string ContentName { get; set; }
+        public required string ChannelName { get; set; }
     }
 
     public class UserEvent : UserEntity

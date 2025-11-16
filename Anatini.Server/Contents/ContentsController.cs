@@ -3,6 +3,7 @@ using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Contents.Extensions;
 using Anatini.Server.Context;
 using Anatini.Server.Context.EntityExtensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -233,17 +234,8 @@ namespace Anatini.Server.Contents
                     content.Status = updateContent.Status;
                     content.PublishedVersion = publishedVersion;
 
-                    await context.Add(new AttributeContent
-                    {
-                        ItemId = ItemId.Get("Date", content.DraftVersion.DateNZ.ToString("O"), content.Id),
-                        Value = content.DraftVersion.DateNZ.ToString("O"),
-                        ValueType = "Date", // TODO also "Week" in format "####-W##"
-                        ContentId = content.Id,
-                        ContentSlug = content.DefaultSlug,
-                        ContentChannelId = channel.Id,
-                        ContentChannelSlug = channel.DefaultSlug,
-                        ContentName = content.DraftVersion.Name
-                    });
+                    await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
+                    await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
                 }
 
                 await context.Update(content);

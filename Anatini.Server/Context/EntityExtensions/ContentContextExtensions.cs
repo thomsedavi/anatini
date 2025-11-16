@@ -1,9 +1,31 @@
-﻿using Anatini.Server.Utils;
+﻿using Anatini.Server.Enums;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Context.EntityExtensions
 {
     public static class ContentContextExtensions
     {
+        public static async Task<AttributeContent> AddAttributeContent(this AnatiniContext context, AttributeContentType attributeType, string attributeValue, Channel channel, Content content)
+        {
+            var value = $"{Enum.GetName(attributeType)!}:{attributeValue}";
+
+            var attributeContent = new AttributeContent
+            {
+                ItemId = ItemId.Get(value, channel.Id, content.Id),
+                Value = value,
+                ContentId = content.Id,
+                ContentSlug = content.DefaultSlug,
+                ContentChannelId = channel.Id,
+                ContentChannelSlug = channel.DefaultSlug,
+                ContentName = content.DraftVersion.Name,
+                ChannelName = channel.Name
+            };
+
+            await context.Add(attributeContent);
+
+            return attributeContent;
+        }
+
         public static async Task<Content> AddContentAsync(this AnatiniContext context, Guid id, string name, string slug, Guid channelId, EventData eventData)
         {
             var channelOwnedAlias = new ContentOwnedAlias
