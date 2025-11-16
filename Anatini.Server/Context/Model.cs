@@ -42,6 +42,7 @@ namespace Anatini.Server.Context
         public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Content> Contents { get; set; }
+        public DbSet<AttributeContent> AttributeContents { get; set; }
         public DbSet<UserAlias> UserAliases { get; set; }
         public DbSet<ChannelAlias> ChannelAliases { get; set; }
         public DbSet<ContentAlias> ContentAliases { get; set; }
@@ -64,6 +65,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<User>().Configure();
             modelBuilder.Entity<Channel>().Configure();
             modelBuilder.Entity<Content>().Configure();
+            modelBuilder.Entity<AttributeContent>().Configure();
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();
@@ -154,14 +156,11 @@ namespace Anatini.Server.Context
         public required Guid ChannelId { get; set; }
         public required string Status { get; set; }
         public required string ContentType { get; set; }
-        public required DateOnly DateNZ { get; set; }
         public required ICollection<ContentOwnedAlias> Aliases { get; set; }
         public required ContentOwnedVersion DraftVersion {  get; set; }
         public ContentOwnedVersion? PublishedVersion {  get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
-
-        // tags
     }
 
     [Owned]
@@ -169,6 +168,7 @@ namespace Anatini.Server.Context
     {
         public required string Name { get; set; }
         public ICollection<ContentOwnedElement>? Elements { get; set; }
+        public required DateOnly DateNZ { get; set; }
     }
 
     [Owned]
@@ -185,6 +185,15 @@ namespace Anatini.Server.Context
         public required Guid ContentOwnedVersionContentId { get; set; }
         public required Guid ContentOwnedVersionContentChannelId { get; set; }
         public string? Content { get; set; }
+    }
+
+    public class AttributeContent : ContentEntity
+    {
+        public required string Value { get; set; }
+        public required string ValueType { get; set; }
+        public required string ContentSlug { get; set; }
+        public required string ContentChannelSlug { get; set; }
+        public required string ContentName { get; set; }
     }
 
     public class UserEvent : UserEntity
@@ -240,6 +249,12 @@ namespace Anatini.Server.Context
     public abstract class UserEntity : Entity
     {
         public required Guid UserId { get; set; }
+    }
+
+    public abstract class ContentEntity : Entity
+    {
+        public required Guid ContentId { get; set; }
+        public required Guid ContentChannelId { get; set; }
     }
 
     public abstract class AliasEntity : Entity

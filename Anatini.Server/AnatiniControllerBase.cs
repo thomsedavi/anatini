@@ -64,13 +64,13 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, Channel, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> contentFunctionAsync(Content content)
+            async Task<IActionResult> contentFunctionAsync(Content content, Channel channel)
             {
                 using var innerContext = new ContextBase();
 
-                return await contentContextFunction(content, new AnatiniContext(innerContext));
+                return await contentContextFunction(content, channel, new AnatiniContext(innerContext));
             }
 
             return await UsingContentAsync(channelId, contentId, contentFunctionAsync, eTag, refreshETag, requiresAuthorisation);
@@ -79,7 +79,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
-            async Task<IActionResult> contentFunctionAsync(Content content)
+            async Task<IActionResult> contentFunctionAsync(Content content, Channel channel)
             {
                 var result = contentFunction(content);
 
@@ -103,7 +103,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Channel, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
         {
             try
             {
@@ -121,15 +121,15 @@ namespace Anatini.Server
                     channelId = channelAlias.ChannelId.ToString();
                 }
 
+                var channel = await innerContext.Channels.FindAsync(new Guid(channelId));
+
+                if (channel == null)
+                {
+                    return Problem();
+                }
+
                 if (requiresAuthorisation)
                 {
-                    var channel = await innerContext.Channels.FindAsync(new Guid(channelId));
-
-                    if (channel == null)
-                    {
-                        return Problem();
-                    }
-
                     if (!channel.Users.Any(user => user.Id == UserId))
                     {
                         return Forbid();
@@ -160,7 +160,7 @@ namespace Anatini.Server
                     return ValidationProblem(statusCode: 412);
                 }
 
-                var result = await contentFunctionAsync(content);
+                var result = await contentFunctionAsync(content, channel);
 
                 if (refreshETag)
                 {

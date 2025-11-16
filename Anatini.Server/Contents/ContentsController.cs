@@ -53,7 +53,7 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PutElement(string channelId, string contentId, [FromForm] UpdateElement updateElement)
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
+            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel _, AnatiniContext context)
             {
                 var element = content.DraftVersion.Elements?.FirstOrDefault(element => element.Index == updateElement.Index);
 
@@ -85,7 +85,7 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] CreateElement createElement)
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
+            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel _, AnatiniContext context)
             {
                 var elements = content.DraftVersion.Elements ?? [];
 
@@ -185,11 +185,11 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchContent(string channelId, string contentId, [FromForm] UpdateContent updateContent)
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, AnatiniContext context)
+            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel channel, AnatiniContext context)
             {
                 if (updateContent.DateNZ.HasValue)
                 {
-                    content.DateNZ = updateContent.DateNZ.Value;
+                    content.DraftVersion.DateNZ = updateContent.DateNZ.Value;
                 }
 
                 if (!string.IsNullOrEmpty(updateContent.Name))
@@ -203,7 +203,8 @@ namespace Anatini.Server.Contents
                     {
                         Name = content.DraftVersion.Name,
                         ContentId = content.Id,
-                        ContentChannelId = content.ChannelId
+                        ContentChannelId = content.ChannelId,
+                        DateNZ = content.DraftVersion.DateNZ
                     };
 
                     var draftElements = content.DraftVersion.Elements?.OrderBy(element => element.Index).ToList();
@@ -231,6 +232,18 @@ namespace Anatini.Server.Contents
 
                     content.Status = updateContent.Status;
                     content.PublishedVersion = publishedVersion;
+
+                    await context.Add(new AttributeContent
+                    {
+                        ItemId = ItemId.Get("Date", content.DraftVersion.DateNZ.ToString("O"), content.Id),
+                        Value = content.DraftVersion.DateNZ.ToString("O"),
+                        ValueType = "Date", // TODO also "Week" in format "####-W##"
+                        ContentId = content.Id,
+                        ContentSlug = content.DefaultSlug,
+                        ContentChannelId = channel.Id,
+                        ContentChannelSlug = channel.DefaultSlug,
+                        ContentName = content.DraftVersion.Name
+                    });
                 }
 
                 await context.Update(content);

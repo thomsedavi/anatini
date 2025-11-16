@@ -68,13 +68,13 @@ export type ContentElement = {
 export type ContentVersion = {
   name: string;
   elements?: ContentElement[];
+  dateNZ: string;
 }
 
 export type ContentEdit = {
   id: string;
   channelId: string;
   defaultSlug: string;
-  dateNZ: string;
   version: ContentVersion;
 }
 

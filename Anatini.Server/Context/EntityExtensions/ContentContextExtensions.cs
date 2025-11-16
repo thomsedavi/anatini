@@ -17,7 +17,8 @@ namespace Anatini.Server.Context.EntityExtensions
             {
                 ContentChannelId = channelId,
                 Name = name,
-                ContentId = id
+                ContentId = id,
+                DateNZ = eventData.DateOnlyNZNow,
             };
 
             var content = new Content
@@ -27,7 +28,6 @@ namespace Anatini.Server.Context.EntityExtensions
                 Status = "Draft",
                 ContentType = "Post",
                 ChannelId = channelId,
-                DateNZ = eventData.DateOnlyNZNow,
                 Aliases = [channelOwnedAlias],
                 DefaultSlug = slug,
                 DraftVersion = channelOwnedDraftVersion,

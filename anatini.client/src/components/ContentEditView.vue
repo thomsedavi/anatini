@@ -200,10 +200,10 @@
     <p v-if="error">{{ error }}</p>
     <template v-if="content">
       <h1>{{ content.version.name }}</h1>
-      <p>{{ content.dateNZ }}</p>
-      <p>{{ new Date(content.dateNZ).getFullYear() }}</p>
-      <p>{{ new Date(content.dateNZ).getMonth() + 1 }}</p>
-      <p>{{ new Date(content.dateNZ).getDate() }}</p>
+      <p>{{ content.version.dateNZ }}</p>
+      <p>{{ new Date(content.version.dateNZ).getFullYear() }}</p>
+      <p>{{ new Date(content.version.dateNZ).getMonth() + 1 }}</p>
+      <p>{{ new Date(content.version.dateNZ).getDate() }}</p>
       <input v-model="input" placeholder="add a single line" />
       <textarea v-model="textarea" placeholder="add multiple line"></textarea>
       <br>
