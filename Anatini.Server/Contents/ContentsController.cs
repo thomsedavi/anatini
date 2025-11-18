@@ -1,4 +1,5 @@
-﻿using Anatini.Server.Context;
+﻿using Anatini.Server.Contents.Extensions;
+using Anatini.Server.Context;
 using Anatini.Server.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,9 +19,9 @@ namespace Anatini.Server.Contents
                 {
                     var value = $"{AttributeContentType.Week}:{query.Week}";
 
-                    var attributeContents = await context.Context.AttributeContents.Where(a => a.Value == value).OrderByDescending(a => a.Timestamp).Skip(1).Take(10).ToListAsync();
+                    var attributeContents = await context.Context.AttributeContents.WithPartitionKey(value).OrderByDescending(a => a.Timestamp).Skip(1).Take(10).ToListAsync();
 
-                    return Ok(new { Contents = attributeContents });
+                    return Ok(new { Contents = attributeContents.Select(attributeContent => attributeContent.ToAttributeContentDto()) });
                 }
 
                 return BadRequest();
