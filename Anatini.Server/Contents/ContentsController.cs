@@ -19,9 +19,9 @@ namespace Anatini.Server.Contents
                 {
                     var value = $"{AttributeContentType.Week}:{query.Week}";
 
-                    var attributeContents = await context.Context.AttributeContents.WithPartitionKey(value).OrderByDescending(a => a.Timestamp).Skip(1).Take(10).ToListAsync();
+                    var attributeContentsPage = await context.Context.AttributeContents.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, null);
 
-                    return Ok(new { Contents = attributeContents.Select(attributeContent => attributeContent.ToAttributeContentDto()) });
+                    return Ok(new { AttributeContents = attributeContentsPage.Values.Select(attributeContent => attributeContent.ToAttributeContentDto()), attributeContentsPage.ContinuationToken });
                 }
 
                 return BadRequest();
