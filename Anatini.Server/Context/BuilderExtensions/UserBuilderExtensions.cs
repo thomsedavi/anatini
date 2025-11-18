@@ -13,6 +13,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userBuilder.Property(user => user.ItemId).ToJsonProperty("id");
             userBuilder.Property(user => user.Id).ToJsonProperty("Id");
             userBuilder.Property(user => user.ETag).ToJsonProperty("_etag");
+            userBuilder.Property(user => user.Timestamp).ToJsonProperty("_ts");
             userBuilder.OwnsMany(user => user.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(userOwnedAlias => userOwnedAlias.Slug); });
             userBuilder.OwnsMany(user => user.Emails, emailBuildAction => { emailBuildAction.HasKey(userOwnedEmail => userOwnedEmail.Address); });
             userBuilder.OwnsMany(user => user.Channels, channelBuildAction => { channelBuildAction.HasKey(userOwnedChannel => userOwnedChannel.Id); });

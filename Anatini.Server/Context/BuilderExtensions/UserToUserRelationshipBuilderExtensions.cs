@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             userToUserRelationshipBuilder.HasPartitionKey(userToUserRelationship => new { userToUserRelationship.UserId, userToUserRelationship.RelationshipType, userToUserRelationship.ToUserId });
             userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.ItemId).ToJsonProperty("id");
             userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.ETag).ToJsonProperty("_etag");
+            userToUserRelationshipBuilder.Property(userToUserRelationship => userToUserRelationship.Timestamp).ToJsonProperty("_ts");
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             channelAliasBuilder.HasPartitionKey(channelAlias => channelAlias.Slug);
             channelAliasBuilder.Property(channelAlias => channelAlias.ItemId).ToJsonProperty("id");
             channelAliasBuilder.Property(channelAlias => channelAlias.ETag).ToJsonProperty("_etag");
+            channelAliasBuilder.Property(channelAlias => channelAlias.Timestamp).ToJsonProperty("_ts");
             channelAliasBuilder.Property(channelAlias => channelAlias.Slug).ToJsonProperty("Slug");
         }
     }

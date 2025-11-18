@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.BuilderExtensions
             contentBuilder.HasPartitionKey(content => new { content.ChannelId, content.Id });
             contentBuilder.Property(content => content.ItemId).ToJsonProperty("id");
             contentBuilder.Property(content => content.ETag).ToJsonProperty("_etag");
+            contentBuilder.Property(content => content.Timestamp).ToJsonProperty("_ts");
             contentBuilder.OwnsMany(content => content.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(contentOwnedAlias => contentOwnedAlias.Slug); });
             contentBuilder.OwnsOne(content => content.DraftVersion, versionBuildAction => { versionBuildAction.OwnsMany(version => version.Elements, elementBuildAction => { elementBuildAction.HasKey(element => element.Index); }); });
             contentBuilder.OwnsOne(content => content.PublishedVersion, versionbuildAction => { versionbuildAction.OwnsMany(version => version.Elements, elementBuildAction => { elementBuildAction.HasKey(element => element.Index); }); });
