@@ -17,15 +17,10 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannel(string channelId)
+        public async Task<IActionResult> GetChannel(string channelId) => await UsingChannel(channelId, channel =>
         {
-            IActionResult channelFunction(Channel channel)
-            {
-                return Ok(channel.ToChannelDto());
-            }
-
-            return await UsingChannel(channelId, channelFunction);
-        }
+            return Ok(channel.ToChannelDto());
+        });
 
         [Authorize]
         [HttpGet("{channelId}/edit")]
@@ -34,15 +29,10 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannelEdit(string channelId)
+        public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannel(channelId, channel =>
         {
-            IActionResult channelFunction(Channel channel)
-            {
-                return Ok(channel.ToChannelEditDto());
-            }
-
-            return await UsingChannel(channelId, channelFunction, requiresAuthorisation: true);
-        }
+            return Ok(channel.ToChannelEditDto());
+        }, requiresAuthorisation: true);
 
 
         [Authorize]
@@ -52,20 +42,15 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel)
+        public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel) => await UsingUserContextAsync(UserId, async (user, context) =>
         {
-            async Task<IActionResult> userContextFunctionAsync(User user, AnatiniContext context)
-            {
-                await context.AddChannelAliasAsync(newChannel.Slug, newChannel.Id, newChannel.Name);
-                var channel = await context.AddChannelAsync(newChannel.Id, newChannel.Name, newChannel.Slug, user.Id, user.Name);
+            await context.AddChannelAliasAsync(newChannel.Slug, newChannel.Id, newChannel.Name);
+            var channel = await context.AddChannelAsync(newChannel.Id, newChannel.Name, newChannel.Slug, user.Id, user.Name);
 
-                user.AddChannel(channel);
-                await context.Update(user);
+            user.AddChannel(channel);
+            await context.Update(user);
 
-                return Ok(user.ToUserEditDto());
-            }
-
-            return await UsingUserContextAsync(UserId, userContextFunctionAsync);
-        }
+            return Ok(user.ToUserEditDto());
+        });
     }
 }

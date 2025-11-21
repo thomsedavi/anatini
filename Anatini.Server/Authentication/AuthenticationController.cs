@@ -25,36 +25,31 @@ namespace Anatini.Server.Authentication
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostEmail([FromForm] EmailForm form)
+        public async Task<IActionResult> PostEmail([FromForm] EmailForm form) => await UsingContextAsync(async context =>
         {
-            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
+            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
+            var userId = Guid.NewGuid();
+
+            try
             {
-                var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-                var userId = Guid.NewGuid();
-
-                try
+                await context.AddUserEmailAsync(form.EmailAddress, userId);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                 {
-                    await context.AddUserEmailAsync(form.EmailAddress, userId);
+                    return NoContent();
                 }
-                catch (DbUpdateException dbUpdateException)
+                else
                 {
-                    if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                    {
-                        return NoContent();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-
-                await context.AddUserEventAsync(userId, EventType.EmailCreated, eventData);
-
-                return NoContent();
             }
 
-            return await UsingContextAsync(contextFunctionAsync);
-        }
+            await context.AddUserEventAsync(userId, EventType.EmailCreated, eventData);
+
+            return NoContent();
+        });
 
         [HttpPost("signup")]
         [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
@@ -63,57 +58,52 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignup([FromForm] NewUser newUser)
+        public async Task<IActionResult> PostSignup([FromForm] NewUser newUser) => await UsingContextAsync(async context =>
         {
-            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
+            var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
+
+            var email = await context.FindAsync<UserEmail>(newUser.EmailAddress);
+
+            if (email == null)
             {
-                var eventData = new EventData(HttpContext).Add("emailAddress", newUser.EmailAddress).Add("name", newUser.Name);
-
-                var email = await context.FindAsync<UserEmail>(newUser.EmailAddress);
-
-                if (email == null)
-                {
-                    return NotFound();
-                }
-
-                if (email.Verified)
-                {
-                    return NotFound();
-                }
-
-                var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
-
-                newUser.Id = email.UserId;
-
-                if (email.VerificationCode != newUser.VerificationCode)
-                {
-                    await context.Remove(email);
-                    await context.AddUserEventAsync(newUser.Id, EventType.VerificationBad, eventData);
-
-                    return NotFound();
-                }
-
-                var refreshToken = TokenGenerator.Get;
-
-                var user = await context.AddUserAsync(newUser.Id, newUser.Name, newUser.Slug, newUser.Password, email.Address, refreshToken, eventData);
-
-                email.Verified = true;
-                email.VerificationCode = null;
-
-                await context.Update(email);
-                await context.AddUserEventAsync(user.Id, EventType.UserCreated, eventData);
-
-                var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
-                var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
-
-                AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
-                AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
-
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
+                return NotFound();
             }
 
-            return await UsingContextAsync(contextFunctionAsync);
-        }
+            if (email.Verified)
+            {
+                return NotFound();
+            }
+
+            var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
+
+            newUser.Id = email.UserId;
+
+            if (email.VerificationCode != newUser.VerificationCode)
+            {
+                await context.Remove(email);
+                await context.AddUserEventAsync(newUser.Id, EventType.VerificationBad, eventData);
+
+                return NotFound();
+            }
+
+            var refreshToken = TokenGenerator.Get;
+
+            var user = await context.AddUserAsync(newUser.Id, newUser.Name, newUser.Slug, newUser.Password, email.Address, refreshToken, eventData);
+
+            email.Verified = true;
+            email.VerificationCode = null;
+
+            await context.Update(email);
+            await context.AddUserEventAsync(user.Id, EventType.UserCreated, eventData);
+
+            var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
+            var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
+
+            AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
+            AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
+
+            return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
+        });
 
         [Authorize]
         [HttpPost("logout")]
@@ -154,51 +144,41 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostLogin([FromForm] LoginForm form)
+        public async Task<IActionResult> PostLogin([FromForm] LoginForm form) => await UsingContextAsync(async context =>
         {
-            async Task<IActionResult> contextFunctionAsync(AnatiniContext context)
+            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
+
+            var user = await context.VerifyPassword(form.EmailAddress, form.Password);
+
+            if (user == null)
             {
-                var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-
-                var user = await context.VerifyPassword(form.EmailAddress, form.Password);
-
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                await context.AddUserEventAsync(user.Id, EventType.LoginOk, eventData);
-
-                var refreshToken = TokenGenerator.Get;
-
-                user.AddSession(refreshToken, eventData);
-                await context.Update(user);
-
-                var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
-                var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
-
-                AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
-                AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
-
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
+                return NotFound();
             }
 
-            return await UsingContextAsync(contextFunctionAsync);
-        }
+            await context.AddUserEventAsync(user.Id, EventType.LoginOk, eventData);
+
+            var refreshToken = TokenGenerator.Get;
+
+            user.AddSession(refreshToken, eventData);
+            await context.Update(user);
+
+            var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
+            var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
+
+            AppendCookie(Constants.AccessToken, accessTokenCookie, eventData.DateTimeUtc.GetAccessTokenExpiry());
+            AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
+
+            return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
+        });
 
         [Authorize]
         [HttpGet("account")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserEdit()
+        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(UserId, async user =>
         {
-            async Task<IActionResult> userFunctionAsync(User user)
-            {
-                return await Task.FromResult(Ok(user.ToUserEditDto()));
-            }
-
-            return await UsingUserAsync(UserId, userFunctionAsync);
-        }
+            return await Task.FromResult(Ok(user.ToUserEditDto()));
+        });
 
         [Authorize]
         [HttpPost("email/verify")]
@@ -264,7 +244,7 @@ namespace Anatini.Server.Authentication
             var refreshTokenKey = refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Jti)?.Value ?? throw new Exception();
             var userId = Guid.TryParse(refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.NameId)?.Value, out Guid id) ? id : throw new Exception();
 
-            async Task<IActionResult> userContextFunctionAsync(User user, AnatiniContext context)
+            return await UsingUserContextAsync(userId, async (user, context) =>
             {
                 var userSession = user.Sessions.FirstOrDefault(session => session.RefreshToken == refreshTokenKey);
 
@@ -286,9 +266,7 @@ namespace Anatini.Server.Authentication
                 AppendCookie(Constants.RefreshToken, refreshTokenCookie, eventData.DateTimeUtc.GetRefreshTokenExpiry());
 
                 return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, ExpiresUtc = eventData.DateTimeUtc.GetAccessTokenExpiry() });
-            }
-
-            return await UsingUserContextAsync(userId, userContextFunctionAsync);
+            });
         }
 
         private static string GetTokenCookie(Guid userId, DateTime expires, string? value = null)

@@ -22,24 +22,19 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostContent(string channelId, [FromForm] CreateContent createContent)
+        public async Task<IActionResult> PostContent(string channelId, [FromForm] CreateContent createContent) => await UsingChannelContextAsync(channelId, async (channel, context) =>
         {
-            async Task<IActionResult> channelContextFunctionAsync(Channel channel, AnatiniContext context)
-            {
-                var eventData = new EventData(HttpContext);
+            var eventData = new EventData(HttpContext);
 
-                var contentAlias = await context.AddContentAliasAsync(createContent.Id, channel.Id, createContent.Slug, createContent.Name);
-                var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Slug, channel.Id, eventData);
+            var contentAlias = await context.AddContentAliasAsync(createContent.Id, channel.Id, createContent.Slug, createContent.Name);
+            var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Slug, channel.Id, eventData);
 
-                channel.AddDraftContent(content, eventData);
-                await context.Update(channel);
+            channel.AddDraftContent(content, eventData);
+            await context.Update(channel);
 
-                //return CreatedAtAction();
-                return Ok(channel.ToChannelEditDto());
-            }
-
-            return await UsingChannelContextAsync(channelId, channelContextFunctionAsync, requiresAuthorisation: true);
-        }
+            //return CreatedAtAction();
+            return Ok(channel.ToChannelEditDto());
+        }, requiresAuthorisation: true);
 
         [Authorize]
         [HttpPut("{contentId}/elements")]
@@ -52,26 +47,21 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutElement(string channelId, string contentId, [FromForm] UpdateElement updateElement)
+        public async Task<IActionResult> PutElement(string channelId, string contentId, [FromForm] UpdateElement updateElement) => await UsingContentContextAsync(channelId, contentId, async (content, _, context) =>
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel _, AnatiniContext context)
+            var element = content.DraftVersion.Elements?.FirstOrDefault(element => element.Index == updateElement.Index);
+
+            if (element == null)
             {
-                var element = content.DraftVersion.Elements?.FirstOrDefault(element => element.Index == updateElement.Index);
-
-                if (element == null)
-                {
-                    return NotFound();
-                }
-
-                element.Content = updateElement.Content;
-
-                await context.Update(content);
-
-                return NoContent();
+                return NotFound();
             }
 
-            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
-        }
+            element.Content = updateElement.Content;
+
+            await context.Update(content);
+
+            return NoContent();
+        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
 
         [Authorize]
         [HttpPost("{contentId}/elements")]
@@ -84,95 +74,90 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] CreateElement createElement)
+        public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] CreateElement createElement) => await UsingContentContextAsync(channelId, contentId, async (content, _, context) =>
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel _, AnatiniContext context)
+            var elements = content.DraftVersion.Elements ?? [];
+
+            if (elements.Count >= 512)
             {
-                var elements = content.DraftVersion.Elements ?? [];
+                return Forbid();
+            }
 
-                if (elements.Count >= 512)
+            int? index = null;
+
+            if (elements.Count == 0)
+            {
+                index = int.MaxValue / 2;
+            }
+            else
+            {
+                var nextElements = elements.Where(element => element.Index > createElement.InsertAfter).OrderBy(element => element.Index).ToList();
+
+                int? diff = null;
+
+                if (nextElements.Count == 0)
                 {
-                    return Forbid();
-                }
-
-                int? index = null;
-
-                if (elements.Count == 0)
-                {
-                    index = int.MaxValue / 2;
+                    diff = int.MaxValue - createElement.InsertAfter;
                 }
                 else
                 {
-                    var nextElements = elements.Where(element => element.Index > createElement.InsertAfter).OrderBy(element => element.Index).ToList();
+                    var nextElement = nextElements.First();
+                    diff = nextElement.Index - createElement.InsertAfter;
+                }
 
-                    int? diff = null;
+                if (diff >= 2)
+                {
+                    index = createElement.InsertAfter + (diff / 2);
+                }
+            }
 
-                    if (nextElements.Count == 0)
+            if (!index.HasValue)
+            {
+                var orderedElements = elements.OrderBy(element => element.Index).ToList();
+                var gap = int.MaxValue / (orderedElements.Count + 1);
+                var respaceIndex = 1;
+
+                if (createElement.InsertAfter == 0)
+                {
+                    index = gap * respaceIndex++;
+                }
+
+                for (var i = 0; i < orderedElements.Count; i++)
+                {
+                    if (orderedElements[i].Index == createElement.InsertAfter)
                     {
-                        diff = int.MaxValue - createElement.InsertAfter;
+                        orderedElements[i].Index = gap * respaceIndex++;
+
+                        index = gap * respaceIndex++;
                     }
                     else
                     {
-                        var nextElement = nextElements.First();
-                        diff = nextElement.Index - createElement.InsertAfter;
-                    }
-
-                    if (diff >= 2)
-                    {
-                        index = createElement.InsertAfter + (diff / 2);
+                        orderedElements[i].Index = gap * respaceIndex++;
                     }
                 }
 
-                if (!index.HasValue)
-                {
-                    var orderedElements = elements.OrderBy(element => element.Index).ToList();
-                    var gap = int.MaxValue / (orderedElements.Count + 1);
-                    var respaceIndex = 1;
-
-                    if (createElement.InsertAfter == 0)
-                    {
-                        index = gap * respaceIndex++;
-                    }
-
-                    for (var i = 0; i < orderedElements.Count; i++)
-                    {
-                        if (orderedElements[i].Index == createElement.InsertAfter)
-                        {
-                            orderedElements[i].Index = gap * respaceIndex++;
-
-                            index = gap * respaceIndex++;
-                        }
-                        else
-                        {
-                            orderedElements[i].Index = gap * respaceIndex++;
-                        }
-                    }
-
-                    content.DraftVersion.Elements = orderedElements;
-                }
-
-                if (!index.HasValue)
-                {
-                    return Problem();
-                }
-
-                var element = new ContentOwnedElement
-                {
-                    Index = index.Value,
-                    Tag = createElement.Tag,
-                    Content = createElement.Content,
-                    ContentOwnedVersionContentChannelId = content.ChannelId,
-                    ContentOwnedVersionContentId = content.Id
-                };
-
-                content.DraftVersion.Elements!.Add(element);
-                await context.Update(content);
-
-                return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
+                content.DraftVersion.Elements = orderedElements;
             }
 
-            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
-        }
+            if (!index.HasValue)
+            {
+                return Problem();
+            }
+
+            var element = new ContentOwnedElement
+            {
+                Index = index.Value,
+                Tag = createElement.Tag,
+                Content = createElement.Content,
+                ContentOwnedVersionContentChannelId = content.ChannelId,
+                ContentOwnedVersionContentId = content.Id
+            };
+
+            content.DraftVersion.Elements!.Add(element);
+            await context.Update(content);
+
+            return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
+        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
 
         [Authorize]
         [HttpPatch("{contentId}")]
@@ -184,89 +169,79 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchContent(string channelId, string contentId, [FromForm] UpdateContent updateContent)
+        public async Task<IActionResult> PatchContent(string channelId, string contentId, [FromForm] UpdateContent updateContent) => await UsingContentContextAsync(channelId, contentId, async (content, channel, context) =>
         {
-            async Task<IActionResult> contentContextFunctionAsync(Content content, Channel channel, AnatiniContext context)
+            if (updateContent.DateNZ.HasValue)
             {
-                if (updateContent.DateNZ.HasValue)
-                {
-                    content.DraftVersion.DateNZ = updateContent.DateNZ.Value;
-                }
-
-                if (!string.IsNullOrEmpty(updateContent.Name))
-                {
-                    content.DraftVersion.Name = updateContent.Name;
-                }
-
-                if (updateContent.Status == "Published")
-                {
-                    var publishedVersion = new ContentOwnedVersion
-                    {
-                        Name = content.DraftVersion.Name,
-                        ContentId = content.Id,
-                        ContentChannelId = content.ChannelId,
-                        DateNZ = content.DraftVersion.DateNZ
-                    };
-
-                    var draftElements = content.DraftVersion.Elements?.OrderBy(element => element.Index).ToList();
-
-                    if (draftElements != null)
-                    {
-                        var publishedElements = new List<ContentOwnedElement>();
-
-                        for (var index = 0; index < draftElements.Count; index++)
-                        {
-                            var draftElement = draftElements[index];
-
-                            publishedElements.Add(new ContentOwnedElement
-                            {
-                                Index = index,
-                                Tag = draftElement.Tag,
-                                Content = draftElement.Content,
-                                ContentOwnedVersionContentId = draftElement.ContentOwnedVersionContentId,
-                                ContentOwnedVersionContentChannelId = draftElement.ContentOwnedVersionContentChannelId
-                            });
-                        }
-
-                        publishedVersion.Elements = publishedElements;
-                    }
-
-                    content.Status = updateContent.Status;
-                    content.PublishedVersion = publishedVersion;
-
-                    await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
-                    await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
-                }
-
-                await context.Update(content);
-
-                return NoContent();
+                content.DraftVersion.DateNZ = updateContent.DateNZ.Value;
             }
 
-            return await UsingContentContextAsync(channelId, contentId, contentContextFunctionAsync, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
-        }
+            if (!string.IsNullOrEmpty(updateContent.Name))
+            {
+                content.DraftVersion.Name = updateContent.Name;
+            }
+
+            if (updateContent.Status == "Published")
+            {
+                var publishedVersion = new ContentOwnedVersion
+                {
+                    Name = content.DraftVersion.Name,
+                    ContentId = content.Id,
+                    ContentChannelId = content.ChannelId,
+                    DateNZ = content.DraftVersion.DateNZ
+                };
+
+                var draftElements = content.DraftVersion.Elements?.OrderBy(element => element.Index).ToList();
+
+                if (draftElements != null)
+                {
+                    var publishedElements = new List<ContentOwnedElement>();
+
+                    for (var index = 0; index < draftElements.Count; index++)
+                    {
+                        var draftElement = draftElements[index];
+
+                        publishedElements.Add(new ContentOwnedElement
+                        {
+                            Index = index,
+                            Tag = draftElement.Tag,
+                            Content = draftElement.Content,
+                            ContentOwnedVersionContentId = draftElement.ContentOwnedVersionContentId,
+                            ContentOwnedVersionContentChannelId = draftElement.ContentOwnedVersionContentChannelId
+                        });
+                    }
+
+                    publishedVersion.Elements = publishedElements;
+                }
+
+                content.Status = updateContent.Status;
+                content.PublishedVersion = publishedVersion;
+
+                await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
+                await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
+            }
+
+            await context.Update(content);
+
+            return NoContent();
+        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
 
         [HttpGet("{contentId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetContent(string channelId, string contentId)
+        public async Task<IActionResult> GetContent(string channelId, string contentId) => await UsingContent(channelId, contentId, content =>
         {
-            IActionResult contentFunction(Content content)
+            var versionDto = content.ToContentDto();
+
+            if (versionDto == null)
             {
-                var versionDto = content.ToContentDto();
-
-                if (versionDto == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(versionDto);
+                return NotFound();
             }
 
-            return await UsingContent(channelId, contentId, contentFunction);
-        }
+            return Ok(versionDto);
+        });
 
         [HttpGet("{contentId}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -275,15 +250,10 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetContentEdit(string channelId, string contentId)
+        public async Task<IActionResult> GetContentEdit(string channelId, string contentId) => await UsingContent(channelId, contentId, content =>
         {
-            IActionResult contentFunction(Content content)
-            {
-                return Ok(content.ToContentEditDto());
-            }
-
-            return await UsingContent(channelId, contentId, contentFunction, requiresAuthorisation: true);
-        }
+            return Ok(content.ToContentEditDto());
+        }, requiresAuthorisation: true);
 
         [HttpGet("{contentId}/preview")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -292,14 +262,9 @@ namespace Anatini.Server.Contents
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetContentPreview(string channelId, string contentId)
+        public async Task<IActionResult> GetContentPreview(string channelId, string contentId) => await UsingContent(channelId, contentId, content =>
         {
-            IActionResult contentFunction(Content content)
-            {
-                return Ok(content.ToContentDto(usePreview: true));
-            }
-
-            return await UsingContent(channelId, contentId, contentFunction, requiresAuthorisation: true);
-        }
+            return Ok(content.ToContentDto(usePreview: true));
+        }, requiresAuthorisation: true);
     }
 }
