@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
+using Anatini.Server.Authentication.Extensions;
 using Anatini.Server.Authentication.Responses;
 using Anatini.Server.Context;
 using Anatini.Server.Context.EntityExtensions;
@@ -108,13 +109,23 @@ namespace Anatini.Server.Authentication
         [Authorize]
         [HttpPost("logout")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult PostLogout()
+        public async Task<IActionResult> PostLogout() => await UsingUserContextAsync(UserId, async (user, context) =>
         {
+            var refreshTokenString = CookieValue(Constants.RefreshToken);
+
+            var refreshToken = refreshTokenString?.GetClaimValue(JwtRegisteredClaimNames.Jti);
+
+            if (refreshToken != null)
+            {
+                user.RemoveSession(refreshToken);
+                await context.Update(user);
+            }
+
             DeleteCookie(Constants.AccessToken);
             DeleteCookie(Constants.RefreshToken);
 
             return NoContent();
-        }
+        });
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
@@ -209,10 +220,7 @@ namespace Anatini.Server.Authentication
                 return await GetRefreshToken(refreshTokenString, eventData);
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var accessToken = tokenHandler.ReadJwtToken(accessTokenString);
-
-            var exp = accessToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Exp)?.Value;
+            var exp = accessTokenString.GetClaimValue(JwtRegisteredClaimNames.Exp);
 
             DateTime expiresDateTime;
 
@@ -238,15 +246,12 @@ namespace Anatini.Server.Authentication
 
         private async Task<IActionResult> GetRefreshToken(string refreshTokenString, EventData eventData)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var refreshToken = tokenHandler.ReadJwtToken(refreshTokenString);
-
-            var refreshTokenKey = refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.Jti)?.Value ?? throw new Exception();
-            var userId = Guid.TryParse(refreshToken.Claims.FirstOrDefault(a => a.Type == JwtRegisteredClaimNames.NameId)?.Value, out Guid id) ? id : throw new Exception();
+            var refreshToken = refreshTokenString?.GetClaimValue(JwtRegisteredClaimNames.Jti) ?? throw new Exception();
+            var userId = Guid.TryParse(refreshTokenString.GetClaimValue(JwtRegisteredClaimNames.NameId), out Guid id) ? id : throw new Exception();
 
             return await UsingUserContextAsync(userId, async (user, context) =>
             {
-                var userSession = user.Sessions.FirstOrDefault(session => session.RefreshToken == refreshTokenKey);
+                var userSession = user.Sessions?.FirstOrDefault(session => session.RefreshToken == refreshToken);
 
                 if (userSession == null)
                 {

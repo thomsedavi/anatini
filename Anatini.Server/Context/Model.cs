@@ -80,7 +80,7 @@ namespace Anatini.Server.Context
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
-        public required ICollection<UserOwnedSession> Sessions { get; set; }
+        public ICollection<UserOwnedSession>? Sessions { get; set; }
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public required string DefaultSlug { get; set; }

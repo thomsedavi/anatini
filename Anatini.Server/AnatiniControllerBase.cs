@@ -144,7 +144,7 @@ namespace Anatini.Server
 
                     var newContent = await newInnerContext.Contents.FindAsync(new Guid(channelId), new Guid(contentId));
 
-                    Response.Headers.ETag = newContent!.ETag;
+                    Response.Headers.ETag = newContent?.ETag ?? Response.Headers.ETag;
                 }
                 else
                 {

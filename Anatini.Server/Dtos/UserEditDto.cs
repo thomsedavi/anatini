@@ -7,7 +7,7 @@
         public required string DefaultSlug { get; set; }
         public IEnumerable<UserEditChannelDto>? Channels { get; set; }
         public required IEnumerable<UserEditEmailDto> Emails { get; set; }
-        public required IEnumerable<UserEditSessionDto> Sessions { get; set; }
+        public IEnumerable<UserEditSessionDto>? Sessions { get; set; }
         public required IEnumerable<UserEditAliasDto> Aliases { get; set; }
     }
 

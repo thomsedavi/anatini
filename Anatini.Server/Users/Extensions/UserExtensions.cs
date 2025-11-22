@@ -55,9 +55,21 @@ namespace Anatini.Server.Users.Extensions
                 Revoked = false
             };
 
-            var sessions = user.Sessions.ToList();
+            var sessions = user.Sessions?.ToList() ?? [];
             sessions.Add(userOwnedSession);
             user.Sessions = sessions;
+
+            return user;
+        }
+
+        public static User RemoveSession(this User user, string refreshToken)
+        {
+            var userOwnedSesion = user.Sessions?.FirstOrDefault(session => session.RefreshToken == refreshToken);
+
+            if (userOwnedSesion != null)
+            {
+                user.Sessions?.Remove(userOwnedSesion);
+            }
 
             return user;
         }
@@ -69,7 +81,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = user.Id,
                 Name = user.Name,
                 Emails = user.Emails.Select(ToUserEditEmailDto),
-                Sessions = user.Sessions.Select(ToUserEditSessionDto),
+                Sessions = user.Sessions?.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
                 DefaultSlug = user.DefaultSlug
