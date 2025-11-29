@@ -6,7 +6,7 @@
   import type { IsAuthenticated } from '@/types';
 
   const { emailAddress, verificationFailed } = defineProps<{
-    emailAddress?: string;
+    emailAddress: string | null;
     verificationFailed: boolean;
   }>();
 
@@ -89,7 +89,7 @@
     <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
       <p>
         <label for="emailAddress">Email Address</label>
-        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== undefined" @input="() => emailAddressInput?.setCustomValidity('')">
+        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== null" @input="() => emailAddressInput?.setCustomValidity('')">
       </p>
 
       <p>

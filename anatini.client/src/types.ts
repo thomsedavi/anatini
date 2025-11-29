@@ -11,11 +11,11 @@ export type UserEdit = {
     address: string;
     verified: boolean;
   }[];
-  channels?: {
+  channels: {
     id: string;
     name: string;
     defaultSlug: string;
-  }[];
+  }[] | null;
   sessions: {
     id: string;
     userAgent: string;
@@ -39,10 +39,10 @@ export type Events = {
 export type Channel = {
   name: string;
   slug: string;
-  topContents?: {
+  topContents: {
     defaultSlug: string;
     name: string;
-  }[];
+  }[] | null;
 };
 
 export type ChannelEdit = {
@@ -52,12 +52,12 @@ export type ChannelEdit = {
   aliases: {
     slug: string;
   }[];
-  topDraftContents?: {
+  topDraftContents: {
     id: string;
     defaultSlug: string;
     name: string;
     updatedDateTimeUTC: string;
-  }[];
+  }[] | null;
 };
 
 export type ContentElement = {
@@ -68,7 +68,7 @@ export type ContentElement = {
 
 export type ContentVersion = {
   name: string;
-  elements?: ContentElement[];
+  elements: ContentElement[] | null;
   dateNZ: string;
 }
 
@@ -86,5 +86,5 @@ export type Content = {
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;
-  expiresUtc?: string;
+  expiresUtc: string | null;
 }

@@ -42,7 +42,7 @@
 
     let execArrays = [...text.matchAll(regExp)];
 
-    if (execArrays.length % 2 == 1) {
+    if (execArrays.length % 2 === 1) {
       execArrays = execArrays.slice(0, execArrays.length - 1);
     }
 
@@ -55,7 +55,7 @@
     let result: string = '';
 
     cleanedLineSegments.forEach((lineSegment, index) => {
-      if (index % 2 == 0) {
+      if (index % 2 === 0) {
         result += lineSegment;
       } else {
         result += `${replacementTag.openingTags}${lineSegment.trim()}${replacementTag.closingTags}`;
@@ -121,7 +121,7 @@
       {
         const elementContent = sanitizeElementContent(element.content);
 
-        if (element.tag == 'p') {
+        if (element.tag === 'p') {
           result += formatParagraph(elementContent);
         }
         else {
@@ -136,7 +136,7 @@
   function getMainHtml(): string {
     if (loading.value) {
       return '<p>Loading...</p>';
-    } else if (content.value?.version.elements !== undefined) {
+    } else if (content.value !== null && content.value.version.elements !== null) {
       return getContents(content.value.version.elements);
     } else {
       return '<b>Error</b>';

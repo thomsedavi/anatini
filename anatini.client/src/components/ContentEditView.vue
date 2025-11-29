@@ -50,7 +50,7 @@
   }
 
   async function editElement(index: number) {
-    if (eTag.value == null || content.value == null) {
+    if (eTag.value === null || content.value === null) {
       return;
     }
 
@@ -77,7 +77,7 @@
   }
 
   async function publish() {
-    if (eTag.value == null || content.value == null) {
+    if (eTag.value === null || content.value === null) {
       return;
     }
 
@@ -103,7 +103,7 @@
   }
 
   async function updateName() {
-    if (eTag.value == null || content.value == null) {
+    if (eTag.value === null || content.value === null) {
       return;
     }
 
@@ -129,7 +129,7 @@
   }
 
   async function updateDate() {
-    if (eTag.value == null || content.value == null) {
+    if (eTag.value === null || content.value === null) {
       return;
     }
 
@@ -155,7 +155,7 @@
   }
 
   async function contentElement(tag: string, element: string, insertAfter: number) {
-    if (eTag.value == null || content.value == null) {
+    if (eTag.value === null || content.value === null) {
       return;
     }
 
@@ -222,13 +222,13 @@
       <button @click="() => contentElement('p', textarea, 0)">Add Paragraph</button>
       <template v-if="content.version.elements">
         <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
-          <h1 v-if="element.tag == 'h1'">{{ element.content ?? "(unknown)" }}</h1>
-          <h2 v-if="element.tag == 'h2'">{{ element.content ?? "(unknown)" }}</h2>
-          <h3 v-if="element.tag == 'h3'">{{ element.content ?? "(unknown)" }}</h3>
-          <h4 v-if="element.tag == 'h4'">{{ element.content ?? "(unknown)" }}</h4>
-          <h5 v-if="element.tag == 'h5'">{{ element.content ?? "(unknown)" }}</h5>
-          <h6 v-if="element.tag == 'h6'">{{ element.content ?? "(unknown)" }}</h6>
-          <p v-if="element.tag == 'p'">{{ element.content ?? "(unknown)" }}<button @click="() => editElement(element.index)">Edit</button></p>
+          <h1 v-if="element.tag === 'h1'">{{ element.content ?? "(unknown)" }}</h1>
+          <h2 v-if="element.tag === 'h2'">{{ element.content ?? "(unknown)" }}</h2>
+          <h3 v-if="element.tag === 'h3'">{{ element.content ?? "(unknown)" }}</h3>
+          <h4 v-if="element.tag === 'h4'">{{ element.content ?? "(unknown)" }}</h4>
+          <h5 v-if="element.tag === 'h5'">{{ element.content ?? "(unknown)" }}</h5>
+          <h6 v-if="element.tag === 'h6'">{{ element.content ?? "(unknown)" }}</h6>
+          <p v-if="element.tag === 'p'">{{ element.content ?? "(unknown)" }}<button @click="() => editElement(element.index)">Edit</button></p>
           <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
           <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
           <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>

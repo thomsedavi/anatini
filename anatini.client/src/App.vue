@@ -68,7 +68,7 @@
 </script>
 
 <template>
-  <template v-if="store.isLoggedIn !== undefined">
+  <template v-if="store.isLoggedIn !== null">
     <nav v-if="isMobile">
       <template v-if="isCollapsed">
         <RouterLink to="/">Home</RouterLink>

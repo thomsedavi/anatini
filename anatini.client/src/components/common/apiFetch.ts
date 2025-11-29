@@ -9,7 +9,7 @@ export async function apiFetch<Type>(
   statusActions?: {[id: number]: () => void},
   handleResponse?: (response: Response) => void
 ): Promise<void> {
-  if (store.expiresUtc == undefined) {
+  if (store.expiresUtc === null) {
     return;
   }
 

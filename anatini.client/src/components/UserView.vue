@@ -2,47 +2,60 @@
   import type { User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { apiFetch } from './common/apiFetch';
 
   const route = useRoute();
 
-  const loading = ref<boolean>(false);
+  const loading = ref<boolean>(true);
   const error = ref<string | null>(null);
   const user = ref<User | null>(null);
 
-  watch([() => route.params.userSlug], fetchUser, { immediate: true });
+  watch([() => route.params.userId], fetchUser, { immediate: true });
 
   async function fetchUser(array: (() => string | string[])[]) {
-    error.value = user.value = null
-    loading.value = true
+    error.value = user.value = null;
+    loading.value = true;
 
-    fetch(`/api/users/${array[0]}`, { method: "GET" })
-      .then((value: Response) => {
-        if (value.ok) {
-          value.json()
-            .then((value: User) => {
-              user.value = value;
-            })
-            .catch(() => {
-              error.value = 'Unknown Error';
-            });
-        } else if (value.status === 401) {
-          error.value = 'Unauthorised';
-        } else {
-          error.value = 'Unkown Error';
-        }
-      })
-      .catch(() => {
-        error.value = 'Unknown Error';
-      }).
-      finally(() => {
-        loading.value = false
-      });
+    const onfulfilled = async (value: User) => {
+      user.value = value;
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    apiFetch(`users/${array[0]}`, onfulfilled, onfinally);
+  }
+
+  async function trust() {
+    if (user.value === null) {
+      return;
+    }
+
+    const onfulfilled = async (value: string) => {
+      console.log(value);
+    };
+
+    const onfinally = () => {
+      loading.value = false;
+    };
+
+    const body: Record<string, string> = {
+      type: "Trusts"
+    };
+
+    const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body) };
+
+    apiFetch(`users/${user.value.id}/relationships`, onfulfilled, onfinally, init);
   }
 </script>
 
 <template>
-  <main>
-    <h2>UserView</h2>
-    <h3 v-if="user">{{ user.name }}</h3>
+  <main v-if="user">
+    <h1>{{ user.name }}</h1>
+    <button @click="() => trust()">Trust</button>
+  </main>
+  <main v-else>
+    <h1>Loading...</h1>
   </main>
 </template>

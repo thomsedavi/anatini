@@ -3,7 +3,7 @@
   import { validateInputs } from './common/validity';
 
   const emit = defineEmits<{
-    submitEmail: [email?: string];
+    submitEmail: [email: string | null];
   }>();
 
   const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
@@ -54,6 +54,6 @@
         <input type="submit" value="Submit" :disabled="isFetching">
       </p>
     </form>
-    <button @click="emit('submitEmail')">I have an email verification code already</button>
+    <button @click="emit('submitEmail', null)">I have an email verification code already</button>
   </main>
 </template>
