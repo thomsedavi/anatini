@@ -27,6 +27,7 @@ export type UserEdit = {
   aliases: {
     slug: string;
   }[];
+  protected: boolean | null;
 };
 
 export type Events = {

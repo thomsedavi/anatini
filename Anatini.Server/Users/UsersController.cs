@@ -25,7 +25,7 @@ namespace Anatini.Server.Users
                 return Forbid();
             }
 
-            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name);
+            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name, user.Protected);
 
             user.AddAlias(userAlias, newUserAlias.Default);
             await context.Update(user);

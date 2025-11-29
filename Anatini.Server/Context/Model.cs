@@ -85,6 +85,7 @@ namespace Anatini.Server.Context
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public IList<string>? Permissions { get; set; }
+        public bool? Protected { get; set; }
     }
 
     [Owned]
@@ -222,6 +223,7 @@ namespace Anatini.Server.Context
     {
         public required Guid UserId { get; set; }
         public required string UserName { get; set; }
+        public bool? Protected { get; set; }
     }
 
     public class ChannelAlias : AliasEntity

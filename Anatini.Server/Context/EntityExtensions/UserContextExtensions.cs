@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class UserContextExtensions
     {
-        public static async Task<User> AddUserAsync(this AnatiniContext context, Guid id, string name, string slug, string password, string address, string refreshToken, EventData eventData)
+        public static async Task<User> AddUserAsync(this AnatiniContext context, Guid id, string name, string slug, string password, string address, bool? @protected, string refreshToken, EventData eventData)
         {
             var userOwnedAlias = new UserOwnedAlias
             {
@@ -41,7 +41,8 @@ namespace Anatini.Server.Context.EntityExtensions
                 Aliases = [userOwnedAlias],
                 HashedPassword = null!,
                 Emails = [userOwnedEmail],
-                Sessions = [userOwnedSession]
+                Sessions = [userOwnedSession],
+                Protected = @protected
             };
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);

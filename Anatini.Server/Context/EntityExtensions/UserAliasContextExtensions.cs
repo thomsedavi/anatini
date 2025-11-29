@@ -4,14 +4,15 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class UserAliasContextExtensions
     {
-        public static async Task<UserAlias> AddUserAliasAsync(this AnatiniContext context, Guid userId, string slug, string userName)
+        public static async Task<UserAlias> AddUserAliasAsync(this AnatiniContext context, Guid userId, string slug, string userName, bool? @protected)
         {
             var userAlias = new UserAlias
             {
                 ItemId = ItemId.Get(slug),
                 Slug = slug,
                 UserId = userId,
-                UserName = userName
+                UserName = userName,
+                Protected = @protected
             };
 
             await context.Add(userAlias);

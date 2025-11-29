@@ -28,6 +28,8 @@ namespace Anatini.Server.Authentication
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
         public required string VerificationCode { get; set; }
 
+        public bool? Protected { get; set; }
+
         public Guid Id { get; set; } = Guid.NewGuid();
     }
 

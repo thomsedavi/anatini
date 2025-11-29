@@ -22,6 +22,7 @@
   const slugInput = useTemplateRef<HTMLInputElement>('slug');
   const passwordInput = useTemplateRef<HTMLInputElement>('password');
   const verificationCodeInput = useTemplateRef<HTMLInputElement>('verification-code');
+  const protectedInput = useTemplateRef<HTMLInputElement>('protected');
   const isFetching = ref<boolean>(false);
 
   async function signup(event: Event) {
@@ -45,6 +46,10 @@
       password: passwordInput.value!.value,
       verificationCode: verificationCodeInput.value!.value.trim(),
     };
+
+    if (protectedInput.value!.checked) {
+      body['protected'] = 'true';
+    }
 
     fetch("/api/authentication/signup", {
       method: "POST",
@@ -111,6 +116,11 @@
         <label for="verificationCode">Verification Code</label>
         <input id="verificationCode" type="text" name="verificationCode" ref="verification-code" @input="() => verificationCodeInput?.setCustomValidity('')">
       </p>
+
+      <div>
+        <label for="protected">Protected</label>
+        <input id="protected" type="checkbox" name="protected" ref="protected" />
+      </div>
 
       <p>
         <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
