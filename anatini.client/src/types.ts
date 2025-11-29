@@ -1,4 +1,5 @@
 export type User = {
+  id: string;
   name: string;
 };
 
@@ -76,6 +77,7 @@ export type ContentEdit = {
   channelId: string;
   defaultSlug: string;
   version: ContentVersion;
+  protected: boolean | null;
 }
 
 export type Content = {

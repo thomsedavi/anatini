@@ -1,5 +1,6 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Context.EntityExtensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,40 @@ namespace Anatini.Server.Users
             // TODO return 404 if slug requires authentication
 
             return Ok(userAlias.ToUserDto());
+        });
+
+        [HttpPost("{toUserSlug}/relationships")]
+        public async Task<IActionResult> PostRelationship(string toUserSlug, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(UserId, async (user, context) =>
+        {
+            if (!user.HasAnyPermission(UserPermission.Admin, UserPermission.Trusted))
+            {
+                return Forbid();
+            }
+
+            if (!Guid.TryParse(toUserSlug, out Guid toUserId))
+            {
+                var userAlias = await context.FindAsync<UserAlias>(toUserSlug) ?? throw new KeyNotFoundException();
+
+                toUserId = userAlias.UserId;
+            }
+
+            if (user.Id == toUserId)
+            {
+                return BadRequest();
+            }
+
+            var toUser = await context.FindAsync<User>(toUserId) ?? throw new KeyNotFoundException();
+
+            if (createRelationship.Type == "Trusts")
+            {
+                await context.AddUserToUserRelationshipsAsync(user.Id, toUser.Id, UserToUserRelationshipType.Trusts);
+                await context.AddUserToUserRelationshipsAsync(toUser.Id, user.Id, UserToUserRelationshipType.TrustedBy);
+
+                toUser.AddPermission(UserPermission.Trusted);
+                await context.Update(user);
+            }
+
+            return await Task.FromResult(NoContent());
         });
     }
 }

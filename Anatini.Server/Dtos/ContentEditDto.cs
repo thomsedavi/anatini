@@ -6,6 +6,7 @@
         public required Guid ChannelId { get; set; }
         public required string DefaultSlug { get; set; }
         public required ContentVersionDto Version { get; set; }
+        public bool? Protected { get; set; }
     }
 
     public class ContentVersionDto

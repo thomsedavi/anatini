@@ -1,11 +1,32 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Dtos;
+using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
+        public static User AddPermission(this User user, UserPermission userPermission)
+        {
+            var permissions = user.Permissions ?? [];
+
+            if (permissions.Any(permission => permission == Enum.GetName(userPermission)!))
+            {
+                return user;
+            }
+
+            permissions.Add(Enum.GetName(userPermission)!);
+            user.Permissions = permissions;
+
+            return user;
+        }
+
+        public static bool HasAnyPermission(this User user, params UserPermission[] permissions)
+        {
+            return permissions.Any(permission => user.Permissions?.Any(userPermission => userPermission == Enum.GetName(permission)!) ?? false);
+        }
+
         public static User AddChannel(this User user, Channel channel)
         {
             var userOwnedChannel = new UserOwnedChannel

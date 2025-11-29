@@ -75,9 +75,9 @@ namespace Anatini.Server.Authentication
                 return NotFound();
             }
 
-            var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
-
             newUser.Id = email.UserId;
+
+            var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name);
 
             if (email.VerificationCode != newUser.VerificationCode)
             {

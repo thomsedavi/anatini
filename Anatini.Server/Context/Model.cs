@@ -79,11 +79,12 @@ namespace Anatini.Server.Context
     {
         public required string Name { get; set; }
         public required string HashedPassword { get; set; }
+        public required string DefaultSlug { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
         public ICollection<UserOwnedSession>? Sessions { get; set; }
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
-        public required string DefaultSlug { get; set; }
+        public IList<string>? Permissions { get; set; }
     }
 
     [Owned]
@@ -161,6 +162,7 @@ namespace Anatini.Server.Context
         public ContentOwnedVersion? PublishedVersion {  get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
+        public bool? Protected { get; set; }
     }
 
     [Owned]

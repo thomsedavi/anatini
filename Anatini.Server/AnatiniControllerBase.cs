@@ -25,13 +25,9 @@ namespace Anatini.Server
 
                 return result;
             }
-            catch (DbUpdateException dbUpdateException)
+            catch (Exception exception)
             {
-                return DbUpdateExceptionResult(dbUpdateException);
-            }
-            catch (Exception)
-            {
-                return Problem();
+                return ExceptionResult(exception);
             }
         }
 
@@ -153,13 +149,9 @@ namespace Anatini.Server
 
                 return result;
             }
-            catch (DbUpdateException dbUpdateException)
+            catch (Exception exception)
             {
-                return DbUpdateExceptionResult(dbUpdateException);
-            }
-            catch (Exception)
-            {
-                return Problem();
+                return ExceptionResult(exception);
             }
         }
 
@@ -200,13 +192,9 @@ namespace Anatini.Server
 
                 return await channelFunctionAsync(channel);
             }
-            catch (DbUpdateException dbUpdateException)
+            catch (Exception exception)
             {
-                return DbUpdateExceptionResult(dbUpdateException);
-            }
-            catch (Exception)
-            {
-                return Problem();
+                return ExceptionResult(exception);
             }
         }
 
@@ -244,20 +232,20 @@ namespace Anatini.Server
 
                 return await userFunction(user);
             }
-            catch (DbUpdateException dbUpdateException)
+            catch (Exception exception)
             {
-                return DbUpdateExceptionResult(dbUpdateException);
-            }
-            catch (Exception)
-            {
-                return Problem();
+                return ExceptionResult(exception);
             }
         }
 
         [NonAction]
-        private IActionResult DbUpdateExceptionResult(DbUpdateException dbUpdateException)
+        public IActionResult ExceptionResult(Exception exception)
         {
-            if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
+            if (exception is KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            else if (exception is DbUpdateException dbUpdateException && dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
             {
                 return Conflict();
             }
