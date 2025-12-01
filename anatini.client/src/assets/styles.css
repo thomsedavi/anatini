@@ -2,6 +2,7 @@
   --white: rgb(255 255 255);
   --lighter: rgb(255 240 225);
   --light: rgb(240 225 210);
+  --red: rgb(210 0 60);
   --dark: rgb(30 45 60);
   --darker: rgb(15 30 45);
   --black: rgb(0 0 0);
@@ -14,6 +15,7 @@
     --input-background: var(--black);
     --background: var(--lighter);
     --hover: var(--dark);
+    --shadow: var(--red);
   }
 }
 
@@ -24,6 +26,7 @@
     --input-background: var(--darker);
     --background: var(--darker);
     --hover: var(--light);
+    --shadow: var(--red);
   }
 }
 
@@ -53,6 +56,7 @@ button, input[type="submit"] {
   background-color: var(--text);
   border-bottom-right-radius: 1em;
   border-top-left-radius: 1em;
+  box-shadow: 0 0.2em var(--shadow);
   padding: 1em;
 
   &:hover {
@@ -68,6 +72,7 @@ main {
 nav {
   background-color: var(--text);
   overflow: hidden;
+  box-shadow: 0 0.2em var(--shadow);
 }
 
 nav a {
