@@ -90,7 +90,7 @@
 
 <template>
   <main>
-    <h2>SignupView</h2>
+    <h2>Sign Up</h2>
     <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
       <p>
         <label for="emailAddress">Email Address</label>
@@ -126,6 +126,6 @@
         <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
       </p>
     </form>
-    <button v-if="verificationFailed" @click="emit('goBack')">Go Back</button>
+    <button type="button" @click="emit('goBack')">Go Back</button>
   </main>
 </template>

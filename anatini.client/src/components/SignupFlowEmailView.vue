@@ -43,7 +43,7 @@
 
 <template>
   <main>
-    <h2>SignupFlowEmailView</h2>
+    <h2>Sign Up</h2>
     <form id="email" @submit="email" action="/api/authentication/email" method="post">
       <p>
         <label for="emailAddress">Email Address</label>
@@ -54,6 +54,6 @@
         <input type="submit" value="Submit" :disabled="isFetching">
       </p>
     </form>
-    <button @click="emit('submitEmail', null)">I have an email verification code already</button>
+    <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>
   </main>
 </template>

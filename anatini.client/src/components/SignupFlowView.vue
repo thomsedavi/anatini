@@ -19,8 +19,6 @@
 </script>
 
 <template>
-  <main>
-    <SignupFlowEmailView v-if="page === 'email'" @submit-email="submitEmail" />
-    <SignupFlowSignupView v-if="page === 'signup'" :emailAddress="emailAddress" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
-  </main>
+  <SignupFlowEmailView v-if="page === 'email'" @submit-email="submitEmail" />
+  <SignupFlowSignupView v-else-if="page === 'signup'" :emailAddress="emailAddress" :verificationFailed="verificationFailed" @go-back="goBack" @fail-verification="verificationFailed = true" />
 </template>

@@ -71,7 +71,7 @@
 
 <template>
   <main>
-    <h2>LoginView</h2>
+    <h2>Login</h2>
     <form id="login" @submit="login" action="???" method="post">
       <p>
         <label for="emailAddress">Email Address</label>

@@ -53,7 +53,7 @@
 <template>
   <main v-if="user">
     <h1>{{ user.name }}</h1>
-    <button @click="() => trust()">Trust</button>
+    <button type="button" @click="() => trust()">Trust</button>
   </main>
   <main v-else>
     <h1>Loading...</h1>

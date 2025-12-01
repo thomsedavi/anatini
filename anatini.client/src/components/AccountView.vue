@@ -158,7 +158,7 @@
           {{ refreshToken.ipAddress }}: {{ refreshToken.userAgent }}
         </li>
       </ul>
-      <button @click="getEvents" :disabled="isGettingEvents">Get Events</button>
+      <button type="button" @click="getEvents" :disabled="isGettingEvents">Get Events</button>
       <template v-if="events">
         <h3>Events</h3>
         <ul>

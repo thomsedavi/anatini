@@ -1,13 +1,35 @@
 :root {
-  --white: #fffaf0;
-  --grey: #567;
-  --black: #123;
-  --red: #721;
-  --yellow: #883;
+  --white: rgb(255 255 255);
+  --lighter: rgb(255 240 225);
+  --light: rgb(240 225 210);
+  --dark: rgb(30 45 60);
+  --darker: rgb(15 30 45);
+  --black: rgb(0 0 0);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: var(--darker);
+    --input: var(--white);
+    --input-background: var(--black);
+    --background: var(--lighter);
+    --hover: var(--dark);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: var(--lighter);
+    --input: var(--white);
+    --input-background: var(--darker);
+    --background: var(--darker);
+    --hover: var(--light);
+  }
 }
 
 body {
-  background-color: var(--white);
+  color: var(--text);
+  background-color: var(--background);
   margin: 0;
   overflow: scroll;
   max-width: 1100px;
@@ -17,50 +39,76 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+input:not([type="submit"]) {
+  display: block;
+  background-color: var(--input);
+  border-color: var(--input-background);
+  border-style:solid
+}
+
+button, input[type="submit"] {
+  border: none;
+  cursor: pointer;
+  color: var(--background);
+  background-color: var(--text);
+  border-bottom-right-radius: 1em;
+  border-top-left-radius: 1em;
+  padding: 1em;
+
+  &:hover {
+    background-color: var(--hover);
+  }
+}
+
 main {
   padding-left: 0.83em;
   padding-right: 0.83em;
 }
 
 nav {
-  background-color: var(--black);;
+  background-color: var(--text);
   overflow: hidden;
 }
 
 nav a {
   float: left;
   display: block;
-  color: var(--white);
+  color: var(--background);
   padding: 0.83em 0.83em;
   text-decoration: none;
 }
 
 nav a:hover {
-  background-color: var(--grey);
+  background-color: var(--hover);
 }
 
 nav > svg {
   cursor: pointer;
 
   > rect {
-    fill: var(--black);
+    fill: var(--text);
   }
 
   > path {
-    stroke: var(--white);
+    stroke: var(--background);
     stroke-width: 5;
     stroke-linecap: round;
   }
 
   &:hover {
     > rect {
-      fill: var(--grey);
+      fill: var(--hover);
     }
   }
 }
 
 a {
   cursor: pointer;
+}
+
+label {
+  display: block;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 600px) {
