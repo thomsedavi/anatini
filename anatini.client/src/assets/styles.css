@@ -16,6 +16,7 @@
     --background: var(--lighter);
     --hover: var(--dark);
     --shadow: var(--red);
+    --button-text: var(--white);
   }
 }
 
@@ -27,6 +28,7 @@
     --background: var(--darker);
     --hover: var(--light);
     --shadow: var(--red);
+    --button-text: var(--darker);
   }
 }
 
@@ -52,12 +54,13 @@ input:not([type="submit"]) {
 button, input[type="submit"] {
   border: none;
   cursor: pointer;
-  color: var(--background);
+  color: var(--button-text);
   background-color: var(--text);
   border-bottom-right-radius: 1em;
   border-top-left-radius: 1em;
   box-shadow: 0 0.2em var(--shadow);
   padding: 1em;
+  font-weight: bold;
 
   &:hover {
     background-color: var(--hover);
@@ -78,9 +81,10 @@ nav {
 nav a {
   float: left;
   display: block;
-  color: var(--background);
+  color: var(--button-text);
   padding: 0.83em 0.83em;
   text-decoration: none;
+  font-weight: bold;
 }
 
 nav a:hover {
