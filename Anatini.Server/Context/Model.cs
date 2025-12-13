@@ -44,8 +44,11 @@ namespace Anatini.Server.Context
         public DbSet<Content> Contents { get; set; }
         public DbSet<AttributeContent> AttributeContents { get; set; }
         public DbSet<UserAlias> UserAliases { get; set; }
+        public DbSet<UserImage> UserImages { get; set; }
         public DbSet<ChannelAlias> ChannelAliases { get; set; }
+        public DbSet<ChannelImage> ChannelImages { get; set; }
         public DbSet<ContentAlias> ContentAliases { get; set; }
+        public DbSet<ContentImage> ContentImages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -70,8 +73,11 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();
             modelBuilder.Entity<UserAlias>().Configure();
+            modelBuilder.Entity<UserImage>().Configure();
             modelBuilder.Entity<ChannelAlias>().Configure();
+            modelBuilder.Entity<ChannelImage>().Configure();
             modelBuilder.Entity<ContentAlias>().Configure();
+            modelBuilder.Entity<ContentImage>().Configure();
         }
     }
 
@@ -226,10 +232,20 @@ namespace Anatini.Server.Context
         public bool? Protected { get; set; }
     }
 
+    public class UserImage : UserEntity
+    {
+        public required Guid Id { get; set; }
+    }
+
     public class ChannelAlias : AliasEntity
     {
         public required Guid ChannelId { get; set; }
         public required string ChannelName { get; set; }
+    }
+
+    public class ChannelImage : ChannelEntity
+    {
+        public required Guid Id { get; set; }
     }
 
     public class ContentAlias : AliasEntity
@@ -237,6 +253,11 @@ namespace Anatini.Server.Context
         public required Guid ContentChannelId { get; set; }
         public required Guid ContentId { get; set; }
         public required string ContentName { get; set; }
+    }
+
+    public class ContentImage : ContentEntity
+    {
+        public required Guid Id { get; set; }
     }
 
     public abstract class Entity
@@ -254,6 +275,11 @@ namespace Anatini.Server.Context
     public abstract class UserEntity : Entity
     {
         public required Guid UserId { get; set; }
+    }
+
+    public abstract class ChannelEntity : Entity
+    {
+        public required Guid ChannelId { get; set; }
     }
 
     public abstract class ContentEntity : Entity
