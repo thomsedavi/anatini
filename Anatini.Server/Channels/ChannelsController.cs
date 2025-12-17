@@ -44,8 +44,8 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel) => await UsingUserContextAsync(UserId, async (user, context) =>
         {
-            await context.AddChannelAliasAsync(newChannel.Slug, newChannel.Id, newChannel.Name);
-            var channel = await context.AddChannelAsync(newChannel.Id, newChannel.Name, newChannel.Slug, user.Id, user.Name);
+            await context.AddChannelAliasAsync(newChannel.Slug, newChannel.Id, newChannel.Name, newChannel.Protected);
+            var channel = await context.AddChannelAsync(newChannel.Id, newChannel.Name, newChannel.Slug, newChannel.Protected, user.Id, user.Name);
 
             user.AddChannel(channel);
             await context.Update(user);

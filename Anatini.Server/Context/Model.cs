@@ -91,6 +91,8 @@ namespace Anatini.Server.Context
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public IList<string>? Permissions { get; set; }
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
@@ -135,6 +137,9 @@ namespace Anatini.Server.Context
         public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
         public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
         public required string DefaultSlug { get; set; }
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
+        public bool? Protected { get; set; }
     }
 
     [Owned]
@@ -229,6 +234,8 @@ namespace Anatini.Server.Context
     {
         public required Guid UserId { get; set; }
         public required string UserName { get; set; }
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
@@ -241,6 +248,9 @@ namespace Anatini.Server.Context
     {
         public required Guid ChannelId { get; set; }
         public required string ChannelName { get; set; }
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
+        public bool? Protected { get; set; }
     }
 
     public class ChannelImage : ChannelEntity
@@ -253,6 +263,7 @@ namespace Anatini.Server.Context
         public required Guid ContentChannelId { get; set; }
         public required Guid ContentId { get; set; }
         public required string ContentName { get; set; }
+        public bool? Protected { get; set; }
     }
 
     public class ContentImage : ContentEntity

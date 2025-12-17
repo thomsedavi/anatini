@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.EntityExtensions
 {
     public static class ContentAliasContextExtensions
     {
-        public static async Task<ContentAlias> AddContentAliasAsync(this AnatiniContext context, Guid contentId, Guid channelId, string slug, string contentName)
+        public static async Task<ContentAlias> AddContentAliasAsync(this AnatiniContext context, Guid contentId, Guid channelId, string slug, string contentName, bool? @protected)
         {
             var contentAlias = new ContentAlias
             {
@@ -12,7 +12,8 @@ namespace Anatini.Server.Context.EntityExtensions
                 Slug = slug,
                 ContentChannelId = channelId,
                 ContentId = contentId,
-                ContentName = contentName
+                ContentName = contentName,
+                Protected = @protected
             };
 
             await context.Add(contentAlias);

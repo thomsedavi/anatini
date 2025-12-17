@@ -7,6 +7,7 @@
         public IEnumerable<ChannelEditContentDto>? TopDraftContents { get; set; }
         public required IEnumerable<ChannelEditAliasDto> Aliases { get; set; }
         public required string DefaultSlug { get; set; }
+        public bool? Protected { get; set; }
     }
 
     public class ChannelEditContentDto

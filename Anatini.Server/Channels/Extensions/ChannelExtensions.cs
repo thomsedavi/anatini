@@ -70,7 +70,8 @@ namespace Anatini.Server.Channels.Extensions
                 Name = channel.Name,
                 TopDraftContents = channel.TopDraftContents?.Select(ToChannelEditContentDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
-                DefaultSlug = channel.DefaultSlug
+                DefaultSlug = channel.DefaultSlug,
+                Protected = channel.Protected
             };
         }
 

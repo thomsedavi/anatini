@@ -26,7 +26,7 @@ namespace Anatini.Server.Context.EntityExtensions
             return attributeContent;
         }
 
-        public static async Task<Content> AddContentAsync(this AnatiniContext context, Guid id, string name, string slug, Guid channelId, EventData eventData)
+        public static async Task<Content> AddContentAsync(this AnatiniContext context, Guid id, string name, string slug, bool? @protected, Guid channelId, EventData eventData)
         {
             var channelOwnedAlias = new ContentOwnedAlias
             {
@@ -53,7 +53,8 @@ namespace Anatini.Server.Context.EntityExtensions
                 Aliases = [channelOwnedAlias],
                 DefaultSlug = slug,
                 DraftVersion = channelOwnedDraftVersion,
-                UpdatedDateTimeUTC = eventData.DateTimeUtc
+                UpdatedDateTimeUTC = eventData.DateTimeUtc,
+                Protected = @protected
             };
 
             await context.Add(content);
