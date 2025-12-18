@@ -19,16 +19,13 @@
 
     isFetching.value = true;
 
-    const body: Record<string, string> = {
-      emailAddress: emailAddressInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('emailAddress', emailAddressInput.value!.value.trim());
 
     fetch("/api/authentication/email", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
+      body: body,
     }).then((response: Response) => {
       if (response.ok) {
         emit('submitEmail', emailAddressInput.value!.value);

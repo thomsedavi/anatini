@@ -66,12 +66,12 @@
       eTag.value = response.headers.get("ETag");
     }
 
-    const body: Record<string, string> = {
-      index: index.toString(),
-      content: ' this  '
-    };
+    const body = new FormData();
 
-    const init = { method: "PUT", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+    body.append('index', index.toString());
+    body.append('content', ' this  ');
+
+    const init = { method: "PUT", headers: { "If-Match": eTag.value }, body: body };
 
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
@@ -93,11 +93,11 @@
       eTag.value = response.headers.get("ETag");
     }
 
-    const body: Record<string, string> = {
-      status: 'Published'
-    };
+    const body = new FormData();
 
-    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+    body.append('status', 'Published');
+
+    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
@@ -119,11 +119,11 @@
       eTag.value = response.headers.get("ETag");
     }
 
-    const body: Record<string, string> = {
-      name: input.value
-    };
+    const body = new FormData();
 
-    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+    body.append('name', input.value);
+
+    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
@@ -145,11 +145,11 @@
       eTag.value = response.headers.get("ETag");
     }
 
-    const body: Record<string, string> = {
-      dateNZ: input.value
-    };
+    const body = new FormData();
 
-    const init = { method: "PATCH", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+    body.append('dateNZ', input.value);
+
+    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
@@ -180,13 +180,13 @@
       eTag.value = response.headers.get("ETag");
     }
 
-    const body: Record<string, string> = {
-      insertAfter: insertAfter.toString(),
-      tag: tag,
-      content: element
-    };
+    const body = new FormData();
 
-    const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "If-Match": eTag.value }, body: new URLSearchParams(body) };
+    body.append('insertAfter', insertAfter.toString());
+    body.append('tag', tag);
+    body.append('content', element);
+
+    const init = { method: "POST", headers: { "If-Match": eTag.value }, body: body };
 
     apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
@@ -208,18 +208,18 @@
       <textarea v-model="textarea" placeholder="add multiple line"></textarea>
       <br>
       <br>
-      <button @click="() => updateDate()">Update Date</button>
-      <button @click="() => updateName()">Update Name</button>
-      <button @click="() => publish()">Publish</button>
+      <button type="button" @click="() => updateDate()">Update Date</button>
+      <button type="button" @click="() => updateName()">Update Name</button>
+      <button type="button" @click="() => publish()">Publish</button>
       <br>
       <br>
-      <button @click="() => contentElement('h1', input, 0)">Add Header 1</button>
-      <button @click="() => contentElement('h2', input, 0)">Add Header 2</button>
-      <button @click="() => contentElement('h3', input, 0)">Add Header 3</button>
-      <button @click="() => contentElement('h4', input, 0)">Add Header 4</button>
-      <button @click="() => contentElement('h5', input, 0)">Add Header 5</button>
-      <button @click="() => contentElement('h6', input, 0)">Add Header 6</button>
-      <button @click="() => contentElement('p', textarea, 0)">Add Paragraph</button>
+      <button type="button" @click="() => contentElement('h1', input, 0)">Add Header 1</button>
+      <button type="button" @click="() => contentElement('h2', input, 0)">Add Header 2</button>
+      <button type="button" @click="() => contentElement('h3', input, 0)">Add Header 3</button>
+      <button type="button" @click="() => contentElement('h4', input, 0)">Add Header 4</button>
+      <button type="button" @click="() => contentElement('h5', input, 0)">Add Header 5</button>
+      <button type="button" @click="() => contentElement('h6', input, 0)">Add Header 6</button>
+      <button type="button" @click="() => contentElement('p', textarea, 0)">Add Paragraph</button>
       <template v-if="content.version.elements">
         <template v-for="element in content.version.elements.sort((a, b) => a.index > b.index ? 1 : -1)" :key="'element' + element.index">
           <h1 v-if="element.tag === 'h1'">{{ element.content ?? "(unknown)" }}</h1>
@@ -228,14 +228,14 @@
           <h4 v-if="element.tag === 'h4'">{{ element.content ?? "(unknown)" }}</h4>
           <h5 v-if="element.tag === 'h5'">{{ element.content ?? "(unknown)" }}</h5>
           <h6 v-if="element.tag === 'h6'">{{ element.content ?? "(unknown)" }}</h6>
-          <p v-if="element.tag === 'p'">{{ element.content ?? "(unknown)" }}<button @click="() => editElement(element.index)">Edit</button></p>
-          <button @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
-          <button @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
-          <button @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
-          <button @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
-          <button @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
-          <button @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
-          <button @click="() => contentElement('p', textarea, element.index)">Add Paragraph</button>
+          <p v-if="element.tag === 'p'">{{ element.content ?? "(unknown)" }}<button type="button" @click="() => editElement(element.index)">Edit</button></p>
+          <button type="button" @click="() => contentElement('h1', input, element.index)">Add Header 1</button>
+          <button type="button" @click="() => contentElement('h2', input, element.index)">Add Header 2</button>
+          <button type="button" @click="() => contentElement('h3', input, element.index)">Add Header 3</button>
+          <button type="button" @click="() => contentElement('h4', input, element.index)">Add Header 4</button>
+          <button type="button" @click="() => contentElement('h5', input, element.index)">Add Header 5</button>
+          <button type="button" @click="() => contentElement('h6', input, element.index)">Add Header 6</button>
+          <button type="button" @click="() => contentElement('p', textarea, element.index)">Add Paragraph</button>
         </template>
       </template>
     </template>

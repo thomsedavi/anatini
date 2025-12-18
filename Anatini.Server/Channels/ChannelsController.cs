@@ -1,6 +1,5 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Context;
 using Anatini.Server.Context.EntityExtensions;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +36,7 @@ namespace Anatini.Server.Channels
 
         [Authorize]
         [HttpPost]
-        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

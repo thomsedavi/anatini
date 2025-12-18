@@ -60,10 +60,10 @@
 
     isCreatingContent.value = true;
 
-    const body: Record<string, string> = {
-      name: contentNameInput.value!.value.trim(),
-      slug: contentSlugInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('name', contentNameInput.value!.value.trim());
+    body.append('slug', contentSlugInput.value!.value.trim());
 
     const onfulfilled = (value: ChannelEdit) => {
       channel.value = value;
@@ -73,7 +73,7 @@
       isCreatingContent.value = false;
     };
 
-    const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body) };
+    const init = { method: "POST", body: body };
 
     const statusActions = {
       409: () => {

@@ -39,24 +39,21 @@
 
     isFetching.value = true;
 
-    const body: Record<string, string> = {
-      emailAddress: emailAddressInput.value!.value.trim(),
-      name: nameInput.value!.value.trim(),
-      slug: slugInput.value!.value.trim(),
-      password: passwordInput.value!.value,
-      verificationCode: verificationCodeInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('emailAddress', emailAddressInput.value!.value.trim());
+    body.append('name', nameInput.value!.value.trim());
+    body.append('slug', slugInput.value!.value.trim());
+    body.append('password', passwordInput.value!.value);
+    body.append('verificationCode', verificationCodeInput.value!.value.trim());
 
     if (protectedInput.value!.checked) {
-      body['protected'] = 'true';
+      body.append('protected', 'true');
     }
 
     fetch("/api/authentication/signup", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
+      body: body,
     }).then((response: Response) => {
       if (response.ok) {
         response.json()

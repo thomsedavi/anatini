@@ -27,17 +27,14 @@
 
     isFetching.value = true;
 
-    const body: Record<string, string> = {
-      emailAddress: emailAddressInput.value!.value.trim(),
-      password: passwordInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('emailAddress', emailAddressInput.value!.value.trim());
+    body.append('password', passwordInput.value!.value.trim());
 
     fetch("/api/authentication/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
+      body: body,
     }).then((response: Response) => {
       if (response.ok) {
         response.json()

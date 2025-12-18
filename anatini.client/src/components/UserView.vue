@@ -40,11 +40,11 @@
       loading.value = false;
     };
 
-    const body: Record<string, string> = {
-      type: "Trusts"
-    };
+    const body = new FormData();
 
-    const init = { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body) };
+    body.append('type', 'Trusts');
+
+    const init = { method: "POST", body: body };
 
     apiFetch(`users/${user.value.id}/relationships`, onfulfilled, onfinally, init);
   }

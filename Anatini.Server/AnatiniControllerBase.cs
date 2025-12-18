@@ -10,8 +10,6 @@ namespace Anatini.Server
 {
     public class AnatiniControllerBase : ControllerBase
     {
-        public string? CookieValue(string key) => Request.Cookies.FirstOrDefault(cookie => cookie.Key == key).Value;
-        public void DeleteCookie(string key) => Response.Cookies.Delete(key);
         public Guid UserId => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out Guid userId) ? userId : Guid.Empty;
 
         [NonAction]

@@ -23,7 +23,7 @@ namespace Anatini.Server.Authentication
     public class AuthenticationController : AnatiniControllerBase
     {
         [HttpPost("email")]
-        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form) => await UsingContextAsync(async context =>
@@ -53,7 +53,7 @@ namespace Anatini.Server.Authentication
         });
 
         [HttpPost("signup")]
-        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -150,7 +150,7 @@ namespace Anatini.Server.Authentication
         }
 
         [HttpPost("login")]
-        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -193,7 +193,7 @@ namespace Anatini.Server.Authentication
 
         [Authorize]
         [HttpPost("email/verify")]
-        [Consumes(MediaTypeNames.Application.FormUrlEncoded)]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         public IActionResult PostVerifyEmail([FromForm] VerifyEmailForm request)
         {
@@ -316,5 +316,8 @@ namespace Anatini.Server.Authentication
 
             Response.Cookies.Append(key, value, options);
         }
+
+        private string? CookieValue(string key) => Request.Cookies.FirstOrDefault(cookie => cookie.Key == key).Value;
+        private void DeleteCookie(string key) => Response.Cookies.Delete(key);
     }
 }

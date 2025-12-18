@@ -50,17 +50,14 @@
 
     isCreatingChannel.value = true;
 
-    const body: Record<string, string> = {
-      name: channelNameInput.value!.value.trim(),
-      slug: channelSlugInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('name', channelNameInput.value!.value.trim());
+    body.append('slug', channelSlugInput.value!.value.trim());
 
     fetch("/api/channels", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
+      body: body,
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
@@ -91,16 +88,13 @@
 
     isCreatingUserSlug.value = true;
 
-    const body: Record<string, string> = {
-      slug: userSlugInput.value!.value.trim(),
-    };
+    const body = new FormData();
+
+    body.append('slug', userSlugInput.value!.value.trim())
 
     fetch("/api/users/slugs", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams(body),
+      body: body,
     }).then((response: Response) => {
       if (response.ok) {
         response.json()
