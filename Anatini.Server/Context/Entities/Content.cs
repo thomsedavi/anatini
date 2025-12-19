@@ -19,6 +19,7 @@ namespace Anatini.Server.Context.Entities
     public class ContentOwnedVersion : ContentOwnedEntity
     {
         public required string Name { get; set; }
+        public Guid? CardImageId { get; set; }
         public ICollection<ContentOwnedElement>? Elements { get; set; }
         public required DateOnly DateNZ { get; set; }
     }

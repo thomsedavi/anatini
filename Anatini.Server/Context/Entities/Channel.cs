@@ -10,8 +10,9 @@ namespace Anatini.Server.Context.Entities
         public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
         public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
         public required string DefaultSlug { get; set; }
-        public Guid? IconImageId { get; set; } // 400 x 400 ?? Also, square?
-        public Guid? BannerImageId { get; set; } // 3:1 or 16:9, 1500x500 or 1600x900?
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
+        public Guid? DefaultCardImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
