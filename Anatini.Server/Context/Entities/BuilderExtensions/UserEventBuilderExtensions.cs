@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Anatini.Server.Context.BuilderExtensions
+namespace Anatini.Server.Context.Entities.BuilderExtensions
 {
     public static class UserEventBuilderExtensions
     {

@@ -2,7 +2,7 @@
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Identity;
 
-namespace Anatini.Server.Context.EntityExtensions
+namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserContextExtensions
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Anatini.Server.Context.BuilderExtensions
+namespace Anatini.Server.Context.Entities.BuilderExtensions
 {
-    public static class ChannelImageExtensions
+    public static class ChannelImageBuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<ChannelImage> channelImageBuilder)
         {

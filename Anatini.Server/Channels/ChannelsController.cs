@@ -1,6 +1,6 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Context.EntityExtensions;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

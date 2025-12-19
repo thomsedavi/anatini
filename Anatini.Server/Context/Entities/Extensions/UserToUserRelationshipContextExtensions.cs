@@ -1,7 +1,7 @@
 ﻿using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Context.EntityExtensions
+namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserToUserRelationshipContextExtensions
     {

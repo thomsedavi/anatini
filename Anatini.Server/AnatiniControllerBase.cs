@@ -1,10 +1,11 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
-using User = Anatini.Server.Context.User;
+using User = Anatini.Server.Context.Entities.User;
 
 namespace Anatini.Server
 {

@@ -1,4 +1,4 @@
-﻿using Anatini.Server.Context;
+﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 
 namespace Anatini.Server.Users.Extensions

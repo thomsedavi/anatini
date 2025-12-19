@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Contents.Extensions;
-using Anatini.Server.Context;
-using Anatini.Server.Context.EntityExtensions;
+using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,6 @@
 ﻿using Anatini.Server.Context;
-using Anatini.Server.Context.EntityExtensions;
+using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
