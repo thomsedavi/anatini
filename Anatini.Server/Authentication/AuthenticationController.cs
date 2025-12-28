@@ -19,7 +19,7 @@ using CosmosException = Microsoft.Azure.Cosmos.CosmosException;
 namespace Anatini.Server.Authentication
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/authentication")]
     public class AuthenticationController : AnatiniControllerBase
     {
         [HttpPost("email")]

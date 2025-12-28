@@ -77,11 +77,13 @@ namespace Anatini.Server.Channels
 
             var (width, height) = imageType switch
             {
+                ImageType.Banner => (1600, 900),
                 ImageType.Card => (480, 360),
+                ImageType.Icon => (400, 400),
                 _ => throw new UnreachableException()
             };
 
-            var result = createImage.File.GetJpegDimensions();
+            var result = await createImage.File.GetJpegDimensions();
 
             if (result?.Width != width && result?.Height != height)
             {

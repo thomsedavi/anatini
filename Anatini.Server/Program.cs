@@ -1,6 +1,7 @@
 using System.Text;
 using Anatini.Server;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Images.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
