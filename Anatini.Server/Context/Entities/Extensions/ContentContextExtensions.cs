@@ -18,7 +18,9 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ContentChannelId = channel.Id,
                 ContentChannelSlug = channel.DefaultSlug,
                 ContentName = content.DraftVersion.Name,
-                ChannelName = channel.Name
+                ChannelName = channel.Name,
+                ChannelDefaultCardImageId = channel.DefaultCardImageId,
+                CardImageId = content.DraftVersion.CardImageId
             };
 
             await context.Add(attributeContent);

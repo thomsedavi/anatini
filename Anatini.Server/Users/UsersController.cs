@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Anatini.Server.Users
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UsersController : AnatiniControllerBase
     {
         [Authorize]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Anatini.Server.Contents
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/contents")]
     public class ContentsController : AnatiniControllerBase
     {
         [HttpGet]

@@ -1,15 +1,20 @@
-﻿using System.Net.Mime;
+﻿using System.Diagnostics;
+using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
+using Anatini.Server.Common;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Anatini.Server.Channels
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class ChannelsController : AnatiniControllerBase
+    [Route("api/channels")]
+    public class ChannelsController(IBlobService blobService) : AnatiniControllerBase
     {
         [HttpGet("{channelId}")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -33,6 +38,74 @@ namespace Anatini.Server.Channels
             return Ok(channel.ToChannelEditDto());
         }, requiresAuthorisation: true);
 
+        [Authorize]
+        [HttpPost("{channelId}/images")]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostImage(string channelId, [FromForm] CreateImage createImage) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        {
+            if (createImage.File == null || createImage.File.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!Enum.TryParse(createImage.Type, out ImageType imageType))
+            {
+                return ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
+            }
+
+            var extension = Path.GetExtension(createImage.File.FileName).ToLowerInvariant();
+
+            if (extension != ".jpg" && extension != ".jpeg")
+            {
+                return ValidationProblem(statusCode: StatusCodes.Status415UnsupportedMediaType);
+            }
+
+            if (createImage.File.Length > 1024 * 1024)
+            {
+                return ValidationProblem(statusCode: StatusCodes.Status413PayloadTooLarge);
+            }
+
+            var (width, height) = imageType switch
+            {
+                ImageType.Card => (480, 360),
+                _ => throw new UnreachableException()
+            };
+
+            var result = createImage.File.GetJpegDimensions();
+
+            if (result?.Width != width && result?.Height != height)
+            {
+                return ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
+            }
+
+            var imageId = Guid.NewGuid();
+
+            var blobContainerName = "anatini-dev";
+            var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
+
+            await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
+
+            await context.AddChannelImageAsync(imageId, channel.Id, blobContainerName, blobName);
+
+            return CreatedAtAction(nameof(GetImage), new { channelId, imageId }, new { Id = imageId, ChannelId = channel.Id });
+        }, requiresAuthorisation: true);
+
+        [Authorize]
+        [HttpGet("{channelId}/images/{imageId}")]
+        public async Task<IActionResult> GetImage(string channelId, string imageId) => await UsingChannelAliasAsync(channelId, async channelAlias =>
+        {
+            return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
+        });
 
         [Authorize]
         [HttpPost]

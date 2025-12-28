@@ -128,7 +128,7 @@ namespace Anatini.Server
 
                 if (eTag != null && eTag != content.ETag)
                 {
-                    return ValidationProblem(statusCode: 412);
+                    return ValidationProblem(statusCode: StatusCodes.Status412PreconditionFailed);
                 }
 
                 var result = await contentFunctionAsync(content, channel);
@@ -147,6 +147,28 @@ namespace Anatini.Server
                 }
 
                 return result;
+            }
+            catch (Exception exception)
+            {
+                return ExceptionResult(exception);
+            }
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannelAliasAsync(string channelSlug, Func<ChannelAlias, Task<IActionResult>> channelAliasFunctionAsync)
+        {
+            try
+            {
+                using var innerContext = new ContextBase();
+
+                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
+
+                if (channelAlias == null)
+                {
+                    return NotFound();
+                }
+
+                return await channelAliasFunctionAsync(channelAlias);
             }
             catch (Exception exception)
             {

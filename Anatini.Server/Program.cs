@@ -36,6 +36,7 @@ builder.Services.AddAuthentication()
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IBlobService, BlobService>();
 
 var app = builder.Build();
 

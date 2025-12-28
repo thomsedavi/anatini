@@ -70,6 +70,7 @@ namespace Anatini.Server.Channels.Extensions
                 Name = channel.Name,
                 TopDraftContents = channel.TopDraftContents?.Select(ToChannelEditContentDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
+                DefaultCardImageId = channel.DefaultCardImageId,
                 DefaultSlug = channel.DefaultSlug,
                 Protected = channel.Protected
             };

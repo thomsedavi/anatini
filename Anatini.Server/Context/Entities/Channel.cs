@@ -44,12 +44,15 @@ namespace Anatini.Server.Context.Entities
         public required string ChannelName { get; set; }
         public Guid? IconImageId { get; set; }
         public Guid? BannerImageId { get; set; }
+        public Guid? DefaultCardImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
     public class ChannelImage : ChannelEntity
     {
         public required Guid Id { get; set; }
+        public required string BlobContainerName { get; set; }
+        public required string BlobName { get; set; }
     }
 
     public abstract class ChannelEntity : Entity

@@ -60,6 +60,8 @@ namespace Anatini.Server.Context.Entities
         public required string ContentChannelSlug { get; set; }
         public required string ContentName { get; set; }
         public required string ChannelName { get; set; }
+        public Guid? ChannelDefaultCardImageId { get; set; }
+        public Guid? CardImageId { get; set; }
     }
 
     public abstract class ContentEntity : Entity

@@ -8,6 +8,7 @@
         public required IEnumerable<ChannelEditAliasDto> Aliases { get; set; }
         public required string DefaultSlug { get; set; }
         public bool? Protected { get; set; }
+        public Guid? DefaultCardImageId { get; set; }
     }
 
     public class ChannelEditContentDto
