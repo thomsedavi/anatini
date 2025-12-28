@@ -63,6 +63,7 @@
       store.isLoggedIn = false;
     }).finally(() => {
       router.replace({ path: '/' });
+      isCollapsed.value = true;
     });
   }
 </script>
@@ -72,7 +73,7 @@
     <nav v-if="isMobile">
       <template v-if="isCollapsed">
         <RouterLink to="/">Home</RouterLink>
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.15em" height="3.15em" @click="isCollapsed = false">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.16rem" height="3.16rem" @click="isCollapsed = false">
           <rect width="100" height="100" />
           <path d="M 32.5 32.5 L 67.5 32.5" />
           <path d="M 32.5 50 L 67.5 50" />
@@ -80,17 +81,17 @@
         </svg>
       </template>
       <template v-else>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">Go to About</RouterLink>
+        <RouterLink to="/" @click="isCollapsed = true">Home</RouterLink>
+        <RouterLink to="/about" @click="isCollapsed = true">Go to About</RouterLink>
         <template v-if="!store.isLoggedIn">
-          <RouterLink to="/signup">Signup</RouterLink>
-          <RouterLink to="/login">Login</RouterLink>
+          <RouterLink to="/signup" @click="isCollapsed = true">Signup</RouterLink>
+          <RouterLink to="/login" @click="isCollapsed = true">Login</RouterLink>
         </template>
         <template v-else>
-          <RouterLink to="/account">Account</RouterLink>
+          <RouterLink to="/account" @click="isCollapsed = true">Account</RouterLink>
           <a @click="logout">Log Out</a>
         </template>
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.15em" height="3.15em" @click="isCollapsed = true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.16rem" height="3.16rem" @click="isCollapsed = true">
         <rect width="100" height="100" />
         <path d="M 32.5 32.5 L 67.5 67.5" />
         <path d="M 32.5 67.7 L 67.5 32.5" />

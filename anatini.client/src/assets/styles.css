@@ -1,34 +1,44 @@
 :root {
-  --white: rgb(255 255 255);
+  --lightest: rgb(255 255 255);
   --lighter: rgb(255 240 225);
   --light: rgb(240 225 210);
   --red: rgb(210 0 60);
   --dark: rgb(30 45 60);
   --darker: rgb(15 30 45);
-  --black: rgb(0 0 0);
+  --darkest: rgb(0 0 0);
+  --amber-light: rgb(240, 210, 120);
+  --amber-dark: rgb(180, 150, 30);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     --text: var(--darker);
-    --input: var(--white);
-    --input-background: var(--black);
+    --input: var(--lightest);
+    --input-background: var(--darkest);
     --background: var(--lighter);
     --hover: var(--dark);
     --shadow: var(--red);
-    --button-text: var(--white);
+    --button: var(--darker);
+    --button-text: var(--lightest);
+    --scrollbar: var(--darker);
+    --scrollbar-background: var(--light);
+    --link: var(--amber-dark);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --text: var(--lighter);
-    --input: var(--white);
+    --input: var(--lightest);
     --input-background: var(--darker);
     --background: var(--darker);
     --hover: var(--light);
     --shadow: var(--red);
+    --button: var(--lighter);
     --button-text: var(--darker);
+    --scrollbar: var(--lighter);
+    --scrollbar-background: var(--dark);
+    --link: var(--amber-light);
   }
 }
 
@@ -55,11 +65,11 @@ button, input[type="submit"] {
   border: none;
   cursor: pointer;
   color: var(--button-text);
-  background-color: var(--text);
-  border-bottom-right-radius: 1em;
-  border-top-left-radius: 1em;
-  box-shadow: 0 0.2em var(--shadow);
-  padding: 1em;
+  background-color: var(--button);
+  border-bottom-right-radius: 1rem;
+  border-top-left-radius: 1rem;
+  box-shadow: 0 0.15rem var(--shadow);
+  padding: 0.5rem;
   font-weight: bold;
 
   &:hover {
@@ -68,21 +78,72 @@ button, input[type="submit"] {
 }
 
 main {
-  padding-left: 0.83em;
-  padding-right: 0.83em;
+  padding-left: 0.83rem;
+  padding-right: 0.83rem;
+
+  a {
+    color: var(--link);
+    text-decoration: none;
+    font-weight: bolder;
+  }
+
+  > section {
+    > ol {
+      display: flex;
+
+      overflow-x: auto;
+      list-style: none;
+
+      > li {
+        flex: 0 0 18rem;
+
+        > article {
+          width: 18rem;
+          height: 100%;
+
+          display: flex;
+          flex-direction: column;
+
+          > p {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          > footer {
+            margin-top: auto;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        height: 1rem;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--scrollbar-background);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar);
+      }
+    }
+  }
 }
 
 nav {
   background-color: var(--text);
   overflow: hidden;
-  box-shadow: 0 0.2em var(--shadow);
+  box-shadow: 0 0.15rem var(--shadow);
 }
 
 nav a {
   float: left;
   display: block;
   color: var(--button-text);
-  padding: 0.83em 0.83em;
+  padding: 0.83rem 0.83rem;
   text-decoration: none;
   font-weight: bold;
 }

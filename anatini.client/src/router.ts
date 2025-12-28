@@ -12,6 +12,7 @@ import UserView from './components/UserView.vue';
 import ChannelEditView from './components/ChannelEditView.vue';
 import ChannelView from './components/ChannelView.vue';
 import UsersView from './components/UsersView.vue';
+import TagsView from './components/TagsView.vue';
 
 const routes = [
   {
@@ -62,6 +63,11 @@ const routes = [
     path: '/channels/:channelId',
     component: ChannelView,
     name: 'Channel',
+  },
+   {
+    path: '/tags/:tagId',
+    component: TagsView,
+    name: 'Tags',
   },
   {
     path: '/users',
