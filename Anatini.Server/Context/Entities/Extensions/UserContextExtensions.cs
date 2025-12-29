@@ -47,7 +47,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 
             user.HashedPassword = UserPasswordHasher.HashPassword(user, password);
 
-            await context.Add(user);
+            await context.AddAsync(user);
 
             return user;
         }

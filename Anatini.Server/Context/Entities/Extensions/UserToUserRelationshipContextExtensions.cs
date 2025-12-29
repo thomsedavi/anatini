@@ -17,7 +17,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                     ToUserId = toUserId
                 };
 
-                await context.Add(userToUserRelationship);
+                await context.AddAsync(userToUserRelationship);
             }
 
             return context;

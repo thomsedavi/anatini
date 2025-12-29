@@ -29,7 +29,7 @@ namespace Anatini.Server.Users
             var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name, user.Protected);
 
             user.AddAlias(userAlias, newUserAlias.Default);
-            await context.Update(user);
+            await context.UpdateAsync(user);
 
             return Ok(user.ToUserEditDto());
         });
@@ -91,7 +91,7 @@ namespace Anatini.Server.Users
                 await context.AddUserToUserRelationshipsAsync(toUser.Id, user.Id, UserToUserRelationshipType.TrustedBy);
 
                 toUser.AddPermission(UserPermission.Trusted);
-                await context.Update(user);
+                await context.UpdateAsync(user);
             }
 
             return await Task.FromResult(NoContent());

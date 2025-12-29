@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 BlobName = blobName
             };
 
-            return await context.Add(channelImage);
+            return await context.AddAsync(channelImage);
         }
     }
 }

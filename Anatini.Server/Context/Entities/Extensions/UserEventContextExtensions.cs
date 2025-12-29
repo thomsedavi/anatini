@@ -16,7 +16,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Data = data.ToDictionary()
             };
 
-            await context.Add(userEvent);
+            await context.AddAsync(userEvent);
 
             return userEvent;
         }

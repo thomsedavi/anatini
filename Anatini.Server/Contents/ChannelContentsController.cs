@@ -30,7 +30,7 @@ namespace Anatini.Server.Contents
             var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Slug, createContent.Protected, channel.Id, eventData);
 
             channel.AddDraftContent(content, eventData);
-            await context.Update(channel);
+            await context.UpdateAsync(channel);
 
             //return CreatedAtAction();
             return Ok(channel.ToChannelEditDto());
@@ -58,7 +58,7 @@ namespace Anatini.Server.Contents
 
             element.Content = updateElement.Content;
 
-            await context.Update(content);
+            await context.UpdateAsync(content);
 
             return NoContent();
         }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
@@ -154,7 +154,7 @@ namespace Anatini.Server.Contents
             };
 
             content.DraftVersion.Elements!.Add(element);
-            await context.Update(content);
+            await context.UpdateAsync(content);
 
             return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
         }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
@@ -221,7 +221,7 @@ namespace Anatini.Server.Contents
                 await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
             }
 
-            await context.Update(content);
+            await context.UpdateAsync(content);
 
             return NoContent();
         }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);

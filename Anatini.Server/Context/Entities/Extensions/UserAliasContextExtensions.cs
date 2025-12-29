@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Protected = @protected
             };
 
-            await context.Add(userAlias);
+            await context.AddAsync(userAlias);
 
             return userAlias;
         }

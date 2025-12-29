@@ -39,6 +39,37 @@ namespace Anatini.Server.Channels
         }, requiresAuthorisation: true);
 
         [Authorize]
+        [HttpPatch("{channelId}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchChannel(string channelId, [FromForm] UpdateChannel updateChannel) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        {
+            if (updateChannel.DefaultCardImageId.HasValue)
+            {
+                channel.DefaultCardImageId = updateChannel.DefaultCardImageId.Value;
+
+                foreach (var alias in channel.Aliases)
+                {
+                    var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Slug);
+
+                    if (channelAlias != null)
+                    {
+                        channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId.Value;
+                        await context.UpdateAsync(channelAlias);
+                    }
+                }
+            }
+
+            await context.UpdateAsync(channel);
+
+            return NoContent();
+        });
+
+        [Authorize]
         [HttpPost("{channelId}/images")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -116,13 +147,13 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] NewChannel newChannel) => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingUserContextAsync(UserId, async (user, context) =>
         {
-            await context.AddChannelAliasAsync(newChannel.Slug, newChannel.Id, newChannel.Name, newChannel.Protected);
-            var channel = await context.AddChannelAsync(newChannel.Id, newChannel.Name, newChannel.Slug, newChannel.Protected, user.Id, user.Name);
+            await context.AddChannelAliasAsync(createChannel.Slug, createChannel.Id, createChannel.Name, createChannel.Protected);
+            var channel = await context.AddChannelAsync(createChannel.Id, createChannel.Name, createChannel.Slug, createChannel.Protected, user.Id, user.Name);
 
             user.AddChannel(channel);
-            await context.Update(user);
+            await context.UpdateAsync(user);
 
             return Ok(user.ToUserEditDto());
         });

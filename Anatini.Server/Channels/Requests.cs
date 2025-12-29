@@ -3,7 +3,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Channels
 {
-    public class NewChannel
+    public class CreateChannel
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
@@ -16,7 +16,12 @@ namespace Anatini.Server.Channels
         public Guid Id { get; set; } = Guid.NewGuid();
     }
 
-    public class NewChannelAlias
+    public class UpdateChannel
+    {
+        public Guid? DefaultCardImageId { get; set; }
+    }
+
+    public class CreateChannelAlias
     {
         [Slug, MaxLength(64), DataType(DataType.Text)]
         public required string Slug { get; set; }

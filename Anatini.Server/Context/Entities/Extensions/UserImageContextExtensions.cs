@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 UserId = userId
             };
 
-            return await context.Add(userImage);
+            return await context.AddAsync(userImage);
         }
     }
 }

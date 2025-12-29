@@ -81,7 +81,7 @@ namespace Anatini.Server.Authentication
 
             if (email.VerificationCode != newUser.VerificationCode)
             {
-                await context.Remove(email);
+                await context.RemoveAsync(email);
                 await context.AddUserEventAsync(newUser.Id, EventType.VerificationBad, eventData);
 
                 return NotFound();
@@ -94,7 +94,7 @@ namespace Anatini.Server.Authentication
             email.Verified = true;
             email.VerificationCode = null;
 
-            await context.Update(email);
+            await context.UpdateAsync(email);
             await context.AddUserEventAsync(user.Id, EventType.UserCreated, eventData);
 
             var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
@@ -118,7 +118,7 @@ namespace Anatini.Server.Authentication
             if (refreshToken != null)
             {
                 user.RemoveSession(refreshToken);
-                await context.Update(user);
+                await context.UpdateAsync(user);
             }
 
             DeleteCookie(Constants.AccessToken);
@@ -171,7 +171,7 @@ namespace Anatini.Server.Authentication
             var refreshToken = TokenGenerator.Get;
 
             user.AddSession(refreshToken, eventData);
-            await context.Update(user);
+            await context.UpdateAsync(user);
 
             var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
             var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), refreshToken);
@@ -262,7 +262,7 @@ namespace Anatini.Server.Authentication
                 }
 
                 userSession.RefreshToken = TokenGenerator.Get;
-                await context.Update(user);
+                await context.UpdateAsync(user);
 
                 var accessTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetAccessTokenExpiry());
                 var refreshTokenCookie = GetTokenCookie(user.Id, eventData.DateTimeUtc.GetRefreshTokenExpiry(), userSession.RefreshToken);

@@ -30,7 +30,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Protected = @protected
             };
 
-            await context.Add(channel);
+            await context.AddAsync(channel);
 
             return channel;
         }

@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Verified = false
             };
 
-            return await context.Add(userEmail);
+            return await context.AddAsync(userEmail);
         }
     }
 }

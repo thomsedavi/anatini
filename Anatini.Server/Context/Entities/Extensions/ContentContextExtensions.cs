@@ -23,7 +23,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 CardImageId = content.DraftVersion.CardImageId
             };
 
-            await context.Add(attributeContent);
+            await context.AddAsync(attributeContent);
 
             return attributeContent;
         }
@@ -59,7 +59,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Protected = @protected
             };
 
-            await context.Add(content);
+            await context.AddAsync(content);
 
             return content;
         }

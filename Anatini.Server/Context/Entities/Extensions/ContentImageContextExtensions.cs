@@ -14,7 +14,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ContentId = channelId
             };
 
-            return await context.Add(contentImage);
+            return await context.AddAsync(contentImage);
         }
     }
 }
