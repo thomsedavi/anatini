@@ -41,7 +41,7 @@ namespace Anatini.Server.Account
 
             await context.AddUserImageAsync(imageId, user.Id, blobContainerName, blobName);
 
-            return CreatedAtAction(nameof(UsersController.GetImage), new { user.Id, imageId }, new { Id = imageId, ChannelId = user.Id });
+            return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId }, new { Id = imageId, UserId = user.Id });
         });
     }
 }

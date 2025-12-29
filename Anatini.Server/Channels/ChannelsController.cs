@@ -95,7 +95,7 @@ namespace Anatini.Server.Channels
 
             await context.AddChannelImageAsync(imageId, channel.Id, blobContainerName, blobName);
 
-            return CreatedAtAction(nameof(GetImage), new { channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
+            return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
         }, requiresAuthorisation: true);
 
         [Authorize]
