@@ -8,21 +8,21 @@ namespace Anatini.Server.Context
     {
         public ContextBase Context => context;
 
-        public async Task<int> Update(Entity entity)
+        public async Task<int> UpdateAsync(Entity entity)
         {
             context.Update(entity);
 
             return await context.SaveChangesAsync();
         }
 
-        public async Task<int> Add(Entity entity)
+        public async Task<int> AddAsync(Entity entity)
         {
             context.Add(entity);
 
             return await context.SaveChangesAsync();
         }
 
-        internal async Task<int> Remove(Entity entity)
+        internal async Task<int> RemoveAsync(Entity entity)
         {
             context.Remove(entity);
 
