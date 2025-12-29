@@ -162,7 +162,7 @@
         </ul>
       </template>
       <h3>Create Slug</h3>
-      <form id="createSlug" @submit="createSlug" action="???" method="post">
+      <form @submit="createSlug" action="/api/users/slugs" method="POST">
         <fieldset>
           <legend>Create Alias</legend>
 
@@ -180,16 +180,16 @@
         </li>
       </ul>
       <h3>Create Channel</h3>
-      <form id="createChannel" @submit="createChannel" action="???" method="post">
+      <form @submit="createChannel" action="/api/channels" method="POST">
         <fieldset>
           <legend>Create Channel</legend>
 
           <label for="channelName">Channel Name</label>
-          <input id="channelName" type="text" name="channelName" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
+          <input id="channelName" type="text" name="name" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
           <hr>
 
           <label for="channelSlug">Channel Slug</label>
-          <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
+          <input id="channelSlug" type="text" name="slug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
           <hr>
 
           <button type="submit" :disabled="isCreatingChannel">Submit</button>

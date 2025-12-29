@@ -69,7 +69,7 @@
 <template>
   <main>
     <h2>Login</h2>
-    <form id="login" @submit="login" action="???" method="post">
+    <form @submit="login" action="/api/authentication/login" method="POST">
       <fieldset>
         <legend>Log In</legend>
 

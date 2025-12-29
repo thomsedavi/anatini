@@ -88,7 +88,7 @@
 <template>
   <main>
     <h2>Sign Up</h2>
-    <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
+    <form @submit="signup" action="/api/authentication/signup" method="POST">
       <fieldset>
         <legend>Sign Up</legend>
 

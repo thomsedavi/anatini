@@ -96,12 +96,12 @@
           <legend>Create Content</legend>
 
           <label for="contentName">Content Name</label>
-          <input id="contentName" type="text" name="contentName" maxlength="64" ref="content-name" @input="event => contentNameInput?.setCustomValidity('')">
+          <input id="contentName" type="text" name="name" maxlength="64" ref="content-name" @input="event => contentNameInput?.setCustomValidity('')">
 
           <hr>
 
           <label for="contentSlug">Content Slug</label>
-          <input id="contentSlug" type="text" name="contentSlug" maxlength="64" ref="content-slug" @input="event => contentSlugInput?.setCustomValidity('')">
+          <input id="contentSlug" type="text" name="slug" maxlength="64" ref="content-slug" @input="event => contentSlugInput?.setCustomValidity('')">
 
           <hr>
 

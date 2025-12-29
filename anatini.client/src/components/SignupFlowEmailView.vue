@@ -41,7 +41,7 @@
 <template>
   <main>
     <h2>Sign Up</h2>
-    <form id="email" @submit="email" action="/api/authentication/email" method="post">
+    <form @submit="email" action="/api/authentication/email" method="POST">
       <fieldset>
         <legend>Email Address</legend>
 
