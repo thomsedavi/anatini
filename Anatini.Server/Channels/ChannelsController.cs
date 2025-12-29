@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Common;
 using Anatini.Server.Context.Entities.Extensions;
-using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
-using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,41 +81,9 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostImage(string channelId, [FromForm] CreateImage createImage) => await UsingChannelContextAsync(channelId, async (channel, context) =>
         {
-            if (createImage.File == null || createImage.File.Length == 0)
+            if (ImageValidationError(createImage, out ActionResult? issue))
             {
-                return BadRequest();
-            }
-
-            if (!Enum.TryParse(createImage.Type, out ImageType imageType))
-            {
-                return ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
-            }
-
-            var extension = Path.GetExtension(createImage.File.FileName).ToLowerInvariant();
-
-            if (extension != ".jpg" && extension != ".jpeg")
-            {
-                return ValidationProblem(statusCode: StatusCodes.Status415UnsupportedMediaType);
-            }
-
-            if (createImage.File.Length > 1024 * 1024)
-            {
-                return ValidationProblem(statusCode: StatusCodes.Status413PayloadTooLarge);
-            }
-
-            var (width, height) = imageType switch
-            {
-                ImageType.Banner => (1600, 900),
-                ImageType.Card => (480, 360),
-                ImageType.Icon => (400, 400),
-                _ => throw new UnreachableException()
-            };
-
-            var result = await createImage.File.GetJpegDimensions();
-
-            if (result?.Width != width && result?.Height != height)
-            {
-                return ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
+                return issue ?? BadRequest();
             }
 
             var imageId = Guid.NewGuid();
@@ -130,7 +95,7 @@ namespace Anatini.Server.Channels
 
             await context.AddChannelImageAsync(imageId, channel.Id, blobContainerName, blobName);
 
-            return CreatedAtAction(nameof(GetImage), new { channelId, imageId }, new { Id = imageId, ChannelId = channel.Id });
+            return CreatedAtAction(nameof(GetImage), new { channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
         }, requiresAuthorisation: true);
 
         [Authorize]

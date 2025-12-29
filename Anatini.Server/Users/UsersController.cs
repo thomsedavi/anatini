@@ -1,5 +1,4 @@
-﻿using Anatini.Server.Context;
-using Anatini.Server.Context.Entities;
+﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Users.Extensions;
@@ -95,6 +94,13 @@ namespace Anatini.Server.Users
             }
 
             return await Task.FromResult(NoContent());
+        });
+
+        [Authorize]
+        [HttpGet("{userId}/images/{imageId}")]
+        public async Task<IActionResult> GetImage(string userId, string imageId) => await UsingUserAliasAsync(userId, async channelAlias =>
+        {
+            return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
         });
     }
 }

@@ -1,7 +1,11 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Security.Claims;
+using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Enums;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
@@ -177,6 +181,28 @@ namespace Anatini.Server
         }
 
         [NonAction]
+        public async Task<IActionResult> UsingUserAliasAsync(string userSlug, Func<UserAlias, Task<IActionResult>> userAliasFunctionAsync)
+        {
+            try
+            {
+                using var innerContext = new ContextBase();
+
+                var userAlias = await innerContext.UserAliases.FindAsync(userSlug);
+
+                if (userAlias == null)
+                {
+                    return NotFound();
+                }
+
+                return await userAliasFunctionAsync(userAlias);
+            }
+            catch (Exception exception)
+            {
+                return ExceptionResult(exception);
+            }
+        }
+
+        [NonAction]
         public async Task<IActionResult> UsingChannelAsync(string channelId, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAuthorisation = false)
         {
 
@@ -274,6 +300,55 @@ namespace Anatini.Server
             {
                 return Problem();
             }
+        }
+
+        [NonAction]
+        public bool ImageValidationError(CreateImage createImage, out ActionResult? result)
+        {
+            if (createImage.File == null || createImage.File.Length == 0)
+            {
+                result = BadRequest();
+                return true;
+            }
+
+            if (!Enum.TryParse(createImage.Type, out ImageType imageType))
+            {
+                result = ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
+                return true;
+            }
+
+            var extension = Path.GetExtension(createImage.File.FileName).ToLowerInvariant();
+
+            if (extension != ".jpg" && extension != ".jpeg")
+            {
+                result = ValidationProblem(statusCode: StatusCodes.Status415UnsupportedMediaType);
+                return true;
+            }
+
+            if (createImage.File.Length > 1024 * 1024)
+            {
+                result = ValidationProblem(statusCode: StatusCodes.Status413PayloadTooLarge);
+                return true;
+            }
+
+            var (width, height) = imageType switch
+            {
+                ImageType.Banner => (1600, 900),
+                ImageType.Card => (480, 360),
+                ImageType.Icon => (400, 400),
+                _ => throw new UnreachableException()
+            };
+
+            var dimensions = createImage.File.GetJpegDimensions();
+
+            if (dimensions?.Width != width && dimensions?.Height != height)
+            {
+                result = ValidationProblem(statusCode: StatusCodes.Status422UnprocessableEntity);
+                return true;
+            }
+
+            result = null;
+            return false;
         }
     }
 }

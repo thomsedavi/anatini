@@ -82,6 +82,8 @@ namespace Anatini.Server.Context.Entities
     public class UserImage : UserEntity
     {
         public required Guid Id { get; set; }
+        public required string BlobContainerName { get; set; }
+        public required string BlobName { get; set; }
     }
 
     public abstract class UserEntity : Entity
