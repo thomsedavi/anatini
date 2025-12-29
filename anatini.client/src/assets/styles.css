@@ -2,7 +2,9 @@
   --lightest: rgb(255 255 255);
   --lighter: rgb(255 240 225);
   --light: rgb(240 225 210);
+  --lightish: rgb(195 180 165);
   --red: rgb(210 0 60);
+  --darkish: rgb(60 75 90);
   --dark: rgb(30 45 60);
   --darker: rgb(15 30 45);
   --darkest: rgb(0 0 0);
@@ -19,6 +21,7 @@
     --hover: var(--dark);
     --shadow: var(--red);
     --button: var(--darker);
+    --button-disabled: var(--darkish);
     --button-text: var(--lightest);
     --scrollbar: var(--darker);
     --scrollbar-background: var(--light);
@@ -36,6 +39,7 @@
     --shadow: var(--red);
     --button: var(--lighter);
     --button-text: var(--darker);
+    --button-disabled: var(--lightish);
     --scrollbar: var(--lighter);
     --scrollbar-background: var(--dark);
     --link: var(--amber-light);
@@ -80,6 +84,11 @@ button, input[type="file"] {
 
   &:hover {
     background-color: var(--hover);
+  }
+
+  &:disabled {
+    cursor: default;
+    background-color: var(--button-disabled);
   }
 }
 

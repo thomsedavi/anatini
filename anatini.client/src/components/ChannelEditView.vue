@@ -14,6 +14,10 @@
   const contentSlugInput = useTemplateRef<HTMLInputElement>('content-slug');
   const contentNameInput = useTemplateRef<HTMLInputElement>('content-name');
 
+  const chosenFile = ref<File | null>(null);
+  const previewUrl = ref<string | null>(null);
+  const uploadStatus = ref('No file selected');
+
   watch([() => route.params.channelId], fetchChannel, { immediate: true });
 
   async function fetchChannel(array: (() => string | string[])[]) {
@@ -84,6 +88,55 @@
 
     apiFetch(`channels/${route.params.channelId}/contents`, onfulfilled, onfinally, init, statusActions);
   }
+
+  const onChooseFile = (event: Event) => {
+    const input = event?.target as HTMLInputElement
+
+    const file = input?.files?.[0];
+  
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      uploadStatus.value = 'Please select an image file';
+      return;
+    }
+
+    chosenFile.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+    uploadStatus.value = 'File selected';
+  };
+
+  const uploadImage = async (event: Event) => {
+    event.preventDefault();
+
+    if (!chosenFile.value) return;
+
+    uploadStatus.value = 'Uploading';
+
+    const formData = new FormData();
+
+    formData.append('file', chosenFile.value);
+    formData.append('type', 'Card');
+
+    try {
+      const onfulfilled = async () => {
+        uploadStatus.value = 'Upload successful';
+
+        chosenFile.value = null; 
+      };
+
+      const onfinally = () => {
+        //loading.value = false;
+      };
+
+      const init: RequestInit = { method: "POST", body: formData };
+
+      apiFetch(`channels/${route.params.channelId}/images`, onfulfilled, onfinally, init);
+    } catch (error) {
+      console.error(error);
+      uploadStatus.value = "Upload failed";
+    }
+  }
 </script>
 
 <template>
@@ -91,7 +144,42 @@
     <h2>ChannelEditView</h2>
     <template v-if="channel">
       <h3>{{ channel.name }}</h3>
-      <form id="createContent" @submit="createContent" action="???" method="content">
+
+      <form @submit="uploadImage" :action="`/api/channels/${route.params.channelId}/images`" method="POST">
+        <fieldset>
+          <legend>Set Default Card</legend>
+
+          <label for="file-input">Choose File</label>
+          <input
+            type="file"
+            accept="image/*"
+            id="file-input"
+            @change="onChooseFile"
+            aria-describedby="file-help"
+            required
+            aria-controls="file-preview upload-status"
+          />
+          <small id="file-help">Files must be JPG or PNG, under 1MB, and have dimensions 480 wide by 360 high</small>
+          <hr>
+
+          <output id="file-preview" for="file-input">
+            <figure>
+              <img :src="previewUrl ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+              <figcaption>A preview will appear here</figcaption>
+            </figure>
+          </output>
+          <hr>
+
+          <button type="submit" :disabled="!chosenFile">Upload</button>
+          <output id="upload-status" for="file-input" aria-live="polite">{{ uploadStatus}}</output>
+
+          <footer>
+            <small>This will be the default preview image for content</small>
+          </footer>
+        </fieldset>
+      </form>
+
+      <form @submit="createContent" action="/api/channels/lotographia/contents" method="POST">
         <fieldset>
           <legend>Create Content</legend>
 
