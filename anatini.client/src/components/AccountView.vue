@@ -163,14 +163,15 @@
       </template>
       <h3>Create Slug</h3>
       <form id="createSlug" @submit="createSlug" action="???" method="post">
-        <p>
+        <fieldset>
+          <legend>Create Alias</legend>
+
           <label for="slug">Slug</label>
           <input id="slug" type="text" name="slug" maxlength="64" ref="user-slug" @input="event => userSlugInput?.setCustomValidity('')">
-        </p>
+          <hr>
 
-        <p>
-          <input type="submit" value="Submit" :disabled="isCreatingUserSlug">
-        </p>
+          <button type="submit" :disabled="isCreatingUserSlug">Submit</button>
+        </fieldset>
       </form>
       <h3>Slugs</h3>
       <ul>
@@ -180,19 +181,19 @@
       </ul>
       <h3>Create Channel</h3>
       <form id="createChannel" @submit="createChannel" action="???" method="post">
-        <p>
+        <fieldset>
+          <legend>Create Channel</legend>
+
           <label for="channelName">Channel Name</label>
           <input id="channelName" type="text" name="channelName" maxlength="64" ref="channel-name" @input="event => channelNameInput?.setCustomValidity('')">
-        </p>
+          <hr>
 
-        <p>
           <label for="channelSlug">Channel Slug</label>
           <input id="channelSlug" type="text" name="channelSlug" maxlength="64" ref="channel-slug" @input="event => channelSlugInput?.setCustomValidity('')">
-        </p>
+          <hr>
 
-        <p>
-          <input type="submit" value="Submit" :disabled="isCreatingChannel">
-        </p>
+          <button type="submit" :disabled="isCreatingChannel">Submit</button>
+        </fieldset>
       </form>
       <template v-if="account.channels?.length">
         <h3>Channels</h3>

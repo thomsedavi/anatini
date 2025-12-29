@@ -70,19 +70,19 @@
   <main>
     <h2>Login</h2>
     <form id="login" @submit="login" action="???" method="post">
-      <p>
+      <fieldset>
+        <legend>Log In</legend>
+
         <label for="emailAddress">Email Address</label>
         <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="event => emailAddressInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
         <label for="password">Password</label>
         <input id="password" type="password" name="password" ref="password" @input="event => passwordInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
-        <input type="submit" value="Submit" :disabled="isFetching">
-      </p>
+        <button type="submit" :disabled="isFetching">Submit</button>
+      </fieldset>
     </form>
   </main>
 </template>

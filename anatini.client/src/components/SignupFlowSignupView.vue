@@ -89,39 +89,35 @@
   <main>
     <h2>Sign Up</h2>
     <form id="signup" @submit="signup" action="/api/authentication/signup" method="post">
-      <p>
+      <fieldset>
+        <legend>Sign Up</legend>
+
         <label for="emailAddress">Email Address</label>
         <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== null" @input="() => emailAddressInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
         <label for="name">Name</label>
         <input id="name" type="text" name="name" maxlength="64" ref="name" @input="() => nameInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
         <label for="slug">Slug</label>
         <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="() => slugInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
         <label for="password">Password</label>
         <input id="password" type="password" name="password" ref="password" @input="() => passwordInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
         <label for="verificationCode">Verification Code</label>
         <input id="verificationCode" type="text" name="verificationCode" ref="verification-code" @input="() => verificationCodeInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <div>
         <label for="protected">Protected</label>
         <input id="protected" type="checkbox" name="protected" ref="protected" />
-      </div>
+        <hr>
 
-      <p>
-        <input type="submit" value="Submit" :disabled="isFetching || verificationFailed">
-      </p>
+        <button type="submit" :disabled="isFetching || verificationFailed">Submit</button>
+      </fieldset>
     </form>
     <button type="button" @click="emit('goBack')">Go Back</button>
   </main>

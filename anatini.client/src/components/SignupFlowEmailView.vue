@@ -42,14 +42,15 @@
   <main>
     <h2>Sign Up</h2>
     <form id="email" @submit="email" action="/api/authentication/email" method="post">
-      <p>
+      <fieldset>
+        <legend>Email Address</legend>
+
         <label for="emailAddress">Email Address</label>
         <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
-      </p>
+        <hr>
 
-      <p>
-        <input type="submit" value="Submit" :disabled="isFetching">
-      </p>
+        <button type="submit" :disabled="isFetching">Submit</button>
+      </fieldset>
     </form>
     <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>
   </main>
