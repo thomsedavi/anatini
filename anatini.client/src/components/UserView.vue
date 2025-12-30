@@ -52,11 +52,43 @@
 
 <template>
   <main v-if="user">
-    <h1>{{ user.name }}</h1>
-    <img v-if="user.iconImageUri" :src="user.iconImageUri" />
-    <button type="button" @click="() => trust()">Trust</button>
+    <article>
+      <header aria-busy="false">
+        <figure>
+          <img v-if="user.iconImageUri" alt="Image" :src="user.iconImageUri" width="400" height="400" />
+          <figcaption>Member since 2023</figcaption>
+        </figure>
+
+        <h1>{{ user.name }}</h1>
+      </header>
+
+      <section aria-label="User biography">
+        <p>User biography goes here</p>
+      </section>
+
+      <footer>
+        <menu type="toolbar">
+          <li>
+            <button type="button" aria-pressed="false" @click="() => trust()">Trust</button>
+          </li>
+          <li>
+            <button type="button" class="danger">Block</button>
+          </li>
+        </menu>
+      </footer>
+    </article>
   </main>
   <main v-else>
-    <h1>Loading...</h1>
+    <article aria-busy="true" aria-live="polite" aria-labelledby="loading-title">
+      <header>
+        <h1 id="loading-title">Loading user...</h1>
+      </header>
+
+      <section>
+        <p role="status">Please wait while the user information is fetched.</p>
+                
+        <progress max="100">Loading...</progress>
+      </section>
+    </article>
   </main>
 </template>
