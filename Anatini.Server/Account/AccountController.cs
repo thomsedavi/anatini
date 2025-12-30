@@ -13,6 +13,32 @@ namespace Anatini.Server.Account
     public class AccountController(IBlobService blobService) : AnatiniControllerBase
     {
         [Authorize]
+        [HttpPatch]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
+        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingUserContextAsync(UserId, async (user, context) =>
+        {
+            if (updateUser.IconImageId.HasValue)
+            {
+                user.IconImageId = updateUser.IconImageId.Value;
+
+                foreach (var alias in user.Aliases)
+                {
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+
+                    if (userAlias != null)
+                    {
+                        userAlias.IconImageId = updateUser.IconImageId.Value;
+                        await context.UpdateAsync(userAlias);
+                    }
+                }
+            }
+
+            await context.UpdateAsync(user);
+
+            return NoContent();
+        });
+
+        [Authorize]
         [HttpPost("images")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]

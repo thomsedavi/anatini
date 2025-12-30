@@ -17,6 +17,10 @@
   const channelSlugInput = useTemplateRef<HTMLInputElement>('channel-slug');
   const channelNameInput = useTemplateRef<HTMLInputElement>('channel-name');
 
+  const chosenFile = ref<File | null>(null);
+  const previewUrl = ref<string | null>(null);
+  const uploadStatus = ref('No file selected');
+
   onMounted(() => {
     isFetching.value = true;
 
@@ -131,6 +135,80 @@
 
     await apiFetch("users/events", onfulfilled, onfinally);
   }
+
+  const onChooseFile = (event: Event) => {
+    const input = event?.target as HTMLInputElement
+
+    const file = input?.files?.[0];
+  
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      uploadStatus.value = 'Please select an image file';
+      return;
+    }
+
+    chosenFile.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+    uploadStatus.value = 'File selected';
+  };
+
+const updateProfileIconImage = async (id: string) => {
+    try {
+      const formData = new FormData();
+
+      formData.append('iconImageId', id);
+
+      const onfulfilled = () => {
+        //loading.value = false;
+      };
+
+      const onfinally = () => {
+        //loading.value = false;
+      };
+
+      const init: RequestInit = { method: "PATCH", body: formData };
+
+      apiFetch('account', onfulfilled, onfinally, init);
+    } catch (error) {
+      console.error(error);
+      uploadStatus.value = "Upload failed";
+    }
+  }
+
+  const uploadImage = async (event: Event) => {
+    event.preventDefault();
+
+    if (!chosenFile.value) return;
+
+    uploadStatus.value = 'Uploading';
+
+    const formData = new FormData();
+
+    formData.append('file', chosenFile.value);
+    formData.append('type', 'Icon');
+
+    try {
+      const onfulfilled = async (value: { id: string, channelId: string }) => {
+        updateProfileIconImage(value.id);
+
+        uploadStatus.value = 'Upload successful';
+
+        chosenFile.value = null; 
+      };
+
+      const onfinally = () => {
+        //loading.value = false;
+      };
+
+      const init: RequestInit = { method: "POST", body: formData };
+
+      apiFetch(`account/images`, onfulfilled, onfinally, init);
+    } catch (error) {
+      console.error(error);
+      uploadStatus.value = "Upload failed";
+    }
+  }
 </script>
 
 <template>
@@ -140,6 +218,41 @@
     <p v-if="error">{{ error }}</p>
     <template v-if="account">
       <p>{{ account.name }}</p>
+
+      <form @submit="uploadImage" action="???" method="POST">
+        <fieldset>
+          <legend>Set Profile Image</legend>
+
+          <label for="file-input">Choose File</label>
+          <input
+            type="file"
+            accept="image/*"
+            id="file-input"
+            @change="onChooseFile"
+            aria-describedby="file-help"
+            required
+            aria-controls="file-preview upload-status"
+          />
+          <small id="file-help">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
+          <hr>
+
+          <output id="file-preview" for="file-input">
+            <figure>
+              <img :src="previewUrl ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+              <figcaption>A preview will appear here</figcaption>
+            </figure>
+          </output>
+          <hr>
+
+          <button type="submit" :disabled="!chosenFile">Upload</button>
+          <output id="upload-status" for="file-input" aria-live="polite">{{ uploadStatus}}</output>
+
+          <footer>
+            <small>This will be your profile image</small>
+          </footer>
+        </fieldset>
+      </form>
+
       <h3>Emails</h3>
       <ul>
         <li v-for="(email, index) in account.emails" :key="'email' + index">
