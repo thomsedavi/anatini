@@ -1,6 +1,7 @@
 export type User = {
   id: string;
   name: string;
+  iconImageUri: string | null;
 };
 
 export type UserEdit = {

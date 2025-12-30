@@ -2,6 +2,8 @@ using System.Text;
 using Anatini.Server;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Images.Services;
+using Azure.Identity;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -37,6 +39,12 @@ builder.Services.AddAuthentication()
 builder.Services.AddAuthorization();
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddSingleton(x =>
+    new BlobServiceClient(
+        new Uri("https://TODO.blob.core.windows.net"),
+        new DefaultAzureCredential()
+    ));
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IBlobService, BlobService>();

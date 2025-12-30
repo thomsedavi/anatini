@@ -1,16 +1,31 @@
-﻿using Anatini.Server.Context.Entities;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
+using Anatini.Server.Images.Services;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class UserSlugExtensions
     {
-        public static UserDto ToUserDto(this UserAlias userAlias)
+        public static async Task<UserDto> ToUserDto(this UserAlias userAlias, AnatiniContext context, IBlobService blobService)
         {
+            string? iconImageUri = null;
+
+            if (userAlias.IconImageId.HasValue)
+            {
+                var userImage = await context.Context.UserImages.FindAsync(userAlias.UserId, userAlias.IconImageId.Value);
+
+                if (userImage != null)
+                {
+                    iconImageUri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName);
+                }
+            }
+
             return new UserDto
             {
                 Id = userAlias.UserId,
-                Name = userAlias.UserName
+                Name = userAlias.UserName,
+                IconImageUri = iconImageUri
             };
         }
     }

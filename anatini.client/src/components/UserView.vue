@@ -53,6 +53,7 @@
 <template>
   <main v-if="user">
     <h1>{{ user.name }}</h1>
+    <img v-if="user.iconImageUri" :src="user.iconImageUri" />
     <button type="button" @click="() => trust()">Trust</button>
   </main>
   <main v-else>

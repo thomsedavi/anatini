@@ -1,6 +1,7 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Anatini.Server.Users
 {
     [ApiController]
     [Route("api/users")]
-    public class UsersController : AnatiniControllerBase
+    public class UsersController(IBlobService blobService) : AnatiniControllerBase
     {
         [Authorize]
         [HttpPost("aliases")]
@@ -59,7 +60,7 @@ namespace Anatini.Server.Users
 
             // TODO return 404 if slug requires authentication
 
-            return Ok(userAlias.ToUserDto());
+            return Ok(await userAlias.ToUserDto(context, blobService));
         });
 
         [HttpPost("{toUserSlug}/relationships")]
