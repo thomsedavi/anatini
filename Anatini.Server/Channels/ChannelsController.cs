@@ -2,6 +2,7 @@
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Common;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -120,7 +121,7 @@ namespace Anatini.Server.Channels
             user.AddChannel(channel);
             await context.UpdateAsync(user);
 
-            return Ok(user.ToUserEditDto());
-        });
+            return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Slug }, channel.ToChannelDto());
+        }, UserPermission.Admin, UserPermission.Trusted);
     }
 }

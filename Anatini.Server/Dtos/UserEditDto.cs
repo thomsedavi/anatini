@@ -9,6 +9,7 @@
         public required IEnumerable<UserEditEmailDto> Emails { get; set; }
         public IEnumerable<UserEditSessionDto>? Sessions { get; set; }
         public required IEnumerable<UserEditAliasDto> Aliases { get; set; }
+        public IList<string>? Permissions { get;  set; }
         public bool? Protected { get; set; }
     }
 

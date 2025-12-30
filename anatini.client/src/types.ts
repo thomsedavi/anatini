@@ -28,6 +28,7 @@ export type UserEdit = {
   aliases: {
     slug: string;
   }[];
+  permissions: string[] | null;
   protected: boolean | null;
 };
 

@@ -21,10 +21,12 @@
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref('No file selected');
 
+  const requiredPermissions = ["Admin", "Trusted"];
+
   onMounted(() => {
     isFetching.value = true;
 
-    fetch("/api/authentication/account", {
+    fetch("/api/account", {
       method: "GET",
     }).then((response: Response) => {
       if (response.ok) {
@@ -292,8 +294,8 @@ const updateProfileIconImage = async (id: string) => {
           {{ alias.slug }}: {{ account.defaultSlug === alias.slug ? 'Default' : 'Not Default'}}
         </li>
       </ul>
-      <h3>Create Channel</h3>
-      <form @submit="createChannel" action="/api/channels" method="POST">
+      <h3 v-if="account.permissions?.some(permission => requiredPermissions.includes(permission))">Create Channel</h3>
+      <form v-if="account.permissions?.some(permission => requiredPermissions.includes(permission))" @submit="createChannel" action="/api/channels" method="POST">
         <fieldset>
           <legend>Create Channel</legend>
 

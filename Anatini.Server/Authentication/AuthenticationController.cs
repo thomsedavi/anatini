@@ -183,15 +183,6 @@ namespace Anatini.Server.Authentication
         });
 
         [Authorize]
-        [HttpGet("account")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(UserId, async user =>
-        {
-            return await Task.FromResult(Ok(user.ToUserEditDto()));
-        });
-
-        [Authorize]
         [HttpPost("email/verify")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]

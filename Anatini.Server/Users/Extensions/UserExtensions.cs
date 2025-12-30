@@ -105,6 +105,7 @@ namespace Anatini.Server.Users.Extensions
                 Sessions = user.Sessions?.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
+                Permissions = user.Permissions,
                 DefaultSlug = user.DefaultSlug,
                 Protected = user.Protected
             };

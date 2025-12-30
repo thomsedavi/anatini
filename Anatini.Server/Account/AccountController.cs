@@ -3,6 +3,7 @@ using Anatini.Server.Common;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users;
+using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,15 @@ namespace Anatini.Server.Account
     [Route("api/account")]
     public class AccountController(IBlobService blobService) : AnatiniControllerBase
     {
+        [Authorize]
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(UserId, async user =>
+        {
+            return await Task.FromResult(Ok(user.ToUserEditDto()));
+        });
+
         [Authorize]
         [HttpPatch]
         [Consumes(MediaTypeNames.Multipart.FormData)]

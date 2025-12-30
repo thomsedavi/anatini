@@ -66,11 +66,6 @@ namespace Anatini.Server.Users
         [HttpPost("{toUserSlug}/relationships")]
         public async Task<IActionResult> PostRelationship(string toUserSlug, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(UserId, async (user, context) =>
         {
-            if (!user.HasAnyPermission(UserPermission.Admin, UserPermission.Trusted))
-            {
-                return Forbid();
-            }
-
             if (!Guid.TryParse(toUserSlug, out Guid toUserId))
             {
                 var userAlias = await context.FindAsync<UserAlias>(toUserSlug) ?? throw new KeyNotFoundException();
@@ -95,7 +90,7 @@ namespace Anatini.Server.Users
             }
 
             return await Task.FromResult(NoContent());
-        });
+        }, UserPermission.Admin, UserPermission.Trusted);
 
         [Authorize]
         [HttpGet("{userId}/images/{imageId}")]

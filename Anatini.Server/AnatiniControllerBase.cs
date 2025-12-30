@@ -5,6 +5,7 @@ using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
+using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -246,25 +247,25 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContext(Guid userId, Func<User, AnatiniContext, IActionResult> userContextFunction) => await UsingUserAsync(userId, async user =>
+        public async Task<IActionResult> UsingUserContext(Guid userId, Func<User, AnatiniContext, IActionResult> userContextFunction, params UserPermission[] permissions) => await UsingUserAsync(userId, async user =>
         {
             using var innerContext = new ContextBase();
 
             var result = userContextFunction(user, new AnatiniContext(innerContext));
 
             return await Task.FromResult(result);
-        });
+        }, permissions);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContextAsync(Guid userId, Func<User, AnatiniContext, Task<IActionResult>> userContextFunction) => await UsingUserAsync(userId, async user =>
+        public async Task<IActionResult> UsingUserContextAsync(Guid userId, Func<User, AnatiniContext, Task<IActionResult>> userContextFunction, params UserPermission[] permissions) => await UsingUserAsync(userId, async user =>
         {
             using var innerContext = new ContextBase();
 
             return await userContextFunction(user, new AnatiniContext(innerContext));
-        });
+        }, permissions);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserAsync(Guid userId, Func<User, Task<IActionResult>> userFunction)
+        public async Task<IActionResult> UsingUserAsync(Guid userId, Func<User, Task<IActionResult>> userFunction, params UserPermission[] permissions)
         {
             try
             {
@@ -275,6 +276,11 @@ namespace Anatini.Server
                 if (user == null)
                 {
                     return Problem();
+                }
+
+                if (permissions.Length > 0 && !user.HasAnyPermission(permissions))
+                {
+                    return Forbid();
                 }
 
                 return await userFunction(user);
