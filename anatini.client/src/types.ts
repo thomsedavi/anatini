@@ -1,7 +1,12 @@
+export type Image = {
+  uri: string;
+  altText: string | null;
+}
+
 export type User = {
   id: string;
   name: string;
-  iconImageUri: string | null;
+  iconImage: Image | null;
 };
 
 export type UserEdit = {

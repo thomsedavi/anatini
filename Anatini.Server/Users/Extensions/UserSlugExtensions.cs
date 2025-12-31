@@ -9,7 +9,7 @@ namespace Anatini.Server.Users.Extensions
     {
         public static async Task<UserDto> ToUserDto(this UserAlias userAlias, AnatiniContext context, IBlobService blobService)
         {
-            string? iconImageUri = null;
+            ImageDto? iconImage = null;
 
             if (userAlias.IconImageId.HasValue)
             {
@@ -17,7 +17,11 @@ namespace Anatini.Server.Users.Extensions
 
                 if (userImage != null)
                 {
-                    iconImageUri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName);
+                    iconImage = new ImageDto
+                    {
+                        Uri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName),
+                        AltText = userImage.AltText,
+                    };
                 }
             }
 
@@ -25,7 +29,7 @@ namespace Anatini.Server.Users.Extensions
             {
                 Id = userAlias.UserId,
                 Name = userAlias.UserName,
-                IconImageUri = iconImageUri
+                IconImage = iconImage
             };
         }
     }

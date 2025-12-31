@@ -75,7 +75,7 @@ namespace Anatini.Server.Account
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            await context.AddUserImageAsync(imageId, user.Id, blobContainerName, blobName);
+            await context.AddUserImageAsync(imageId, user.Id, blobContainerName, blobName, createImage.AltText);
 
             return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId }, new { Id = imageId, UserId = user.Id });
         });

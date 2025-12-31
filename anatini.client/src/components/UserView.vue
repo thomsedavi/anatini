@@ -54,7 +54,7 @@
     <article :aria-busy="fetching ? 'true' : 'false'" aria-live="polite" aria-labelledby="heading">
       <header>
         <figure>
-          <img v-if="user?.iconImageUri" alt="Image" :src="user.iconImageUri" width="400" height="400" />
+          <img v-if="user?.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
           <svg v-else
             view-box="0 0 400 400"
             width="400"

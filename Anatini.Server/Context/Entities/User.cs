@@ -12,8 +12,8 @@ namespace Anatini.Server.Context.Entities
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public IList<string>? Permissions { get; set; }
-        public Guid? IconImageId { get; set; } // 400 x 400 ?? Also, circular
-        public Guid? BannerImageId { get; set; } // 3:1 or 16:9, 1500x500 or 1600x900?
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
@@ -84,6 +84,7 @@ namespace Anatini.Server.Context.Entities
         public required Guid Id { get; set; }
         public required string BlobContainerName { get; set; }
         public required string BlobName { get; set; }
+        public string? AltText {  get; set; }
     }
 
     public abstract class UserEntity : Entity

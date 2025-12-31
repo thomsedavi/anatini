@@ -4,6 +4,6 @@
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public string? IconImageUri { get; internal set; }
+        public ImageDto? IconImage { get; set; }
     }
 }
