@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetchAuthenticated } from './common/apiFetch';
   import type { Content, ContentElement } from '@/types';
 
   const route = useRoute();
@@ -22,7 +22,7 @@
       loading.value = false;
     };
 
-    await apiFetch(`channels/${array[0]}/contents/${array[1]}/preview`, onfulfilled, onfinally);
+    await apiFetchAuthenticated(`channels/${array[0]}/contents/${array[1]}/preview`, onfulfilled, onfinally);
   }
 
   function sanitizeElementContent(elementContent: string): string {

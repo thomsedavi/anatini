@@ -9,6 +9,30 @@ export async function apiFetch<Type>(
   statusActions?: {[id: number]: () => void},
   handleResponse?: (response: Response) => void
 ): Promise<void> {
+  await fetch(`/api/${input}`, init).then((response: Response) => {
+    if (response.ok) {
+      handleResponse?.(response);
+
+      response.json()
+        .then(onfulfilled)
+        .catch(() => { console.log('Unknown Error'); });
+    } else if (statusActions?.[response.status]) {
+      statusActions[response.status]();
+    } else {
+      console.log("Unknown Error");
+    }
+  })
+  .finally(onfinally);
+}
+
+export async function apiFetchAuthenticated<Type>(
+  input: RequestInfo | URL,
+  onfulfilled: (value: Type) => void,
+  onfinally: () => void,
+  init?: RequestInit,
+  statusActions?: {[id: number]: () => void},
+  handleResponse?: (response: Response) => void
+): Promise<void> {
   if (store.expiresUtc === null) {
     return;
   }
@@ -32,18 +56,5 @@ export async function apiFetch<Type>(
     });
   }
 
-  await fetch(`/api/${input}`, init).then((response: Response) => {
-    if (response.ok) {
-      handleResponse?.(response);
-
-      response.json()
-        .then(onfulfilled)
-        .catch(() => { console.log('Unknown Error'); });
-    } else if (statusActions?.[response.status]) {
-      statusActions[response.status]();
-    } else {
-      console.log("Unknown Error");
-    }
-  })
-  .finally(onfinally);
+  return await apiFetch(input, onfulfilled, onfinally, init, statusActions, handleResponse);
 }

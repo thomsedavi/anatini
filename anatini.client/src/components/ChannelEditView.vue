@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
   import type { ChannelEdit } from '@/types';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetchAuthenticated } from './common/apiFetch';
 
   const route = useRoute();
 
@@ -86,7 +86,7 @@
       }
     };
 
-    apiFetch(`channels/${route.params.channelId}/contents`, onfulfilled, onfinally, init, statusActions);
+    apiFetchAuthenticated(`channels/${route.params.channelId}/contents`, onfulfilled, onfinally, init, statusActions);
   }
 
   const onChooseFile = (event: Event) => {
@@ -122,7 +122,7 @@
 
       const init: RequestInit = { method: "PATCH", body: formData };
 
-      apiFetch(`channels/${route.params.channelId}`, onfulfilled, onfinally, init);
+      apiFetchAuthenticated(`channels/${route.params.channelId}`, onfulfilled, onfinally, init);
     } catch (error) {
       console.error(error);
       uploadStatus.value = "Upload failed";
@@ -156,7 +156,7 @@
 
       const init: RequestInit = { method: "POST", body: formData };
 
-      apiFetch(`channels/${route.params.channelId}/images`, onfulfilled, onfinally, init);
+      apiFetchAuthenticated(`channels/${route.params.channelId}/images`, onfulfilled, onfinally, init);
     } catch (error) {
       console.error(error);
       uploadStatus.value = "Upload failed";

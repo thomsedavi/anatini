@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetchAuthenticated } from './common/apiFetch';
   import type { ContentEdit, ContentElement } from '@/types';
 
   const route = useRoute();
@@ -46,7 +46,7 @@
       }
     };
 
-    await apiFetch(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
+    await apiFetchAuthenticated(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
   }
 
   async function editElement(index: number) {
@@ -73,7 +73,7 @@
 
     const init = { method: "PUT", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function publish() {
@@ -99,7 +99,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function updateName() {
@@ -125,7 +125,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function updateDate() {
@@ -151,7 +151,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function contentElement(tag: string, element: string, insertAfter: number) {
@@ -188,7 +188,7 @@
 
     const init = { method: "POST", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetch(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 </script>
 

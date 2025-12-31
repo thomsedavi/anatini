@@ -58,7 +58,10 @@ namespace Anatini.Server.Users
                 return NotFound();
             }
 
-            // TODO return 404 if slug requires authentication
+            if (userAlias.Protected.HasValue && userAlias.Protected.Value && !await UserHasAnyPermission(UserId, UserPermission.Trusted, UserPermission.Admin))
+            {
+                return NotFound();
+            }
 
             return Ok(await userAlias.ToUserDto(context, blobService));
         });

@@ -3,7 +3,7 @@
   import { useRouter } from 'vue-router';
   import { reportValidity, validateInputs } from './common/validity';
   import type { UserEdit, Events } from '@/types';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetchAuthenticated } from './common/apiFetch';
 
   const router = useRouter();
   const account = ref<UserEdit | null>(null);
@@ -135,7 +135,7 @@
       isGettingEvents.value = false;
     };
 
-    await apiFetch("users/events", onfulfilled, onfinally);
+    await apiFetchAuthenticated("users/events", onfulfilled, onfinally);
   }
 
   const onChooseFile = (event: Event) => {
@@ -171,7 +171,7 @@ const updateProfileIconImage = async (id: string) => {
 
       const init: RequestInit = { method: "PATCH", body: formData };
 
-      apiFetch('account', onfulfilled, onfinally, init);
+      apiFetchAuthenticated('account', onfulfilled, onfinally, init);
     } catch (error) {
       console.error(error);
       uploadStatus.value = "Upload failed";
@@ -205,7 +205,7 @@ const updateProfileIconImage = async (id: string) => {
 
       const init: RequestInit = { method: "POST", body: formData };
 
-      apiFetch(`account/images`, onfulfilled, onfinally, init);
+      apiFetchAuthenticated(`account/images`, onfulfilled, onfinally, init);
     } catch (error) {
       console.error(error);
       uploadStatus.value = "Upload failed";

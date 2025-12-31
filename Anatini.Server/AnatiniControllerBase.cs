@@ -265,6 +265,26 @@ namespace Anatini.Server
         }, permissions);
 
         [NonAction]
+        public async Task<bool> UserHasAnyPermission(Guid userId, params UserPermission[] permissions)
+        {
+            if (userId == Guid.Empty)
+            {
+                return false;
+            }
+
+            using var innerContext = new ContextBase();
+
+            var user = await innerContext.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            return user.HasAnyPermission(permissions);
+        }
+
+        [NonAction]
         public async Task<IActionResult> UsingUserAsync(Guid userId, Func<User, Task<IActionResult>> userFunction, params UserPermission[] permissions)
         {
             try
