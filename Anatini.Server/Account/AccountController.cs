@@ -16,6 +16,7 @@ namespace Anatini.Server.Account
         [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(UserId, async user =>
         {

@@ -1,7 +1,12 @@
 export type Image = {
   uri: string;
   altText: string | null;
-}
+};
+
+export type InputError = {
+  id: string;
+  message: string;
+};
 
 export type User = {
   id: string;
@@ -10,7 +15,7 @@ export type User = {
 };
 
 export type UserEdit = {
-  id: string,
+  id: string;
   name: string;
   defaultSlug: string;
   emails: {

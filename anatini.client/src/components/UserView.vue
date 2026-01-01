@@ -51,7 +51,7 @@
 
 <template>
   <main>
-    <article :aria-busy="fetchingUser" aria-live="polite" aria-labelledby="heading">
+    <article :aria-busy="fetchingUser" aria-live="polite" aria-labelledby="heading-main">
       <header>
         <figure>
           <img v-if="user?.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
@@ -64,7 +64,7 @@
           <figcaption>Picture Of User</figcaption>
         </figure>
 
-        <h1 id="heading">{{ getHeading() }}</h1>
+        <h1 id="heading-main">{{ getHeading() }}</h1>
       </header>
 
       <section v-if="fetchingUser">

@@ -4,7 +4,7 @@ import type { IsAuthenticated } from "@/types";
 export async function apiFetch<Type>(
   input: RequestInfo | URL,
   onfulfilled: (value: Type) => void,
-  onfinally: () => void,
+  onfinally?: () => void,
   init?: RequestInit,
   statusActions?: {[id: number]: () => void},
   handleResponse?: (response: Response) => void
@@ -16,10 +16,10 @@ export async function apiFetch<Type>(
       response.json()
         .then(onfulfilled)
         .catch(() => { console.log('Unknown Error'); });
-    } else if (statusActions?.[response.status]) {
+    }
+
+    if (statusActions?.[response.status]) {
       statusActions[response.status]();
-    } else {
-      console.log("Unknown Error");
     }
   })
   .finally(onfinally);
@@ -28,7 +28,7 @@ export async function apiFetch<Type>(
 export async function apiFetchAuthenticated<Type>(
   input: RequestInfo | URL,
   onfulfilled: (value: Type) => void,
-  onfinally: () => void,
+  onfinally?: () => void,
   init?: RequestInit,
   statusActions?: {[id: number]: () => void},
   handleResponse?: (response: Response) => void
