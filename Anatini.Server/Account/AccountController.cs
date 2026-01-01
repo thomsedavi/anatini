@@ -25,9 +25,28 @@ namespace Anatini.Server.Account
 
         [Authorize]
         [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingUserContextAsync(UserId, async (user, context) =>
         {
+            if (updateUser.Name != null)
+            {
+                user.Name = updateUser.Name;
+
+                foreach (var alias in user.Aliases)
+                {
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+
+                    if (userAlias != null)
+                    {
+                        userAlias.UserName = updateUser.Name;
+                        await context.UpdateAsync(userAlias);
+                    }
+                }
+            }
+
             if (updateUser.IconImageId.HasValue)
             {
                 user.IconImageId = updateUser.IconImageId.Value;

@@ -9,9 +9,7 @@
   const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
   const isFetching = ref<boolean>(false);
 
-  async function email(event: Event) {
-    event.preventDefault();
-
+  async function email() {
     if (!validateInputs([
       {element: emailAddressInput.value, error: 'Please enter an email address.'},
     ]))
@@ -41,7 +39,7 @@
 <template>
   <main>
     <h2>Sign Up</h2>
-    <form @submit="email" action="/api/authentication/email" method="POST">
+    <form @submit.prevent="email" action="/api/authentication/email" method="POST">
       <fieldset>
         <legend>Email Address</legend>
 

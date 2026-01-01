@@ -25,9 +25,7 @@
   const protectedInput = useTemplateRef<HTMLInputElement>('protected');
   const isFetching = ref<boolean>(false);
 
-  async function signup(event: Event) {
-    event.preventDefault();
-
+  async function signup() {
     if (!validateInputs([
       { element: emailAddressInput.value, error: 'Please enter an email address.' },
       { element: nameInput.value, error: 'Please enter a name.' },
@@ -88,7 +86,7 @@
 <template>
   <main>
     <h2>Sign Up</h2>
-    <form @submit="signup" action="/api/authentication/signup" method="POST">
+    <form @submit.prevent="signup" action="/api/authentication/signup" method="POST">
       <fieldset>
         <legend>Sign Up</legend>
 

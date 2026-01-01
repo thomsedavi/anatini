@@ -16,9 +16,7 @@
     emailAddressInput.value!.focus()
   });
 
-  async function login(e: Event) {
-    e.preventDefault();
-
+  async function login() {
     if (!validateInputs([
       {element: emailAddressInput.value, error: 'Please enter an email address.'},
       {element: passwordInput.value, error: 'Please enter a password.'},
@@ -69,7 +67,7 @@
 <template>
   <main>
     <h2>Login</h2>
-    <form @submit="login" action="/api/authentication/login" method="POST">
+    <form @submit.prevent="login" action="/api/authentication/login" method="POST">
       <fieldset>
         <legend>Log In</legend>
 

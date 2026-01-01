@@ -3,6 +3,7 @@
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import type { Content, ContentElement, ErrorMessage, StatusActions } from '@/types';
+import { tidy } from './common/utils';
 
   const route = useRoute();
 
@@ -19,13 +20,13 @@
           .then((value: Content) => {
             content.value = value;
           })
-          .catch(() => { content.value = { heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
+          .catch(() => { content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
       },
       404: () => {
-        content.value = { heading: '404 Not Found', body: 'This content cannot be found' };
+        content.value = { error: true, heading: '404 Not Found', body: 'This content cannot be found' };
       },
       500: () => {
-        content.value = { heading: 'Unknown Error', body: 'There was a problem fetching this content, please reload the page' };
+        content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this content, please reload the page' };
       }
     };
 
@@ -82,7 +83,7 @@
     let paragraph: string[] = [];
 
     lines.forEach(line => {
-      const cleanedLine = line.replace(/\s+/g, ' ').trim();
+      const cleanedLine = tidy(line);
 
       if (cleanedLine.length > 0) {
         const replacementTags = [

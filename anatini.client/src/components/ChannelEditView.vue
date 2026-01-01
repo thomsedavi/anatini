@@ -170,7 +170,7 @@
     <template v-if="channel">
       <h3>{{ channel.name }}</h3>
 
-      <form @submit="uploadImage" :action="`/api/channels/${route.params.channelId}/images`" method="POST">
+      <form @submit.prevent="uploadImage" :action="`/api/channels/${route.params.channelId}/images`" method="POST">
         <fieldset>
           <legend>Set Default Card</legend>
 
@@ -204,7 +204,7 @@
         </fieldset>
       </form>
 
-      <form @submit="createContent" action="/api/channels/lotographia/contents" method="POST">
+      <form @submit.prevent="createContent" action="/api/channels/lotographia/contents" method="POST">
         <fieldset>
           <legend>Create Content</legend>
 
