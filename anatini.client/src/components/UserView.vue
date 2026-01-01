@@ -6,14 +6,14 @@
 
   const route = useRoute();
 
-  const fetching = ref<boolean>(true);
+  const fetchingUser = ref<boolean>(true);
   const user = ref<User | null>(null);
   const error = ref<{ header: string, body: string } | null>(null);
 
   watch([() => route.params.userId], fetchUser, { immediate: true });
 
   async function fetchUser(array: (() => string | string[])[]) {
-    fetching.value = true;
+    fetchingUser.value = true;
     error.value = user.value = null;
 
     const onfulfilled = async (value: User) => {
@@ -21,7 +21,7 @@
     };
 
     const onfinally = () => {
-      fetching.value = false
+      fetchingUser.value = false
     };
 
     const statusActions = {
@@ -37,7 +37,7 @@
   }
 
   function getHeading(): string {
-    if (fetching.value) {
+    if (fetchingUser.value) {
       return 'Fetching...';
     } if (user.value) {
       return user.value.name;
@@ -51,7 +51,7 @@
 
 <template>
   <main>
-    <article :aria-busy="fetching ? 'true' : 'false'" aria-live="polite" aria-labelledby="heading">
+    <article :aria-busy="fetchingUser" aria-live="polite" aria-labelledby="heading">
       <header>
         <figure>
           <img v-if="user?.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
@@ -67,8 +67,8 @@
         <h1 id="heading">{{ getHeading() }}</h1>
       </header>
 
-      <section v-if="fetching">
-        <p role="status">Please wait while the user information is fetched.</p>
+      <section v-if="fetchingUser">
+        <p role="status" class="visually-hidden">Please wait while the user information is fetched.</p>
                 
         <progress max="100">Loading...</progress>
       </section>
