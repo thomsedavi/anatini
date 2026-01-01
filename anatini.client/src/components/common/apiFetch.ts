@@ -34,6 +34,7 @@ export async function apiFetchAuthenticated<Type>(
   handleResponse?: (response: Response) => void
 ): Promise<void> {
   if (store.expiresUtc === null) {
+    statusActions?.[401]?.();
     return;
   }
 
