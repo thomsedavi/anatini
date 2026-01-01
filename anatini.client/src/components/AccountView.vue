@@ -1,36 +1,39 @@
 <script setup lang="ts">
-  import type { InputError, UserEdit } from '@/types';
+  import type { ErrorMessage, InputError, StatusActions, UserEdit } from '@/types';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
 
   const router = useRouter();
-  const user = ref<UserEdit | 'ERROR' | null>(null);
+  const user = ref<UserEdit | ErrorMessage | null>(null);
   const errorSummary = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
-
+  
   onMounted(() => {
-    const onfulfilled = async (value: UserEdit) => {
-      user.value = value;
-    };
-
-    const statusActions = {
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: UserEdit) => {
+            user.value = value;
+          })
+          .catch(() => { user.value = { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+      },
       401: () => {
         router.replace({ path: '/login', query: { redirect: '/account' } });
       },
       500: () => {
-        user.value = 'ERROR';
+        user.value = { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
       }
     };
 
-    apiFetchAuthenticated('account', onfulfilled, undefined, undefined, statusActions);
+    apiFetchAuthenticated('account', statusActions);
   });
 
   function getHeading(): string {
     if (user.value === null) {
       return 'Fetching...';
-    } if (user.value === 'ERROR') {
-      return 'Unknown Error';
+    } if ('heading' in user.value) {
+      return user.value.heading;
     } else {
       return 'Account Settings';
     }
@@ -50,9 +53,9 @@
         <progress max="100">Fetching account...</progress>
       </section>
 
-      <section v-else-if="user === 'ERROR'">
+      <section v-else-if="'body' in user">
         <p>
-          There was a problem fetching your account, please reload the page
+          {{ user.body }}
         </p>
       </section>
 

@@ -1,11 +1,10 @@
+export type ErrorMessage = { heading: string, body: string };
+export type StatusActions = { [id: number]: (response?: Response) => void };
+export type InputError = { id: string; message: string; };
+
 export type Image = {
   uri: string;
   altText: string | null;
-};
-
-export type InputError = {
-  id: string;
-  message: string;
 };
 
 export type User = {

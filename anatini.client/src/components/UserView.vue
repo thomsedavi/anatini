@@ -1,60 +1,54 @@
 <script setup lang="ts">
-  import type { User } from '@/types';
+  import type { ErrorMessage, StatusActions, User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetch } from './common/apiFetch';
 
   const route = useRoute();
 
-  const fetchingUser = ref<boolean>(true);
-  const user = ref<User | null>(null);
-  const error = ref<{ header: string, body: string } | null>(null);
+  const user = ref<User | ErrorMessage | null>(null);
 
   watch([() => route.params.userId], fetchUser, { immediate: true });
 
   async function fetchUser(array: (() => string | string[])[]) {
-    fetchingUser.value = true;
-    error.value = user.value = null;
+    user.value = null;
 
-    const onfulfilled = async (value: User) => {
-      user.value = value;
-    };
-
-    const onfinally = () => {
-      fetchingUser.value = false
-    };
-
-    const statusActions = {
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: User) => {
+            user.value = value;
+          })
+          .catch(() => { user.value = { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+      },
       404: () => {
-        error.value = {
-          header: '404 Not Found',
-          body: 'This user cannot be found',
-        };
+        user.value = { heading: '404 Not Found', body: 'This user cannot be found' };
+      },
+      500: () => {
+        user.value = { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };
       }
     };
 
-    apiFetch(`users/${array[0]}`, onfulfilled, onfinally, undefined, statusActions);
+    apiFetch(`users/${array[0]}`, statusActions);
   }
 
   function getHeading(): string {
-    if (fetchingUser.value) {
+    if (user.value === null) {
       return 'Fetching...';
-    } if (user.value) {
-      return user.value.name;
-    } else if (error.value) {
-      return error.value.header;
+    } else if ('heading' in user.value) {
+      return user.value.heading;
     } else {
-      return 'Unknown Error';
+      return user.value.name;
     }
   }
 </script>
 
 <template>
   <main>
-    <article :aria-busy="fetchingUser" aria-live="polite" aria-labelledby="heading-main">
+    <article :aria-busy="user === null" aria-live="polite" aria-labelledby="heading-main">
       <header>
         <figure>
-          <img v-if="user?.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
+          <img v-if="user && 'iconImage' in user && user.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
           <svg v-else
             view-box="0 0 400 400"
             width="400"
@@ -67,18 +61,20 @@
         <h1 id="heading-main">{{ getHeading() }}</h1>
       </header>
 
-      <section v-if="fetchingUser">
+      <section v-if="user === null">
         <p role="status" class="visually-hidden">Please wait while the user information is fetched.</p>
                 
-        <progress max="100">Loading...</progress>
+        <progress max="100">Fetching user...</progress>
       </section>
-      <section v-else-if="user" aria-label="User biography">
-        <p>User biography goes here</p>
-      </section>
-      <section v-else>
+
+      <section v-else-if="'body' in user">
         <p>
-          {{error?.body ?? 'Unknown Error'}}
+          {{ user.body }}
         </p>
+      </section>
+
+      <section v-else aria-label="User biography">
+        <p>User biography goes here</p>
       </section>
     </article>
   </main>

@@ -2,27 +2,34 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
-  import type { Content, ContentElement } from '@/types';
+  import type { Content, ContentElement, ErrorMessage, StatusActions } from '@/types';
 
   const route = useRoute();
 
-  const loading = ref<boolean>(false);
-  const content = ref<Content | null>(null);
+  const content = ref<Content | ErrorMessage | null>(null);
 
   watch([() => route.params.channelId, () => route.params.contentId], fetchContent, { immediate: true });
 
   async function fetchContent(array: (() => string | string[])[]) {
-    loading.value = true;
+    content.value = null;
 
-    const onfulfilled = (value: Content) => {
-      content.value = value;
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: Content) => {
+            content.value = value;
+          })
+          .catch(() => { content.value = { heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
+      },
+      404: () => {
+        content.value = { heading: '404 Not Found', body: 'This content cannot be found' };
+      },
+      500: () => {
+        content.value = { heading: 'Unknown Error', body: 'There was a problem fetching this content, please reload the page' };
+      }
     };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
-
-    await apiFetchAuthenticated(`channels/${array[0]}/contents/${array[1]}/preview`, onfulfilled, onfinally);
+    await apiFetchAuthenticated(`channels/${array[0]}/contents/${array[1]}/preview`, statusActions);
   }
 
   function sanitizeElementContent(elementContent: string): string {
@@ -134,12 +141,14 @@
   }
 
   function getMainHtml(): string {
-    if (loading.value) {
+    if (content.value === null) {
       return '<p>Loading...</p>';
-    } else if (content.value !== null && content.value.version.elements !== null) {
+    } else if ('heading' in content.value) {
+      return `<h1>${ content.value.heading }</h1>`;
+    } else if (content.value.version.elements) {
       return getContents(content.value.version.elements);
     } else {
-      return '<b>Error</b>';
+      return '<h1>Unknown Error</h1>';
     }
   }
 </script>

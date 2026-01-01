@@ -2,13 +2,11 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
-  import type { ContentEdit, ContentElement } from '@/types';
+  import type { ContentEdit, ErrorMessage, StatusActions } from '@/types';
 
   const route = useRoute();
 
-  const loading = ref<boolean>(false);
-  const content = ref<ContentEdit | null>(null);
-  const error = ref<string | null>(null);
+  const content = ref<ContentEdit | ErrorMessage | null>(null);
   const eTag = ref<string | null>(null);
   const input = ref<string>('');
   const textarea = ref<string>('');
@@ -25,170 +23,172 @@
   }
 
   async function fetchContent(channelId: string | string[], contentId: string | string[]) {
-    error.value = null;
-    loading.value = true;
+    content.value = null;
 
-    const onfulfilled = (value: ContentEdit) => {
-      content.value = value;
-    };
-
-    const onfinally = () => {
-      loading.value = false;
-    };
-
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
-
-    const statusActions = {
-      401: () => {
-        error.value = 'Unauthorised';
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: ContentEdit) => {
+            content.value = value;
+            eTag.value = response.headers.get("ETag");
+          })
+          .catch(() => { content.value = { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+      },
+      404: () => {
+        content.value = { heading: '404 Not Found', body: 'This user cannot be found' };
+      },
+      500: () => {
+        content.value = { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };
       }
     };
 
-    await apiFetchAuthenticated(`channels/${channelId}/contents/${contentId}/edit`, onfulfilled, onfinally, undefined, statusActions, handleResponse);
+    await apiFetchAuthenticated(`channels/${channelId}/contents/${contentId}/edit`, statusActions);
   }
 
   async function editElement(index: number) {
-    if (eTag.value === null || content.value === null) {
-      return;
-    }
+    console.log(index);
+    // if (eTag.value === null || content.value === null) {
+    //   return;
+    // }
 
-    const onfulfilled = async (value: string) => {
-      console.log(value);
-    };
+    // const onfulfilled = async (value: string) => {
+    //   console.log(value);
+    // };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
+    // const onfinally = () => {
+    //   loading.value = false;
+    // };
 
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
+    // const handleResponse = (response: Response) => {
+    //   eTag.value = response.headers.get("ETag");
+    // }
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('index', index.toString());
-    body.append('content', ' this  ');
+    // body.append('index', index.toString());
+    // body.append('content', ' this  ');
 
-    const init = { method: "PUT", headers: { "If-Match": eTag.value }, body: body };
+    // const init = { method: "PUT", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
+    // apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function publish() {
-    if (eTag.value === null || content.value === null) {
-      return;
-    }
+    // if (eTag.value === null || content.value === null) {
+    //   return;
+    // }
 
-    const onfulfilled = async (value: string) => {
-      console.log(value);
-    };
+    // const onfulfilled = async (value: string) => {
+    //   console.log(value);
+    // };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
+    // const onfinally = () => {
+    //   loading.value = false;
+    // };
 
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
+    // const handleResponse = (response: Response) => {
+    //   eTag.value = response.headers.get("ETag");
+    // }
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('status', 'Published');
+    // body.append('status', 'Published');
 
-    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
+    // const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    // apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function updateName() {
-    if (eTag.value === null || content.value === null) {
-      return;
-    }
+    // if (eTag.value === null || content.value === null) {
+    //   return;
+    // }
 
-    const onfulfilled = async (value: string) => {
-      console.log(value);
-    };
+    // const onfulfilled = async (value: string) => {
+    //   console.log(value);
+    // };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
+    // const onfinally = () => {
+    //   loading.value = false;
+    // };
 
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
+    // const handleResponse = (response: Response) => {
+    //   eTag.value = response.headers.get("ETag");
+    // }
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('name', input.value);
+    // body.append('name', input.value);
 
-    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
+    // const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    // apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function updateDate() {
-    if (eTag.value === null || content.value === null) {
-      return;
-    }
+    // if (eTag.value === null || content.value === null) {
+    //   return;
+    // }
 
-    const onfulfilled = async (value: string) => {
-      console.log(value);
-    };
+    // const onfulfilled = async (value: string) => {
+    //   console.log(value);
+    // };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
+    // const onfinally = () => {
+    //   loading.value = false;
+    // };
 
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
+    // const handleResponse = (response: Response) => {
+    //   eTag.value = response.headers.get("ETag");
+    // }
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('dateNZ', input.value);
+    // body.append('dateNZ', input.value);
 
-    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
+    // const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
+    // apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 
   async function contentElement(tag: string, element: string, insertAfter: number) {
-    if (eTag.value === null || content.value === null) {
-      return;
-    }
+    console.log(tag);
+    console.log(element);
+    console.log(insertAfter);
+    // if (eTag.value === null || content.value === null) {
+    //   return;
+    // }
 
-    const onfulfilled = async (value: ContentElement) => {
-      if (content.value?.version.elements?.some(element => (element.index === value.index + 1) || (element.index === value.index - 1))) {
-        // reload the content because it will have been respaced
-        await fetchContent(route.params.channelId, route.params.contentId);
-      } else {
-        const elements = content.value!.version.elements ?? [];
+    // const onfulfilled = async (value: ContentElement) => {
+    //   if (content.value?.version.elements?.some(element => (element.index === value.index + 1) || (element.index === value.index - 1))) {
+    //     // reload the content because it will have been respaced
+    //     await fetchContent(route.params.channelId, route.params.contentId);
+    //   } else {
+    //     const elements = content.value!.version.elements ?? [];
 
-        elements.push(value);
+    //     elements.push(value);
 
-        content.value!.version.elements = elements;
-      }
-    };
+    //     content.value!.version.elements = elements;
+    //   }
+    // };
 
-    const onfinally = () => {
-      loading.value = false;
-    };
+    // const onfinally = () => {
+    //   loading.value = false;
+    // };
 
-    const handleResponse = (response: Response) => {
-      eTag.value = response.headers.get("ETag");
-    }
+    // const handleResponse = (response: Response) => {
+    //   eTag.value = response.headers.get("ETag");
+    // }
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('insertAfter', insertAfter.toString());
-    body.append('tag', tag);
-    body.append('content', element);
+    // body.append('insertAfter', insertAfter.toString());
+    // body.append('tag', tag);
+    // body.append('content', element);
 
-    const init = { method: "POST", headers: { "If-Match": eTag.value }, body: body };
+    // const init = { method: "POST", headers: { "If-Match": eTag.value }, body: body };
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
+    // apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}/elements`, onfulfilled, onfinally, init, undefined, handleResponse);
   }
 </script>
 
@@ -196,9 +196,7 @@
   <main>
     <h2>ContentEditView</h2>
     <p>Current route path: {{ $route.fullPath }}</p>
-    <p v-if="loading">Loading...</p>
-    <p v-if="error">{{ error }}</p>
-    <template v-if="content">
+    <template v-if="content !== null && 'version' in content">
       <h1>{{ content.version.name }}</h1>
       <p>{{ content.version.dateNZ }}</p>
       <p>{{ new Date(content.version.dateNZ).getFullYear() }}</p>

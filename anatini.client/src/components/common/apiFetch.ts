@@ -1,37 +1,25 @@
 import { store } from "@/store";
-import type { IsAuthenticated } from "@/types";
+import type { IsAuthenticated, StatusActions } from "@/types";
 
-export async function apiFetch<Type>(
+export async function apiFetch(
   input: RequestInfo | URL,
-  onfulfilled: (value: Type) => void,
+  statusActions: StatusActions,
   onfinally?: () => void,
   init?: RequestInit,
-  statusActions?: {[id: number]: () => void},
-  handleResponse?: (response: Response) => void
 ): Promise<void> {
   await fetch(`/api/${input}`, init).then((response: Response) => {
-    if (response.ok) {
-      handleResponse?.(response);
-
-      response.json()
-        .then(onfulfilled)
-        .catch(() => { console.log('Unknown Error'); });
-    }
-
-    if (statusActions?.[response.status]) {
-      statusActions[response.status]();
+    if (statusActions[response.status]) {
+      statusActions[response.status](response);
     }
   })
   .finally(onfinally);
 }
 
-export async function apiFetchAuthenticated<Type>(
+export async function apiFetchAuthenticated(
   input: RequestInfo | URL,
-  onfulfilled: (value: Type) => void,
+  statusActions: StatusActions,
   onfinally?: () => void,
   init?: RequestInit,
-  statusActions?: {[id: number]: () => void},
-  handleResponse?: (response: Response) => void
 ): Promise<void> {
   if (store.expiresUtc === null) {
     statusActions?.[401]?.();
@@ -57,5 +45,5 @@ export async function apiFetchAuthenticated<Type>(
     });
   }
 
-  return await apiFetch(input, onfulfilled, onfinally, init, statusActions, handleResponse);
+  return await apiFetch(input, statusActions, onfinally, init);
 }

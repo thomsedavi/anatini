@@ -1,9 +1,7 @@
 <script setup lang="ts">
   import { ref, watch, useTemplateRef } from 'vue';
   import { useRoute } from 'vue-router';
-  import { reportValidity, validateInputs } from './common/validity';
   import type { ChannelEdit } from '@/types';
-  import { apiFetchAuthenticated } from './common/apiFetch';
 
   const route = useRoute();
 
@@ -49,44 +47,45 @@
   }
 
   async function createContent(event: Event) {
-    event.preventDefault();
+    console.log(event);
+    // event.preventDefault();
 
-    if (channel.value === null)
-      return;
+    // if (channel.value === null)
+    //   return;
 
-    if (!validateInputs([
-      { element: contentNameInput.value, error: 'Please enter content name.' },
-      { element: contentSlugInput.value, error: 'Please enter content slug.' },
-    ]))
-    {
-      return;
-    }
+    // if (!validateInputs([
+    //   { element: contentNameInput.value, error: 'Please enter content name.' },
+    //   { element: contentSlugInput.value, error: 'Please enter content slug.' },
+    // ]))
+    // {
+    //   return;
+    // }
 
-    isCreatingContent.value = true;
+    // isCreatingContent.value = true;
 
-    const body = new FormData();
+    // const body = new FormData();
 
-    body.append('name', contentNameInput.value!.value.trim());
-    body.append('slug', contentSlugInput.value!.value.trim());
+    // body.append('name', contentNameInput.value!.value.trim());
+    // body.append('slug', contentSlugInput.value!.value.trim());
 
-    const onfulfilled = (value: ChannelEdit) => {
-      channel.value = value;
-    };
+    // const onfulfilled = (value: ChannelEdit) => {
+    //   channel.value = value;
+    // };
 
-    const onfinally = () => {
-      isCreatingContent.value = false;
-    };
+    // const onfinally = () => {
+    //   isCreatingContent.value = false;
+    // };
 
-    const init = { method: "POST", body: body };
+    // const init = { method: "POST", body: body };
 
-    const statusActions = {
-      409: () => {
-        contentSlugInput.value!.setCustomValidity("Slug already in use!");
-        reportValidity([contentSlugInput.value]);
-      }
-    };
+    // const statusActions = {
+    //   409: () => {
+    //     contentSlugInput.value!.setCustomValidity("Slug already in use!");
+    //     reportValidity([contentSlugInput.value]);
+    //   }
+    // };
 
-    apiFetchAuthenticated(`channels/${route.params.channelId}/contents`, onfulfilled, onfinally, init, statusActions);
+    // apiFetchAuthenticated(`channels/${route.params.channelId}/contents`, onfulfilled, onfinally, init, statusActions);
   }
 
   const onChooseFile = (event: Event) => {
@@ -106,61 +105,62 @@
     uploadStatus.value = 'File selected';
   };
 
-  const updateDefaultCardImage = async (id: string) => {
-    try {
-      const formData = new FormData();
+  // const updateDefaultCardImage = async (id: string) => {
+  //   try {
+  //     const formData = new FormData();
 
-      formData.append('defaultCardImageId', id);
+  //     formData.append('defaultCardImageId', id);
 
-      const onfulfilled = () => {
-        //loading.value = false;
-      };
+  //     const onfulfilled = () => {
+  //       //loading.value = false;
+  //     };
 
-      const onfinally = () => {
-        //loading.value = false;
-      };
+  //     const onfinally = () => {
+  //       //loading.value = false;
+  //     };
 
-      const init: RequestInit = { method: "PATCH", body: formData };
+  //     const init: RequestInit = { method: "PATCH", body: formData };
 
-      apiFetchAuthenticated(`channels/${route.params.channelId}`, onfulfilled, onfinally, init);
-    } catch (error) {
-      console.error(error);
-      uploadStatus.value = "Upload failed";
-    }
-  }
+  //     apiFetchAuthenticated(`channels/${route.params.channelId}`, onfulfilled, onfinally, init);
+  //   } catch (error) {
+  //     console.error(error);
+  //     uploadStatus.value = "Upload failed";
+  //   }
+  // }
 
   const uploadImage = async (event: Event) => {
-    event.preventDefault();
+    console.log(event);
+    // event.preventDefault();
 
-    if (!chosenFile.value) return;
+    // if (!chosenFile.value) return;
 
-    uploadStatus.value = 'Uploading';
+    // uploadStatus.value = 'Uploading';
 
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    formData.append('file', chosenFile.value);
-    formData.append('type', 'Card');
+    // formData.append('file', chosenFile.value);
+    // formData.append('type', 'Card');
 
-    try {
-      const onfulfilled = async (value: { id: string, channelId: string }) => {
-        updateDefaultCardImage(value.id);
+    // try {
+    //   const onfulfilled = async (value: { id: string, channelId: string }) => {
+    //     updateDefaultCardImage(value.id);
 
-        uploadStatus.value = 'Upload successful';
+    //     uploadStatus.value = 'Upload successful';
 
-        chosenFile.value = null; 
-      };
+    //     chosenFile.value = null; 
+    //   };
 
-      const onfinally = () => {
-        //loading.value = false;
-      };
+    //   const onfinally = () => {
+    //     //loading.value = false;
+    //   };
 
-      const init: RequestInit = { method: "POST", body: formData };
+    //   const init: RequestInit = { method: "POST", body: formData };
 
-      apiFetchAuthenticated(`channels/${route.params.channelId}/images`, onfulfilled, onfinally, init);
-    } catch (error) {
-      console.error(error);
-      uploadStatus.value = "Upload failed";
-    }
+    //   apiFetchAuthenticated(`channels/${route.params.channelId}/images`, onfulfilled, onfinally, init);
+    // } catch (error) {
+    //   console.error(error);
+    //   uploadStatus.value = "Upload failed";
+    // }
   }
 </script>
 
