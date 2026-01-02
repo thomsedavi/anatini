@@ -64,6 +64,14 @@
       return;
     }
 
+    const tidiedName = tidy(inputName.value);
+    const tidiedBio = tidy(inputBio.value);
+
+    if (tidiedName === '') {
+      inputErrors.value = [{id: 'name-input', message: 'Name is required'}]
+      return;
+    }
+
     status.value = 'saving';
 
     const statusActions: StatusActions = {
@@ -71,11 +79,11 @@
         status.value = 'saved';
 
         if (user.value !== null && 'name' in user.value) {
-          user.value.name = tidy(inputName.value);
+          user.value.name = tidiedName;
         }
 
         if (user.value !== null && 'bio' in user.value) {
-          user.value.bio = tidy(inputBio.value);
+          user.value.bio = tidiedBio;
         }
       },
       400: (response?: Response) => {
@@ -106,12 +114,12 @@
 
     const body = new FormData();
 
-    if (user.value.name !== tidy(inputName.value)) {
-      body.append('name', tidy(inputName.value));
+    if (user.value.name !== tidiedName) {
+      body.append('name', tidiedName);
     }
 
-    if (user.value.bio !== tidy(inputBio.value)) {
-      body.append('bio', tidy(inputBio.value));
+    if (user.value.bio !== tidiedBio) {
+      body.append('bio', tidiedBio);
     }
 
     const init = { method: "PATCH", body: body };
@@ -180,7 +188,7 @@
         </aside>
 
         <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
-          <form @submit.prevent="patchAccount" action="/api/account" method="PATCH">
+          <form @submit.prevent="patchAccount" action="/api/account" method="PATCH" novalidate>
             <header>
               <h2>Public Information</h2>
             </header>
