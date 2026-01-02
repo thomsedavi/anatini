@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { ErrorMessage, InputError, StatusActions, UserEdit } from '@/types';
-  import { onMounted, ref } from 'vue';
+  import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { tidy } from './common/utils';
@@ -11,7 +11,8 @@
   const inputErrors = ref<InputError[]>([]);
   const tab = ref<'public' | 'private'>('public');
   const inputName = ref<string>('');
-  const status = ref<'saving' | 'saved' | 'waiting'>('waiting');
+  const inputBio = ref<string>('');
+  const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
   
   onMounted(() => {
     const statusActions: StatusActions = {
@@ -19,7 +20,9 @@
         response?.json()
           .then((value: UserEdit) => {
             user.value = value;
+            user.value.bio = user.value.bio?.replace(/\r\n/g, "\n") ?? null;
             inputName.value = value.name;
+            inputBio.value = value.bio ?? '';
           })
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
@@ -46,7 +49,7 @@
 
   function noChange(): boolean {
     if (user.value !== null && 'name' in user.value) {
-      return user.value.name === tidy(inputName.value);
+      return user.value.name === tidy(inputName.value) && (user.value.bio ?? '') === tidy(inputBio.value);
     } else {
       return true;
     }
@@ -65,25 +68,39 @@
 
     const statusActions: StatusActions = {
       204: () => {
-        if (user.value !== null && 'name' in user.value) {
-          user.value.name = inputName.value;
-        }
-        
         status.value = 'saved';
+
+        if (user.value !== null && 'name' in user.value) {
+          user.value.name = tidy(inputName.value);
+        }
+
+        if (user.value !== null && 'bio' in user.value) {
+          user.value.bio = tidy(inputBio.value);
+        }
       },
       400: (response?: Response) => {
-        response?.json().then(value => {
-          if (value.errors && 'Name' in value.errors) {
-            inputErrors.value = [{id: 'name-input', message: value.errors['Name'][0]}]
-          }
-        })
+        status.value = 'inactive';
 
-        status.value = 'waiting';
+        response?.json().then(value => {
+          if (value.errors) {
+            if ('Name' in value.errors) {
+              inputErrors.value = [{id: 'name-input', message: value.errors['Name'][0]}]
+            }
+
+            if ('Bio' in value.errors) {
+              inputErrors.value = [{id: 'bio-input', message: value.errors['Bio'][0]}]
+            }
+
+            nextTick(() => {
+              errorSummary.value?.focus();
+            });
+          }
+        });
       },
       500: () => {
-        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem updating your account, please reload the page' };
+        status.value = 'inactive';
 
-        status.value = 'waiting';
+        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem updating your account, please reload the page' };
       }
     };
 
@@ -91,6 +108,10 @@
 
     if (user.value.name !== tidy(inputName.value)) {
       body.append('name', tidy(inputName.value));
+    }
+
+    if (user.value.bio !== tidy(inputBio.value)) {
+      body.append('bio', tidy(inputBio.value));
     }
 
     const init = { method: "PATCH", body: body };
@@ -184,13 +205,33 @@
                   <small id="name-help">Your Name</small>
                   <small v-if="getError('name-input')" id="name-error" role="alert">{{ getError('name-input') ?? 'Unknown Error' }}</small>
                 </li>
+
+                <li>
+                  <label for="bio-input">Biography</label>
+                  <textarea
+                    id="bio-input"
+                    v-model="inputBio"
+                    name="bio"
+                    maxlength="256"
+                    :aria-invalid="getError('bio-input') ? true : undefined"
+                    :aria-errormessage="getError('bio-input') ? 'bio-error' : undefined"
+                    aria-describedby="bio-help bio-counter"></textarea>
+                  <small id="bio-help">Briefly describe yourself for your public profile.</small>
+                  <small v-if="getError('bio-input')" id="bio-error" role="alert">{{ getError('bio-input') ?? 'Unknown Error' }}</small>
+                  <output
+                    id="bio-counter"
+                    :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
+                    aria-atomic="true">
+                    Characters remaining: {{ 256 - tidy(inputBio).length }}
+                  </output>
+                </li>
               </ul>
             </fieldset>
 
             <footer>
               <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
-              <output name="status" for="name" aria-live="polite">{{ status === 'saved' ? 'Saved!' : undefined }}</output>
+              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>

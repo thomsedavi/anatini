@@ -101,6 +101,7 @@ namespace Anatini.Server.Users.Extensions
             {
                 Id = user.Id,
                 Name = user.Name,
+                Bio = user.Bio,
                 Emails = user.Emails.Select(ToUserEditEmailDto),
                 Sessions = user.Sessions?.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),

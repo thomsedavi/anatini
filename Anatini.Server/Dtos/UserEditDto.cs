@@ -5,6 +5,7 @@
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
+        public string? Bio { get; set; }
         public IEnumerable<UserEditChannelDto>? Channels { get; set; }
         public required IEnumerable<UserEditEmailDto> Emails { get; set; }
         public IEnumerable<UserEditSessionDto>? Sessions { get; set; }

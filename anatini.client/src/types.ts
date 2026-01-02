@@ -16,6 +16,7 @@ export type User = {
 export type UserEdit = {
   id: string;
   name: string;
+  bio: string | null;
   defaultSlug: string;
   emails: {
     address: string;

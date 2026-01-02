@@ -47,6 +47,22 @@ namespace Anatini.Server.Account
                 }
             }
 
+            if (Request.Form.Keys.Contains("bio"))
+            {
+                user.Bio = updateUser.Bio;
+
+                foreach (var alias in user.Aliases)
+                {
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+
+                    if (userAlias != null)
+                    {
+                        userAlias.UserBio = updateUser.Bio;
+                        await context.UpdateAsync(userAlias);
+                    }
+                }
+            }
+
             if (updateUser.IconImageId.HasValue)
             {
                 user.IconImageId = updateUser.IconImageId.Value;
