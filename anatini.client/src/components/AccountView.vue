@@ -4,13 +4,16 @@
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { tidy } from './common/utils';
+  import InputListItem from './common/InputListItem.vue';
 
   const router = useRouter();
   const user = ref<UserEdit | ErrorMessage | null>(null);
   const errorSummary = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
-  const tab = ref<'public' | 'private'>('public');
+  const tab = ref<'public' | 'private' | 'channels'>('public');
   const inputName = ref<string>('');
+  const inputChannelName = ref<string>('');
+  const inputChannelSlug = ref<string>('');
   const inputBio = ref<string>('');
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
   
@@ -56,7 +59,11 @@
   }
 
   function getError(id: string): string | undefined {
-    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+    return inputErrors.value.find(inputError => inputError.id === `${id}-input`)?.message;
+  }
+
+  async function postChannel() {
+    alert('todo');
   }
 
   async function patchAccount() {
@@ -183,6 +190,18 @@
                   Private
                 </button>
               </li>
+              <li role="presentation">
+                <button 
+                  id="tab-channels" 
+                  role="tab" 
+                  :aria-selected="tab === 'channels'"
+                  aria-controls="panel-channels" 
+                  type="button" 
+                  tabindex="-1"
+                  @click="tab = 'channels'">
+                  Channels
+                </button>
+              </li>
             </ul>
           </nav>
         </aside>
@@ -197,22 +216,13 @@
               <legend>Public</legend>
 
               <ul>
-                <li>
-                  <label for="name-input">Name</label>
-                  <input
-                    type="text"
-                    id="name-input"
-                    v-model="inputName"
-                    name="name"
-                    maxlength="64"
-                    aria-describedby="name-help"
-                    :aria-invalid="getError('name-input') ? true : undefined"
-                    :aria-errormessage="getError('name-input') ? 'name-error' : undefined"
-                    autocomplete="name"
-                    required />
-                  <small id="name-help">Your Name</small>
-                  <small v-if="getError('name-input')" id="name-error" role="alert">{{ getError('name-input') ?? 'Unknown Error' }}</small>
-                </li>
+                <InputListItem
+                  v-model="inputName"
+                  label="Name"
+                  name="name"
+                  id="name"
+                  :maxlength="64"
+                  :error="getError('name')" />
 
                 <li>
                   <label for="bio-input">Biography</label>
@@ -246,6 +256,42 @@
 
         <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tab !== 'private'">
           <h2>Private Information</h2>
+        </section>
+
+        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tab !== 'channels'">
+          <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate>
+            <header>
+              <h2>Create Channel</h2>
+            </header>
+
+            <fieldset>
+              <legend>Create Channel</legend>
+
+              <ul>
+                <InputListItem
+                  v-model="inputChannelName"
+                  label="Name"
+                  name="name"
+                  id="channel-name"
+                  :maxlength="64"
+                  :error="getError('channel-name')" />
+
+                <InputListItem
+                  v-model="inputChannelSlug"
+                  label="Slug"
+                  name="slug"
+                  id="channel-slug"
+                  :maxlength="64"
+                  :error="getError('channel-slug')" />
+              </ul>
+            </fieldset>
+
+            <footer>
+              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
+
+              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
+            </footer>
+          </form>
         </section>
       </template>
     </article>
