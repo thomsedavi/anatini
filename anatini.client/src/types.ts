@@ -22,11 +22,7 @@ export type UserEdit = {
     address: string;
     verified: boolean;
   }[];
-  channels: {
-    id: string;
-    name: string;
-    defaultSlug: string;
-  }[] | null;
+  channels: Channel[] | null;
   sessions: {
     id: string;
     userAgent: string;
@@ -50,8 +46,9 @@ export type Events = {
 };
 
 export type Channel = {
+  id: string;
   name: string;
-  slug: string;
+  defaultSlug: string;
   topContents: {
     defaultSlug: string;
     name: string;

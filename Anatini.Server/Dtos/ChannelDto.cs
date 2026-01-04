@@ -5,6 +5,7 @@
         public required string Name { get; set; }
         public IEnumerable<ChannelContentDto>? TopContents { get; set; }
         public required string DefaultSlug { get; set; }
+        public Guid Id { get; set; }
     }
 
     public class ChannelContentDto

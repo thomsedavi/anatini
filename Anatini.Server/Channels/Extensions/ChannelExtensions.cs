@@ -47,6 +47,7 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelDto
             {
+                Id = channel.Id,
                 Name = channel.Name,
                 TopContents = channel.TopPublishedContents?.Select(ToChannelContentDto),
                 DefaultSlug = channel.DefaultSlug

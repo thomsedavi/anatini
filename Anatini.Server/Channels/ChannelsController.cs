@@ -110,7 +110,7 @@ namespace Anatini.Server.Channels
         [HttpPost]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingUserContextAsync(UserId, async (user, context) =>

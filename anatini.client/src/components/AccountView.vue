@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, StatusActions, UserEdit } from '@/types';
+  import type { Channel, ErrorMessage, InputError, StatusActions, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
@@ -67,11 +67,14 @@
   async function postChannel() {
     inputErrors.value = [];
 
-    if (tidy(inputChannelName.value) === '') {
+    const tidiedName = tidy(inputChannelName.value);
+    const tidiedSlug = tidy(inputChannelSlug.value);
+
+    if (tidiedName === '') {
       inputErrors.value.push({id: 'channel-name', message: 'Channel name is required'});
     }
 
-    if (tidy(inputChannelSlug.value) === '') {
+    if (tidiedSlug === '') {
       inputErrors.value.push({id: 'channel-slug', message: 'Channel slug is required'});
     }
 
@@ -83,10 +86,76 @@
       return;
     }
 
-    alert('todo');
+    status.value = 'saving';
+
+    const statusActions: StatusActions = {
+      201: (response?: Response) => {
+        status.value = 'saved';
+        
+        response?.json().then((value: Channel) => {
+          if (user.value !== null && 'channels' in user.value) {
+            const channels = user.value.channels ?? [];
+            channels.push(value);
+            user.value.channels = channels;
+          }
+        });
+
+        inputChannelName.value = '';
+        inputChannelSlug.value = '';
+      },
+      400: (response?: Response) => {
+        status.value = 'inactive';
+
+        response?.json().then(value => {
+          if (value.errors) {
+            if ('Name' in value.errors) {
+              inputErrors.value = [{id: 'channel-name', message: value.errors['Name'][0]}]
+            }
+
+            if ('Slug' in value.errors) {
+              inputErrors.value = [{id: 'channel-slug', message: value.errors['Slug'][0]}]
+            }
+
+            nextTick(() => {
+              errorSectionRef.value?.focus();
+            });
+          }
+        });
+      },
+      409: () => {
+        status.value = 'inactive';
+
+        inputErrors.value = [{ id: 'channel-slug', message: 'Slug already in use' }]
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      },
+      500: () => {
+        status.value = 'inactive';
+
+        // TODO handle this better
+        inputErrors.value = [{ id: 'channel-name', message: 'Unknown Error' }]
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      }
+    }
+
+    const body = new FormData();
+
+    body.append('name', tidiedName);
+    body.append('slug', tidiedSlug);
+
+    const init = { method: "POST", body: body };
+
+    apiFetchAuthenticated('channels', statusActions, undefined, init);
   }
 
   async function patchAccount() {
+    inputErrors.value = [];
+
     if (user.value === null || 'error' in user.value) {
       return;
     }
@@ -95,7 +164,12 @@
     const tidiedBio = tidy(inputBio.value);
 
     if (tidiedName === '') {
-      inputErrors.value = [{id: 'name', message: 'Name is required'}]
+      inputErrors.value = [{ id: 'name', message: 'Name is required' }];
+
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
       return;
     }
 
@@ -135,7 +209,12 @@
       500: () => {
         status.value = 'inactive';
 
-        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem updating your account, please reload the page' };
+        // TODO handle this better
+        inputErrors.value = [{ id: 'name', message: 'Unknown Error' }]
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
       }
     };
 
@@ -332,7 +411,7 @@
               <h3 id="section-your-channels">Your Channels</h3>
             </header>
 
-            <ul role="list" v-if="(user.channels?.length ?? 0) > 0">
+            <ul role="list" v-if="(user.channels?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
               <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
                 <article :aria-labelledby="`channel-${channel.defaultSlug}`">
                   <header>
