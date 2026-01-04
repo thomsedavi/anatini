@@ -416,7 +416,7 @@
                 <article :aria-labelledby="`channel-${channel.defaultSlug}`">
                   <header>
                     <h4 :id="`channel-${channel.defaultSlug}`">
-                      <a>{{channel.name}}</a>
+                      <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
                     </h4>
                   </header>
 
