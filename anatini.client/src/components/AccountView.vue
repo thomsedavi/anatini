@@ -8,7 +8,7 @@
 
   const router = useRouter();
   const user = ref<UserEdit | ErrorMessage | null>(null);
-  const errorSummary = ref<HTMLElement | null>(null);
+  const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const tab = ref<'public' | 'private' | 'channels'>('public');
   const inputName = ref<string>('');
@@ -16,6 +16,8 @@
   const inputChannelSlug = ref<string>('');
   const inputBio = ref<string>('');
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
+
+  const channelPermissions = ["Admin", "Trusted"];
   
   onMounted(() => {
     const statusActions: StatusActions = {
@@ -59,10 +61,28 @@
   }
 
   function getError(id: string): string | undefined {
-    return inputErrors.value.find(inputError => inputError.id === `${id}-input`)?.message;
+    return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
   async function postChannel() {
+    inputErrors.value = [];
+
+    if (tidy(inputChannelName.value) === '') {
+      inputErrors.value.push({id: 'channel-name', message: 'Channel name is required'});
+    }
+
+    if (tidy(inputChannelSlug.value) === '') {
+      inputErrors.value.push({id: 'channel-slug', message: 'Channel slug is required'});
+    }
+
+    if (inputErrors.value.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
+      return;
+    }
+
     alert('todo');
   }
 
@@ -75,7 +95,7 @@
     const tidiedBio = tidy(inputBio.value);
 
     if (tidiedName === '') {
-      inputErrors.value = [{id: 'name-input', message: 'Name is required'}]
+      inputErrors.value = [{id: 'name', message: 'Name is required'}]
       return;
     }
 
@@ -99,15 +119,15 @@
         response?.json().then(value => {
           if (value.errors) {
             if ('Name' in value.errors) {
-              inputErrors.value = [{id: 'name-input', message: value.errors['Name'][0]}]
+              inputErrors.value = [{id: 'name', message: value.errors['Name'][0]}]
             }
 
             if ('Bio' in value.errors) {
-              inputErrors.value = [{id: 'bio-input', message: value.errors['Bio'][0]}]
+              inputErrors.value = [{id: 'bio', message: value.errors['Bio'][0]}]
             }
 
             nextTick(() => {
-              errorSummary.value?.focus();
+              errorSectionRef.value?.focus();
             });
           }
         });
@@ -155,11 +175,11 @@
       </section>
 
       <template v-else>
-        <section v-if="inputErrors.length > 0" ref="errorSummary" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+        <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
           <h2 id="heading-errors">There was a problem updating your account</h2>
           <ul>
             <li v-for="error in inputErrors" :key="'error' + error.id">
-              <a :href="'#' + error.id">{{ error.message }}</a>
+              <a :href="'#input-' + error.id">{{ error.message }}</a>
             </li>
           </ul>
         </section>
@@ -175,7 +195,7 @@
                   aria-controls="panel-public" 
                   type="button"
                   @click="tab = 'public'">
-                  Public
+                  Display
                 </button>
               </li>
               <li role="presentation">
@@ -187,7 +207,7 @@
                   type="button" 
                   tabindex="-1"
                   @click="tab = 'private'">
-                  Private
+                  Privacy & Security
                 </button>
               </li>
               <li role="presentation">
@@ -207,11 +227,11 @@
         </aside>
 
         <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
-          <form @submit.prevent="patchAccount" action="/api/account" method="PATCH" novalidate>
-            <header>
-              <h2>Public Information</h2>
-            </header>
+          <header>
+            <h2>Display</h2>
+          </header>
 
+          <form @submit.prevent="patchAccount" action="/api/account" method="PATCH" novalidate>
             <fieldset>
               <legend>Public</legend>
 
@@ -222,20 +242,22 @@
                   name="name"
                   id="name"
                   :maxlength="64"
-                  :error="getError('name')" />
+                  :error="getError('name')"
+                  help="Your display name"
+                  autocomplete="name" />
 
                 <li>
-                  <label for="bio-input">Biography</label>
+                  <label for="input-bio">Biography</label>
                   <textarea
-                    id="bio-input"
+                    id="input-bio"
                     v-model="inputBio"
                     name="bio"
                     maxlength="256"
-                    :aria-invalid="getError('bio-input') ? true : undefined"
-                    :aria-errormessage="getError('bio-input') ? 'bio-error' : undefined"
+                    :aria-invalid="getError('bio') ? true : undefined"
+                    :aria-errormessage="getError('bio') ? 'bio-error' : undefined"
                     aria-describedby="bio-help bio-counter"></textarea>
                   <small id="bio-help">Briefly describe yourself for your public profile.</small>
-                  <small v-if="getError('bio-input')" id="bio-error" role="alert">{{ getError('bio-input') ?? 'Unknown Error' }}</small>
+                  <small v-if="getError('bio')" id="bio-error" role="alert">{{ getError('bio') ?? 'Unknown Error' }}</small>
                   <output
                     id="bio-counter"
                     :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
@@ -255,43 +277,81 @@
         </section>
 
         <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tab !== 'private'">
-          <h2>Private Information</h2>
+          <header>
+            <h2>Privacy & Security</h2>
+          </header>
         </section>
 
-        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tab !== 'channels'">
-          <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate>
-            <header>
-              <h2>Create Channel</h2>
-            </header>
+        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tab !== 'channels'" >
+          <header>
+            <h2>Channels</h2>
+          </header>
 
+          <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
             <fieldset>
               <legend>Create Channel</legend>
 
               <ul>
                 <InputListItem
                   v-model="inputChannelName"
-                  label="Name"
+                  label="Name*"
                   name="name"
                   id="channel-name"
                   :maxlength="64"
+                  help="The display name of your channel"
                   :error="getError('channel-name')" />
 
                 <InputListItem
                   v-model="inputChannelSlug"
-                  label="Slug"
+                  label="Slug*"
                   name="slug"
                   id="channel-slug"
                   :maxlength="64"
+                  help="The unique URL of your channel, lower case with hyphens (e.g. 'my-anatini-channel')"
                   :error="getError('channel-slug')" />
               </ul>
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
+              <button type="submit" :disabled="status === 'saving' || tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
 
               <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
+
+          <article v-else>
+            <header>
+              <h3>Insufficient permission</h3>
+            </header>
+
+            <p>You do not currently have permission to create Channels</p>
+          </article>
+
+          <section aria-labelledby="section-your-channels">
+            <header>
+              <h3 id="section-your-channels">Your Channels</h3>
+            </header>
+
+            <ul role="list" v-if="(user.channels?.length ?? 0) > 0">
+              <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
+                <article :aria-labelledby="`channel-${channel.defaultSlug}`">
+                  <header>
+                    <h4 :id="`channel-${channel.defaultSlug}`">
+                      <a>{{channel.name}}</a>
+                    </h4>
+                  </header>
+
+                  <p>Channel Description Goes Here</p>
+
+                  <footer>
+                    <small>Slug: <code>{{ channel.defaultSlug }}</code></small>
+                  </footer>
+                </article>
+              </li>
+            </ul>
+
+            <p v-else>You do not have any channels</p>
+          </section>
         </section>
       </template>
     </article>

@@ -6,25 +6,27 @@
     name: { type: String, required: true },
     id: { type: String, required: true },
     error: { type: String, required: false },
-    maxlength: {type: Number, required: true }
+    maxlength: {type: Number, required: true },
+    help: {type: String, required: true },
+    autocomplete: {type: String, required: false }
   });
 </script>
 
 <template>
   <li>
-      <label :for="`${id}-input`">{{ props.label }}</label>
+      <label :for="`input-${id}`">{{ props.label }}</label>
       <input
       type="text"
-      :id="`${id}-input`"
+      :id="`input-${id}`"
       v-model="model"
       :name="name"
       :maxlength="maxlength"
-      :aria-describedby="`${id}-help`"
+      :aria-describedby="`help-${id}`"
       :aria-invalid="error ? true : undefined"
-      :aria-errormessage="error ? `${id}-error` : undefined"
-      :autocomplete="id"
+      :aria-errormessage="error ? `error-${id}` : undefined"
+      :autocomplete="autocomplete ?? 'on'"
       required />
-      <small :id="`${id}-help`">Channel Slug</small>
-      <small v-if="error" :id="`${id}-error`" role="alert">{{ error ?? 'Unknown Error' }}</small>
+      <small :id="`help-${id}`">{{ help }}</small>
+      <small v-if="error" :id="`error-${id}`" role="alert">{{ error ?? 'Unknown Error' }}</small>
    </li>
 </template>
