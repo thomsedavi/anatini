@@ -2,7 +2,7 @@
   import type { ErrorMessage, StatusActions, User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetch } from './common/apiFetch';import { formatParagraph } from './common/utils';
 
   const route = useRoute();
 
@@ -18,14 +18,15 @@
         response?.json()
           .then((value: User) => {
             user.value = value;
+            user.value.bio = user.value.bio?.replace(/\r\n/g, "\n") ?? null;
           })
-          .catch(() => { user.value = { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+          .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       404: () => {
-        user.value = { heading: '404 Not Found', body: 'This user cannot be found' };
+        user.value = { error: true, heading: '404 Not Found', body: 'This user cannot be found' };
       },
       500: () => {
-        user.value = { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };
+        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };
       }
     };
 
@@ -67,14 +68,13 @@
         <progress max="100">Fetching user...</progress>
       </section>
 
-      <section v-else-if="'body' in user">
+      <section v-else-if="'error' in user">
         <p>
           {{ user.body }}
         </p>
       </section>
 
-      <section v-else aria-label="User biography">
-        <p>User biography goes here</p>
+      <section v-else-if="user.bio" aria-label="User biography" v-html="formatParagraph(user.bio)">
       </section>
     </article>
   </main>
