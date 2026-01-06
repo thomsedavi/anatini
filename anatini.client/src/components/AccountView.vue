@@ -45,7 +45,7 @@
   function getHeading(): string {
     if (user.value === null) {
       return 'Fetching...';
-    } if ('heading' in user.value) {
+    } if ('error' in user.value) {
       return user.value.heading;
     } else {
       return 'Account Settings';
@@ -247,7 +247,7 @@
         <progress max="100">Fetching account...</progress>
       </section>
 
-      <section v-else-if="'body' in user">
+      <section v-else-if="'error' in user">
         <p>
           {{ user.body }}
         </p>

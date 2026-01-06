@@ -18,6 +18,8 @@ namespace Anatini.Server.Channels
 
     public class UpdateChannel
     {
+        [MaxLength(64), DataType(DataType.Text)]
+        public string? Name { get; set; }
         public Guid? DefaultCardImageId { get; set; }
     }
 
