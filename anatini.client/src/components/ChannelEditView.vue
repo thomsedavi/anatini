@@ -139,23 +139,19 @@
           </ul>
         </section>
 
-        <aside>
-          <nav aria-label="Channel settings sections">
-            <ul role="tablist">
-              <li role="presentation">
-                <button 
-                  id="tab-public" 
-                  role="tab" 
-                  :aria-selected="tab === 'public'"
-                  aria-controls="panel-public" 
-                  type="button"
-                  @click="tab = 'public'">
-                  Display
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </aside>
+        <ul role="tablist">
+          <li role="presentation">
+            <button 
+              id="tab-public" 
+              role="tab" 
+              :aria-selected="tab === 'public'"
+              aria-controls="panel-public" 
+              type="button"
+              @click="tab = 'public'">
+              Display
+            </button>
+          </li>
+        </ul>
 
         <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
           <header>

@@ -263,47 +263,43 @@
           </ul>
         </section>
 
-        <aside>
-          <nav aria-label="Account settings sections">
-            <ul role="tablist">
-              <li role="presentation">
-                <button 
-                  id="tab-public" 
-                  role="tab" 
-                  :aria-selected="tab === 'public'"
-                  aria-controls="panel-public" 
-                  type="button"
-                  @click="tab = 'public'">
-                  Display
-                </button>
-              </li>
-              <li role="presentation">
-                <button 
-                  id="tab-private" 
-                  role="tab" 
-                  :aria-selected="tab === 'private'"
-                  aria-controls="panel-private" 
-                  type="button" 
-                  tabindex="-1"
-                  @click="tab = 'private'">
-                  Privacy & Security
-                </button>
-              </li>
-              <li role="presentation">
-                <button 
-                  id="tab-channels" 
-                  role="tab" 
-                  :aria-selected="tab === 'channels'"
-                  aria-controls="panel-channels" 
-                  type="button" 
-                  tabindex="-1"
-                  @click="tab = 'channels'">
-                  Channels
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </aside>
+        <ul role="tablist">
+          <li role="presentation">
+            <button 
+              id="tab-public" 
+              role="tab" 
+              :aria-selected="tab === 'public'"
+              aria-controls="panel-public" 
+              type="button"
+              @click="tab = 'public'">
+              Display
+            </button>
+          </li>
+          <li role="presentation">
+            <button 
+              id="tab-private" 
+              role="tab" 
+              :aria-selected="tab === 'private'"
+              aria-controls="panel-private" 
+              type="button" 
+              tabindex="-1"
+              @click="tab = 'private'">
+              Privacy & Security
+            </button>
+          </li>
+          <li role="presentation">
+            <button 
+              id="tab-channels" 
+              role="tab" 
+              :aria-selected="tab === 'channels'"
+              aria-controls="panel-channels" 
+              type="button" 
+              tabindex="-1"
+              @click="tab = 'channels'">
+              Channels
+            </button>
+          </li>
+        </ul>
 
         <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
           <header>
