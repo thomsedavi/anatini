@@ -1,20 +1,20 @@
 <script setup lang="ts">
   const model = defineModel<string>();
 
-  const props = defineProps({
+  defineProps({
     label: { type: String, required: true },
     name: { type: String, required: true },
     id: { type: String, required: true },
     error: { type: String, required: false },
-    maxlength: {type: Number, required: true },
-    help: {type: String, required: true },
-    autocomplete: {type: String, required: false }
+    maxlength: { type: Number, required: true },
+    help: { type: String, required: true },
+    autocomplete: { type: String, required: false }
   });
 </script>
 
 <template>
   <li>
-      <label :for="`input-${id}`">{{ props.label }}</label>
+      <label :for="`input-${id}`">{{ label }}</label>
       <input
       type="text"
       :id="`input-${id}`"

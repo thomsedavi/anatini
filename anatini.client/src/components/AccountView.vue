@@ -3,19 +3,28 @@
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
-  import { tidy } from './common/utils';
+  import { getTabIndex, tidy } from './common/utils';
   import InputListItem from './common/InputListItem.vue';
+  import TabListItem from './common/TabListItem.vue';
 
   const router = useRouter();
   const user = ref<UserEdit | ErrorMessage | null>(null);
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
-  const tab = ref<'public' | 'private' | 'channels'>('public');
   const inputName = ref<string>('');
   const inputChannelName = ref<string>('');
   const inputChannelSlug = ref<string>('');
   const inputBio = ref<string>('');
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
+  const tabIndex = ref<number>(0);
+
+  const tabs = ref([
+    { id: 'public', text: 'Display' },
+    { id: 'private', text: 'Privacy & Security' },
+    { id: 'channels', text: 'Channels' }
+  ]);
+
+  const tabRefs = ref<HTMLButtonElement[]>([]);
 
   const channelPermissions = ["Admin", "Trusted"];
   
@@ -232,6 +241,21 @@
 
     apiFetchAuthenticated('account', statusActions, undefined, init);
   }
+
+  function handleKeyDown(event: KeyboardEvent, index: number): void {
+    const newIndex = getTabIndex(event.key, index, tabs.value.length);
+
+    if (newIndex === undefined) {
+      return;
+    }
+
+    event.preventDefault();
+    tabIndex.value = newIndex;
+    
+    nextTick(() => {
+      tabRefs.value[newIndex].focus();
+    })
+  }
 </script>
 
 <template>
@@ -263,45 +287,18 @@
           </ul>
         </section>
 
-        <ul role="tablist">
-          <li role="presentation">
-            <button 
-              id="tab-public" 
-              role="tab" 
-              :aria-selected="tab === 'public'"
-              aria-controls="panel-public" 
-              type="button"
-              @click="tab = 'public'">
-              Display
-            </button>
-          </li>
-          <li role="presentation">
-            <button 
-              id="tab-private" 
-              role="tab" 
-              :aria-selected="tab === 'private'"
-              aria-controls="panel-private" 
-              type="button" 
-              tabindex="-1"
-              @click="tab = 'private'">
-              Privacy & Security
-            </button>
-          </li>
-          <li role="presentation">
-            <button 
-              id="tab-channels" 
-              role="tab" 
-              :aria-selected="tab === 'channels'"
-              aria-controls="panel-channels" 
-              type="button" 
-              tabindex="-1"
-              @click="tab = 'channels'">
-              Channels
-            </button>
-          </li>
+        <ul role="tablist" aria-label="Settings Options">
+          <TabListItem v-for="(tab, index) in tabs"
+            :key="tab.id"
+            :selected="tabIndex === index"
+            @click="tabIndex = index"
+            @keydown="handleKeyDown($event, index)"
+            :text="tab.text"
+            :id="tab.id"
+            :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </ul>
 
-        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
+        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
           <header>
             <h2>Display</h2>
           </header>
@@ -351,13 +348,13 @@
           </form>
         </section>
 
-        <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tab !== 'private'">
+        <section id="panel-private" role="tabpanel" tabindex="0" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
           <header>
             <h2>Privacy & Security</h2>
           </header>
         </section>
 
-        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tab !== 'channels'" >
+        <section id="panel-channels" role="tabpanel" tabindex="0" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
           <header>
             <h2>Channels</h2>
           </header>

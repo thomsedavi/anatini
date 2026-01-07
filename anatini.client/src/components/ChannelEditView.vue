@@ -3,17 +3,25 @@
   import { nextTick, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
-  import { tidy } from './common/utils';
+  import { getTabIndex, tidy } from './common/utils';
   import InputListItem from './common/InputListItem.vue';
+  import TabListItem from './common/TabListItem.vue';
 
   const route = useRoute();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
-  const tab = ref<'public'>('public');
+  const tabIndex = ref<number>(0);
   const inputName = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
   const errorSectionRef = ref<HTMLElement | null>(null);
+
+  const tabs = ref([
+    { id: 'public', text: 'Display' },
+    { id: 'contents', text: 'Contents' }
+  ]);
+
+  const tabRefs = ref<HTMLButtonElement[]>([]);
 
   watch([() => route.params.channelId], fetchChannel, { immediate: true });
 
@@ -108,6 +116,21 @@
 
     apiFetchAuthenticated(`channels/${channel.value.id}`, statusActions, undefined, init);
   }
+
+  function handleKeyDown(event: KeyboardEvent, index: number): void {
+    const newIndex = getTabIndex(event.key, index, tabs.value.length);
+
+    if (newIndex === undefined) {
+      return;
+    }
+
+    event.preventDefault();
+    tabIndex.value = newIndex;
+    
+    nextTick(() => {
+      tabRefs.value[newIndex].focus();
+    })
+  }
 </script>
 
 <template>
@@ -139,21 +162,18 @@
           </ul>
         </section>
 
-        <ul role="tablist">
-          <li role="presentation">
-            <button 
-              id="tab-public" 
-              role="tab" 
-              :aria-selected="tab === 'public'"
-              aria-controls="panel-public" 
-              type="button"
-              @click="tab = 'public'">
-              Display
-            </button>
-          </li>
+        <ul role="tablist" aria-label="Settings Options">
+          <TabListItem v-for="(tab, index) in tabs"
+            :key="tab.id"
+            :selected="tabIndex === index"
+            @click="tabIndex = index"
+            @keydown="handleKeyDown($event, index)"
+            :text="tab.text"
+            :id="tab.id"
+            :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </ul>
 
-        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tab !== 'public'">
+        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
           <header>
             <h2>Display</h2>
           </header>

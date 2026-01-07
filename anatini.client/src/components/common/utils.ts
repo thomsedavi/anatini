@@ -80,6 +80,20 @@ export function formatParagraph(elementContent: string): string {
   return result;
 }
 
+export function getTabIndex(key: string, index: number, length: number): number | undefined {
+  if (key === 'ArrowRight') {
+    return (index + 1) % length;
+  } else if (key === 'ArrowLeft') {
+    return (index - 1 + length) % length;
+  } else if (key === 'Home') {
+    return 0;
+  } else if (key === 'End') {
+    return length - 1;
+  } else {
+    return;
+  }
+}
+
 /*
 Input
 ```
