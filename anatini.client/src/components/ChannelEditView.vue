@@ -4,7 +4,7 @@
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
   import { getTabIndex, tidy } from './common/utils';
-  import InputListItem from './common/InputListItem.vue';
+  import InputText from './common/InputText.vue';
   import TabListItem from './common/TabListItem.vue';
 
   const route = useRoute();
@@ -141,7 +141,7 @@
       </header>
 
       <section v-if="channel === null">
-        <p role="status" class="visually-hidden">Please wait while the channel information is fetched.</p>
+        <p role="status" class="visuallyhidden">Please wait while the channel information is fetched.</p>
                 
         <progress max="100">Fetching account...</progress>
       </section>
@@ -180,25 +180,23 @@
 
           <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="PATCH" novalidate>
             <fieldset>
-              <legend>Public</legend>
+              <legend>Display</legend>
 
-              <ul>
-                <InputListItem
-                  v-model="inputName"
-                  label="Name"
-                  name="name"
-                  id="name"
-                  :maxlength="64"
-                  :error="getError('name')"
-                  help="Channel display name"
-                  autocomplete="name" />
-              </ul>
+              <InputText
+                v-model="inputName"
+                label="Name"
+                name="name"
+                id="name"
+                :maxlength="64"
+                :error="getError('name')"
+                help="Channel display name"
+                autocomplete="name" />
             </fieldset>
 
             <footer>
               <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>

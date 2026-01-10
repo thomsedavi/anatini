@@ -59,7 +59,6 @@ body {
 }
 
 input {
-  display: block;
   background-color: var(--input);
   border-color: var(--input-background);
   border-style:solid
@@ -111,6 +110,21 @@ main {
         > img {
           border-radius: 50%;
           object-fit: cover;
+        }
+      }
+    }
+
+    > section {
+      > form {
+        > fieldset {
+          span {
+            display: inline-block;
+            vertical-align: top;
+
+            > small {
+              display: block;
+            }
+          }
         }
       }
     }
@@ -211,11 +225,6 @@ a {
   cursor: pointer;
 }
 
-label {
-  display: block;
-  font-weight: bold;
-}
-
 @media screen and (max-width: 600px) {
   nav {
     position: relative;
@@ -233,14 +242,13 @@ label {
   }
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
   height: 1px;
-  padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }

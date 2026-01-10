@@ -4,7 +4,7 @@
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { getTabIndex, tidy } from './common/utils';
-  import InputListItem from './common/InputListItem.vue';
+  import InputText from './common/InputText.vue';
   import TabListItem from './common/TabListItem.vue';
 
   const router = useRouter();
@@ -331,7 +331,7 @@
       </header>
 
       <section v-if="user === null">
-        <p role="status" class="visually-hidden">Please wait while the user information is fetched.</p>
+        <p role="status" class="visuallyhidden">Please wait while the user information is fetched.</p>
                 
         <progress max="100">Fetching account...</progress>
       </section>
@@ -372,43 +372,43 @@
             <fieldset>
               <legend>Public</legend>
 
-              <ul>
-                <InputListItem
-                  v-model="inputName"
-                  label="Name"
-                  name="name"
-                  id="name"
-                  :maxlength="64"
-                  :error="getError('name')"
-                  help="Your display name"
-                  autocomplete="name" />
+              <InputText
+                v-model="inputName"
+                label="Name"
+                name="name"
+                id="name"
+                :maxlength="64"
+                :error="getError('name')"
+                help="Your display name"
+                autocomplete="name" />
 
-                <li>
-                  <label for="input-bio">Biography</label>
-                  <textarea
-                    id="input-bio"
-                    v-model="inputBio"
-                    name="bio"
-                    maxlength="256"
-                    :aria-invalid="getError('bio') ? true : undefined"
-                    :aria-errormessage="getError('bio') ? 'bio-error' : undefined"
-                    aria-describedby="bio-help bio-counter"></textarea>
-                  <small id="bio-help">Briefly describe yourself for your public profile.</small>
-                  <small v-if="getError('bio')" id="bio-error" role="alert">{{ getError('bio') ?? 'Unknown Error' }}</small>
-                  <output
-                    id="bio-counter"
-                    :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
-                    aria-atomic="true">
-                    Characters remaining: {{ 256 - tidy(inputBio).length }}
-                  </output>
-                </li>
-              </ul>
+              <br>
+
+              <label for="input-bio">Biography</label>
+              <span>
+              <textarea
+                id="input-bio"
+                v-model="inputBio"
+                name="bio"
+                maxlength="256"
+                :aria-invalid="getError('bio') ? true : undefined"
+                :aria-errormessage="getError('bio') ? 'bio-error' : undefined"
+                aria-describedby="bio-help bio-counter"></textarea>
+              <small id="bio-help">Briefly describe yourself for your public profile.</small>
+              <small v-if="getError('bio')" id="bio-error" role="alert">{{ getError('bio') ?? 'Unknown Error' }}</small>
+              <output
+                id="bio-counter"
+                :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
+                aria-atomic="true">
+                Characters remaining: {{ 256 - tidy(inputBio).length }}
+              </output>
+              </span>
             </fieldset>
 
             <footer>
               <button type="submit" :disabled="status === 'saving' || noChangeDisplay()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>
@@ -422,19 +422,17 @@
             <fieldset>
               <legend>Privacy & Security</legend>
 
-              <ul>
-                <li>
-                  <label for="input-protected">Protected</label>
-                  <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
-                  <small id="help-protected">Your account will only be visible to trusted users</small>
-                </li>
-              </ul>
+              <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
+              <span>
+                <label for="input-protected">Protected</label>
+                <small id="help-protected">Your account will only be visible to trusted users</small>
+              </span>
             </fieldset>
 
             <footer>
               <button type="submit" :disabled="status === 'saving' || noChangePrivacy()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>
@@ -448,8 +446,7 @@
             <fieldset>
               <legend>Create Channel</legend>
 
-              <ul>
-                <InputListItem
+                <InputText
                   v-model="inputChannelName"
                   label="Name*"
                   name="name"
@@ -458,21 +455,22 @@
                   help="The display name of your channel"
                   :error="getError('channel-name')" />
 
-                <InputListItem
+                <br>
+
+                <InputText
                   v-model="inputChannelSlug"
                   label="Slug*"
                   name="slug"
                   id="channel-slug"
                   :maxlength="64"
-                  help="The unique URL of your channel, lower case with hyphens (e.g. 'my-anatini-channel')"
+                  help="lower case with hyphens (e.g. 'my-anatini-channel')"
                   :error="getError('channel-slug')" />
-              </ul>
             </fieldset>
 
             <footer>
               <button type="submit" :disabled="status === 'saving' || tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
 
-              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
 

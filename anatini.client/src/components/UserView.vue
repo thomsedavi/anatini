@@ -63,7 +63,7 @@
       </header>
 
       <section v-if="user === null">
-        <p role="status" class="visually-hidden">Please wait while the user information is fetched.</p>
+        <p role="status" class="visuallyhidden">Please wait while the user information is fetched.</p>
                 
         <progress max="100">Fetching user...</progress>
       </section>
