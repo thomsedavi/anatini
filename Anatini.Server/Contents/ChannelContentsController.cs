@@ -32,8 +32,7 @@ namespace Anatini.Server.Contents
             channel.AddDraftContent(content, eventData);
             await context.UpdateAsync(channel);
 
-            //return CreatedAtAction();
-            return Ok(channel.ToChannelEditDto());
+            return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultSlug, contentId = createContent.Slug }, new { createContent.Id });
         }, requiresAuthorisation: true);
 
         [Authorize]

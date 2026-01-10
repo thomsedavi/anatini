@@ -15,6 +15,8 @@
   const inputErrors = ref<InputError[]>([]);
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
   const errorSectionRef = ref<HTMLElement | null>(null);
+  const inputContentName = ref<string>('');
+  const inputContentSlug = ref<string>('');
 
   const tabs = ref([
     { id: 'public', text: 'Display' },
@@ -117,6 +119,69 @@
     apiFetchAuthenticated(`channels/${channel.value.id}`, statusActions, undefined, init);
   }
 
+  async function postContent() {
+    inputErrors.value = [];
+
+    if (channel.value === null || 'error' in channel.value) {
+      return;
+    }
+
+    const tidiedName = tidy(inputContentName.value);
+    const tidiedSlug = tidy(inputContentSlug.value);
+
+    if (tidiedName === '') {
+      inputErrors.value.push({id: 'content-name', message: 'Content name is required'});
+    }
+
+    if (tidiedSlug === '') {
+      inputErrors.value.push({id: 'content-slug', message: 'Content slug is required'});
+    }
+
+    if (inputErrors.value.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
+      return;
+    }
+
+    status.value = 'saving';
+
+
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        status.value = 'saved';
+
+        console.log(response);
+        
+        //response?.json().then((value: any) => {
+        //  console.log(value);
+        //});
+
+        inputContentName.value = '';
+        inputContentSlug.value = '';
+      },
+      409: () => {
+        status.value = 'inactive';
+
+        inputErrors.value = [{ id: 'channel-slug', message: 'Slug already in use' }]
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      }
+    }
+
+    const body = new FormData();
+
+    body.append('name', tidiedName);
+    body.append('slug', tidiedSlug);
+
+    const init = { method: "POST", body: body };
+
+    apiFetchAuthenticated(`channels/${channel.value.id}/contents`, statusActions, undefined, init);
+  }
+
   function handleKeyDown(event: KeyboardEvent, index: number): void {
     const newIndex = getTabIndex(event.key, index, tabs.value.length);
 
@@ -197,6 +262,44 @@
               <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
               <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+            </footer>
+          </form>
+        </section>
+
+        <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 1">
+          <header>
+            <h2>Contents</h2>
+          </header>
+
+          <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/contents`" method="POST" novalidate>
+            <fieldset>
+              <legend>Create Content</legend>
+                
+              <InputText
+                v-model="inputContentName"
+                label="Name*"
+                name="name"
+                id="content-name"
+                :maxlength="64"
+                help="The display name of your content"
+                :error="getError('content-name')" />
+
+              <br>
+
+              <InputText
+                v-model="inputContentSlug"
+                label="Slug*"
+                name="slug"
+                id="content-slug"
+                :maxlength="64"
+                help="lower case with hyphens (e.g. 'my-anatini-content')"
+                :error="getError('content-slug')" />
+            </fieldset>
+
+            <footer>
+              <button type="submit" :disabled="status === 'saving' || tidy(inputContentName) === '' || tidy(inputContentSlug) === ''">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
+
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
         </section>

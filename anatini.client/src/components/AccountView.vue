@@ -445,7 +445,6 @@
           <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
             <fieldset>
               <legend>Create Channel</legend>
-
                 <InputText
                   v-model="inputChannelName"
                   label="Name*"
