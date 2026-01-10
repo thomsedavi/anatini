@@ -18,7 +18,7 @@ namespace Anatini.Server.Contents
         [HttpPost]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -32,7 +32,7 @@ namespace Anatini.Server.Contents
             channel.AddDraftContent(content, eventData);
             await context.UpdateAsync(channel);
 
-            return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultSlug, contentId = createContent.Slug }, new { createContent.Id });
+            return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultSlug, contentId = createContent.Slug }, new { createContent.Id, DefaultSlug = createContent.Slug, createContent.Name });
         }, requiresAuthorisation: true);
 
         [Authorize]

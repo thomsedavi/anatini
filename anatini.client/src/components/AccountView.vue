@@ -445,25 +445,26 @@
           <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
             <fieldset>
               <legend>Create Channel</legend>
-                <InputText
-                  v-model="inputChannelName"
-                  label="Name*"
-                  name="name"
-                  id="channel-name"
-                  :maxlength="64"
-                  help="The display name of your channel"
-                  :error="getError('channel-name')" />
+              
+              <InputText
+                v-model="inputChannelName"
+                label="Name*"
+                name="name"
+                id="channel-name"
+                :maxlength="64"
+                help="The display name of your channel"
+                :error="getError('channel-name')" />
 
-                <br>
+              <br>
 
-                <InputText
-                  v-model="inputChannelSlug"
-                  label="Slug*"
-                  name="slug"
-                  id="channel-slug"
-                  :maxlength="64"
-                  help="lower case with hyphens (e.g. 'my-anatini-channel')"
-                  :error="getError('channel-slug')" />
+              <InputText
+                v-model="inputChannelSlug"
+                label="Slug*"
+                name="slug"
+                id="channel-slug"
+                :maxlength="64"
+                help="lower case with hyphens (e.g. 'my-anatini-channel')"
+                :error="getError('channel-slug')" />
             </fieldset>
 
             <footer>

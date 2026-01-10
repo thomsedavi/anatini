@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, ErrorMessage, InputError, StatusActions } from '@/types';
+  import type { ChannelEdit, DraftContent, ErrorMessage, InputError, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
@@ -149,14 +149,16 @@
 
 
     const statusActions: StatusActions = {
-      200: (response?: Response) => {
+      201: (response?: Response) => {
         status.value = 'saved';
 
-        console.log(response);
-        
-        //response?.json().then((value: any) => {
-        //  console.log(value);
-        //});
+        response?.json().then((value: DraftContent) => {
+          if (channel.value !== null && 'topDraftContents' in channel.value) {
+            const topDraftContents = channel.value.topDraftContents ?? [];
+            topDraftContents.push(value);
+            channel.value.topDraftContents = topDraftContents;
+          }
+        });
 
         inputContentName.value = '';
         inputContentSlug.value = '';
@@ -302,6 +304,32 @@
               <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
+
+          <section aria-labelledby="section-your-contents">
+            <header>
+              <h3 id="section-your-contents">Your Contents</h3>
+            </header>
+
+            <ul role="list" v-if="(channel.topDraftContents?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
+              <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultSlug}`">
+                <article :aria-labelledby="`content-${content.defaultSlug}`">
+                  <header>
+                    <h4 :id="`content-${content.defaultSlug}`">
+                      <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultSlug, contentId: content.defaultSlug }}">{{ content.name }}</RouterLink>
+                    </h4>
+                  </header>
+
+                  <p>Content Description Goes Here</p>
+
+                  <footer>
+                    <small>Slug: <code>{{ content.defaultSlug }}</code></small>
+                  </footer>
+                </article>
+              </li>
+            </ul>
+
+            <p v-else>You do not have any contents</p>
+          </section>
         </section>
       </template>
     </article>

@@ -56,6 +56,13 @@ export type Channel = {
   }[] | null;
 };
 
+export type DraftContent = {
+  id: string;
+  defaultSlug: string;
+  name: string;
+  updatedDateTimeUTC: string;
+}
+
 export type ChannelEdit = {
   id: string;
   name: string;
@@ -63,12 +70,7 @@ export type ChannelEdit = {
   aliases: {
     slug: string;
   }[];
-  topDraftContents: {
-    id: string;
-    defaultSlug: string;
-    name: string;
-    updatedDateTimeUTC: string;
-  }[] | null;
+  topDraftContents: DraftContent[] | null;
 };
 
 export type ContentElement = {
