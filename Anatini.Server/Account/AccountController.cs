@@ -79,6 +79,22 @@ namespace Anatini.Server.Account
                 }
             }
 
+            if (updateUser.Protected.HasValue)
+            {
+                user.Protected = updateUser.Protected.Value ? true : null;
+
+                foreach (var alias in user.Aliases)
+                {
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+
+                    if (userAlias != null)
+                    {
+                        userAlias.Protected = updateUser.Protected.Value ? true : null;
+                        await context.UpdateAsync(userAlias);
+                    }
+                }
+            }
+
             await context.UpdateAsync(user);
 
             return NoContent();

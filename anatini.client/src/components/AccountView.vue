@@ -12,9 +12,10 @@
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputName = ref<string>('');
+  const inputBio = ref<string>('');
+  const inputProtected = ref<boolean>(false);
   const inputChannelName = ref<string>('');
   const inputChannelSlug = ref<string>('');
-  const inputBio = ref<string>('');
   const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
   const tabIndex = ref<number>(0);
 
@@ -37,6 +38,7 @@
             user.value.bio = user.value.bio?.replace(/\r\n/g, "\n") ?? null;
             inputName.value = value.name;
             inputBio.value = value.bio ?? '';
+            inputProtected.value = value.protected ?? false;
           })
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
@@ -61,9 +63,17 @@
     }
   }
 
-  function noChange(): boolean {
+  function noChangeDisplay(): boolean {
     if (user.value !== null && 'name' in user.value) {
       return user.value.name === tidy(inputName.value) && (user.value.bio ?? '') === tidy(inputBio.value);
+    } else {
+      return true;
+    }
+  }
+
+  function noChangePrivacy(): boolean {
+    if (user.value !== null && 'protected' in user.value) {
+      return (user.value.protected ?? false) === inputProtected.value;
     } else {
       return true;
     }
@@ -162,7 +172,7 @@
     apiFetchAuthenticated('channels', statusActions, undefined, init);
   }
 
-  async function patchAccount() {
+  async function patchAccountDisplay() {
     inputErrors.value = [];
 
     if (user.value === null || 'error' in user.value) {
@@ -242,6 +252,61 @@
     apiFetchAuthenticated('account', statusActions, undefined, init);
   }
 
+  async function patchAccountPrivacy() {
+    inputErrors.value = [];
+
+    if (user.value === null || 'error' in user.value) {
+      return;
+    }
+
+    status.value = 'saving';
+
+    const statusActions: StatusActions = {
+      204: () => {
+        status.value = 'saved';
+
+        if (user.value !== null && 'name' in user.value) {
+          user.value.protected = inputProtected.value === false ? null : true;
+        }
+      },
+      400: (response?: Response) => {
+        status.value = 'inactive';
+
+        response?.json().then(value => {
+          if (value.errors) {
+            if ('Protected' in value.errors) {
+              inputErrors.value = [{id: 'protected', message: value.errors['Protected'][0]}]
+            }
+
+            nextTick(() => {
+              errorSectionRef.value?.focus();
+            });
+          }
+        });
+      },
+      500: () => {
+        status.value = 'inactive';
+
+        // TODO handle this better
+        inputErrors.value = [{ id: 'name', message: 'Unknown Error' }]
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      }
+    };
+
+    const body = new FormData();
+
+    if ((user.value.protected ?? false) !== inputProtected.value) {
+      body.append('protected', inputProtected.value ? 'true' : 'false');
+    }
+
+    const init = { method: "PATCH", body: body };
+
+    apiFetchAuthenticated('account', statusActions, undefined, init);
+  }
+
   function handleKeyDown(event: KeyboardEvent, index: number): void {
     const newIndex = getTabIndex(event.key, index, tabs.value.length);
 
@@ -303,7 +368,7 @@
             <h2>Display</h2>
           </header>
 
-          <form @submit.prevent="patchAccount" action="/api/account" method="PATCH" novalidate>
+          <form @submit.prevent="patchAccountDisplay" action="/api/account" method="PATCH" novalidate>
             <fieldset>
               <legend>Public</legend>
 
@@ -341,7 +406,7 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+              <button type="submit" :disabled="status === 'saving' || noChangeDisplay()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
 
               <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
             </footer>
@@ -352,6 +417,26 @@
           <header>
             <h2>Privacy & Security</h2>
           </header>
+
+          <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="PATCH" novalidate>
+            <fieldset>
+              <legend>Privacy & Security</legend>
+
+              <ul>
+                <li>
+                  <label for="input-protected">Protected</label>
+                  <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
+                  <small id="help-protected">Your account will only be visible to trusted users</small>
+                </li>
+              </ul>
+            </fieldset>
+
+            <footer>
+              <button type="submit" :disabled="status === 'saving' || noChangePrivacy()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+
+              <p role="status" class="visually-hidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+            </footer>
+          </form>
         </section>
 
         <section id="panel-channels" role="tabpanel" tabindex="0" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
