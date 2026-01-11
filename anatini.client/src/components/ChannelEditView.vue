@@ -5,7 +5,7 @@
   import { useRoute } from 'vue-router';
   import { getTabIndex, tidy } from './common/utils';
   import InputText from './common/InputText.vue';
-  import TabListItem from './common/TabListItem.vue';
+  import TabButton from './common/TabButton.vue';
 
   const route = useRoute();
 
@@ -228,8 +228,8 @@
           </ul>
         </section>
 
-        <ul role="tablist" aria-label="Settings Options">
-          <TabListItem v-for="(tab, index) in tabs"
+        <section role="tablist" aria-label="Settings Options">
+          <TabButton v-for="(tab, index) in tabs"
             :key="tab.id"
             :selected="tabIndex === index"
             @click="tabIndex = index"
@@ -237,7 +237,7 @@
             :text="tab.text"
             :id="tab.id"
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
-        </ul>
+        </section>
 
         <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
           <header>
