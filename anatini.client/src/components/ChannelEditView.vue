@@ -19,8 +19,8 @@
   const inputContentSlug = ref<string>('');
 
   const tabs = ref([
+    { id: 'contents', text: 'Contents' },
     { id: 'public', text: 'Display' },
-    { id: 'contents', text: 'Contents' }
   ]);
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -147,7 +147,6 @@
 
     status.value = 'saving';
 
-
     const statusActions: StatusActions = {
       201: (response?: Response) => {
         status.value = 'saved';
@@ -240,34 +239,6 @@
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </ul>
 
-        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
-          <header>
-            <h2>Display</h2>
-          </header>
-
-          <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="PATCH" novalidate>
-            <fieldset>
-              <legend>Display</legend>
-
-              <InputText
-                v-model="inputName"
-                label="Name"
-                name="name"
-                id="name"
-                :maxlength="64"
-                :error="getError('name')"
-                help="Channel display name"
-                autocomplete="name" />
-            </fieldset>
-
-            <footer>
-              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
-            </footer>
-          </form>
-        </section>
-
         <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 1">
           <header>
             <h2>Contents</h2>
@@ -330,6 +301,34 @@
 
             <p v-else>You do not have any contents</p>
           </section>
+        </section>
+
+        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
+          <header>
+            <h2>Display</h2>
+          </header>
+
+          <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="PATCH" novalidate>
+            <fieldset>
+              <legend>Display</legend>
+
+              <InputText
+                v-model="inputName"
+                label="Name"
+                name="name"
+                id="name"
+                :maxlength="64"
+                :error="getError('name')"
+                help="Channel display name"
+                autocomplete="name" />
+            </fieldset>
+
+            <footer>
+              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+
+              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+            </footer>
+          </form>
         </section>
       </template>
     </article>

@@ -22,7 +22,7 @@
   const tabs = ref([
     { id: 'public', text: 'Display' },
     { id: 'private', text: 'Privacy & Security' },
-    { id: 'channels', text: 'Channels' }
+    { id: 'channels', text: 'Channels' },
   ]);
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
