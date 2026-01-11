@@ -239,7 +239,7 @@
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </ul>
 
-        <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 1">
+        <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
           <header>
             <h2>Contents</h2>
           </header>
@@ -303,7 +303,7 @@
           </section>
         </section>
 
-        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
+        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
           <header>
             <h2>Display</h2>
           </header>
