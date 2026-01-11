@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Channel, ErrorMessage, InputError, StatusActions, UserEdit } from '@/types';
+  import type { Channel, ErrorMessage, InputError, Status, StatusActions, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
@@ -16,7 +16,7 @@
   const inputProtected = ref<boolean>(false);
   const inputChannelName = ref<string>('');
   const inputChannelSlug = ref<string>('');
-  const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
+  const status = ref<Status>('idle');
   const tabIndex = ref<number>(0);
 
   const tabs = ref([
@@ -105,11 +105,11 @@
       return;
     }
 
-    status.value = 'saving';
+    status.value = 'pending';
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
-        status.value = 'saved';
+        status.value = 'success';
         
         response?.json().then((value: Channel) => {
           if (user.value !== null && 'channels' in user.value) {
@@ -123,7 +123,7 @@
         inputChannelSlug.value = '';
       },
       400: (response?: Response) => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         response?.json().then(value => {
           if (value.errors) {
@@ -142,7 +142,7 @@
         });
       },
       409: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         inputErrors.value = [{ id: 'channel-slug', message: 'Slug already in use' }]
 
@@ -151,7 +151,7 @@
         });
       },
       500: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         // TODO handle this better
         inputErrors.value = [{ id: 'channel-name', message: 'Unknown Error' }]
@@ -192,11 +192,11 @@
       return;
     }
 
-    status.value = 'saving';
+    status.value = 'pending';
 
     const statusActions: StatusActions = {
       204: () => {
-        status.value = 'saved';
+        status.value = 'success';
 
         if (user.value !== null && 'name' in user.value) {
           user.value.name = tidiedName;
@@ -207,7 +207,7 @@
         }
       },
       400: (response?: Response) => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         response?.json().then(value => {
           if (value.errors) {
@@ -226,7 +226,7 @@
         });
       },
       500: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         // TODO handle this better
         inputErrors.value = [{ id: 'name', message: 'Unknown Error' }]
@@ -259,18 +259,18 @@
       return;
     }
 
-    status.value = 'saving';
+    status.value = 'pending';
 
     const statusActions: StatusActions = {
       204: () => {
-        status.value = 'saved';
+        status.value = 'success';
 
         if (user.value !== null && 'name' in user.value) {
           user.value.protected = inputProtected.value === false ? null : true;
         }
       },
       400: (response?: Response) => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         response?.json().then(value => {
           if (value.errors) {
@@ -285,7 +285,7 @@
         });
       },
       500: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         // TODO handle this better
         inputErrors.value = [{ id: 'name', message: 'Unknown Error' }]
@@ -406,9 +406,9 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || noChangeDisplay()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+              <button type="submit" :disabled="status === 'pending' || noChangeDisplay()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>
@@ -430,9 +430,9 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || noChangePrivacy()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+              <button type="submit" :disabled="status === 'pending' || noChangePrivacy()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>
@@ -468,9 +468,9 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
+              <button type="submit" :disabled="status === 'pending' || tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''">{{status === 'pending' ? 'Creating...' : 'Create' }}</button>
 
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
 

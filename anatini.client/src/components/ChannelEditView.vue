@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, DraftContent, ErrorMessage, InputError, StatusActions } from '@/types';
+  import type { ChannelEdit, DraftContent, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
@@ -13,7 +13,7 @@
   const tabIndex = ref<number>(0);
   const inputName = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
-  const status = ref<'saving' | 'saved' | 'inactive'>('inactive');
+  const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputContentName = ref<string>('');
   const inputContentSlug = ref<string>('');
@@ -86,18 +86,18 @@
       return;
     }
 
-    status.value = 'saving';
+    status.value = 'pending';
 
     const statusActions: StatusActions = {
       204: () => {
-        status.value = 'saved';
+        status.value = 'success';
 
         if (channel.value !== null && 'name' in channel.value) {
           channel.value.name = tidiedName;
         }
       },
       500: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         // TODO handle this better
         inputErrors.value = [{ id: 'name', message: 'Unknown Error' }]
@@ -145,11 +145,11 @@
       return;
     }
 
-    status.value = 'saving';
+    status.value = 'pending';
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
-        status.value = 'saved';
+        status.value = 'success';
 
         response?.json().then((value: DraftContent) => {
           if (channel.value !== null && 'topDraftContents' in channel.value) {
@@ -163,7 +163,7 @@
         inputContentSlug.value = '';
       },
       409: () => {
-        status.value = 'inactive';
+        status.value = 'error';
 
         inputErrors.value = [{ id: 'channel-slug', message: 'Slug already in use' }]
 
@@ -270,9 +270,9 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || tidy(inputContentName) === '' || tidy(inputContentSlug) === ''">{{status === 'saving' ? 'Creating...' : 'Create' }}</button>
+              <button type="submit" :disabled="status === 'pending' || tidy(inputContentName) === '' || tidy(inputContentSlug) === ''">{{status === 'pending' ? 'Creating...' : 'Create' }}</button>
 
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Created!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Created!' : undefined }}</p>
             </footer>
           </form>
 
@@ -324,9 +324,9 @@
             </fieldset>
 
             <footer>
-              <button type="submit" :disabled="status === 'saving' || noChange()">{{status === 'saving' ? 'Saving...' : 'Save' }}</button>
+              <button type="submit" :disabled="status === 'pending' || noChange()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
 
-              <p role="status" class="visuallyhidden">{{ status === 'saved' ? 'Saved!' : undefined }}</p>
+              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
             </footer>
           </form>
         </section>

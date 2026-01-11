@@ -1,41 +1,53 @@
 <script setup lang="ts">
-  import { ref, useTemplateRef, onMounted } from 'vue';
+  import type { InputError, IsAuthenticated, Status, StatusActions } from '@/types';
+  import InputText from './common/InputText.vue';
+  import { nextTick, ref } from 'vue';
+  import { tidy } from './common/utils';
+  import { apiFetch } from './common/apiFetch';
+  import { store } from '@/store';
   import { useRoute, useRouter } from 'vue-router';
-  import { store } from '../store.ts';
-  import { reportValidity, validateInputs } from './common/validity.ts';
-  import type { IsAuthenticated } from '@/types';
 
   const router = useRouter();
   const route = useRoute();
 
-  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
-  const passwordInput = useTemplateRef<HTMLInputElement>('password');
-  const isFetching = ref<boolean>(false);
+  const inputEmailAddress = ref<string>('');
+  const inputPassword = ref<string>('');
+  const inputErrors = ref<InputError[]>([]);
+  const status = ref<Status>('idle');
+  const errorSectionRef = ref<HTMLElement | null>(null);
 
-  onMounted(() => {
-    emailAddressInput.value!.focus()
-  });
+  function getError(id: string): string | undefined {
+    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+  }
 
   async function login() {
-    if (!validateInputs([
-      {element: emailAddressInput.value, error: 'Please enter an email address.'},
-      {element: passwordInput.value, error: 'Please enter a password.'},
-    ]))
+    inputErrors.value = [];
+
+    const tidiedEmailAddress = tidy(inputEmailAddress.value);
+
+    if (tidiedEmailAddress === '') {
+      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    }
+
+    if (inputPassword.value === '') {
+      inputErrors.value.push({id: 'password', message: 'Password is required'});
+    }
+
+    if (inputErrors.value.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
       return;
+    }
 
-    isFetching.value = true;
+    status.value = 'pending';
 
-    const body = new FormData();
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        status.value = 'success';
 
-    body.append('emailAddress', emailAddressInput.value!.value.trim());
-    body.append('password', passwordInput.value!.value.trim());
-
-    fetch("/api/authentication/login", {
-      method: "POST",
-      body: body,
-    }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
+        response?.json()
           .then((value: IsAuthenticated) => {
             store.isLoggedIn = value.isAuthenticated;
             store.expiresUtc = value.expiresUtc;
@@ -51,36 +63,81 @@
           .catch(() => {
             store.isLoggedIn = false;
           });
-      } else if (response.status === 401) {
-        passwordInput.value!.setCustomValidity("Incorrect password");
+      },
+      404: () => {
+        status.value = 'error';
 
-        reportValidity([passwordInput.value]);
-      } else {
-        console.log("Unknown Error");
+        inputErrors.value.push({id: 'password', message: 'Unable to match email address and password'});
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      },
+      500: () => {
+        status.value = 'error';
+
+        inputErrors.value.push({id: 'password', message: 'There was an error logging you in, please try again'});
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
       }
-    }).finally(() => {
-      isFetching.value = false;
-    });
+    }
+
+    const body = new FormData();
+
+    body.append('emailAddress', tidiedEmailAddress);
+    body.append('password', inputPassword.value);
+
+    const init = { method: "POST", body: body };
+
+    apiFetch('authentication/login', statusActions, undefined, init);
   }
 </script>
 
 <template>
   <main>
-    <h2>Login</h2>
-    <form @submit.prevent="login" action="/api/authentication/login" method="POST">
-      <fieldset>
-        <legend>Log In</legend>
+    <section aria-labelledby="heading-main">
+      <header>
+        <h1 id="heading-main">Login</h1>
+      </header>
 
-        <label for="emailAddress">Email Address</label>
-        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="event => emailAddressInput?.setCustomValidity('')">
-        <hr>
+      <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+        <h2 id="heading-errors">There was a problem Logging In</h2>
+        <ul>
+          <li v-for="error in inputErrors" :key="'error' + error.id">
+            <a :href="'#input-' + error.id">{{ error.message }}</a>
+          </li>
+        </ul>
+      </section>
 
-        <label for="password">Password</label>
-        <input id="password" type="password" name="password" ref="password" @input="event => passwordInput?.setCustomValidity('')">
-        <hr>
+      <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate>
+        <fieldset>
+          <legend>Login</legend>
 
-        <button type="submit" :disabled="isFetching">Submit</button>
-      </fieldset>
-    </form>
+          <InputText
+            v-model="inputEmailAddress"
+            label="Email"
+            name="emailAddress"
+            id="emailAddress"
+            :error="getError('emailAddress')"
+            autocomplete="email" />
+
+          <br>
+
+          <InputText
+            v-model="inputPassword"
+            label="Password"
+            name="password"
+            id="password"
+            :error="getError('password')"
+            autocomplete="current-password" />
+        </fieldset>
+
+        <footer>
+          <button type="submit" :disabled="status === 'pending' || tidy(inputEmailAddress) === '' || inputPassword === ''">{{status === 'pending' ? 'Logging In...' : 'Log in' }}</button>
+        </footer>
+      </form>
+    </section>
   </main>
 </template>

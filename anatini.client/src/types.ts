@@ -1,6 +1,7 @@
 export type ErrorMessage = { error: true, heading: string, body: string };
 export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
+export type Status = 'idle' | 'pending' | 'success' | 'error';
 
 export type Image = {
   uri: string;

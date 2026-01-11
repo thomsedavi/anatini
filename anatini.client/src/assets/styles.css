@@ -91,6 +91,19 @@ button, input[type="file"] {
   }
 }
 
+form {
+  > fieldset {
+    span {
+      display: inline-block;
+      vertical-align: top;
+
+      > small {
+        display: block;
+      }
+    }
+  }
+}
+
 main {
   display: grid;
   place-items: center;
@@ -110,21 +123,6 @@ main {
         > img {
           border-radius: 50%;
           object-fit: cover;
-        }
-      }
-    }
-
-    > section {
-      > form {
-        > fieldset {
-          span {
-            display: inline-block;
-            vertical-align: top;
-
-            > small {
-              display: block;
-            }
-          }
         }
       }
     }
