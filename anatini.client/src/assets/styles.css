@@ -85,21 +85,19 @@ button, input[type="file"] {
     background-color: var(--hover);
   }
 
-  &:disabled {
+  &[aria-disabled="true"] {
     cursor: default;
     background-color: var(--button-disabled);
   }
 }
 
 form {
-  > fieldset {
-    span {
-      display: inline-block;
-      vertical-align: top;
+  span {
+    display: inline-block;
+    vertical-align: top;
 
-      > small {
-        display: block;
-      }
+    small {
+      display: block;
     }
   }
 }

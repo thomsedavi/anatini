@@ -6,6 +6,7 @@
   import { getTabIndex, tidy } from './common/utils';
   import InputText from './common/InputText.vue';
   import TabButton from './common/TabButton.vue';
+  import SubmitButton from './common/SubmitButton.vue';
 
   const route = useRoute();
 
@@ -207,7 +208,7 @@
       </header>
 
       <section v-if="channel === null">
-        <p role="status" class="visuallyhidden">Please wait while the channel information is fetched.</p>
+        <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the channel information is fetched.</p>
                 
         <progress max="100">Fetching account...</progress>
       </section>
@@ -257,8 +258,6 @@
                 help="The display name of your content"
                 :error="getError('content-name')" />
 
-              <br>
-
               <InputText
                 v-model="inputContentSlug"
                 label="Slug*"
@@ -269,12 +268,14 @@
                 :error="getError('content-slug')" />
             </fieldset>
 
-            <footer>
-              <button type="submit" :disabled="status === 'pending' || tidy(inputContentName) === '' || tidy(inputContentSlug) === ''">{{status === 'pending' ? 'Creating...' : 'Create' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Created!' : undefined }}</p>
-            </footer>
+            <SubmitButton
+              :busy="status === 'pending'"
+              :disabled="tidy(inputContentName) === '' || tidy(inputContentSlug) === ''"
+              text="Create"
+              busy-text="Creating..." />
           </form>
+
+          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
 
           <section aria-labelledby="section-your-contents">
             <header>
@@ -309,26 +310,24 @@
           </header>
 
           <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="PATCH" novalidate>
-            <fieldset>
-              <legend>Display</legend>
+            <InputText
+              v-model="inputName"
+              label="Name"
+              name="name"
+              id="name"
+              :maxlength="64"
+              :error="getError('name')"
+              help="Channel display name"
+              autocomplete="name" />
 
-              <InputText
-                v-model="inputName"
-                label="Name"
-                name="name"
-                id="name"
-                :maxlength="64"
-                :error="getError('name')"
-                help="Channel display name"
-                autocomplete="name" />
-            </fieldset>
-
-            <footer>
-              <button type="submit" :disabled="status === 'pending' || noChange()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
-            </footer>
+            <SubmitButton
+              :busy="status === 'pending'"
+              :disabled="noChange()"
+              text="Save"
+              busy-text="Saving..." />
           </form>
+
+          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Saved!' : undefined }}</p>
         </section>
       </template>
     </article>

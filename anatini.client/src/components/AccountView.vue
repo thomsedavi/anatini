@@ -6,6 +6,7 @@
   import { getTabIndex, tidy } from './common/utils';
   import InputText from './common/InputText.vue';
   import TabButton from './common/TabButton.vue';
+  import SubmitButton from './common/SubmitButton.vue';
 
   const router = useRouter();
   const user = ref<UserEdit | ErrorMessage | null>(null);
@@ -331,7 +332,7 @@
       </header>
 
       <section v-if="user === null">
-        <p role="status" class="visuallyhidden">Please wait while the user information is fetched.</p>
+        <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the user information is fetched.</p>
                 
         <progress max="100">Fetching account...</progress>
       </section>
@@ -369,48 +370,46 @@
           </header>
 
           <form @submit.prevent="patchAccountDisplay" action="/api/account" method="PATCH" novalidate>
-            <fieldset>
-              <legend>Public</legend>
+            <InputText
+              v-model="inputName"
+              label="Name"
+              name="name"
+              id="name"
+              :maxlength="64"
+              :error="getError('name')"
+              help="Your display name"
+              autocomplete="name" />
 
-              <InputText
-                v-model="inputName"
-                label="Name"
-                name="name"
-                id="name"
-                :maxlength="64"
-                :error="getError('name')"
-                help="Your display name"
-                autocomplete="name" />
-
-              <br>
-
+            <div>
               <label for="input-bio">Biography</label>
               <span>
-              <textarea
-                id="input-bio"
-                v-model="inputBio"
-                name="bio"
-                maxlength="256"
-                :aria-invalid="getError('bio') ? true : undefined"
-                :aria-errormessage="getError('bio') ? 'bio-error' : undefined"
-                aria-describedby="bio-help bio-counter"></textarea>
-              <small id="bio-help">Briefly describe yourself for your public profile.</small>
-              <small v-if="getError('bio')" id="bio-error" role="alert">{{ getError('bio') ?? 'Unknown Error' }}</small>
-              <output
-                id="bio-counter"
-                :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
-                aria-atomic="true">
-                Characters remaining: {{ 256 - tidy(inputBio).length }}
-              </output>
+                <textarea
+                  id="input-bio"
+                  v-model="inputBio"
+                  name="bio"
+                  maxlength="256"
+                  :aria-invalid="getError('bio') ? true : undefined"
+                  :aria-errormessage="getError('bio') ? 'bio-error' : undefined"
+                  aria-describedby="bio-help bio-counter"></textarea>
+                <small id="bio-help">Briefly describe yourself for your public profile.</small>
+                <small v-if="getError('bio')" id="bio-error" role="alert">{{ getError('bio') ?? 'Unknown Error' }}</small>
+                <output
+                  id="bio-counter"
+                  :aria-live="256 - tidy(inputBio).length < 20 ? 'assertive' : 'polite'"
+                  aria-atomic="true">
+                  Characters remaining: {{ 256 - tidy(inputBio).length }}
+                </output>
               </span>
-            </fieldset>
+            </div>
 
-            <footer>
-              <button type="submit" :disabled="status === 'pending' || noChangeDisplay()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
-            </footer>
+            <SubmitButton
+              :busy="status === 'pending'"
+              :disabled="noChangeDisplay()"
+              text="Save"
+              busy-text="Saving..." />
           </form>
+
+          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Saved!' : undefined }}</p>
         </section>
 
         <section id="panel-private" role="tabpanel" tabindex="0" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
@@ -419,22 +418,22 @@
           </header>
 
           <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="PATCH" novalidate>
-            <fieldset>
-              <legend>Privacy & Security</legend>
-
+            <div>
               <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
               <span>
                 <label for="input-protected">Protected</label>
                 <small id="help-protected">Your account will only be visible to trusted users</small>
               </span>
-            </fieldset>
+            </div>
 
-            <footer>
-              <button type="submit" :disabled="status === 'pending' || noChangePrivacy()">{{status === 'pending' ? 'Saving...' : 'Save' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Saved!' : undefined }}</p>
-            </footer>
+            <SubmitButton
+              :busy="status === 'pending'"
+              :disabled="noChangePrivacy()"
+              text="Save"
+              busy-text="Saving..." />
           </form>
+
+          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Saved!' : undefined }}</p>
         </section>
 
         <section id="panel-channels" role="tabpanel" tabindex="0" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
@@ -445,7 +444,7 @@
           <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
             <fieldset>
               <legend>Create Channel</legend>
-              
+
               <InputText
                 v-model="inputChannelName"
                 label="Name*"
@@ -454,8 +453,6 @@
                 :maxlength="64"
                 help="The display name of your channel"
                 :error="getError('channel-name')" />
-
-              <br>
 
               <InputText
                 v-model="inputChannelSlug"
@@ -467,11 +464,11 @@
                 :error="getError('channel-slug')" />
             </fieldset>
 
-            <footer>
-              <button type="submit" :disabled="status === 'pending' || tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''">{{status === 'pending' ? 'Creating...' : 'Create' }}</button>
-
-              <p role="status" class="visuallyhidden">{{ status === 'success' ? 'Created!' : undefined }}</p>
-            </footer>
+            <SubmitButton
+              :busy="status === 'pending'"
+              :disabled="tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''"
+              text="Create"
+              busy-text="Creating..." />
           </form>
 
           <article v-else>
@@ -481,6 +478,8 @@
 
             <p>You do not currently have permission to create Channels</p>
           </article>
+
+          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
 
           <section aria-labelledby="section-your-channels">
             <header>

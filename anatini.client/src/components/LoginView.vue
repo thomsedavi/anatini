@@ -6,6 +6,7 @@
   import { apiFetch } from './common/apiFetch';
   import { store } from '@/store';
   import { useRoute, useRouter } from 'vue-router';
+  import SubmitButton from './common/SubmitButton.vue';
 
   const router = useRouter();
   const route = useRoute();
@@ -20,7 +21,12 @@
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
-  async function login() {
+  async function login(event: Event) {
+    if ((event as SubmitEvent).submitter?.ariaDisabled === 'true')
+    {
+      return;
+    }
+
     inputErrors.value = [];
 
     const tidiedEmailAddress = tidy(inputEmailAddress.value);
@@ -111,33 +117,33 @@
         </ul>
       </section>
 
-      <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate>
-        <fieldset>
-          <legend>Login</legend>
+      <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
+        <InputText
+          type="email"
+          v-model="inputEmailAddress"
+          label="Email"
+          name="emailAddress"
+          id="emailAddress"
+          :error="getError('emailAddress')"
+          autocomplete="email" />
 
-          <InputText
-            v-model="inputEmailAddress"
-            label="Email"
-            name="emailAddress"
-            id="emailAddress"
-            :error="getError('emailAddress')"
-            autocomplete="email" />
+        <InputText
+          type="password"
+          v-model="inputPassword"
+          label="Password"
+          name="password"
+          id="password"
+          :error="getError('password')"
+          autocomplete="current-password" />
 
-          <br>
-
-          <InputText
-            v-model="inputPassword"
-            label="Password"
-            name="password"
-            id="password"
-            :error="getError('password')"
-            autocomplete="current-password" />
-        </fieldset>
-
-        <footer>
-          <button type="submit" :disabled="status === 'pending' || tidy(inputEmailAddress) === '' || inputPassword === ''">{{status === 'pending' ? 'Logging In...' : 'Log in' }}</button>
-        </footer>
+        <SubmitButton
+          :busy="status === 'pending'"
+          :disabled="tidy(inputEmailAddress) === '' || inputPassword === ''"
+          text="Log In"
+          busy-text="Logging In..." />
       </form>
+
+      <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
     </section>
   </main>
 </template>
