@@ -12,13 +12,13 @@ export type User = {
   id: string;
   name: string;
   iconImage: Image | null;
-  bio: string | null;
+  about: string | null;
 };
 
 export type UserEdit = {
   id: string;
   name: string;
-  bio: string | null;
+  about: string | null;
   defaultSlug: string;
   emails: {
     address: string;
@@ -38,6 +38,7 @@ export type UserEdit = {
   }[];
   permissions: string[] | null;
   protected: boolean | null;
+  iconImage: Image | null;
 };
 
 export type Events = {
@@ -50,6 +51,7 @@ export type Events = {
 export type Channel = {
   id: string;
   name: string;
+  about: string | null;
   defaultSlug: string;
   topContents: {
     defaultSlug: string;

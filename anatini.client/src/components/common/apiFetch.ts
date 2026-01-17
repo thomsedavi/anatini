@@ -4,8 +4,8 @@ import type { IsAuthenticated, StatusActions } from "@/types";
 export async function apiFetch(
   input: RequestInfo | URL,
   statusActions: StatusActions,
-  onfinally?: () => void,
   init?: RequestInit,
+  onfinally?: () => void,
 ): Promise<void> {
   await fetch(`/api/${input}`, init).then((response: Response) => {
     if (statusActions[response.status]) {
@@ -18,8 +18,8 @@ export async function apiFetch(
 export async function apiFetchAuthenticated(
   input: RequestInfo | URL,
   statusActions: StatusActions,
-  onfinally?: () => void,
   init?: RequestInit,
+  onfinally?: () => void,
 ): Promise<void> {
   if (store.expiresUtc === null) {
     statusActions?.[401]?.();
@@ -45,5 +45,5 @@ export async function apiFetchAuthenticated(
     });
   }
 
-  return await apiFetch(input, statusActions, onfinally, init);
+  return await apiFetch(input, statusActions, init, onfinally);
 }

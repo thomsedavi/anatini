@@ -117,7 +117,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`channels/${channel.value.id}`, statusActions, undefined, init);
+    apiFetchAuthenticated(`channels/${channel.value.id}`, statusActions, init);
   }
 
   async function postContent() {
@@ -181,7 +181,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`channels/${channel.value.id}/contents`, statusActions, undefined, init);
+    apiFetchAuthenticated(`channels/${channel.value.id}/contents`, statusActions, init);
   }
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {

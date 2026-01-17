@@ -5,6 +5,7 @@ namespace Anatini.Server.Context.Entities
     public class Channel : BaseEntity
     {
         public required string Name { get; set; }
+        public string? About { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedAlias> Aliases { get; set; }
         public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }

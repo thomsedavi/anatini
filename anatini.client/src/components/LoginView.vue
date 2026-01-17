@@ -97,7 +97,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/login', statusActions, undefined, init);
+    apiFetch('authentication/login', statusActions, init);
   }
 </script>
 

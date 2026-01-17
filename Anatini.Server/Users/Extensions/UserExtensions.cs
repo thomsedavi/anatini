@@ -1,6 +1,8 @@
-﻿using Anatini.Server.Context.Entities;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Users.Extensions
@@ -34,6 +36,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = channel.Id,
                 UserId = user.Id,
                 Name = channel.Name,
+                About = channel.About,
                 DefaultSlug = channel.DefaultSlug
             };
 
@@ -95,20 +98,37 @@ namespace Anatini.Server.Users.Extensions
             return user;
         }
 
-        public static UserEditDto ToUserEditDto(this User user)
+        public static async Task<UserEditDto> ToUserEditDto(this User user, AnatiniContext? context = null, IBlobService? blobService = null)
         {
+            ImageDto? iconImage = null;
+
+            if (user.IconImageId.HasValue && context != null && blobService != null)
+            {
+                var userImage = await context.Context.UserImages.FindAsync(user.Id, user.IconImageId.Value);
+
+                if (userImage != null)
+                {
+                    iconImage = new ImageDto
+                    {
+                        Uri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName),
+                        AltText = userImage.AltText,
+                    };
+                }
+            }
+
             return new UserEditDto
             {
                 Id = user.Id,
                 Name = user.Name,
-                Bio = user.Bio,
+                About = user.About,
                 Emails = user.Emails.Select(ToUserEditEmailDto),
                 Sessions = user.Sessions?.Select(ToUserEditSessionDto),
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
                 Permissions = user.Permissions,
                 DefaultSlug = user.DefaultSlug,
-                Protected = user.Protected
+                Protected = user.Protected,
+                IconImage = iconImage
             };
         }
 
@@ -148,6 +168,7 @@ namespace Anatini.Server.Users.Extensions
             {
                 Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name,
+                About = userOwnedChannel.About,
                 DefaultSlug = userOwnedChannel.DefaultSlug
             };
         }

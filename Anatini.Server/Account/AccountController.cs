@@ -18,9 +18,9 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(UserId, async user =>
+        public async Task<IActionResult> GetUserEdit() => await UsingUserContextAsync(UserId, async (user, context) =>
         {
-            return await Task.FromResult(Ok(user.ToUserEditDto()));
+            return await Task.FromResult(Ok(await user.ToUserEditDto(context, blobService)));
         });
 
         [Authorize]
@@ -47,9 +47,9 @@ namespace Anatini.Server.Account
                 }
             }
 
-            if (Request.Form.Keys.Contains("bio"))
+            if (Request.Form.Keys.Contains("about"))
             {
-                user.Bio = updateUser.Bio;
+                user.About = updateUser.About;
 
                 foreach (var alias in user.Aliases)
                 {
@@ -57,7 +57,7 @@ namespace Anatini.Server.Account
 
                     if (userAlias != null)
                     {
-                        userAlias.UserBio = updateUser.Bio;
+                        userAlias.UserAbout = updateUser.About;
                         await context.UpdateAsync(userAlias);
                     }
                 }

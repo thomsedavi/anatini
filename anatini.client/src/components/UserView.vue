@@ -18,7 +18,7 @@
         response?.json()
           .then((value: User) => {
             user.value = value;
-            user.value.bio = user.value.bio?.replace(/\r\n/g, "\n") ?? null;
+            user.value.about = user.value.about?.replace(/\r\n/g, "\n") ?? null;
           })
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
@@ -74,7 +74,7 @@
         </p>
       </section>
 
-      <section v-else-if="user.bio" aria-label="User biography" v-html="formatParagraph(user.bio)">
+      <section v-else-if="user.about" aria-label="About user" v-html="formatParagraph(user.about)">
       </section>
     </article>
   </main>

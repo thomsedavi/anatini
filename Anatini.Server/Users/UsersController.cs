@@ -26,12 +26,12 @@ namespace Anatini.Server.Users
                 return Forbid();
             }
 
-            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name, user.Protected);
+            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name, user.Protected, user.About);
 
             user.AddAlias(userAlias, newUserAlias.Default);
             await context.UpdateAsync(user);
 
-            return Ok(user.ToUserEditDto());
+            return Ok(await user.ToUserEditDto());
         });
 
         [Authorize]

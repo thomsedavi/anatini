@@ -5,9 +5,9 @@ namespace Anatini.Server.Context.Entities
     public class User : BaseEntity
     {
         public required string Name { get; set; }
+        public string? About { get; set; }
         public required string HashedPassword { get; set; }
         public required string DefaultSlug { get; set; }
-        public string? Bio { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
         public ICollection<UserOwnedSession>? Sessions { get; set; }
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
@@ -23,6 +23,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
+        public string? About { get; set; }
         public required string DefaultSlug { get; set; }
     }
 
@@ -75,7 +76,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid UserId { get; set; }
         public required string UserName { get; set; }
-        public string? UserBio { get; set; }
+        public string? UserAbout { get; set; }
         public Guid? IconImageId { get; set; }
         public Guid? BannerImageId { get; set; }
         public bool? Protected { get; set; }

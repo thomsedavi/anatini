@@ -29,7 +29,7 @@ namespace Anatini.Server.Users.Extensions
             {
                 Id = userAlias.UserId,
                 Name = userAlias.UserName,
-                Bio = userAlias.UserBio,
+                About = userAlias.UserAbout,
                 IconImage = iconImage
             };
         }

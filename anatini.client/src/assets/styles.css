@@ -84,8 +84,8 @@ button, input[type="file"] {
   }
 
   &[aria-disabled="true"] {
-    cursor: default;
     background-color: var(--button-disabled);
+    pointer-events: none;
   }
 
   &:not(:first-child) {

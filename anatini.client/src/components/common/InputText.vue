@@ -9,7 +9,8 @@
     maxlength: { type: Number, required: false },
     help: { type: String, required: false },
     autocomplete: { type: String, required: false },
-    type: { type: String, required: false }
+    type: { type: String, required: false },
+    required: { type: Boolean, required: false }
   });
 </script>
 
@@ -27,9 +28,9 @@
         :aria-invalid="error ? true : undefined"
         :aria-errormessage="error ? `error-${id}` : undefined"
         :autocomplete="autocomplete ?? 'on'"
-        required />
+        :required="required ? true : undefined" />
       <small v-if="help" :id="`help-${id}`">{{ help }}</small>
-      <small v-if="error" :id="`error-${id}`" role="alert">{{ error ?? 'Unknown Error' }}</small>
+      <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
     </span>
   </div>
 </template>
