@@ -24,7 +24,7 @@
       :maxlength="maxlength ?? undefined"
       :aria-invalid="error ? true : undefined"
       :aria-errormessage="error ? `error-${id}` : undefined"
-      :aria-describedby="`${help ? `help=${id}` : undefined} ${maxlength ? `counter=${id}` : undefined}`"></textarea>
+      :aria-describedby="`${help ? `help-${id}` : undefined} ${maxlength ? `counter-${id}` : undefined}`"></textarea>
     <small v-if="help" :id="`help-${id}`">{{ help }}</small>
     <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
     <output v-if="maxlength"
