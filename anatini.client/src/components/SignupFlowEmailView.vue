@@ -47,7 +47,7 @@
         <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
         <hr>
 
-        <button type="submit" :disabled="isFetching">Submit</button>
+        <button type="submit" :aria-disabled="isFetching">Submit</button>
       </fieldset>
     </form>
     <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>

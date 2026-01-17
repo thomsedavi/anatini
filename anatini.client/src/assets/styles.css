@@ -75,9 +75,7 @@ button, input[type="file"] {
   cursor: pointer;
   color: var(--button-text);
   background-color: var(--button);
-  border-bottom-right-radius: 1rem;
-  border-top-left-radius: 1rem;
-  box-shadow: 0 0.15rem var(--shadow);
+  box-shadow: 0.15rem 0.15rem var(--shadow);
   padding: 0.5rem;
   font-weight: bold;
 
@@ -89,6 +87,10 @@ button, input[type="file"] {
     cursor: default;
     background-color: var(--button-disabled);
   }
+
+  &:not(:first-child) {
+    margin-left: 0.15em;
+  }
 }
 
 form {
@@ -98,6 +100,13 @@ form {
 
     small {
       display: block;
+    }
+  }
+
+  > div {
+    > label {
+      width: 10rem;
+      display: inline-block;
     }
   }
 }

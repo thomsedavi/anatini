@@ -5,10 +5,10 @@
   import { store } from '@/store.ts';
   import type { IsAuthenticated } from '@/types';
 
-  const { emailAddress, verificationFailed } = defineProps<{
-    emailAddress: string | null;
-    verificationFailed: boolean;
-  }>();
+  defineProps({
+    emailAddress: { type: String, required: false },
+    verificationFailed: { type: Boolean, required: true },
+  });
 
   const emit = defineEmits<{
     goBack: [];
@@ -114,7 +114,7 @@
         <input id="protected" type="checkbox" name="protected" ref="protected" />
         <hr>
 
-        <button type="submit" :disabled="isFetching || verificationFailed">Submit</button>
+        <button type="submit" :aria-disabled="isFetching || verificationFailed">Submit</button>
       </fieldset>
     </form>
     <button type="button" @click="emit('goBack')">Go Back</button>
