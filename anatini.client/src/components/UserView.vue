@@ -46,7 +46,7 @@
 
 <template>
   <main>
-    <article :aria-busy="user === null" aria-live="polite" aria-labelledby="heading-main">
+    <article :aria-busy="user === null" aria-labelledby="heading-main">
       <header>
         <figure>
           <img v-if="user && 'iconImage' in user && user.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />

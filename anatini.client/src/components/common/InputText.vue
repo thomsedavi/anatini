@@ -28,7 +28,8 @@
         :aria-invalid="error ? true : undefined"
         :aria-errormessage="error ? `error-${id}` : undefined"
         :autocomplete="autocomplete ?? 'on'"
-        :required="required ? true : undefined" />
+        :required="required ? true : undefined"
+        :aria-required="required ? true : undefined" />
       <small v-if="help" :id="`help-${id}`">{{ help }}</small>
       <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
     </span>

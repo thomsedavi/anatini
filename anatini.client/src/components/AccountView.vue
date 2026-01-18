@@ -21,7 +21,8 @@
   const inputChannelAbout = ref<string>('');
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(0);
-  const pageStatus = ref<string>('Loading account information...');
+  const pageStatus = ref<string>('Loading account information...'); // TODO add other statuses
+  const headingMainRef = ref<HTMLElement | null>(null);
 
   const fileUserIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
@@ -67,6 +68,10 @@
             inputUserAbout.value = value.about ?? '';
             inputProtected.value = value.protected ?? false;
             pageStatus.value = '';
+
+            nextTick(() => {
+              headingMainRef.value?.focus();
+            });
           })
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
@@ -397,9 +402,9 @@
 
 <template>
   <main>
-    <article :aria-busy="user === null" aria-live="polite" aria-labelledby="heading-main">
+    <article :aria-busy="user === null" aria-labelledby="heading-main">
       <header>
-        <h1 id="heading-main">{{ getHeading() }}</h1>
+        <h1 id="heading-main" ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
       </header>
 
       <section v-if="user === null">                
@@ -433,12 +438,12 @@
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </section>
 
-        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
+        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
           <header>
             <h2>Display</h2>
           </header>
 
-          <form @submit.prevent="patchAccountDisplay" action="/api/account" method="PATCH" novalidate>
+          <form @submit.prevent="patchAccountDisplay" action="/api/account" method="POST" novalidate>
             <InputText
               v-model="inputUserName"
               label="Name"
@@ -459,7 +464,7 @@
               help="Briefly describe yourself for your public profile" />
 
             <div>
-              <label for="input-icon">Icon</label>
+              <label for="icon-user">Icon</label>
               <span>
                 <input
                   type="file"
@@ -472,7 +477,7 @@
                 <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
               </span>
 
-              <output id="file-preview" for="file-input">
+              <output id="file-preview" for="icon-user">
                 <figure>
                   <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
                   <figcaption>A preview will appear here</figcaption>
@@ -488,12 +493,12 @@
           </form>
         </section>
 
-        <section id="panel-private" role="tabpanel" tabindex="0" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
+        <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
           <header>
             <h2>Privacy & Security</h2>
           </header>
 
-          <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="PATCH" novalidate>
+          <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
             <div>
               <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
               <span>
@@ -510,7 +515,7 @@
           </form>
         </section>
 
-        <section id="panel-channels" role="tabpanel" tabindex="0" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
+        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
           <header>
             <h2>Channels</h2>
           </header>
@@ -526,7 +531,8 @@
                 id="name-channel"
                 :maxlength="64"
                 help="The display name of your channel"
-                :error="getError('name-channel')" />
+                :error="getError('name-channel')"
+                :required="true" />
 
               <InputText
                 v-model="inputChannelSlug"
@@ -535,7 +541,8 @@
                 id="slug-channel"
                 :maxlength="64"
                 help="lower case with hyphens (e.g. 'my-anatini-channel')"
-                :error="getError('slug-channel')" />
+                :error="getError('slug-channel')"
+                :required="true" />
 
               <InputTextArea
                 v-model="inputChannelAbout"
@@ -577,10 +584,6 @@
                   </header>
 
                   <p v-if="channel.about">{{ channel.about }}</p>
-
-                  <footer>
-                    <small>Slug: <code>{{ channel.defaultSlug }}</code></small>
-                  </footer>
                 </article>
               </li>
             </ul>

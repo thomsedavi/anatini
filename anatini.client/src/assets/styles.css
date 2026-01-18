@@ -26,6 +26,8 @@
     --scrollbar: var(--darker);
     --scrollbar-background: var(--light);
     --link: var(--amber-dark);
+    --card-background: var(--light);
+    --card-border: var(--lightish);
   }
 }
 
@@ -43,6 +45,8 @@
     --scrollbar: var(--lighter);
     --scrollbar-background: var(--dark);
     --link: var(--amber-light);
+    --card-background: var(--dark);
+    --card-border: var(--darkish);
   }
 }
 
@@ -124,12 +128,45 @@ main {
     padding: 2rem;
 
     > header {
+      > h1 {
+        &:focus {
+          outline: none;
+        }
+      }
+
       > figure {
         margin: 0;
 
         > img {
           border-radius: 50%;
           object-fit: cover;
+        }
+      }
+    }
+
+    > section {
+      > section {
+        > ul {
+          list-style: none;
+
+          > li {
+            background-color: var(--card-background);
+            border: 3px solid var(--card-border);
+            margin-bottom: 1rem;
+            padding: 1rem;
+
+            > article {
+              > header {
+                > h4 {
+                  margin-top: 0;
+                }
+              }
+
+              > :last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
         }
       }
     }

@@ -202,7 +202,7 @@
 
 <template>
   <main>
-    <article :aria-busy="channel === null" aria-live="polite" aria-labelledby="heading-main">
+    <article :aria-busy="channel === null" aria-labelledby="heading-main">
       <header>
         <h1 id="heading-main">{{ getHeading() }}</h1>
       </header>
@@ -240,7 +240,7 @@
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
         </section>
 
-        <section id="panel-contents" role="tabpanel" tabindex="0" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
+        <section id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
           <header>
             <h2>Contents</h2>
           </header>
@@ -304,12 +304,12 @@
           </section>
         </section>
 
-        <section id="panel-public" role="tabpanel" tabindex="0" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
+        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
           <header>
             <h2>Display</h2>
           </header>
 
-          <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="PATCH" novalidate>
+          <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="POST" novalidate>
             <InputText
               v-model="inputName"
               label="Name"

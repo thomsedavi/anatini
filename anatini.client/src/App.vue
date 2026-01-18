@@ -89,7 +89,7 @@
         </template>
         <template v-else>
           <RouterLink to="/account" @click="isCollapsed = true">Account</RouterLink>
-          <a @click="logout">Log Out</a>
+          <a href="/" @click.prevent="logout">Log Out</a>
         </template>
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="3.16rem" height="3.16rem" @click="isCollapsed = true">
         <rect width="100" height="100" />
@@ -107,7 +107,7 @@
       </template>
       <template v-else>
         <RouterLink to="/account">Account</RouterLink>
-        <a @click="logout">Log Out</a>
+        <a href="/" @click.prevent="logout">Log Out</a>
       </template>
     </nav>
     <RouterView />
