@@ -3,7 +3,7 @@
   import { nextTick, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
-  import { getTabIndex, tidy } from './common/utils';
+  import { getTabIndex, parseSource, tidy, type Source } from './common/utils';
   import InputText from './common/InputText.vue';
   import TabButton from './common/TabButton.vue';
   import SubmitButton from './common/SubmitButton.vue';
@@ -26,9 +26,9 @@
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
-  watch([() => route.params.channelId], fetchChannel, { immediate: true });
+  watch([() => route.params.channelId], (source: Source) => fetchChannel(parseSource(source)), { immediate: true });
 
-  async function fetchChannel(array: (() => string | string[])[]) {
+  async function fetchChannel(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -43,7 +43,7 @@
       }
     };
 
-    apiFetchAuthenticated(`channels/${array[0]}/edit`, statusActions);
+    apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
   };
 
   function getHeading(): string {

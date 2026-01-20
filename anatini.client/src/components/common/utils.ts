@@ -94,6 +94,20 @@ export function getTabIndex(key: string, index: number, length: number): number 
   }
 }
 
+type Param = () => string | string[];
+
+export type Source = Param[];
+
+export function parseSource(source: Source): string[] {
+  const params: string[] = [];
+
+  source.forEach((param: Param) => {
+    params.push(typeof param === 'string' ? param : param()[0]);
+  });
+
+  return params;
+}
+
 /*
 Input
 ```

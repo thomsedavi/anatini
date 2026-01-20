@@ -37,12 +37,22 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ContentId = id
             };
 
+            var heading1Element = new ContentOwnedElement
+            {
+                Index = int.MaxValue / 2,
+                Tag = "h1",
+                ContentOwnedVersionContentChannelId = channelId,
+                ContentOwnedVersionContentId = channelId,
+                Content = name
+            };
+
             var channelOwnedDraftVersion = new ContentOwnedVersion
             {
                 ContentChannelId = channelId,
                 Name = name,
                 ContentId = id,
                 DateNZ = eventData.DateOnlyNZNow,
+                Elements = [heading1Element]
             };
 
             var content = new Content
