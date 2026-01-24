@@ -1,55 +1,111 @@
 <script setup lang="ts">
-  import { ref, useTemplateRef } from 'vue';
-  import { validateInputs } from './common/validity';
+  import { nextTick, ref } from 'vue';
+  import InputText from './common/InputText.vue';
+  import SubmitButton from './common/SubmitButton.vue';
+  import { tidy } from './common/utils';
+  import type { InputError, Status, StatusActions } from '@/types';
+  import { apiFetch } from './common/apiFetch';
 
   const emit = defineEmits<{
     submitEmail: [email: string | null];
   }>();
 
-  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
-  const isFetching = ref<boolean>(false);
+  const inputErrors = ref<InputError[]>([]);
+  const inputEmailAddress = ref<string>('');
+  const errorSectionRef = ref<HTMLElement | null>(null);
+  const status = ref<Status>('idle');
 
-  async function email() {
-    if (!validateInputs([
-      {element: emailAddressInput.value, error: 'Please enter an email address.'},
-    ]))
+  function getError(id: string): string | undefined {
+    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+  }
+
+  async function email(event: Event) {
+    if ((event as SubmitEvent).submitter?.ariaDisabled === 'true')
+    {
       return;
+    }
 
-    isFetching.value = true;
+    inputErrors.value = [];
+
+    const tidiedEmailAddress = tidy(inputEmailAddress.value);
+
+    if (tidiedEmailAddress === '') {
+      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    }
+
+    if (inputErrors.value.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
+      return;
+    }
+
+    status.value = 'pending';
+
+    const statusActions: StatusActions = {
+      204: () => {
+        emit('submitEmail', tidiedEmailAddress);
+      },
+      500: () => {
+        status.value = 'error';
+
+        inputErrors.value.push({id: 'email', message: 'There was an error signing you up, please try again'});
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      }
+    }
 
     const body = new FormData();
 
-    body.append('emailAddress', emailAddressInput.value!.value.trim());
+    body.append('emailAddress', tidiedEmailAddress);
 
-    fetch("/api/authentication/email", {
-      method: "POST",
-      body: body,
-    }).then((response: Response) => {
-      if (response.ok) {
-        emit('submitEmail', emailAddressInput.value!.value);
-      } else {
-        console.log("Unknown Error");
-      }
-    }).finally(() => {
-      isFetching.value = false;
-    });
+    const init = { method: "POST", body: body };
+
+    apiFetch('authentication/email', statusActions, init);
   }
 </script>
 
 <template>
   <main id="main" tabindex="-1">
-    <h2>Sign Up</h2>
+    <header>
+      <h1>Sign Up</h1>
+    </header>
+
+    <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+      <h2 id="heading-errors">There was a problem Logging In</h2>
+      <ul>
+        <li v-for="error in inputErrors" :key="'error' + error.id">
+          <a :href="'#input-' + error.id">{{ error.message }}</a>
+        </li>
+      </ul>
+    </section>
+
     <form @submit.prevent="email" action="/api/authentication/email" method="POST">
       <fieldset>
-        <legend>Email Address</legend>
+        <legend class="visuallyhidden">Email Address</legend>
 
-        <label for="emailAddress">Email Address</label>
-        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" @input="() => emailAddressInput?.setCustomValidity('')">
-        <hr>
-
-        <button type="submit" :aria-disabled="isFetching">Submit</button>
+        <InputText
+          type="email"
+          v-model="inputEmailAddress"
+          label="Email"
+          name="emailAddress"
+          id="emailAddress"
+          :error="getError('emailAddress')"
+          autocomplete="email" />
       </fieldset>
+
+      <SubmitButton
+        :busy="status === 'pending'"
+        :disabled="tidy(inputEmailAddress) === ''"
+        text="Sign Up"
+        busy-text="Signing Up..." />
+
+      <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>
     </form>
-    <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>
+
+    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>
 </template>

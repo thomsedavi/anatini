@@ -28,8 +28,10 @@
     --hover: var(--dark3);
     --shadow: var(--red);
     --button: var(--dark3);
-    --button-disabled: var(--dark4);
     --button-text: var(--light1);
+    --button-hover: var(--dark4);
+    --button-disabled: var(--dark4);
+    --button-secondary-hover: var(--light2);
     --scrollbar: var(--dark2);
     --scrollbar-background: var(--light3);
     --link: var(--dark2);
@@ -55,7 +57,9 @@
     --shadow: var(--red);
     --button: var(--light3);
     --button-text: var(--dark2);
+    --button-hover: var(--light4);
     --button-disabled: var(--light4);
+    --button-secondary-hover: var(--dark2);
     --scrollbar: var(--light2);
     --scrollbar-background: var(--dark3);
     --link: var(--light2);
@@ -251,7 +255,7 @@ form {
 
   label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     font-size: 0.875rem;
     font-weight: 500;
   }
@@ -272,17 +276,40 @@ form {
   button {
     width: 100%;
     padding: 0.75rem;
-    background-color: var(--button);
-    color: var(--button-text);
-    border: none;
     border-radius: var(--border-radius);
     font-weight: 700;
     cursor: pointer;
+    transition: all 0.2s;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
   }
 
-  button[aria-disabled="true"] {
+  button[type="submit"] {
+    background-color: var(--button);
+    color: var(--button-text);
+    border: 2px solid var(--button);
+
+    &:hover {
+      background-color: var(--button-hover);
+    }
+  }
+
+  button[type="submit"][aria-disabled="true"] {
     background-color: var(--button-disabled);
     pointer-events: none;
+  }
+
+  button[type="button"] {
+    background-color: transparent;
+    color: var(--button-text);
+    border: 2px solid var(--button);
+    color: var(--button);
+
+    &:hover {
+      background-color: var(--button-secondary-hover);
+    }
   }
 }
 
