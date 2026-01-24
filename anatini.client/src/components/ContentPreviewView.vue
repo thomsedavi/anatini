@@ -73,5 +73,5 @@
 </script>
 
 <template>
-  <main v-html="getMainHtml()"></main>
+  <main id="main" tabindex="-1" v-html="getMainHtml()"></main>
 </template>

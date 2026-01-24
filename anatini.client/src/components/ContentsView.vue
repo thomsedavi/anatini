@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <h2>ContentsView</h2>
   </main>
 </template>

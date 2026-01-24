@@ -41,7 +41,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <h2>ChannelView</h2>
     <h3 v-if="channel">{{ channel.name }}</h3>
   </main>

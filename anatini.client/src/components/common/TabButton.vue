@@ -13,16 +13,18 @@
 </script>
 
 <template>
-  <button 
-    :ref="(ref) => addButtonRef(ref)"
-    :id="`tab-${id}`" 
-    role="tab" 
-    :aria-selected="selected"
-    :aria-controls="`panel-${id}`" 
-    type="button"
-    @click="emit('click')"
-    @keydown="(payload) => emit('keydown', payload)"
-    :tabindex="selected ? undefined : -1">
-    {{ text }}
-  </button>
+  <li role="presentation">
+    <button 
+      :ref="(ref) => addButtonRef(ref)"
+      :id="`tab-${id}`" 
+      role="tab" 
+      :aria-selected="selected"
+      :aria-controls="`panel-${id}`" 
+      type="button"
+      @click="emit('click')"
+      @keydown="(payload) => emit('keydown', payload)"
+      :tabindex="selected ? undefined : -1">
+      {{ text }}
+    </button>
+  </li>
 </template>

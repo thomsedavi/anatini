@@ -37,7 +37,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <article :aria-busy="content === null" aria-labelledby="heading-main">
       <header>
         <h1 id="heading-main">{{ getHeading() }}</h1>

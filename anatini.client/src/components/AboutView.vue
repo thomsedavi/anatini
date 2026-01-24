@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <h2>AboutView</h2>
     <label>
       Search: <input v-model.trim="search" maxlength="20">

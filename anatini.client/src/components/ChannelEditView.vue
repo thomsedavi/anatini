@@ -201,7 +201,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <article :aria-busy="channel === null" aria-labelledby="heading-main">
       <header>
         <h1 id="heading-main">{{ getHeading() }}</h1>
@@ -229,7 +229,7 @@
           </ul>
         </section>
 
-        <section role="tablist" aria-label="Settings Options">
+        <ul role="tablist" aria-label="Settings Options">
           <TabButton v-for="(tab, index) in tabs"
             :key="tab.id"
             :selected="tabIndex === index"
@@ -238,7 +238,7 @@
             :text="tab.text"
             :id="tab.id"
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
-        </section>
+        </ul>
 
         <section id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
           <header>

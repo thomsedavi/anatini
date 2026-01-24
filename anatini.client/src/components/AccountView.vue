@@ -401,7 +401,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <article :aria-busy="user === null" aria-labelledby="heading-main">
       <header>
         <h1 id="heading-main" ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
@@ -427,7 +427,7 @@
           </ul>
         </section>
 
-        <section role="tablist" aria-label="Settings Options">
+        <ul role="tablist" aria-label="Settings Options">
           <TabButton v-for="(tab, index) in tabs"
             :key="tab.id"
             :selected="tabIndex === index"
@@ -436,7 +436,7 @@
             :text="tab.text"
             :id="tab.id"
             :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
-        </section>
+        </ul>
 
         <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
           <header>
@@ -463,27 +463,23 @@
               :error="getError('about-user')"
               help="Briefly describe yourself for your public profile" />
 
-            <div>
-              <label for="icon-user">Icon</label>
-              <span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  id="icon-user"
-                  @change="onChooseFile"
-                  aria-describedby="help-icon"
-                  aria-controls="file-preview"
-                />
-                <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
-              </span>
+            <label for="icon-user">Icon</label>
+            <input
+              type="file"
+              accept="image/*"
+              id="icon-user"
+              @change="onChooseFile"
+              aria-describedby="help-icon"
+              aria-controls="file-preview"
+            />
+            <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
 
-              <output id="file-preview" for="icon-user">
-                <figure>
-                  <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
-                  <figcaption>A preview will appear here</figcaption>
-                </figure>
-              </output>
-            </div>
+            <output id="file-preview" for="icon-user">
+              <figure>
+                <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+                <figcaption>A preview will appear here</figcaption>
+              </figure>
+            </output>
 
             <SubmitButton
               :busy="status === 'pending'"
@@ -499,13 +495,9 @@
           </header>
 
           <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
-            <div>
-              <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
-              <span>
-                <label for="input-protected">Protected</label>
-                <small id="help-protected">Your account will only be visible to trusted users</small>
-              </span>
-            </div>
+            <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
+            <label for="input-protected">Protected</label>
+            <small id="help-protected">Your account will only be visible to trusted users</small>
 
             <SubmitButton
               :busy="status === 'pending'"

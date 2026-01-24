@@ -1,50 +1,55 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import { useRoute } from 'vue-router';
 
-  const route = useRoute();
-
-  const loading = ref<boolean>(false);
-  const content = ref<string | null>(null);
-  const error = ref<string | null>(null);
-
-  watch([() => route.params.channelId, () => route.params.contentId], fetchContent, { immediate: true });
-
-  async function fetchContent(array: (() => string | string[])[]) {
-    error.value = content.value = null
-    loading.value = true
-
-    fetch(`/api/channels/${array[0]}/contents/${array[1]}`, { method: "GET" })
-      .then((value: Response) => {
-        if (value.ok) {
-          value.json()
-            .then(value => {
-              content.value = value.content;
-            })
-            .catch(() => {
-              error.value = 'Unknown Error';
-            });
-        } else if (value.status === 401) {
-          error.value = 'Unauthorised';
-        } else {
-          error.value = 'Unkown Error';
-        }
-      })
-      .catch(() => {
-        error.value = 'Unknown Error';
-      }).
-      finally(() => {
-        loading.value = false
-      });
-  }
 </script>
 
 <template>
-  <main>
-    <h2>ContentView</h2>
-    <p>Current route path: {{ $route.fullPath }}</p>
-    <p v-if="loading">Loading...</p>
-    <p v-if="error">{{ error }}</p>
-    <p v-if="content">{{ content }}</p>
+  <main id="main" tabindex="-1">
+    <article aria-labelledby="heading-main">
+      <header>
+        <h1 id="heading-main">Title Of Main Article</h1>
+
+        <address>
+          <a href="/channels/channel-name">Island Style</a>
+        </address>
+
+        <time datetime="2025-10-10">October 10, 2025</time>
+      </header>
+
+      <p>Lorem ipsum dolor sit amet.</p>
+
+      <p>Lorem ipsum dolor sit amet.</p>
+
+      <aside aria-labelledby="comp1">
+        <article>
+          <header>
+            <h2 id="comp1">
+              <a href="/channels/my-channel/contents/my-content">Title Of Related Article With Embedded Card</a>
+            </h2>
+          </header>
+
+          <p>Lorem ipsum dolor sit amet.</p>
+
+          <footer>
+            <time datetime="2025-10-10">October 10, 2025</time>
+          </footer>
+        </article>
+      </aside>
+
+      <section aria-labelledby="h2">
+        <h2 id="h2">Lorem ipsum dolor sit amet.</h2>
+
+        <p>Lorem ipsum dolor sit amet.</p>
+
+        <section aria-labelledby="h3">
+          <h3 id="h3">Lorem ipsum dolor sit amet.</h3>
+
+          <p>Lorem ipsum dolor sit amet.</p>
+        </section>
+      </section>
+
+      <footer>
+        <p><a href="#">Back to top</a></p>
+      </footer>
+    </article>
   </main>
 </template>

@@ -45,7 +45,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <article :aria-busy="user === null" aria-labelledby="heading-main">
       <header>
         <figure>

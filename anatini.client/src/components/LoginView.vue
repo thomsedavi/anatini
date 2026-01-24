@@ -102,7 +102,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <section aria-labelledby="heading-main">
       <header>
         <h1 id="heading-main">Login</h1>

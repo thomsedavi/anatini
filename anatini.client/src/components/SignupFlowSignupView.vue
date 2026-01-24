@@ -84,7 +84,7 @@
 </script>
 
 <template>
-  <main>
+  <main id="main" tabindex="-1">
     <h2>Sign Up</h2>
     <form @submit.prevent="signup" action="/api/authentication/signup" method="POST">
       <fieldset>
