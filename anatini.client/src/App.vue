@@ -55,7 +55,7 @@
     <a href="#main" class="skip">Skip to main content</a>
 
     <header role="banner">
-      <RouterLink to="/">ANATINI</RouterLink>
+      <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
 
       <nav aria-label="Main">
         <ul>

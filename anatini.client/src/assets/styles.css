@@ -6,12 +6,14 @@
   --light5: rgb(150 135 120);
   --red: rgb(210 0 60);
   --dark5: rgb(150 165 180);
-  --dark4: rgb(120 135 150);
+  --dark4: rgb(105 135 165);
   --dark3: rgb(30 45 60);
-  --dark2: rgb(5 15 20);
+  --dark2: rgb(10 20 30);
   --dark1: rgb(0 0 0);
   --amber-light: rgb(240, 210, 120);
   --amber-dark: rgb(180, 150, 30);
+
+  --border-radius: 8px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -25,7 +27,7 @@
     --background-highlight: var(--light1);
     --hover: var(--dark3);
     --shadow: var(--red);
-    --button: var(--dark2);
+    --button: var(--dark3);
     --button-disabled: var(--dark4);
     --button-text: var(--light1);
     --scrollbar: var(--dark2);
@@ -51,7 +53,7 @@
     --background-highlight: var(--dark1);
     --hover: var(--light3);
     --shadow: var(--red);
-    --button: var(--light2);
+    --button: var(--light3);
     --button-text: var(--dark2);
     --button-disabled: var(--light4);
     --scrollbar: var(--light2);
@@ -72,6 +74,7 @@ body {
   color: var(--text);
   background-color: var(--background);
   margin: 0;
+  letter-spacing: 0.05rem;
 }
 
 a {
@@ -109,7 +112,7 @@ header[role="banner"] {
 
 header[role="banner"] > a {
   font-size: 1.5rem;
-  font-weight: lighter;
+  font-weight: 300;
   font-style: italic;
 }
 
@@ -122,7 +125,7 @@ nav ul {
 }
 
 nav a {
-  font-weight: lighter;
+  font-weight: 300;
 }
 
 main {
@@ -144,7 +147,7 @@ button[role="tab"] {
   border: none;
   padding: 0.75rem 1.5rem;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-light);
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
@@ -162,7 +165,7 @@ ul[role="list"] {
   article {
     background: var(--background-highlight);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     border: 1px solid var(--border);
     margin-bottom: 1rem;
     transition: transform 0.1s ease;
@@ -210,12 +213,70 @@ main > article {
   }
 }
 
+form {
+  background: var(--background-highlight);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 25rem;
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+  }
+
+  legend {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+  }
+
+  input:focus {
+    outline: 2px solid var(--border-hover);
+    border-color: transparent;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--button);
+    color: var(--button-text);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  button[aria-disabled="true"] {
+    background-color: var(--button-disabled);
+    pointer-events: none;
+  }
+}
+
 aside {
   margin: 2rem 0;
   padding: 1.5rem;
   background: var(--background-highlight);
   border-left: 4px solid var(--accent);
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 aside h2 {

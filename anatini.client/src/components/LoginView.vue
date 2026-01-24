@@ -103,21 +103,23 @@
 
 <template>
   <main id="main" tabindex="-1">
-    <section aria-labelledby="heading-main">
-      <header>
-        <h1 id="heading-main">Login</h1>
-      </header>
+    <header>
+      <h1>Log In</h1>
+    </header>
 
-      <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-        <h2 id="heading-errors">There was a problem Logging In</h2>
-        <ul>
-          <li v-for="error in inputErrors" :key="'error' + error.id">
-            <a :href="'#input-' + error.id">{{ error.message }}</a>
-          </li>
-        </ul>
-      </section>
+    <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+      <h2 id="heading-errors">There was a problem Logging In</h2>
+      <ul>
+        <li v-for="error in inputErrors" :key="'error' + error.id">
+          <a :href="'#input-' + error.id">{{ error.message }}</a>
+        </li>
+      </ul>
+    </section>
 
-      <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
+    <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
+      <fieldset>
+        <legend>Credentials</legend>
+
         <InputText
           type="email"
           v-model="inputEmailAddress"
@@ -135,15 +137,15 @@
           id="password"
           :error="getError('password')"
           autocomplete="current-password" />
+      </fieldset>
 
-        <SubmitButton
-          :busy="status === 'pending'"
-          :disabled="tidy(inputEmailAddress) === '' || inputPassword === ''"
-          text="Log In"
-          busy-text="Logging In..." />
-      </form>
+      <SubmitButton
+        :busy="status === 'pending'"
+        :disabled="tidy(inputEmailAddress) === '' || inputPassword === ''"
+        text="Log In"
+        busy-text="Logging In..." />
+    </form>
 
-      <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
-    </section>
+    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>
 </template>
