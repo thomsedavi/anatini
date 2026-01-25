@@ -10,7 +10,8 @@
     help: { type: String, required: false },
     autocomplete: { type: String, required: false },
     type: { type: String, required: false },
-    required: { type: Boolean, required: false }
+    required: { type: Boolean, required: false },
+    disabled: { type: Boolean, required: false},
   });
 </script>
 
@@ -27,6 +28,7 @@
     :aria-errormessage="error ? `error-${id}` : undefined"
     :autocomplete="autocomplete ?? 'on'"
     :required="required ? true : undefined"
+    :disabled="disabled ?? undefined"
     :aria-required="required ? true : undefined" />
   <small v-if="help" :id="`help-${id}`">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>

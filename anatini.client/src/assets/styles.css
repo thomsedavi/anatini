@@ -116,7 +116,7 @@ a:hover {
   top: 0;
 }
 
-header[role="banner"] {
+body > header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -125,7 +125,7 @@ header[role="banner"] {
   border-bottom: 1px solid var(--border);
 }
 
-header[role="banner"] > a {
+body > header > a {
   font-size: 1.5rem;
   font-weight: 300;
   font-style: italic;
@@ -253,6 +253,10 @@ form {
     margin-bottom: 1rem;
   }
 
+  label:not(:first-of-type) {
+    margin-top: 1.25rem;
+  }
+
   label {
     display: block;
     margin-bottom: 0.25rem;
@@ -260,17 +264,31 @@ form {
     font-weight: 500;
   }
 
-  input {
+  input:not([type="checkbox"]) {
     width: 100%;
     padding: 0.75rem;
-    margin-bottom: 1.25rem;
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
+
+    &:focus {
+      outline: 2px solid var(--border-hover);
+      border-color: transparent;
+    }
   }
 
-  input:focus {
-    outline: 2px solid var(--border-hover);
-    border-color: transparent;
+  input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+
+  input[type="checkbox"] + label {
+    display: inline-block;
+    margin-bottom: 0;
+  }
+
+  small {
+    display: block;
+    color: var(--text-light);
+    margin-top: 0.2rem;
   }
 
   button {

@@ -54,7 +54,7 @@
   <template v-if="store.isLoggedIn !== null">
     <a href="#main" class="skip">Skip to main content</a>
 
-    <header role="banner">
+    <header>
       <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
 
       <nav aria-label="Main">
