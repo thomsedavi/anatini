@@ -39,10 +39,12 @@ namespace Anatini.Server.Authentication
             {
                 if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
                 {
+                    // do not confirm that a user with this email already exists
                     return NoContent();
                 }
                 else
                 {
+                    // handle the error in UsingContextAsync
                     throw;
                 }
             }

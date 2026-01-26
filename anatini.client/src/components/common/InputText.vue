@@ -12,6 +12,7 @@
     type: { type: String, required: false },
     required: { type: Boolean, required: false },
     disabled: { type: Boolean, required: false},
+    readonly: { type: Boolean, required: false},
   });
 </script>
 
@@ -29,6 +30,7 @@
     :autocomplete="autocomplete ?? 'on'"
     :required="required ? true : undefined"
     :disabled="disabled ?? undefined"
+    :readonly="readonly ?? undefined"
     :aria-required="required ? true : undefined" />
   <small v-if="help" :id="`help-${id}`">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-  import { ref, useTemplateRef } from 'vue';
-  import { useRouter } from 'vue-router'
-  import { reportValidity, validateInputs } from './common/validity';
-  import { store } from '@/store.ts';
-  import type { IsAuthenticated } from '@/types';
+  import { nextTick, ref, useTemplateRef } from 'vue';
+  import type { InputError, IsAuthenticated, Status, StatusActions } from '@/types';
+  import { tidy } from './common/utils';
+  import InputText from './common/InputText.vue';
+  import SubmitButton from './common/SubmitButton.vue';
+  import { apiFetch } from './common/apiFetch';
+  import { store } from '@/store';
+  import { useRouter } from 'vue-router';
 
-  defineProps({
+  const router = useRouter();
+
+  const props = defineProps({
     emailAddress: { type: String, required: false },
     verificationFailed: { type: Boolean, required: true },
   });
@@ -15,108 +20,196 @@
     failVerification: [];
   }>();
   
-  const router = useRouter();
-
-  const emailAddressInput = useTemplateRef<HTMLInputElement>('email-address');
-  const nameInput = useTemplateRef<HTMLInputElement>('name');
-  const slugInput = useTemplateRef<HTMLInputElement>('slug');
-  const passwordInput = useTemplateRef<HTMLInputElement>('password');
-  const verificationCodeInput = useTemplateRef<HTMLInputElement>('verification-code');
+  const inputErrors = ref<InputError[]>([]);
+  const inputEmailAddress = ref<string>(props.emailAddress ?? '');
+  const inputName = ref<string>('');
+  const inputVerificationCode = ref<string>('');
+  const inputSlug = ref<string>('');
+  const inputPassword = ref<string>('');
+  const errorSectionRef = ref<HTMLElement | null>(null);
   const protectedInput = useTemplateRef<HTMLInputElement>('protected');
-  const isFetching = ref<boolean>(false);
+  const status = ref<Status>('idle');
 
-  async function signup() {
-    if (!validateInputs([
-      { element: emailAddressInput.value, error: 'Please enter an email address.' },
-      { element: nameInput.value, error: 'Please enter a name.' },
-      { element: slugInput.value, error: 'Please enter a slug.' },
-      { element: passwordInput.value, error: 'Please enter a password.' },
-      { element: verificationCodeInput.value, error: 'Please enter a verification code.' },
-    ]))
+  function getError(id: string): string | undefined {
+    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+  }
+
+  async function signup(event: Event) {
+    if ((event as SubmitEvent).submitter?.ariaDisabled === 'true')
+    {
       return;
+    }
 
-    isFetching.value = true;
+    inputErrors.value = [];
+
+    const tidiedEmailAddress = tidy(inputEmailAddress.value);
+    const tidiedName = tidy(inputName.value);
+    const tidiedSlug = tidy(inputSlug.value);
+    const tidiedPassword = tidy(inputPassword.value);
+    const tidiedVerificationCode = tidy(inputVerificationCode.value);
+
+    if (tidiedEmailAddress === '') {
+      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    }
+
+    if (tidiedName === '') {
+      inputErrors.value.push({id: 'name', message: 'Name is required'});
+    }
+
+    if (tidiedSlug === '') {
+      inputErrors.value.push({id: 'slug', message: 'Slug is required'});
+    }
+
+    if (tidiedPassword === '') {
+      inputErrors.value.push({id: 'password', message: 'Password is required'});
+    }
+
+    if (tidiedPassword === '') {
+      inputErrors.value.push({id: 'password', message: 'Password is required'});
+    }
+
+    if (tidiedVerificationCode === '') {
+      inputErrors.value.push({id: 'verificationCode', message: 'Verification Code is required'});
+    }
+
+    if (inputErrors.value.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+
+      return;
+    }
+
+    status.value = 'pending';
+
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: IsAuthenticated) => {
+            store.isLoggedIn = value.isAuthenticated;
+            store.expiresUtc = value.expiresUtc;
+
+            router.replace({ path: '/account' });     
+          });
+      },
+      404: () => {
+        status.value = 'error';
+
+        inputErrors.value.push({id: 'verificationCode', message: 'Verification code does not match, please go back and resend email'});
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      },
+      409: () => {
+        status.value = 'error';
+
+        inputErrors.value.push({id: 'slug', message: 'Handle already in use'});
+
+        nextTick(() => {
+          errorSectionRef.value?.focus();
+        });
+      }
+    }
 
     const body = new FormData();
 
-    body.append('emailAddress', emailAddressInput.value!.value.trim());
-    body.append('name', nameInput.value!.value.trim());
-    body.append('slug', slugInput.value!.value.trim());
-    body.append('password', passwordInput.value!.value);
-    body.append('verificationCode', verificationCodeInput.value!.value.trim());
+    body.append('emailAddress', tidiedEmailAddress);
+    body.append('name', tidiedName);
+    body.append('slug', tidiedSlug);
+    body.append('password', tidiedPassword);
+    body.append('verificationCode', tidiedVerificationCode);
 
     if (protectedInput.value!.checked) {
       body.append('protected', 'true');
     }
 
-    fetch("/api/authentication/signup", {
-      method: "POST",
-      body: body,
-    }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
-          .then((value: IsAuthenticated) => {
-            store.isLoggedIn = value.isAuthenticated;
-            store.expiresUtc = value.expiresUtc;
+    const init = { method: "POST", body: body };
 
-            router.replace({ path: '/account' });
-          })
-          .catch(() => {
-            store.isLoggedIn = false;
-          });
-      } else if (response.status === 404) {
-        verificationCodeInput.value!.setCustomValidity("Verification code does not match, please go back and resend email.");
-
-        reportValidity([verificationCodeInput.value]);
-
-        emit('failVerification');
-      } else if (response.status === 409) {
-        slugInput.value!.setCustomValidity("Slug already in use!");
-
-        reportValidity([slugInput.value]);
-      } else {
-        console.log("Unknown Error");
-      }
-    }).finally(() => {
-      isFetching.value = false;
-    });
+    apiFetch('authentication/signup', statusActions, init);
   }
 </script>
 
 <template>
   <main id="main" tabindex="-1">
-    <h2>Sign Up</h2>
+    <header>
+      <h1>Sign Up</h1>
+    </header>
+
+    <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+      <h2 id="heading-errors">There was a problem signing up</h2>
+      <ul>
+        <li v-for="error in inputErrors" :key="'error' + error.id">
+          <a :href="'#input-' + error.id">{{ error.message }}</a>
+        </li>
+      </ul>
+    </section>
+
     <form @submit.prevent="signup" action="/api/authentication/signup" method="POST">
       <fieldset>
-        <legend>Sign Up</legend>
+        <legend class="visuallyhidden">Complete Signup</legend>
 
-        <label for="emailAddress">Email Address</label>
-        <input id="emailAddress" type="email" name="emailAddress" ref="email-address" :value="emailAddress" :disabled="emailAddress !== null" @input="() => emailAddressInput?.setCustomValidity('')">
-        <hr>
+        <InputText
+          type="email"
+          v-model="inputEmailAddress"
+          label="Email"
+          name="emailAddress"
+          id="emailAddress"
+          :error="getError('emailAddress')"
+          autocomplete="email"
+          :readonly="emailAddress !== null"
+          :required="true" />
 
-        <label for="name">Name</label>
-        <input id="name" type="text" name="name" maxlength="64" ref="name" @input="() => nameInput?.setCustomValidity('')">
-        <hr>
+        <InputText
+          v-model="inputName"
+          label="Name"
+          name="name"
+          id="name"
+          autocomplete="name"
+          :error="getError('name')"
+          :required="true" />
 
-        <label for="slug">Slug</label>
-        <input id="slug" type="text" name="slug" maxlength="64" ref="slug" @input="() => slugInput?.setCustomValidity('')">
-        <hr>
+        <InputText
+          v-model="inputSlug"
+          label="Handle"
+          name="slug"
+          id="slug"
+          autocomplete="username"
+          :error="getError('slug')"
+          :required="true"
+          help="lower case characters, number, and hyphens" />
 
-        <label for="password">Password</label>
-        <input id="password" type="password" name="password" ref="password" @input="() => passwordInput?.setCustomValidity('')">
-        <hr>
+        <InputText
+          v-model="inputPassword"
+          label="Password"
+          name="password"
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          :error="getError('password')"
+          :required="true" />
 
-        <label for="verificationCode">Verification Code</label>
-        <input id="verificationCode" type="text" name="verificationCode" ref="verification-code" @input="() => verificationCodeInput?.setCustomValidity('')">
-        <hr>
+        <InputText
+          v-model="inputVerificationCode"
+          label="Verification Code"
+          name="verificationCode"
+          id="verificationCode"
+          autocomplete="one-time-code"
+          :error="getError('verificationCode')"
+          :required="true" />
 
-        <label for="protected">Protected</label>
         <input id="protected" type="checkbox" name="protected" ref="protected" />
-        <hr>
-
-        <button type="submit" :aria-disabled="isFetching || verificationFailed">Submit</button>
+        <label for="protected" aria-describedby="help-protected">Protected</label>
+        <small id="help-protected">your account will only be visible to other verified users</small>
       </fieldset>
+
+      <SubmitButton
+        :busy="status === 'pending'"
+        :disabled="tidy(inputName) === '' || tidy(inputSlug) === '' || tidy(inputPassword) === '' || tidy(inputVerificationCode) === '' || tidy(inputEmailAddress) === '' || verificationFailed"
+        text="Finish Signing Up"
+        busy-text="Finishing Sign Up..." />
+
+      <button type="button" @click="emit('goBack')">Go Back</button>
     </form>
-    <button type="button" @click="emit('goBack')">Go Back</button>
   </main>
 </template>
