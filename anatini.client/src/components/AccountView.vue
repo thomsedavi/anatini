@@ -443,42 +443,46 @@
         </header>
 
         <form @submit.prevent="patchAccountDisplay" action="/api/account" method="POST" novalidate>
-          <InputText
-            v-model="inputUserName"
-            label="Name"
-            name="name"
-            id="name-user"
-            :maxlength="64"
-            :error="getError('name-user')"
-            help="Your display name"
-            autocomplete="name" />
+          <fieldset>
+            <legend class="visuallyhidden">Display Details</legend>
 
-          <InputTextArea
-            v-model="inputUserAbout"
-            label="About"
-            name="about"
-            id="about-user"
-            :maxlength="256"
-            :error="getError('about-user')"
-            help="Briefly describe yourself for your public profile" />
+            <InputText
+              v-model="inputUserName"
+              label="Name"
+              name="name"
+              id="name-user"
+              :maxlength="64"
+              :error="getError('name-user')"
+              help="Your display name"
+              autocomplete="name" />
 
-          <label for="icon-user">Icon</label>
-          <input
-            type="file"
-            accept="image/*"
-            id="icon-user"
-            @change="onChooseFile"
-            aria-describedby="help-icon"
-            aria-controls="file-preview"
-          />
-          <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
+            <InputTextArea
+              v-model="inputUserAbout"
+              label="About"
+              name="about"
+              id="about-user"
+              :maxlength="256"
+              :error="getError('about-user')"
+              help="Briefly describe yourself for your public profile" />
 
-          <output id="file-preview" for="icon-user">
-            <figure>
-              <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
-              <figcaption>A preview will appear here</figcaption>
-            </figure>
-          </output>
+            <label for="icon-user">Icon</label>
+            <input
+              type="file"
+              accept="image/*"
+              id="icon-user"
+              @change="onChooseFile"
+              aria-describedby="help-icon"
+              aria-controls="file-preview"
+            />
+            <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
+
+            <output id="file-preview" for="icon-user">
+              <figure>
+                <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+                <figcaption>A preview will appear here</figcaption>
+              </figure>
+            </output>
+          </fieldset>
 
           <SubmitButton
             :busy="status === 'pending'"
@@ -494,9 +498,13 @@
         </header>
 
         <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
-          <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
-          <label for="input-protected">Protected</label>
-          <small id="help-protected">Your account will only be visible to trusted users</small>
+          <fieldset>
+            <legend class="visuallyhidden">Privacy</legend>
+
+            <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
+            <label for="input-protected">Protected</label>
+            <small id="help-protected">Your account will only be visible to trusted users</small>
+          </fieldset>
 
           <SubmitButton
             :busy="status === 'pending'"

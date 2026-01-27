@@ -98,6 +98,15 @@ main > section, main > article {
   max-width: 50rem;
 }
 
+main > section:has(form) {
+  flex-direction: column;
+  align-items: center;
+
+  &:not([hidden]) {
+    display: flex;
+  }
+}
+
 main > section[id="errors"] {
   max-width: 25rem;
   border: 1px solid var(--error-border);
@@ -118,6 +127,10 @@ main > section[id="errors"] {
 
 * {
   box-sizing: border-box;
+}
+
+h1 {
+  outline: none;
 }
 
 a {
