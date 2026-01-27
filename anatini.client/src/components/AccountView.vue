@@ -401,190 +401,188 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
-    <article :aria-busy="user === null" aria-labelledby="heading-main">
-      <header>
-        <h1 id="heading-main" ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
-      </header>
+  <main id="main" tabindex="-1" :aria-busy="user === null">
+    <header>
+      <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
+    </header>
 
-      <section v-if="user === null">                
-        <progress max="100">Fetching account...</progress>
-      </section>
+    <section v-if="user === null">                
+      <progress max="100">Fetching account...</progress>
+    </section>
 
-      <section v-else-if="'error' in user">
-        <p>
-          {{ user.body }}
-        </p>
-      </section>
+    <section v-else-if="'error' in user">
+      <p>
+        {{ user.body }}
+      </p>
+    </section>
 
-      <template v-else>
-        <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-          <h2 id="heading-errors">There was a problem updating your account</h2>
-          <ul>
-            <li v-for="error in inputErrors" :key="'error' + error.id">
-              <a :href="'#input-' + error.id">{{ error.message }}</a>
-            </li>
-          </ul>
-        </section>
-
-        <ul role="tablist" aria-label="Settings Options">
-          <TabButton v-for="(tab, index) in tabs"
-            :key="tab.id"
-            :selected="tabIndex === index"
-            @click="tabIndex = index"
-            @keydown="handleKeyDown($event, index)"
-            :text="tab.text"
-            :id="tab.id"
-            :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
+    <template v-else>
+      <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+        <h2 id="heading-errors">There was a problem updating your account</h2>
+        <ul>
+          <li v-for="error in inputErrors" :key="'error' + error.id">
+            <a :href="'#input-' + error.id">{{ error.message }}</a>
+          </li>
         </ul>
+      </section>
 
-        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
-          <header>
-            <h2>Display</h2>
-          </header>
+      <ul role="tablist" aria-label="Settings Options">
+        <TabButton v-for="(tab, index) in tabs"
+          :key="tab.id"
+          :selected="tabIndex === index"
+          @click="tabIndex = index"
+          @keydown="handleKeyDown($event, index)"
+          :text="tab.text"
+          :id="tab.id"
+          :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
+      </ul>
 
-          <form @submit.prevent="patchAccountDisplay" action="/api/account" method="POST" novalidate>
+      <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 0">
+        <header>
+          <h2>Display</h2>
+        </header>
+
+        <form @submit.prevent="patchAccountDisplay" action="/api/account" method="POST" novalidate>
+          <InputText
+            v-model="inputUserName"
+            label="Name"
+            name="name"
+            id="name-user"
+            :maxlength="64"
+            :error="getError('name-user')"
+            help="Your display name"
+            autocomplete="name" />
+
+          <InputTextArea
+            v-model="inputUserAbout"
+            label="About"
+            name="about"
+            id="about-user"
+            :maxlength="256"
+            :error="getError('about-user')"
+            help="Briefly describe yourself for your public profile" />
+
+          <label for="icon-user">Icon</label>
+          <input
+            type="file"
+            accept="image/*"
+            id="icon-user"
+            @change="onChooseFile"
+            aria-describedby="help-icon"
+            aria-controls="file-preview"
+          />
+          <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
+
+          <output id="file-preview" for="icon-user">
+            <figure>
+              <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+              <figcaption>A preview will appear here</figcaption>
+            </figure>
+          </output>
+
+          <SubmitButton
+            :busy="status === 'pending'"
+            :disabled="noChangeDisplay()"
+            text="Save"
+            busy-text="Saving..." />
+        </form>
+      </section>
+
+      <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
+        <header>
+          <h2>Privacy & Security</h2>
+        </header>
+
+        <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
+          <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
+          <label for="input-protected">Protected</label>
+          <small id="help-protected">Your account will only be visible to trusted users</small>
+
+          <SubmitButton
+            :busy="status === 'pending'"
+            :disabled="noChangePrivacy()"
+            text="Save"
+            busy-text="Saving..." />
+        </form>
+      </section>
+
+      <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
+        <header>
+          <h2>Channels</h2>
+        </header>
+
+        <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
+          <fieldset>
+            <legend>Create Channel</legend>
+
             <InputText
-              v-model="inputUserName"
-              label="Name"
+              v-model="inputChannelName"
+              label="Name*"
               name="name"
-              id="name-user"
+              id="name-channel"
               :maxlength="64"
-              :error="getError('name-user')"
-              help="Your display name"
-              autocomplete="name" />
+              help="The display name of your channel"
+              :error="getError('name-channel')"
+              :required="true" />
+
+            <InputText
+              v-model="inputChannelSlug"
+              label="Slug*"
+              name="slug"
+              id="slug-channel"
+              :maxlength="64"
+              help="lower case with hyphens (e.g. 'my-anatini-channel')"
+              :error="getError('slug-channel')"
+              :required="true" />
 
             <InputTextArea
-              v-model="inputUserAbout"
+              v-model="inputChannelAbout"
               label="About"
               name="about"
-              id="about-user"
+              id="about-channel"
               :maxlength="256"
-              :error="getError('about-user')"
-              help="Briefly describe yourself for your public profile" />
+              :error="getError('about-channel')"
+              help="Briefly describe your channel" />
+          </fieldset>
 
-            <label for="icon-user">Icon</label>
-            <input
-              type="file"
-              accept="image/*"
-              id="icon-user"
-              @change="onChooseFile"
-              aria-describedby="help-icon"
-              aria-controls="file-preview"
-            />
-            <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
+          <SubmitButton
+            :busy="status === 'pending'"
+            :disabled="tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''"
+            text="Create"
+            busy-text="Creating..." />
+        </form>
 
-            <output id="file-preview" for="icon-user">
-              <figure>
-                <img :alt="user.iconImage?.altText ?? 'User icon'" :src="previewUrl ?? user.iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
-                <figcaption>A preview will appear here</figcaption>
-              </figure>
-            </output>
-
-            <SubmitButton
-              :busy="status === 'pending'"
-              :disabled="noChangeDisplay()"
-              text="Save"
-              busy-text="Saving..." />
-          </form>
-        </section>
-
-        <section id="panel-private" role="tabpanel" aria-labelledby="tab-private" :hidden="tabIndex !== 1">
+        <article v-else>
           <header>
-            <h2>Privacy & Security</h2>
+            <h3>Insufficient permission</h3>
           </header>
 
-          <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
-            <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
-            <label for="input-protected">Protected</label>
-            <small id="help-protected">Your account will only be visible to trusted users</small>
+          <p>You do not currently have permission to create Channels</p>
+        </article>
 
-            <SubmitButton
-              :busy="status === 'pending'"
-              :disabled="noChangePrivacy()"
-              text="Save"
-              busy-text="Saving..." />
-          </form>
-        </section>
-
-        <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
+        <section aria-labelledby="section-your-channels">
           <header>
-            <h2>Channels</h2>
+            <h3 id="section-your-channels">Your Channels</h3>
           </header>
 
-          <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
-            <fieldset>
-              <legend>Create Channel</legend>
+          <ul role="list" v-if="(user.channels?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
+            <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
+              <article :aria-labelledby="`channel-${channel.defaultSlug}`">
+                <header>
+                  <h4 :id="`channel-${channel.defaultSlug}`">
+                    <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
+                  </h4>
+                </header>
 
-              <InputText
-                v-model="inputChannelName"
-                label="Name*"
-                name="name"
-                id="name-channel"
-                :maxlength="64"
-                help="The display name of your channel"
-                :error="getError('name-channel')"
-                :required="true" />
+                <p v-if="channel.about">{{ channel.about }}</p>
+              </article>
+            </li>
+          </ul>
 
-              <InputText
-                v-model="inputChannelSlug"
-                label="Slug*"
-                name="slug"
-                id="slug-channel"
-                :maxlength="64"
-                help="lower case with hyphens (e.g. 'my-anatini-channel')"
-                :error="getError('slug-channel')"
-                :required="true" />
-
-              <InputTextArea
-                v-model="inputChannelAbout"
-                label="About"
-                name="about"
-                id="about-channel"
-                :maxlength="256"
-                :error="getError('about-channel')"
-                help="Briefly describe your channel" />
-            </fieldset>
-
-            <SubmitButton
-              :busy="status === 'pending'"
-              :disabled="tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''"
-              text="Create"
-              busy-text="Creating..." />
-          </form>
-
-          <article v-else>
-            <header>
-              <h3>Insufficient permission</h3>
-            </header>
-
-            <p>You do not currently have permission to create Channels</p>
-          </article>
-
-          <section aria-labelledby="section-your-channels">
-            <header>
-              <h3 id="section-your-channels">Your Channels</h3>
-            </header>
-
-            <ul role="list" v-if="(user.channels?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
-              <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
-                <article :aria-labelledby="`channel-${channel.defaultSlug}`">
-                  <header>
-                    <h4 :id="`channel-${channel.defaultSlug}`">
-                      <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
-                    </h4>
-                  </header>
-
-                  <p v-if="channel.about">{{ channel.about }}</p>
-                </article>
-              </li>
-            </ul>
-
-            <p v-else>You do not have any channels</p>
-          </section>
+          <p v-else>You do not have any channels</p>
         </section>
-      </template>
-    </article>
+      </section>
+    </template>
 
     <p role="status">{{ pageStatus }}</p>
   </main>
