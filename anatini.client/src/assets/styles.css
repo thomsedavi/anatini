@@ -105,6 +105,15 @@ main > section:has(form), main > section:has(progress) {
   &:not([hidden]) {
     display: flex;
   }
+
+  > section {
+    max-width: 25rem;
+    width: 100%;
+
+    h4 {
+      margin: 0;
+    }
+  }
 }
 
 main > section[id="errors"] {
@@ -242,7 +251,10 @@ ul[role="list"] {
 
   article p {
     color: var(--text-light);
-    margin-bottom: 1rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   small {
@@ -305,7 +317,7 @@ form {
     font-weight: 500;
   }
 
-  input:not([type="checkbox"]) {
+  input:not([type="checkbox"]), textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -315,6 +327,11 @@ form {
       outline: 2px solid var(--border-hover);
       border-color: transparent;
     }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
   }
 
   input[readonly] {
@@ -335,10 +352,11 @@ form {
     background-color: var(--red1);
   }
 
-  small {
+  small, output {
     display: block;
     color: var(--text-light);
     margin-top: 0.2rem;
+    font-size: smaller;
   }
 
   small[id^="error"] {
@@ -383,6 +401,24 @@ form {
     &:hover {
       background-color: var(--button-secondary-hover);
     }
+  }
+
+  figure {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+  }
+
+  figcaption {
+    font-size: 0.875rem;
   }
 }
 
