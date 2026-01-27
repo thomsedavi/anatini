@@ -592,6 +592,6 @@
       </section>
     </template>
 
-    <p role="status">{{ pageStatus }}</p>
+    <p role="status" class="visuallyhidden">{{ pageStatus }}</p>
   </main>
 </template>

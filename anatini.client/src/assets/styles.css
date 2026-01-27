@@ -98,7 +98,7 @@ main > section, main > article {
   max-width: 50rem;
 }
 
-main > section:has(form) {
+main > section:has(form), main > section:has(progress) {
   flex-direction: column;
   align-items: center;
 
