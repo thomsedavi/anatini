@@ -107,7 +107,7 @@
       <h1>Log In</h1>
     </header>
 
-    <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+    <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
       <h2 id="heading-errors">There was a problem Logging In</h2>
       <ul>
         <li v-for="error in inputErrors" :key="'error' + error.id">

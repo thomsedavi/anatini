@@ -52,7 +52,7 @@
 
 <template>
   <template v-if="store.isLoggedIn !== null">
-    <a href="#main" class="skip">Skip to main content</a>
+    <a href="#main" id="skip">Skip to main content</a>
 
     <header>
       <RouterLink to="/"><strong>ANATINI</strong></RouterLink>

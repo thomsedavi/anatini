@@ -220,7 +220,7 @@
       </section>
 
       <template v-else>
-        <section v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+        <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
           <h2 id="heading-errors">There was a problem updating your account</h2>
           <ul>
             <li v-for="error in inputErrors" :key="'error' + error.id">

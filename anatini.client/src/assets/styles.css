@@ -1,74 +1,84 @@
 :root {
-  --light1: rgb(255 255 255);
-  --light2: rgb(255 245 235);
-  --light3: rgb(240 225 210);
-  --light4: rgb(180 165 150);
-  --light5: rgb(150 135 120);
-  --red: rgb(210 0 60);
-  --dark5: rgb(150 165 180);
-  --dark4: rgb(105 135 165);
-  --dark3: rgb(30 45 60);
-  --dark2: rgb(10 20 30);
-  --dark1: rgb(0 0 0);
+  --beige1: rgb(255 255 255);
+  --beige2: rgb(255 250 245);
+  --beige3: rgb(240 225 210);
+  --beige4: rgb(180 165 150);
+  --beige5: rgb(150 135 120);
+  --red1: rgb(255, 235, 240);
+  --red2: rgb(210 0 60);
+  --red3: rgb(35, 0, 10);
+  --blue1: rgb(240, 250, 255);
+  --blue2: rgb(150 165 180);
+  --blue3: rgb(105 135 165);
+  --blue4: rgb(30 45 60);
+  --blue5: rgb(10 20 30);
+  --blue6: rgb(0 0 0);
   --amber-light: rgb(240, 210, 120);
   --amber-dark: rgb(180, 150, 30);
 
   --border-radius: 8px;
+  --border-radius-input: 4px;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --text: var(--dark2);
-    --text-light: var(--dark4);
-    --text-lightest: var(--dark5);
-    --input: var(--light1);
-    --input-background: var(--dark1);
-    --background: var(--light2);
-    --background-highlight: var(--light1);
-    --hover: var(--dark3);
-    --shadow: var(--red);
-    --button: var(--dark3);
-    --button-text: var(--light1);
-    --button-hover: var(--dark4);
-    --button-disabled: var(--dark4);
-    --button-secondary-hover: var(--light2);
-    --scrollbar: var(--dark2);
-    --scrollbar-background: var(--light3);
-    --link: var(--dark2);
-    --link-hover: var(--dark4);
-    --card-background: var(--light3);
-    --card-border: var(--light4);
-    --accent: var(--red);
-    --border: var(--dark4);
-    --border-hover: var(--dark5);
+    --text: var(--blue5);
+    --text-light: var(--blue3);
+    --text-lightest: var(--blue2);
+    --input: var(--beige1);
+    --input-background: var(--blue6);
+    --input-background-disabled: var(--blue1);
+    --background: var(--beige2);
+    --background-highlight: var(--beige1);
+    --hover: var(--blue4);
+    --shadow: var(--red2);
+    --button: var(--blue4);
+    --button-text: var(--beige1);
+    --button-hover: var(--blue3);
+    --button-disabled: var(--blue3);
+    --button-secondary-hover: var(--beige2);
+    --scrollbar: var(--blue5);
+    --scrollbar-background: var(--beige3);
+    --link: var(--blue5);
+    --link-hover: var(--blue3);
+    --card-background: var(--beige3);
+    --card-border: var(--beige4);
+    --accent: var(--red2);
+    --border: var(--blue3);
+    --border-hover: var(--blue2);
+    --error-border: var(--red2);
+    --error-background: var(--red1);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: var(--light2);
-    --text-light: var(--light4);
-    --text-lightest: var(--light5);
-    --input: var(--light1);
-    --input-background: var(--dark2);
-    --background: var(--dark2);
-    --background-highlight: var(--dark1);
-    --hover: var(--light3);
-    --shadow: var(--red);
-    --button: var(--light3);
-    --button-text: var(--dark2);
-    --button-hover: var(--light4);
-    --button-disabled: var(--light4);
-    --button-secondary-hover: var(--dark2);
-    --scrollbar: var(--light2);
-    --scrollbar-background: var(--dark3);
-    --link: var(--light2);
-    --link-hover: var(--light4);
-    --card-background: var(--dark3);
-    --card-border: var(--dark4);
-    --accent: var(--red);
-    --border: var(--light4);
-    --border-hover: var(--light5);
+    --text: var(--beige2);
+    --text-light: var(--beige4);
+    --text-lightest: var(--beige5);
+    --input: var(--beige1);
+    --input-background: var(--blue5);
+    --input-background-disabled: var(--beige3);
+    --background: var(--blue5);
+    --background-highlight: var(--blue6);
+    --hover: var(--beige3);
+    --shadow: var(--red2);
+    --button: var(--beige3);
+    --button-text: var(--blue5);
+    --button-hover: var(--beige4);
+    --button-disabled: var(--beige4);
+    --button-secondary-hover: var(--blue5);
+    --scrollbar: var(--beige2);
+    --scrollbar-background: var(--blue4);
+    --link: var(--beige2);
+    --link-hover: var(--beige4);
+    --card-background: var(--blue4);
+    --card-border: var(--blue3);
+    --accent: var(--red2);
+    --border: var(--beige4);
+    --border-hover: var(--beige5);
+    --error-border: var(--red2);
+    --error-background: var(--red3);
   }
 }
 
@@ -88,6 +98,24 @@ main > section, main > article {
   max-width: 50rem;
 }
 
+main > section[id="errors"] {
+  max-width: 25rem;
+  border: 1px solid var(--error-border);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  background-color: var(--error-background);
+
+  > h2 {
+    margin-top: 0;
+    font-size: large;
+  }
+
+  > ul {
+    margin-bottom: 0;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -101,7 +129,7 @@ a:hover {
   color: var(--link-hover);
 }
 
-.skip {
+#skip {
   position: absolute;
   top: -40px;
   left: 0;
@@ -112,7 +140,7 @@ a:hover {
   transition: top 0.2s;
 }
 
-.skip:focus {
+#skip:focus {
   top: 0;
 }
 
@@ -268,12 +296,16 @@ form {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-input);
 
     &:focus {
       outline: 2px solid var(--border-hover);
       border-color: transparent;
     }
+  }
+
+  input[readonly] {
+    background-color: var(--input-background-disabled);
   }
 
   input[type="checkbox"] {
@@ -285,10 +317,20 @@ form {
     margin-bottom: 0;
   }
 
+  input[aria-invalid="true"] {
+    border-color: var(--red2);
+    background-color: var(--red1);
+  }
+
   small {
     display: block;
     color: var(--text-light);
     margin-top: 0.2rem;
+  }
+
+  small[id^="error"] {
+    color: var(--error-border);
+    font-weight: 500;
   }
 
   button {
