@@ -33,7 +33,7 @@ namespace Anatini.Server.Contents
             await context.UpdateAsync(channel);
 
             return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultSlug, contentId = createContent.Slug }, new { createContent.Id, DefaultSlug = createContent.Slug, createContent.Name });
-        }, requiresAuthorisation: true);
+        }, requiresAccess: true);
 
         [Authorize]
         [HttpPut("{contentId}/elements")]
@@ -60,7 +60,7 @@ namespace Anatini.Server.Contents
             await context.UpdateAsync(content);
 
             return NoContent();
-        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
+        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
 
         [Authorize]
         [HttpPost("{contentId}/elements")]
@@ -156,7 +156,7 @@ namespace Anatini.Server.Contents
             await context.UpdateAsync(content);
 
             return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
-        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
+        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
 
         [Authorize]
         [HttpPatch("{contentId}")]
@@ -223,7 +223,7 @@ namespace Anatini.Server.Contents
             await context.UpdateAsync(content);
 
             return NoContent();
-        }, Request.ETagHeader(), refreshETag: true, requiresAuthorisation: true);
+        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
 
         [HttpGet("{contentId}")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -252,7 +252,7 @@ namespace Anatini.Server.Contents
         public async Task<IActionResult> GetContentEdit(string channelId, string contentId) => await UsingContent(channelId, contentId, content =>
         {
             return Ok(content.ToContentEditDto());
-        }, requiresAuthorisation: true);
+        }, requiresAccess: true);
 
         [HttpGet("{contentId}/preview")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -264,6 +264,6 @@ namespace Anatini.Server.Contents
         public async Task<IActionResult> GetContentPreview(string channelId, string contentId) => await UsingContent(channelId, contentId, content =>
         {
             return Ok(content.ToContentDto(usePreview: true));
-        }, requiresAuthorisation: true);
+        }, requiresAccess: true);
     }
 }

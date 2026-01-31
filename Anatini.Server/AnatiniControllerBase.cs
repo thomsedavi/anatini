@@ -36,7 +36,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContext(string channelId, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAuthorisation = false) => await UsingChannelAsync(channelId, async channel =>
+        public async Task<IActionResult> UsingChannelContext(string channelId, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
         {
             using var innerContext = new ContextBase();
 
@@ -44,42 +44,42 @@ namespace Anatini.Server
 
             return await Task.FromResult(result);
 
-        }, requiresAuthorisation);
+        }, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string channelId, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAuthorisation = false) => await UsingChannelAsync(channelId, async channel =>
+        public async Task<IActionResult> UsingChannelContextAsync(string channelId, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
         {
             using var innerContext = new ContextBase();
 
             return await channelContextFunction(channel, new AnatiniContext(innerContext));
-        }, requiresAuthorisation);
+        }, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, Channel, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
+        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, Channel, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
         {
             using var innerContext = new ContextBase();
 
             return await contentContextFunction(content, channel, new AnatiniContext(innerContext));
-        }, eTag, refreshETag, requiresAuthorisation);
+        }, eTag, refreshETag, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
+        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
         {
             var result = contentFunction(content);
 
             return await Task.FromResult(result);
-        }, eTag, refreshETag, requiresAuthorisation);
+        }, eTag, refreshETag, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannel(string channelId, Func<Channel, IActionResult> channelFunction, bool requiresAuthorisation = false) => await UsingChannelAsync(channelId, async channel =>
+        public async Task<IActionResult> UsingChannel(string channelId, Func<Channel, IActionResult> channelFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
         {
             var result = channelFunction(channel);
 
             return await Task.FromResult(result);
-        }, requiresAuthorisation);
+        }, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Channel, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Channel, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
         {
             try
             {
@@ -104,7 +104,7 @@ namespace Anatini.Server
                     return Problem();
                 }
 
-                if (requiresAuthorisation)
+                if (requiresAccess)
                 {
                     if (!channel.Users.Any(user => user.Id == UserId))
                     {
@@ -204,7 +204,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAsync(string channelId, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAuthorisation = false)
+        public async Task<IActionResult> UsingChannelAsync(string channelId, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAccess = false)
         {
 
             try
@@ -230,7 +230,7 @@ namespace Anatini.Server
                     return Problem();
                 }
 
-                if (requiresAuthorisation)
+                if (requiresAccess)
                 {
                     if (!channel.Users.Any(user => user.Id == UserId))
                     {

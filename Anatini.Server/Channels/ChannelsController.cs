@@ -29,12 +29,13 @@ namespace Anatini.Server.Channels
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannel(channelId, channel =>
         {
             return Ok(channel.ToChannelEditDto());
-        }, requiresAuthorisation: true);
+        }, requiresAccess: true);
 
         [Authorize]
         [HttpPatch("{channelId}")]
@@ -113,7 +114,7 @@ namespace Anatini.Server.Channels
             await context.AddChannelImageAsync(imageId, channel.Id, blobContainerName, blobName);
 
             return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
-        }, requiresAuthorisation: true);
+        }, requiresAccess: true);
 
         [Authorize]
         [HttpGet("{channelId}/images/{imageId}")]
