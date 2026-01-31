@@ -4,6 +4,7 @@ import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import ContentView from './components/ContentView.vue';
+import ContentCreateView from './components/ContentCreateView.vue';
 import ContentEditView from './components/ContentEditView.vue';
 import ContentPreviewView from './components/ContentPreviewView.vue';
 import AccountView from './components/AccountView.vue';
@@ -34,6 +35,11 @@ const routes = [
   {
     path: '/account',
     component: AccountView,
+  },
+  {
+    path: '/channels/:channelId/contents/create',
+    component: ContentCreateView,
+    name: 'ContentCreate',
   },
   {
     path: '/channels/:channelId/contents/:contentId/edit',
