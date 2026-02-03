@@ -36,129 +36,6 @@ namespace Anatini.Server.Contents
         }, requiresAccess: true);
 
         [Authorize]
-        [HttpPut("{contentId}/elements")]
-        [ETagRequired]
-        [Consumes(MediaTypeNames.Multipart.FormData)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
-        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PutElement(string channelId, string contentId, [FromForm] UpdateElement updateElement) => await UsingContentContextAsync(channelId, contentId, async (content, _, context) =>
-        {
-            var element = content.DraftVersion.Elements?.FirstOrDefault(element => element.Index == updateElement.Index);
-
-            if (element == null)
-            {
-                return NotFound();
-            }
-
-            element.Content = updateElement.Content;
-
-            await context.UpdateAsync(content);
-
-            return NoContent();
-        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
-
-        [Authorize]
-        [HttpPost("{contentId}/elements")]
-        [ETagRequired]
-        [Consumes(MediaTypeNames.Multipart.FormData)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
-        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostElement(string channelId, string contentId, [FromForm] CreateElement createElement) => await UsingContentContextAsync(channelId, contentId, async (content, _, context) =>
-        {
-            var elements = content.DraftVersion.Elements ?? [];
-
-            if (elements.Count >= 512)
-            {
-                return Forbid();
-            }
-
-            int? index = null;
-
-            if (elements.Count == 0)
-            {
-                index = int.MaxValue / 2;
-            }
-            else
-            {
-                var nextElements = elements.Where(element => element.Index > createElement.InsertAfter).OrderBy(element => element.Index).ToList();
-
-                int? diff = null;
-
-                if (nextElements.Count == 0)
-                {
-                    diff = int.MaxValue - createElement.InsertAfter;
-                }
-                else
-                {
-                    var nextElement = nextElements.First();
-                    diff = nextElement.Index - createElement.InsertAfter;
-                }
-
-                if (diff >= 2)
-                {
-                    index = createElement.InsertAfter + (diff / 2);
-                }
-            }
-
-            if (!index.HasValue)
-            {
-                var orderedElements = elements.OrderBy(element => element.Index).ToList();
-                var gap = int.MaxValue / (orderedElements.Count + 1);
-                var respaceIndex = 1;
-
-                if (createElement.InsertAfter == 0)
-                {
-                    index = gap * respaceIndex++;
-                }
-
-                for (var i = 0; i < orderedElements.Count; i++)
-                {
-                    if (orderedElements[i].Index == createElement.InsertAfter)
-                    {
-                        orderedElements[i].Index = gap * respaceIndex++;
-
-                        index = gap * respaceIndex++;
-                    }
-                    else
-                    {
-                        orderedElements[i].Index = gap * respaceIndex++;
-                    }
-                }
-
-                content.DraftVersion.Elements = orderedElements;
-            }
-
-            if (!index.HasValue)
-            {
-                return Problem();
-            }
-
-            var element = new ContentOwnedElement
-            {
-                Index = index.Value,
-                Tag = createElement.Tag,
-                Content = createElement.Content,
-                ContentOwnedVersionContentChannelId = content.ChannelId,
-                ContentOwnedVersionContentId = content.Id
-            };
-
-            content.DraftVersion.Elements!.Add(element);
-            await context.UpdateAsync(content);
-
-            return await Task.FromResult(CreatedAtAction(nameof(GetContent), new { channelId, contentId }, element.ToContentElementDto()));
-        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
-
-        [Authorize]
         [HttpPatch("{contentId}")]
         [ETagRequired]
         [Consumes(MediaTypeNames.Multipart.FormData)]
@@ -187,31 +64,9 @@ namespace Anatini.Server.Contents
                     Name = content.DraftVersion.Name,
                     ContentId = content.Id,
                     ContentChannelId = content.ChannelId,
-                    DateNZ = content.DraftVersion.DateNZ
+                    DateNZ = content.DraftVersion.DateNZ,
+                    Article = content.DraftVersion.Article
                 };
-
-                var draftElements = content.DraftVersion.Elements?.OrderBy(element => element.Index).ToList();
-
-                if (draftElements != null)
-                {
-                    var publishedElements = new List<ContentOwnedElement>();
-
-                    for (var index = 0; index < draftElements.Count; index++)
-                    {
-                        var draftElement = draftElements[index];
-
-                        publishedElements.Add(new ContentOwnedElement
-                        {
-                            Index = index,
-                            Tag = draftElement.Tag,
-                            Content = draftElement.Content,
-                            ContentOwnedVersionContentId = draftElement.ContentOwnedVersionContentId,
-                            ContentOwnedVersionContentChannelId = draftElement.ContentOwnedVersionContentChannelId
-                        });
-                    }
-
-                    publishedVersion.Elements = publishedElements;
-                }
 
                 content.Status = updateContent.Status;
                 content.PublishedVersion = publishedVersion;

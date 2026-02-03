@@ -10,7 +10,7 @@ namespace Anatini.Server.Account
         [MaxLength(256), DataType(DataType.Text)]
         public string? About { get; set; }
 
-        public Guid? IconImageId { get; set; }
+        public string? IconImageId { get; set; }
 
         public bool? Protected { get; set; }
     }

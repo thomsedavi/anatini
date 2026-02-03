@@ -11,9 +11,9 @@ namespace Anatini.Server.Users.Extensions
         {
             ImageDto? iconImage = null;
 
-            if (userAlias.IconImageId.HasValue)
+            if (userAlias.IconImageId != null)
             {
-                var userImage = await context.Context.UserImages.FindAsync(userAlias.UserId, userAlias.IconImageId.Value);
+                var userImage = await context.Context.UserImages.FindAsync(userAlias.UserId, userAlias.IconImageId);
 
                 if (userImage != null)
                 {

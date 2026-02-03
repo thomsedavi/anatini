@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ChannelAliasContextExtensions
     {
-        public static async Task<ChannelAlias> AddChannelAliasAsync(this AnatiniContext context, string slug, Guid channelId, string channelName, bool? @protected)
+        public static async Task<ChannelAlias> AddChannelAliasAsync(this AnatiniContext context, string slug, string channelId, string channelName, bool? @protected)
         {
             var channelAlias = new ChannelAlias
             {

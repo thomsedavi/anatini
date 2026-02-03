@@ -13,14 +13,14 @@ namespace Anatini.Server.Channels
 
         public bool? Protected { get; set; }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = RandomHex.NextX16();
     }
 
     public class UpdateChannel
     {
         [MaxLength(64), DataType(DataType.Text)]
         public string? Name { get; set; }
-        public Guid? DefaultCardImageId { get; set; }
+        public string? DefaultCardImageId { get; set; }
     }
 
     public class CreateChannelAlias

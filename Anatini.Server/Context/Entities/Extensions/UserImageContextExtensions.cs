@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserImageContextExtensions
     {
-        public static async Task<int> AddUserImageAsync(this AnatiniContext context, Guid id, Guid userId, string blobContainerName, string blobName, string? altText = null)
+        public static async Task<int> AddUserImageAsync(this AnatiniContext context, string id, string userId, string blobContainerName, string blobName, string? altText = null)
         {
             var userImage = new UserImage
             {

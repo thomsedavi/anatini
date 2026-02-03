@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ChannelContextExtensions
     {
-        public static async Task<Channel> AddChannelAsync(this AnatiniContext context, Guid id, string name, string slug, bool? @protected, Guid userId, string userName)
+        public static async Task<Channel> AddChannelAsync(this AnatiniContext context, string id, string name, string slug, bool? @protected, string userId, string userName)
         {
             var channelOwnedUser = new ChannelOwnedUser
             {

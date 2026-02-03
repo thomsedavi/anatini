@@ -69,7 +69,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedSession = new UserOwnedSession
             {
-                Id = Guid.NewGuid(),
+                Id = RandomHex.NextX16(),
                 UserId = user.Id,
                 RefreshToken = refreshToken,
                 CreatedDateTimeUtc = eventData.DateTimeUtc,
@@ -102,9 +102,9 @@ namespace Anatini.Server.Users.Extensions
         {
             ImageDto? iconImage = null;
 
-            if (user.IconImageId.HasValue && context != null && blobService != null)
+            if (user.IconImageId != null && context != null && blobService != null)
             {
-                var userImage = await context.Context.UserImages.FindAsync(user.Id, user.IconImageId.Value);
+                var userImage = await context.Context.UserImages.FindAsync(user.Id, user.IconImageId);
 
                 if (userImage != null)
                 {

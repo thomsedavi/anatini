@@ -4,10 +4,10 @@
   import SignupFlowSignupView from './SignupFlowSignupView.vue'
 
   const page = ref<'email' | 'signup'>('email');
-  const emailAddress = ref<string | null>(null);
+  const emailAddress = ref<string | undefined>(undefined);
   const verificationFailed = ref<boolean>(false);
 
-  function submitEmail(resultEmailAddress: string | null) {
+  function submitEmail(resultEmailAddress: string | undefined) {
     verificationFailed.value = false;
     emailAddress.value = resultEmailAddress;
     page.value = 'signup';

@@ -30,7 +30,7 @@ namespace Anatini.Server.Authentication
 
         public bool? Protected { get; set; }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = RandomHex.NextX16();
     }
 
     public class LoginForm

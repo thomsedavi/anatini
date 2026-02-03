@@ -29,7 +29,7 @@ namespace Anatini.Server.Authentication
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form) => await UsingContextAsync(async context =>
         {
             var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-            var userId = Guid.NewGuid();
+            var userId = RandomHex.NextX16();
 
             try
             {
@@ -111,7 +111,7 @@ namespace Anatini.Server.Authentication
         [Authorize]
         [HttpPost("logout")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PostLogout() => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> PostLogout() => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
             var refreshTokenString = CookieValue(Constants.RefreshToken);
 
@@ -132,23 +132,16 @@ namespace Anatini.Server.Authentication
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            try
+            var eventData = new EventData(HttpContext);
+
+            var refreshTokenString = CookieValue(Constants.RefreshToken);
+
+            if (refreshTokenString == null)
             {
-                var eventData = new EventData(HttpContext);
-
-                var refreshTokenString = CookieValue(Constants.RefreshToken);
-
-                if (refreshTokenString == null)
-                {
-                    return Unauthorized();
-                }
-
-                return await GetRefreshToken(refreshTokenString, eventData);
+                return Unauthorized();
             }
-            catch (Exception)
-            {
-                return Problem();
-            }
+
+            return await GetRefreshToken(refreshTokenString, eventData);
         }
 
         [HttpPost("login")]
@@ -239,8 +232,8 @@ namespace Anatini.Server.Authentication
 
         private async Task<IActionResult> GetRefreshToken(string refreshTokenString, EventData eventData)
         {
-            var refreshToken = refreshTokenString?.GetClaimValue(JwtRegisteredClaimNames.Jti) ?? throw new Exception();
-            var userId = Guid.TryParse(refreshTokenString.GetClaimValue(JwtRegisteredClaimNames.NameId), out Guid id) ? id : throw new Exception();
+            var refreshToken = refreshTokenString.GetClaimValue(JwtRegisteredClaimNames.Jti) ?? throw new Exception();
+            var userId = refreshTokenString.GetClaimValue(JwtRegisteredClaimNames.NameId) ?? throw new Exception();
 
             return await UsingUserContextAsync(userId, async (user, context) =>
             {
@@ -267,11 +260,11 @@ namespace Anatini.Server.Authentication
             });
         }
 
-        private static string GetTokenCookie(Guid userId, DateTime expires, string? value = null)
+        private static string GetTokenCookie(string userId, DateTime expires, string? value = null)
         {
             var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.NameId, userId.ToString())
+                new(JwtRegisteredClaimNames.NameId, userId)
             };
 
             if (value != null)

@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ContentImageContextExtensions
     {
-        public static async Task<int> AddContentImageAsync(this AnatiniContext context, Guid id, Guid contentId, Guid channelId)
+        public static async Task<int> AddContentImageAsync(this AnatiniContext context, string id, string contentId, string channelId)
         {
             var contentImage = new ContentImage
             {

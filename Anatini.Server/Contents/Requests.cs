@@ -13,7 +13,7 @@ namespace Anatini.Server.Contents
 
         public bool? Protected { get; set; }
 
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = RandomHex.NextX16();
     }
 
     public class UpdateContent

@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserContextExtensions
     {
-        public static async Task<User> AddUserAsync(this AnatiniContext context, Guid id, string name, string slug, string password, string address, bool? @protected, string refreshToken, EventData eventData)
+        public static async Task<User> AddUserAsync(this AnatiniContext context, string id, string name, string slug, string password, string address, bool? @protected, string refreshToken, EventData eventData)
         {
             var userOwnedAlias = new UserOwnedAlias
             {
@@ -22,7 +22,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 
             var userOwnedSession = new UserOwnedSession
             {
-                Id = Guid.NewGuid(),
+                Id = RandomHex.NextX16(),
                 UserId = id,
                 RefreshToken = refreshToken,
                 CreatedDateTimeUtc = eventData.DateTimeUtc,
@@ -56,7 +56,7 @@ namespace Anatini.Server.Context.Entities.Extensions
         {
             var userId = (await context.FindAsync<UserEmail>(address))?.UserId;
 
-            if (!userId.HasValue)
+            if (userId == null)
             {
                 return null;
             }

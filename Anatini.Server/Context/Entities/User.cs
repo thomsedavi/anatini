@@ -13,15 +13,15 @@ namespace Anatini.Server.Context.Entities
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
         public ICollection<UserOwnedChannel>? Channels { get; set; }
         public IList<string>? Permissions { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
+        public string? IconImageId { get; set; }
+        public string? BannerImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
     [Owned]
     public class UserOwnedChannel : UserOwnedEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public string? About { get; set; }
         public required string DefaultSlug { get; set; }
@@ -43,7 +43,7 @@ namespace Anatini.Server.Context.Entities
     [Owned]
     public class UserOwnedSession : UserOwnedEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
@@ -68,23 +68,23 @@ namespace Anatini.Server.Context.Entities
 
     public class UserToUserRelationship : UserEntity
     {
-        public required Guid ToUserId { get; set; }
+        public required string ToUserId { get; set; }
         public required string RelationshipType { get; set; }
     }
 
     public class UserAlias : AliasEntity
     {
-        public required Guid UserId { get; set; }
+        public required string UserId { get; set; }
         public required string UserName { get; set; }
         public string? UserAbout { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
+        public string? IconImageId { get; set; }
+        public string? BannerImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
     public class UserImage : UserEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string BlobContainerName { get; set; }
         public required string BlobName { get; set; }
         public string? AltText {  get; set; }
@@ -92,11 +92,11 @@ namespace Anatini.Server.Context.Entities
 
     public abstract class UserEntity : Entity
     {
-        public required Guid UserId { get; set; }
+        public required string UserId { get; set; }
     }
 
     public abstract class UserOwnedEntity
     {
-        public required Guid UserId { get; set; }
+        public required string UserId { get; set; }
     }
 }

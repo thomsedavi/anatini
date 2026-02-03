@@ -2,7 +2,7 @@
 {
     public class UserDto
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public ImageDto? IconImage { get; set; }
         public string? About { get; set; }

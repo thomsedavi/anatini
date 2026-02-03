@@ -43,18 +43,8 @@ namespace Anatini.Server.Contents.Extensions
             return new ContentVersionDto
             {
                 Name = contentOwnedVersion.Name,
-                Elements = contentOwnedVersion.Elements?.Select(ToContentElementDto),
+                Article = contentOwnedVersion.Article,
                 DateNZ = contentOwnedVersion.DateNZ
-            };
-        }
-
-        public static ContentElementDto ToContentElementDto(this ContentOwnedElement contentOwnedElement)
-        {
-            return new ContentElementDto
-            {
-                Tag = contentOwnedElement.Tag,
-                Index = contentOwnedElement.Index,
-                Content = contentOwnedElement.Content
             };
         }
     }

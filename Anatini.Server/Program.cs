@@ -2,6 +2,7 @@ using System.Text;
 using Anatini.Server;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Middleware;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,5 +70,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();

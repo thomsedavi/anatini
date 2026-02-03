@@ -5,6 +5,7 @@ using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,9 +64,9 @@ namespace Anatini.Server.Channels
                 }
             }
 
-            if (updateChannel.DefaultCardImageId.HasValue)
+            if (updateChannel.DefaultCardImageId != null)
             {
-                channel.DefaultCardImageId = updateChannel.DefaultCardImageId.Value;
+                channel.DefaultCardImageId = updateChannel.DefaultCardImageId;
 
                 foreach (var alias in channel.Aliases)
                 {
@@ -73,7 +74,7 @@ namespace Anatini.Server.Channels
 
                     if (channelAlias != null)
                     {
-                        channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId.Value;
+                        channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId;
                         await context.UpdateAsync(channelAlias);
                     }
                 }
@@ -104,7 +105,7 @@ namespace Anatini.Server.Channels
                 return issue ?? BadRequest();
             }
 
-            var imageId = Guid.NewGuid();
+            var imageId = RandomHex.NextX16();
 
             var blobContainerName = "anatini-dev";
             var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
@@ -130,7 +131,7 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
             await context.AddChannelAliasAsync(createChannel.Slug, createChannel.Id, createChannel.Name, createChannel.Protected);
             var channel = await context.AddChannelAsync(createChannel.Id, createChannel.Name, createChannel.Slug, createChannel.Protected, user.Id, user.Name);

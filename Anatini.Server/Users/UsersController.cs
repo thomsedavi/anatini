@@ -3,6 +3,7 @@ using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostAlias([FromForm] NewUserAlias newUserAlias) => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> PostAlias([FromForm] NewUserAlias newUserAlias) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
             if (user.Aliases.Count >= 5)
             {
@@ -38,7 +39,7 @@ namespace Anatini.Server.Users
         [HttpGet("events")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEvents() => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> GetEvents() => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
             var userEvents = await context.Context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
 
@@ -58,7 +59,7 @@ namespace Anatini.Server.Users
                 return NotFound();
             }
 
-            if (userAlias.Protected.HasValue && userAlias.Protected.Value && !await UserHasAnyPermission(UserId, UserPermission.Trusted, UserPermission.Admin))
+            if (userAlias.Protected.HasValue && userAlias.Protected.Value && UserId != null && !await UserHasAnyPermission(UserId, UserPermission.Trusted, UserPermission.Admin))
             {
                 return NotFound();
             }
@@ -66,10 +67,17 @@ namespace Anatini.Server.Users
             return Ok(await userAlias.ToUserDto(context, blobService));
         });
 
+        [Authorize]
         [HttpPost("{toUserSlug}/relationships")]
-        public async Task<IActionResult> PostRelationship(string toUserSlug, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(UserId, async (user, context) =>
+        public async Task<IActionResult> PostRelationship(string toUserSlug, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
-            if (!Guid.TryParse(toUserSlug, out Guid toUserId))
+            string toUserId;
+
+            if (RandomHex.IsX16(toUserSlug))
+            {
+                toUserId = toUserSlug;
+            }
+            else
             {
                 var userAlias = await context.FindAsync<UserAlias>(toUserSlug) ?? throw new KeyNotFoundException();
 

@@ -11,16 +11,16 @@ namespace Anatini.Server.Context.Entities
         public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
         public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
         public required string DefaultSlug { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
-        public Guid? DefaultCardImageId { get; set; }
+        public string? IconImageId { get; set; }
+        public string? BannerImageId { get; set; }
+        public string? DefaultCardImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
     [Owned]
     public class ChannelOwnedUser : ChannelOwnedEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
     }
 
@@ -33,7 +33,7 @@ namespace Anatini.Server.Context.Entities
     [Owned]
     public class ChannelOwnedContent : ChannelOwnedEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public required string DefaultSlug { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
@@ -41,28 +41,28 @@ namespace Anatini.Server.Context.Entities
 
     public class ChannelAlias : AliasEntity
     {
-        public required Guid ChannelId { get; set; }
+        public required string ChannelId { get; set; }
         public required string ChannelName { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
-        public Guid? DefaultCardImageId { get; set; }
+        public string? IconImageId { get; set; }
+        public string? BannerImageId { get; set; }
+        public string? DefaultCardImageId { get; set; }
         public bool? Protected { get; set; }
     }
 
     public class ChannelImage : ChannelEntity
     {
-        public required Guid Id { get; set; }
+        public required string Id { get; set; }
         public required string BlobContainerName { get; set; }
         public required string BlobName { get; set; }
     }
 
     public abstract class ChannelEntity : Entity
     {
-        public required Guid ChannelId { get; set; }
+        public required string ChannelId { get; set; }
     }
 
     public abstract class ChannelOwnedEntity
     {
-        public required Guid ChannelId { get; set; }
+        public required string ChannelId { get; set; }
     }
 }

@@ -7,7 +7,7 @@
   import { apiFetch } from './common/apiFetch';
 
   const emit = defineEmits<{
-    submitEmail: [email: string | null];
+    submitEmail: [email: string | undefined];
   }>();
 
   const inputErrors = ref<InputError[]>([]);
@@ -104,7 +104,7 @@
         text="Sign Up"
         busy-text="Signing Up..." />
 
-      <button type="button" @click="emit('submitEmail', null)">I Have A Code</button>
+      <button type="button" @click="emit('submitEmail', undefined)">I Have A Code</button>
     </form>
 
     <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>

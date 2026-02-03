@@ -18,9 +18,9 @@ namespace Anatini.Server.Utils
                 {
                     return new ValidationResult("Slug can only contain numbers, lowercase letters, and hyphens");
                 }
-                else if (Guid.TryParse(inputLower, out Guid _))
+                else if (RandomHex.IsX16(inputLower))
                 {
-                    return new ValidationResult("Slug cannot be a Guid");
+                    return new ValidationResult("Slug cannot be in this format (sorry)");
                 }
                 else if (_reservedWords.Contains(inputLower))
                 {
