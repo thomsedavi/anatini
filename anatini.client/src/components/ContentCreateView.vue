@@ -169,7 +169,7 @@
 
           <InputText
             v-model="inputContentSlug"
-            label="Slug"
+            label="Content Id"
             name="slug"
             id="slug"
             :maxlength="64"

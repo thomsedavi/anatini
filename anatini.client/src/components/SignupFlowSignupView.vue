@@ -171,7 +171,7 @@
 
         <InputText
           v-model="inputSlug"
-          label="Handle"
+          label="User Id"
           name="slug"
           id="slug"
           autocomplete="username"
