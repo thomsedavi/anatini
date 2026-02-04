@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Channel, ErrorMessage, InputError, Status, StatusActions, UserEdit } from '@/types';
+  import type { ErrorMessage, InputError, Status, StatusActions, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
@@ -16,9 +16,6 @@
   const inputUserName = ref<string>('');
   const inputUserAbout = ref<string>('');
   const inputProtected = ref<boolean>(false);
-  const inputChannelName = ref<string>('');
-  const inputChannelSlug = ref<string>('');
-  const inputChannelAbout = ref<string>('');
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(0);
   const pageStatus = ref<string>('Loading account information...'); // TODO add other statuses
@@ -35,8 +32,6 @@
   ]);
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
-
-  const channelPermissions = ["Admin", "Trusted"];
 
   const onChooseFile = (event: Event) => {
     const input = event?.target as HTMLInputElement
@@ -114,101 +109,6 @@
 
   function getError(id: string): string | undefined {
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
-  }
-
-  async function postChannel() {
-    inputErrors.value = [];
-
-    const tidiedName = tidy(inputChannelName.value);
-    const tidiedSlug = tidy(inputChannelSlug.value);
-    const tidiedAbout = tidy(inputChannelAbout.value);
-
-    if (tidiedName === '') {
-      inputErrors.value.push({id: 'name-channel', message: 'Channel name is required'});
-    }
-
-    if (tidiedSlug === '') {
-      inputErrors.value.push({id: 'slug-channel', message: 'Channel slug is required'});
-    }
-
-    if (inputErrors.value.length > 0) {
-      nextTick(() => {
-        errorSectionRef.value?.focus();
-      });
-
-      return;
-    }
-
-    status.value = 'pending';
-
-    const statusActions: StatusActions = {
-      201: (response?: Response) => {
-        status.value = 'success';
-        
-        response?.json().then((value: Channel) => {
-          if (user.value !== null && 'channels' in user.value) {
-            const channels = user.value.channels ?? [];
-            channels.push(value);
-            user.value.channels = channels;
-          }
-        });
-
-        inputChannelName.value = '';
-        inputChannelSlug.value = '';
-        inputChannelAbout.value = '';
-      },
-      400: (response?: Response) => {
-        status.value = 'error';
-
-        response?.json().then(value => {
-          if (value.errors) {
-            if ('Name' in value.errors) {
-              inputErrors.value = [{id: 'name-channel', message: value.errors['Name'][0]}]
-            }
-
-            if ('Slug' in value.errors) {
-              inputErrors.value = [{id: 'slug-channel', message: value.errors['Slug'][0]}]
-            }
-
-            nextTick(() => {
-              errorSectionRef.value?.focus();
-            });
-          }
-        });
-      },
-      409: () => {
-        status.value = 'error';
-
-        inputErrors.value = [{ id: 'slug-channel', message: 'Slug already in use' }]
-
-        nextTick(() => {
-          errorSectionRef.value?.focus();
-        });
-      },
-      500: () => {
-        status.value = 'error';
-
-        // TODO handle this better
-        inputErrors.value = [{ id: 'name-channel', message: 'Unknown Error' }]
-
-        nextTick(() => {
-          errorSectionRef.value?.focus();
-        });
-      }
-    }
-
-    const body = new FormData();
-
-    body.append('name', tidiedName);
-    body.append('slug', tidiedSlug);
-
-    if (tidiedAbout !== '') {
-      body.append('about', tidiedAbout);
-    }
-
-    const init = { method: "POST", body: body };
-
-    apiFetchAuthenticated('channels', statusActions, init);
   }
 
   async function patchAccountDisplay() {
@@ -517,63 +417,15 @@
       <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels" :hidden="tabIndex !== 2" >
         <header>
           <h2>Channels</h2>
+          <RouterLink :to="{ name: 'ChannelCreate' }">+ Create Channel</RouterLink>
         </header>
-
-        <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate v-if="user.permissions?.some(permission => channelPermissions.includes(permission))">
-          <fieldset>
-            <legend>Create Channel</legend>
-
-            <InputText
-              v-model="inputChannelName"
-              label="Name*"
-              name="name"
-              id="name-channel"
-              :maxlength="64"
-              help="The display name of your channel"
-              :error="getError('name-channel')"
-              :required="true" />
-
-            <InputText
-              v-model="inputChannelSlug"
-              label="Slug*"
-              name="slug"
-              id="slug-channel"
-              :maxlength="64"
-              help="lower case with hyphens (e.g. 'my-anatini-channel')"
-              :error="getError('slug-channel')"
-              :required="true" />
-
-            <InputTextArea
-              v-model="inputChannelAbout"
-              label="About"
-              name="about"
-              id="about-channel"
-              :maxlength="256"
-              :error="getError('about-channel')"
-              help="Briefly describe your channel" />
-          </fieldset>
-
-          <SubmitButton
-            :busy="status === 'pending'"
-            :disabled="tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''"
-            text="Create"
-            busy-text="Creating..." />
-        </form>
-
-        <article v-else>
-          <header>
-            <h3>Insufficient permission</h3>
-          </header>
-
-          <p>You do not currently have permission to create Channels</p>
-        </article>
 
         <section aria-labelledby="section-your-channels">
           <header>
             <h3 id="section-your-channels">Your Channels</h3>
           </header>
 
-          <ul role="list" v-if="(user.channels?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
+          <ul role="list" v-if="(user.channels?.length ?? 0) > 0">
             <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
               <article :aria-labelledby="`channel-${channel.defaultSlug}`">
                 <header>

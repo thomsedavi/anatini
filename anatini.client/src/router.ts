@@ -3,13 +3,14 @@ import { createWebHistory, createRouter } from 'vue-router'
 import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
-import ContentView from './components/ContentView.vue';
 import ContentCreateView from './components/ContentCreateView.vue';
 import ContentEditView from './components/ContentEditView.vue';
 import ContentPreviewView from './components/ContentPreviewView.vue';
+import ContentView from './components/ContentView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
+import ChannelCreateView from './components/ChannelCreateView.vue';
 import ChannelEditView from './components/ChannelEditView.vue';
 import ChannelView from './components/ChannelView.vue';
 import UsersView from './components/UsersView.vue';
@@ -59,6 +60,11 @@ const routes = [
   {
     path: '/users/:userId',
     component: UserView,
+  },
+  {
+    path: '/channels/create',
+    component: ChannelCreateView,
+    name: 'ChannelCreate',
   },
   {
     path: '/channels/:channelId/edit',

@@ -156,7 +156,7 @@
 
       <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/contents`" method="POST" novalidate>
         <fieldset>
-          <legend>Create Content</legend>
+          <legend class="visuallyhidden">Create Content</legend>
 
           <InputText
             v-model="inputContentName"

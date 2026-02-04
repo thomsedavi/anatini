@@ -173,12 +173,18 @@ body > header {
   padding: 1rem 2rem;
   background: var(--background-highlight);
   border-bottom: 1px solid var(--border);
+
+  > a {
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-style: italic;
+  }
 }
 
-body > header > a {
-  font-size: 1.5rem;
-  font-weight: 300;
-  font-style: italic;
+section > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 nav ul {
