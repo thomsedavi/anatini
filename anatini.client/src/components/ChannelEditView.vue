@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, DraftContent, ErrorMessage, InputError, Status, StatusActions } from '@/types';
+  import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRoute } from 'vue-router';
@@ -16,8 +16,6 @@
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
-  const inputContentName = ref<string>('');
-  const inputContentHandle = ref<string>('');
 
   const tabs = ref([
     { id: 'contents', text: 'Contents' },
@@ -120,70 +118,6 @@
     apiFetchAuthenticated(`channels/${channel.value.id}`, statusActions, init);
   }
 
-  async function postContent() {
-    inputErrors.value = [];
-
-    if (channel.value === null || 'error' in channel.value) {
-      return;
-    }
-
-    const tidiedName = tidy(inputContentName.value);
-    const tidiedHandle = tidy(inputContentHandle.value);
-
-    if (tidiedName === '') {
-      inputErrors.value.push({id: 'content-name', message: 'Content name is required'});
-    }
-
-    if (tidiedHandle === '') {
-      inputErrors.value.push({id: 'content-handle', message: 'Content handle is required'});
-    }
-
-    if (inputErrors.value.length > 0) {
-      nextTick(() => {
-        errorSectionRef.value?.focus();
-      });
-
-      return;
-    }
-
-    status.value = 'pending';
-
-    const statusActions: StatusActions = {
-      201: (response?: Response) => {
-        status.value = 'success';
-
-        response?.json().then((value: DraftContent) => {
-          if (channel.value !== null && 'topDraftContents' in channel.value) {
-            const topDraftContents = channel.value.topDraftContents ?? [];
-            topDraftContents.push(value);
-            channel.value.topDraftContents = topDraftContents;
-          }
-        });
-
-        inputContentName.value = '';
-        inputContentHandle.value = '';
-      },
-      409: () => {
-        status.value = 'error';
-
-        inputErrors.value = [{ id: 'channel-handle', message: 'Handle already in use' }]
-
-        nextTick(() => {
-          errorSectionRef.value?.focus();
-        });
-      }
-    }
-
-    const body = new FormData();
-
-    body.append('name', tidiedName);
-    body.append('handle', tidiedHandle);
-
-    const init = { method: "POST", body: body };
-
-    apiFetchAuthenticated(`channels/${channel.value.id}/contents`, statusActions, init);
-  }
-
   function handleKeyDown(event: KeyboardEvent, index: number): void {
     const newIndex = getTabIndex(event.key, index, tabs.value.length);
 
@@ -201,135 +135,100 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
-    <article :aria-busy="channel === null" aria-labelledby="heading-main">
-      <header>
-        <h1 id="heading-main">{{ getHeading() }}</h1>
-      </header>
+  <main id="main" tabindex="-1" :aria-busy="channel === null">
+    <header>
+      <h1 id="heading-main">{{ getHeading() }}</h1>
+    </header>
 
-      <section v-if="channel === null">
-        <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the channel information is fetched.</p>
-                
-        <progress max="100">Fetching account...</progress>
+    <section v-if="channel === null">
+      <progress max="100">Fetching account...</progress>
+    </section>
+
+    <section v-else-if="'error' in channel">
+      <p>
+        {{ channel.body }}
+      </p>
+    </section>
+
+    <template v-else>
+      <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+        <h2 id="heading-errors">There was a problem updating your account</h2>
+        <ul>
+          <li v-for="error in inputErrors" :key="'error' + error.id">
+            <a :href="'#input-' + error.id">{{ error.message }}</a>
+          </li>
+        </ul>
       </section>
 
-      <section v-else-if="'error' in channel">
-        <p>
-          {{ channel.body }}
-        </p>
-      </section>
+      <ul role="tablist" aria-label="Settings Options">
+        <TabButton v-for="(tab, index) in tabs"
+          :key="tab.id"
+          :selected="tabIndex === index"
+          @click="tabIndex = index"
+          @keydown="handleKeyDown($event, index)"
+          :text="tab.text"
+          :id="tab.id"
+          :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
+      </ul>
 
-      <template v-else>
-        <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-          <h2 id="heading-errors">There was a problem updating your account</h2>
-          <ul>
-            <li v-for="error in inputErrors" :key="'error' + error.id">
-              <a :href="'#input-' + error.id">{{ error.message }}</a>
+      <section id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
+        <header>
+          <h2>Contents</h2>
+          <RouterLink :to="{ name: 'ContentCreate' }">+ Create Content</RouterLink>
+        </header>
+
+        <section aria-labelledby="section-your-contents">
+          <header>
+            <h3 id="section-your-contents">Your Contents</h3>
+          </header>
+
+          <ul role="list" v-if="(channel.topDraftContents?.length ?? 0) > 0">
+            <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultHandle}`">
+              <article :aria-labelledby="`content-${content.defaultHandle}`">
+                <header>
+                  <h4 :id="`content-${content.defaultHandle}`">
+                    <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultHandle, contentId: content.defaultHandle }}">{{ content.name }}</RouterLink>
+                  </h4>
+                </header>
+
+                <p>Content Description Goes Here</p>
+
+                <footer>
+                  <small>Handle: <code>{{ content.defaultHandle }}</code></small>
+                </footer>
+              </article>
             </li>
           </ul>
+
+          <p v-else>You do not have any contents</p>
         </section>
+      </section>
 
-        <ul role="tablist" aria-label="Settings Options">
-          <TabButton v-for="(tab, index) in tabs"
-            :key="tab.id"
-            :selected="tabIndex === index"
-            @click="tabIndex = index"
-            @keydown="handleKeyDown($event, index)"
-            :text="tab.text"
-            :id="tab.id"
-            :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
-        </ul>
+      <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
+        <header>
+          <h2>Display</h2>
+        </header>
 
-        <section id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
-          <header>
-            <h2>Contents</h2>
-          </header>
+        <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="POST" novalidate>
+          <InputText
+            v-model="inputName"
+            label="Name"
+            name="name"
+            id="name"
+            :maxlength="64"
+            :error="getError('name')"
+            help="Channel display name"
+            autocomplete="name" />
 
-          <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/contents`" method="POST" novalidate>
-            <fieldset>
-              <legend>Create Content</legend>
-                
-              <InputText
-                v-model="inputContentName"
-                label="Name*"
-                name="name"
-                id="content-name"
-                :maxlength="64"
-                help="The display name of your content"
-                :error="getError('content-name')" />
+          <SubmitButton
+            :busy="status === 'pending'"
+            :disabled="noChange()"
+            text="Save"
+            busy-text="Saving..." />
+        </form>
+      </section>
+    </template>
 
-              <InputText
-                v-model="inputContentHandle"
-                label="Handle*"
-                name="handle"
-                id="content-handle"
-                :maxlength="64"
-                help="lower case with hyphens (e.g. 'my-anatini-content')"
-                :error="getError('content-handle')" />
-            </fieldset>
-
-            <SubmitButton
-              :busy="status === 'pending'"
-              :disabled="tidy(inputContentName) === '' || tidy(inputContentHandle) === ''"
-              text="Create"
-              busy-text="Creating..." />
-          </form>
-
-          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
-
-          <section aria-labelledby="section-your-contents">
-            <header>
-              <h3 id="section-your-contents">Your Contents</h3>
-            </header>
-
-            <ul role="list" v-if="(channel.topDraftContents?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
-              <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultHandle}`">
-                <article :aria-labelledby="`content-${content.defaultHandle}`">
-                  <header>
-                    <h4 :id="`content-${content.defaultHandle}`">
-                      <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultHandle, contentId: content.defaultHandle }}">{{ content.name }}</RouterLink>
-                    </h4>
-                  </header>
-
-                  <p>Content Description Goes Here</p>
-
-                  <footer>
-                    <small>Handle: <code>{{ content.defaultHandle }}</code></small>
-                  </footer>
-                </article>
-              </li>
-            </ul>
-
-            <p v-else>You do not have any contents</p>
-          </section>
-        </section>
-
-        <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
-          <header>
-            <h2>Display</h2>
-          </header>
-
-          <form @submit.prevent="patchChannel" :action="`/api/channels/${channel.id}`" method="POST" novalidate>
-            <InputText
-              v-model="inputName"
-              label="Name"
-              name="name"
-              id="name"
-              :maxlength="64"
-              :error="getError('name')"
-              help="Channel display name"
-              autocomplete="name" />
-
-            <SubmitButton
-              :busy="status === 'pending'"
-              :disabled="noChange()"
-              text="Save"
-              busy-text="Saving..." />
-          </form>
-
-          <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Saved!' : undefined }}</p>
-        </section>
-      </template>
-    </article>
+    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
   </main>
 </template>

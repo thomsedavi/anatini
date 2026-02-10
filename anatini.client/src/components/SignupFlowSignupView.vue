@@ -206,8 +206,8 @@
       <SubmitButton
         :busy="status === 'pending'"
         :disabled="tidy(inputName) === '' || tidy(inputHandle) === '' || tidy(inputPassword) === '' || tidy(inputVerificationCode) === '' || tidy(inputEmailAddress) === '' || verificationFailed"
-        text="Finish Signing Up"
-        busy-text="Finishing Sign Up..." />
+        text="Complete Sign Up"
+        busy-text="Completing Sign Up..." />
 
       <button type="button" @click="emit('goBack')">Go Back</button>
     </form>
