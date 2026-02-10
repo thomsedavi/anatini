@@ -3,7 +3,7 @@
     public class AttributeContentDto
     {
         public required string Name { get; set; }
-        public required string ContentSlug { get; set; }
-        public required string ContentChannelSlug { get; set; }
+        public required string ContentHandle { get; set; }
+        public required string ContentChannelHandle { get; set; }
     }
 }

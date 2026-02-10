@@ -5,8 +5,8 @@ namespace Anatini.Server.Users
 {
     public class NewUserAlias
     {
-        [Slug, MaxLength(64), DataType(DataType.Text)]
-        public required string Slug { get; set; }
+        [Handle, MaxLength(64), DataType(DataType.Text)]
+        public required string Handle { get; set; }
         public bool? Default { get; set; }
     }
 

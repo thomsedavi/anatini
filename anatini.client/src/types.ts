@@ -19,7 +19,7 @@ export type UserEdit = {
   id: string;
   name: string;
   about: string | null;
-  defaultSlug: string;
+  defaultHandle: string;
   emails: {
     address: string;
     verified: boolean;
@@ -34,7 +34,7 @@ export type UserEdit = {
     ipAddress: string;
   }[];
   aliases: {
-    slug: string;
+    handle: string;
   }[];
   permissions: string[] | null;
   protected: boolean | null;
@@ -52,16 +52,16 @@ export type Channel = {
   id: string;
   name: string;
   about: string | null;
-  defaultSlug: string;
+  defaultHandle: string;
   topContents: {
-    defaultSlug: string;
+    defaultHandle: string;
     name: string;
   }[] | null;
 };
 
 export type DraftContent = {
   id: string;
-  defaultSlug: string;
+  defaultHandle: string;
   name: string;
   updatedDateTimeUTC: string;
 }
@@ -69,9 +69,9 @@ export type DraftContent = {
 export type ChannelEdit = {
   id: string;
   name: string;
-  defaultSlug: string;
+  defaultHandle: string;
   aliases: {
-    slug: string;
+    handle: string;
   }[];
   topDraftContents: DraftContent[] | null;
 };
@@ -91,7 +91,7 @@ export type ContentVersion = {
 export type ContentEdit = {
   id: string;
   channelId: string;
-  defaultSlug: string;
+  defaultHandle: string;
   version: ContentVersion;
   protected: boolean | null;
 }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Anatini.Server.Utils
 {
-    public class SlugAttribute : ValidationAttribute
+    public class HandleAttribute : ValidationAttribute
     {
         private readonly string[] _reservedWords = ["create"];
 
@@ -16,11 +16,11 @@ namespace Anatini.Server.Utils
 
                 if (!Regex.IsMatch(inputLower, pattern))
                 {
-                    return new ValidationResult("Slug can only contain numbers, lowercase letters, and hyphens");
+                    return new ValidationResult("Handle can only contain numbers, lowercase letters, and hyphens");
                 }
                 else if (RandomHex.IsX16(inputLower))
                 {
-                    return new ValidationResult("Slug cannot be in this format (sorry)");
+                    return new ValidationResult("Handle cannot be in this format (sorry)");
                 }
                 else if (_reservedWords.Contains(inputLower))
                 {
@@ -30,7 +30,7 @@ namespace Anatini.Server.Utils
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult("Slug must be a string");
+            return new ValidationResult("Handle must be a string");
         }
     }
 }

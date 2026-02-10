@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             contentBuilder.Property(content => content.ItemId).ToJsonProperty("id");
             contentBuilder.Property(content => content.ETag).ToJsonProperty("_etag");
             contentBuilder.Property(content => content.Timestamp).ToJsonProperty("_ts");
-            contentBuilder.OwnsMany(content => content.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(contentOwnedAlias => contentOwnedAlias.Slug); });
+            contentBuilder.OwnsMany(content => content.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(contentOwnedAlias => contentOwnedAlias.Handle); });
         }
     }
 }

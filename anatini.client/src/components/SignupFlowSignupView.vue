@@ -24,7 +24,7 @@
   const inputEmailAddress = ref<string>(props.emailAddress ?? '');
   const inputName = ref<string>('');
   const inputVerificationCode = ref<string>('');
-  const inputSlug = ref<string>('');
+  const inputHandle = ref<string>('');
   const inputPassword = ref<string>('');
   const errorSectionRef = ref<HTMLElement | null>(null);
   const protectedInput = useTemplateRef<HTMLInputElement>('protected');
@@ -44,7 +44,7 @@
 
     const tidiedEmailAddress = tidy(inputEmailAddress.value);
     const tidiedName = tidy(inputName.value);
-    const tidiedSlug = tidy(inputSlug.value);
+    const tidiedHandle = tidy(inputHandle.value);
     const tidiedPassword = tidy(inputPassword.value);
     const tidiedVerificationCode = tidy(inputVerificationCode.value);
 
@@ -56,8 +56,8 @@
       inputErrors.value.push({id: 'name', message: 'Name is required'});
     }
 
-    if (tidiedSlug === '') {
-      inputErrors.value.push({id: 'slug', message: 'Slug is required'});
+    if (tidiedHandle === '') {
+      inputErrors.value.push({id: 'handle', message: 'Handle is required'});
     }
 
     if (tidiedPassword === '') {
@@ -104,7 +104,7 @@
       409: () => {
         status.value = 'error';
 
-        inputErrors.value.push({id: 'slug', message: 'Handle already in use'});
+        inputErrors.value.push({id: 'handle', message: 'Handle already in use'});
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -116,7 +116,7 @@
 
     body.append('emailAddress', tidiedEmailAddress);
     body.append('name', tidiedName);
-    body.append('slug', tidiedSlug);
+    body.append('handle', tidiedHandle);
     body.append('password', tidiedPassword);
     body.append('verificationCode', tidiedVerificationCode);
 
@@ -170,12 +170,12 @@
           :required="true" />
 
         <InputText
-          v-model="inputSlug"
-          label="User Id"
-          name="slug"
-          id="slug"
+          v-model="inputHandle"
+          label="Handle"
+          name="handle"
+          id="handle"
           autocomplete="username"
-          :error="getError('slug')"
+          :error="getError('handle')"
           :required="true"
           help="lower case characters, number, and hyphens" />
 
@@ -205,7 +205,7 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputName) === '' || tidy(inputSlug) === '' || tidy(inputPassword) === '' || tidy(inputVerificationCode) === '' || tidy(inputEmailAddress) === '' || verificationFailed"
+        :disabled="tidy(inputName) === '' || tidy(inputHandle) === '' || tidy(inputPassword) === '' || tidy(inputVerificationCode) === '' || tidy(inputEmailAddress) === '' || verificationFailed"
         text="Finish Signing Up"
         busy-text="Finishing Sign Up..." />
 

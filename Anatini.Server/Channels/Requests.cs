@@ -8,8 +8,8 @@ namespace Anatini.Server.Channels
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
 
-        [Slug, MaxLength(64), DataType(DataType.Text)]
-        public required string Slug { get; set; }
+        [Handle, MaxLength(64), DataType(DataType.Text)]
+        public required string Handle { get; set; }
 
         public bool? Protected { get; set; }
 
@@ -25,7 +25,7 @@ namespace Anatini.Server.Channels
 
     public class CreateChannelAlias
     {
-        [Slug, MaxLength(64), DataType(DataType.Text)]
-        public required string Slug { get; set; }
+        [Handle, MaxLength(64), DataType(DataType.Text)]
+        public required string Handle { get; set; }
     }
 }

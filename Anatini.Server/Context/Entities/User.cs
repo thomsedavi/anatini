@@ -7,7 +7,7 @@ namespace Anatini.Server.Context.Entities
         public required string Name { get; set; }
         public string? About { get; set; }
         public required string HashedPassword { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
         public required ICollection<UserOwnedEmail> Emails { get; set; }
         public ICollection<UserOwnedSession>? Sessions { get; set; }
         public required ICollection<UserOwnedAlias> Aliases { get; set; }
@@ -24,7 +24,7 @@ namespace Anatini.Server.Context.Entities
         public required string Id { get; set; }
         public required string Name { get; set; }
         public string? About { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
     }
 
     [Owned]
@@ -37,7 +37,7 @@ namespace Anatini.Server.Context.Entities
     [Owned]
     public class UserOwnedAlias : UserOwnedEntity
     {
-        public required string Slug { get; set; }
+        public required string Handle { get; set; }
     }
 
     [Owned]

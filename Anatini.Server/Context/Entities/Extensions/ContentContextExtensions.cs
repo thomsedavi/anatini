@@ -14,9 +14,9 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ItemId = ItemId.Get(value, channel.Id, content.Id),
                 Value = value,
                 ContentId = content.Id,
-                ContentSlug = content.DefaultSlug,
+                ContentHandle = content.DefaultHandle,
                 ContentChannelId = channel.Id,
-                ContentChannelSlug = channel.DefaultSlug,
+                ContentChannelHandle = channel.DefaultHandle,
                 ContentName = content.DraftVersion.Name,
                 ChannelName = channel.Name,
                 ChannelDefaultCardImageId = channel.DefaultCardImageId,
@@ -28,11 +28,11 @@ namespace Anatini.Server.Context.Entities.Extensions
             return attributeContent;
         }
 
-        public static async Task<Content> AddContentAsync(this AnatiniContext context, string id, string name, string slug, bool? @protected, string channelId, EventData eventData)
+        public static async Task<Content> AddContentAsync(this AnatiniContext context, string id, string name, string handle, bool? @protected, string channelId, EventData eventData)
         {
             var channelOwnedAlias = new ContentOwnedAlias
             {
-                Slug = slug,
+                Handle = handle,
                 ContentChannelId = channelId,
                 ContentId = id
             };
@@ -54,7 +54,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ContentType = "Post",
                 ChannelId = channelId,
                 Aliases = [channelOwnedAlias],
-                DefaultSlug = slug,
+                DefaultHandle = handle,
                 DraftVersion = channelOwnedDraftVersion,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc,
                 Protected = @protected

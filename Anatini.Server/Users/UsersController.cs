@@ -27,7 +27,7 @@ namespace Anatini.Server.Users
                 return Forbid();
             }
 
-            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Slug, user.Name, user.Protected, user.About);
+            var userAlias = await context.AddUserAliasAsync(user.Id, newUserAlias.Handle, user.Name, user.Protected, user.About);
 
             user.AddAlias(userAlias, newUserAlias.Default);
             await context.UpdateAsync(user);
@@ -46,13 +46,13 @@ namespace Anatini.Server.Users
             return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
         });
 
-        [HttpGet("{slug}")]
+        [HttpGet("{handle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAlias(string slug) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> GetAlias(string handle) => await UsingContextAsync(async context =>
         {
-            var userAlias = await context.FindAsync<UserAlias>(slug);
+            var userAlias = await context.FindAsync<UserAlias>(handle);
 
             if (userAlias == null)
             {
@@ -68,18 +68,18 @@ namespace Anatini.Server.Users
         });
 
         [Authorize]
-        [HttpPost("{toUserSlug}/relationships")]
-        public async Task<IActionResult> PostRelationship(string toUserSlug, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
+        [HttpPost("{toUserHandle}/relationships")]
+        public async Task<IActionResult> PostRelationship(string toUserHandle, [FromForm] CreateRelationship createRelationship) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
             string toUserId;
 
-            if (RandomHex.IsX16(toUserSlug))
+            if (RandomHex.IsX16(toUserHandle))
             {
-                toUserId = toUserSlug;
+                toUserId = toUserHandle;
             }
             else
             {
-                var userAlias = await context.FindAsync<UserAlias>(toUserSlug) ?? throw new KeyNotFoundException();
+                var userAlias = await context.FindAsync<UserAlias>(toUserHandle) ?? throw new KeyNotFoundException();
 
                 toUserId = userAlias.UserId;
             }

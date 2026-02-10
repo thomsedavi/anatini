@@ -32,7 +32,7 @@ namespace Anatini.Server.Contents.Extensions
             {
                 Id = content.Id,
                 ChannelId = content.ChannelId,
-                DefaultSlug = content.DefaultSlug,
+                DefaultHandle = content.DefaultHandle,
                 Version = content.DraftVersion.ToContentVersionDto(),
                 Protected = content.Protected
             };

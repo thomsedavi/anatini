@@ -79,7 +79,7 @@ namespace Anatini.Server.Authentication
 
             newUser.Id = email.UserId;
 
-            var userSlug = await context.AddUserAliasAsync(newUser.Id, newUser.Slug, newUser.Name, newUser.Protected);
+            var userHandle = await context.AddUserAliasAsync(newUser.Id, newUser.Handle, newUser.Name, newUser.Protected);
 
             if (email.VerificationCode != newUser.VerificationCode)
             {
@@ -91,7 +91,7 @@ namespace Anatini.Server.Authentication
 
             var refreshToken = TokenGenerator.Get;
 
-            var user = await context.AddUserAsync(newUser.Id, newUser.Name, newUser.Slug, newUser.Password, email.Address, newUser.Protected, refreshToken, eventData);
+            var user = await context.AddUserAsync(newUser.Id, newUser.Name, newUser.Handle, newUser.Password, email.Address, newUser.Protected, refreshToken, eventData);
 
             email.Verified = true;
             email.VerificationCode = null;

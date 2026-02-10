@@ -8,8 +8,8 @@ namespace Anatini.Server.Contents
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
 
-        [Slug, MaxLength(64), DataType(DataType.Text)]
-        public required string Slug { get; set; }
+        [Handle, MaxLength(64), DataType(DataType.Text)]
+        public required string Handle { get; set; }
 
         public bool? Protected { get; set; }
 

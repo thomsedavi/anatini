@@ -5,7 +5,7 @@ using Anatini.Server.Images.Services;
 
 namespace Anatini.Server.Users.Extensions
 {
-    public static class UserSlugExtensions
+    public static class UserHandleExtensions
     {
         public static async Task<UserDto> ToUserDto(this UserAlias userAlias, AnatiniContext context, IBlobService blobService)
         {

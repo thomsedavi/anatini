@@ -10,7 +10,7 @@ namespace Anatini.Server.Context.Entities
         public required ICollection<ChannelOwnedAlias> Aliases { get; set; }
         public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
         public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
         public string? IconImageId { get; set; }
         public string? BannerImageId { get; set; }
         public string? DefaultCardImageId { get; set; }
@@ -27,7 +27,7 @@ namespace Anatini.Server.Context.Entities
     [Owned]
     public class ChannelOwnedAlias : ChannelOwnedEntity
     {
-        public required string Slug { get; set; }
+        public required string Handle { get; set; }
     }
 
     [Owned]
@@ -35,7 +35,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required string Id { get; set; }
         public required string Name { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
         public required DateTime UpdatedDateTimeUTC { get; set; }
     }
 

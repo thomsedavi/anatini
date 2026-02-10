@@ -13,7 +13,7 @@
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputContentName = ref<string>('');
-  const inputContentSlug = ref<string>('');
+  const inputContentHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -57,14 +57,14 @@
     }
 
     const tidiedName = tidy(inputContentName.value);
-    const tidiedSlug = tidy(inputContentSlug.value);
+    const tidiedHandle = tidy(inputContentHandle.value);
 
     if (tidiedName === '') {
       inputErrors.value.push({id: 'name', message: 'Content name is required'});
     }
 
-    if (tidiedSlug === '') {
-      inputErrors.value.push({id: 'slug', message: 'Content slug is required'});
+    if (tidiedHandle === '') {
+      inputErrors.value.push({id: 'handle', message: 'Content handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -82,7 +82,7 @@
         status.value = 'success';
 
         if (channel.value !== null && 'id' in channel.value) {
-          router.push({ name: 'ContentEdit', params: { channelId: channel.value.id, contentId: tidiedSlug } });
+          router.push({ name: 'ContentEdit', params: { channelId: channel.value.id, contentId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -94,8 +94,8 @@
               inputErrors.value = [{id: 'name', message: value.errors['Name'][0]}]
             }
 
-            if ('Slug' in value.errors) {
-              inputErrors.value = [{id: 'slug', message: value.errors['Slug'][0]}]
+            if ('Handle' in value.errors) {
+              inputErrors.value = [{id: 'handle', message: value.errors['Handle'][0]}]
             }
 
             nextTick(() => {
@@ -107,7 +107,7 @@
       409: () => {
         status.value = 'error';
 
-        inputErrors.value = [{ id: 'slug', message: 'Slug already in use' }]
+        inputErrors.value = [{ id: 'handle', message: 'Handle already in use' }]
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -118,7 +118,7 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
-    body.append('slug', tidiedSlug);
+    body.append('handle', tidiedHandle);
 
     const init = { method: "POST", body: body };
 
@@ -168,18 +168,18 @@
             :error="getError('name')" />
 
           <InputText
-            v-model="inputContentSlug"
-            label="Content Id"
-            name="slug"
-            id="slug"
+            v-model="inputContentHandle"
+            label="Handle"
+            name="handle"
+            id="handle"
             :maxlength="64"
             help="lower case with hyphens (e.g. 'my-anatini-content')"
-            :error="getError('slug')" />
+            :error="getError('handle')" />
         </fieldset>
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="tidy(inputContentName) === '' || tidy(inputContentSlug) === ''"
+          :disabled="tidy(inputContentName) === '' || tidy(inputContentHandle) === ''"
           text="Create"
           busy-text="Creating..." />
       </form>

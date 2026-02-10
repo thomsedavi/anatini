@@ -426,11 +426,11 @@
           </header>
 
           <ul role="list" v-if="(user.channels?.length ?? 0) > 0">
-            <li v-for="channel in user.channels" :key="`channel-${channel.defaultSlug}`">
-              <article :aria-labelledby="`channel-${channel.defaultSlug}`">
+            <li v-for="channel in user.channels" :key="`channel-${channel.defaultHandle}`">
+              <article :aria-labelledby="`channel-${channel.defaultHandle}`">
                 <header>
-                  <h4 :id="`channel-${channel.defaultSlug}`">
-                    <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultSlug }}">{{ channel.name }}</RouterLink>
+                  <h4 :id="`channel-${channel.defaultHandle}`">
+                    <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultHandle }}">{{ channel.name }}</RouterLink>
                   </h4>
                 </header>
 

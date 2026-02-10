@@ -89,7 +89,7 @@ namespace Anatini.Server.Context
 
     public abstract class AliasEntity : Entity
     {
-        public required string Slug { get; set; }
+        public required string Handle { get; set; }
     }
 
     public abstract class Entity

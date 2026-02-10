@@ -4,7 +4,7 @@
     {
         public required string Id { get; set; }
         public required string Name { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
         public string? About { get; set; }
         public IEnumerable<UserEditChannelDto>? Channels { get; set; }
         public required IEnumerable<UserEditEmailDto> Emails { get; set; }
@@ -20,12 +20,12 @@
         public required string Id { get; set; }
         public required string Name { get; set; }
         public string? About { get; set; }
-        public required string DefaultSlug { get; set; }
+        public required string DefaultHandle { get; set; }
     }
 
     public class UserEditAliasDto
     {
-        public required string Slug { get; set; }
+        public required string Handle { get; set; }
     }
 
     public class UserEditEmailDto

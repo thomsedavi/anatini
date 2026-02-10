@@ -26,13 +26,13 @@ namespace Anatini.Server.Contents
         {
             var eventData = new EventData(HttpContext);
 
-            var contentAlias = await context.AddContentAliasAsync(createContent.Id, channel.Id, createContent.Slug, createContent.Name, createContent.Protected);
-            var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Slug, createContent.Protected, channel.Id, eventData);
+            var contentAlias = await context.AddContentAliasAsync(createContent.Id, channel.Id, createContent.Handle, createContent.Name, createContent.Protected);
+            var content = await context.AddContentAsync(createContent.Id, createContent.Name, createContent.Handle, createContent.Protected, channel.Id, eventData);
 
             channel.AddDraftContent(content, eventData);
             await context.UpdateAsync(channel);
 
-            return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultSlug, contentId = createContent.Slug }, new { createContent.Id, DefaultSlug = createContent.Slug, createContent.Name });
+            return CreatedAtAction(nameof(GetContent), new { channelId = channel.DefaultHandle, contentId = createContent.Handle }, new { createContent.Id, DefaultHandle = createContent.Handle, createContent.Name });
         }, requiresAccess: true);
 
         [Authorize]

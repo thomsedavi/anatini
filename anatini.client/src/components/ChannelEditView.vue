@@ -17,7 +17,7 @@
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputContentName = ref<string>('');
-  const inputContentSlug = ref<string>('');
+  const inputContentHandle = ref<string>('');
 
   const tabs = ref([
     { id: 'contents', text: 'Contents' },
@@ -128,14 +128,14 @@
     }
 
     const tidiedName = tidy(inputContentName.value);
-    const tidiedSlug = tidy(inputContentSlug.value);
+    const tidiedHandle = tidy(inputContentHandle.value);
 
     if (tidiedName === '') {
       inputErrors.value.push({id: 'content-name', message: 'Content name is required'});
     }
 
-    if (tidiedSlug === '') {
-      inputErrors.value.push({id: 'content-slug', message: 'Content slug is required'});
+    if (tidiedHandle === '') {
+      inputErrors.value.push({id: 'content-handle', message: 'Content handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -161,12 +161,12 @@
         });
 
         inputContentName.value = '';
-        inputContentSlug.value = '';
+        inputContentHandle.value = '';
       },
       409: () => {
         status.value = 'error';
 
-        inputErrors.value = [{ id: 'channel-slug', message: 'Slug already in use' }]
+        inputErrors.value = [{ id: 'channel-handle', message: 'Handle already in use' }]
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -177,7 +177,7 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
-    body.append('slug', tidiedSlug);
+    body.append('handle', tidiedHandle);
 
     const init = { method: "POST", body: body };
 
@@ -259,18 +259,18 @@
                 :error="getError('content-name')" />
 
               <InputText
-                v-model="inputContentSlug"
-                label="Slug*"
-                name="slug"
-                id="content-slug"
+                v-model="inputContentHandle"
+                label="Handle*"
+                name="handle"
+                id="content-handle"
                 :maxlength="64"
                 help="lower case with hyphens (e.g. 'my-anatini-content')"
-                :error="getError('content-slug')" />
+                :error="getError('content-handle')" />
             </fieldset>
 
             <SubmitButton
               :busy="status === 'pending'"
-              :disabled="tidy(inputContentName) === '' || tidy(inputContentSlug) === ''"
+              :disabled="tidy(inputContentName) === '' || tidy(inputContentHandle) === ''"
               text="Create"
               busy-text="Creating..." />
           </form>
@@ -283,18 +283,18 @@
             </header>
 
             <ul role="list" v-if="(channel.topDraftContents?.length ?? 0) > 0" aria-live="polite" aria-relevant="additions">
-              <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultSlug}`">
-                <article :aria-labelledby="`content-${content.defaultSlug}`">
+              <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultHandle}`">
+                <article :aria-labelledby="`content-${content.defaultHandle}`">
                   <header>
-                    <h4 :id="`content-${content.defaultSlug}`">
-                      <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultSlug, contentId: content.defaultSlug }}">{{ content.name }}</RouterLink>
+                    <h4 :id="`content-${content.defaultHandle}`">
+                      <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultHandle, contentId: content.defaultHandle }}">{{ content.name }}</RouterLink>
                     </h4>
                   </header>
 
                   <p>Content Description Goes Here</p>
 
                   <footer>
-                    <small>Slug: <code>{{ content.defaultSlug }}</code></small>
+                    <small>Handle: <code>{{ content.defaultHandle }}</code></small>
                   </footer>
                 </article>
               </li>

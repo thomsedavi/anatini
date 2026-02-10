@@ -11,7 +11,7 @@
 
   const inputErrors = ref<InputError[]>([]);
   const inputChannelName = ref<string>('');
-  const inputChannelSlug = ref<string>('');
+  const inputChannelHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -23,14 +23,14 @@
     inputErrors.value = [];
 
     const tidiedName = tidy(inputChannelName.value);
-    const tidiedSlug = tidy(inputChannelSlug.value);
+    const tidiedHandle = tidy(inputChannelHandle.value);
 
     if (tidiedName === '') {
       inputErrors.value.push({id: 'name', message: 'Channel name is required'});
     }
 
-    if (tidiedSlug === '') {
-      inputErrors.value.push({id: 'slug', message: 'Channel slug is required'});
+    if (tidiedHandle === '') {
+      inputErrors.value.push({id: 'handle', message: 'Channel handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -47,12 +47,12 @@
       201: () => {
         status.value = 'success';
 
-        router.push({ name: 'ChannelEdit', params: { channelId: tidiedSlug } });
+        router.push({ name: 'ChannelEdit', params: { channelId: tidiedHandle } });
       },
       409: () => {
         status.value = 'error';
 
-        inputErrors.value = [{ id: 'slug', message: 'Slug already in use' }]
+        inputErrors.value = [{ id: 'handle', message: 'Handle already in use' }]
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -63,7 +63,7 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
-    body.append('slug', tidiedSlug);
+    body.append('handle', tidiedHandle);
 
     const init = { method: "POST", body: body };
 
@@ -100,18 +100,18 @@
           :error="getError('name')" />
 
         <InputText
-          v-model="inputChannelSlug"
-          label="Channel Id"
-          name="slug"
-          id="slug"
+          v-model="inputChannelHandle"
+          label="Handle"
+          name="handle"
+          id="handle"
           :maxlength="64"
           help="lower case with hyphens (e.g. 'my-anatini-channel')"
-          :error="getError('slug')" />
+          :error="getError('handle')" />
       </fieldset>
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputChannelName) === '' || tidy(inputChannelSlug) === ''"
+        :disabled="tidy(inputChannelName) === '' || tidy(inputChannelHandle) === ''"
         text="Create"
         busy-text="Creating..." />
     </form>

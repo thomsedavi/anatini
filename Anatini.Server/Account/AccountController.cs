@@ -38,7 +38,7 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
 
                     if (userAlias != null)
                     {
@@ -54,7 +54,7 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
 
                     if (userAlias != null)
                     {
@@ -70,7 +70,7 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
 
                     if (userAlias != null)
                     {
@@ -86,7 +86,7 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Slug);
+                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
 
                     if (userAlias != null)
                     {

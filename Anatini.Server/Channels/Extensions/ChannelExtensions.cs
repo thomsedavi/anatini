@@ -13,7 +13,7 @@ namespace Anatini.Server.Channels.Extensions
                 Id = content.Id,
                 ChannelId = channel.Id,
                 Name = content.DraftVersion.Name,
-                DefaultSlug = content.DefaultSlug,
+                DefaultHandle = content.DefaultHandle,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
@@ -31,7 +31,7 @@ namespace Anatini.Server.Channels.Extensions
                 Id = content.Id,
                 ChannelId = channel.Id,
                 Name = content.PublishedVersion?.Name ?? "(unknown)",
-                DefaultSlug = content.DefaultSlug,
+                DefaultHandle = content.DefaultHandle,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
@@ -50,7 +50,7 @@ namespace Anatini.Server.Channels.Extensions
                 Id = channel.Id,
                 Name = channel.Name,
                 TopContents = channel.TopPublishedContents?.Select(ToChannelContentDto),
-                DefaultSlug = channel.DefaultSlug
+                DefaultHandle = channel.DefaultHandle
             };
         }
 
@@ -59,7 +59,7 @@ namespace Anatini.Server.Channels.Extensions
             return new ChannelContentDto
             {
                 Name = channelOwnedContent.Name,
-                DefaultSlug = channelOwnedContent.DefaultSlug
+                DefaultHandle = channelOwnedContent.DefaultHandle
             };
         }
 
@@ -72,7 +72,7 @@ namespace Anatini.Server.Channels.Extensions
                 TopDraftContents = channel.TopDraftContents?.Select(ToChannelEditContentDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
                 DefaultCardImageId = channel.DefaultCardImageId,
-                DefaultSlug = channel.DefaultSlug,
+                DefaultHandle = channel.DefaultHandle,
                 Protected = channel.Protected
             };
         }
@@ -83,7 +83,7 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channelOwnedContent.Id,
                 Name = channelOwnedContent.Name,
-                DefaultSlug = channelOwnedContent.DefaultSlug,
+                DefaultHandle = channelOwnedContent.DefaultHandle,
                 UpdatedDateTimeUTC = channelOwnedContent.UpdatedDateTimeUTC
             };
         }
@@ -92,7 +92,7 @@ namespace Anatini.Server.Channels.Extensions
         {
             return new ChannelEditAliasDto
             {
-                Slug = channelOwnedAlias.Slug
+                Handle = channelOwnedAlias.Handle
             };
         }
     }

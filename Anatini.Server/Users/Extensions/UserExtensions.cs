@@ -37,7 +37,7 @@ namespace Anatini.Server.Users.Extensions
                 UserId = user.Id,
                 Name = channel.Name,
                 About = channel.About,
-                DefaultSlug = channel.DefaultSlug
+                DefaultHandle = channel.DefaultHandle
             };
 
             var channels = user.Channels ?? [];
@@ -51,7 +51,7 @@ namespace Anatini.Server.Users.Extensions
         {
             var userOwnedAlias = new UserOwnedAlias
             {
-                Slug = userAlias.Slug,
+                Handle = userAlias.Handle,
                 UserId = user.Id
             };
 
@@ -59,7 +59,7 @@ namespace Anatini.Server.Users.Extensions
 
             if (@default ?? false)
             {
-                user.DefaultSlug = userAlias.Slug;
+                user.DefaultHandle = userAlias.Handle;
             }
 
             return user;
@@ -126,7 +126,7 @@ namespace Anatini.Server.Users.Extensions
                 Aliases = user.Aliases.Select(ToUserEditAliasDto),
                 Channels = user.Channels?.Select(ToUserEditChannelDto),
                 Permissions = user.Permissions,
-                DefaultSlug = user.DefaultSlug,
+                DefaultHandle = user.DefaultHandle,
                 Protected = user.Protected,
                 IconImage = iconImage
             };
@@ -158,7 +158,7 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserEditAliasDto
             {
-                Slug = userOwnedAlias.Slug
+                Handle = userOwnedAlias.Handle
             };
         }
 
@@ -169,7 +169,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = userOwnedChannel.Id,
                 Name = userOwnedChannel.Name,
                 About = userOwnedChannel.About,
-                DefaultSlug = userOwnedChannel.DefaultSlug
+                DefaultHandle = userOwnedChannel.DefaultHandle
             };
         }
     }

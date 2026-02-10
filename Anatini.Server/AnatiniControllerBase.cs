@@ -144,11 +144,11 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAliasAsync(string channelSlug, Func<ChannelAlias, Task<IActionResult>> channelAliasFunctionAsync)
+        public async Task<IActionResult> UsingChannelAliasAsync(string channelHandle, Func<ChannelAlias, Task<IActionResult>> channelAliasFunctionAsync)
         {
             using var innerContext = new ContextBase();
 
-            var channelAlias = await innerContext.ChannelAliases.FindAsync(channelSlug);
+            var channelAlias = await innerContext.ChannelAliases.FindAsync(channelHandle);
 
             if (channelAlias == null)
             {
@@ -159,11 +159,11 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserAliasAsync(string userSlug, Func<UserAlias, Task<IActionResult>> userAliasFunctionAsync)
+        public async Task<IActionResult> UsingUserAliasAsync(string userHandle, Func<UserAlias, Task<IActionResult>> userAliasFunctionAsync)
         {
             using var innerContext = new ContextBase();
 
-            var userAlias = await innerContext.UserAliases.FindAsync(userSlug);
+            var userAlias = await innerContext.UserAliases.FindAsync(userHandle);
 
             if (userAlias == null)
             {

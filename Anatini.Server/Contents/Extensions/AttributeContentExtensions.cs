@@ -10,8 +10,8 @@ namespace Anatini.Server.Contents.Extensions
             return new AttributeContentDto
             {
                 Name = attributeContent.ContentName,
-                ContentSlug = attributeContent.ContentSlug,
-                ContentChannelSlug = attributeContent.ContentChannelSlug
+                ContentHandle = attributeContent.ContentHandle,
+                ContentChannelHandle = attributeContent.ContentChannelHandle
             };
         }
     }
