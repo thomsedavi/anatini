@@ -43,7 +43,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Name = name,
                 ContentId = id,
                 DateNZ = eventData.DateOnlyNZNow,
-                Article = "<article><p>Test</p></article>"
+                Article = "<article><section><header><h2>Heading</h2></header><p>Paragraph</p></section></article>"
             };
 
             var content = new Content

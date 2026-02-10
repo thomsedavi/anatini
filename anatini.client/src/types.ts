@@ -84,7 +84,7 @@ export type ContentElement = {
 
 export type ContentVersion = {
   name: string;
-  elements: ContentElement[] | null;
+  article: string | null;
   dateNZ: string;
 }
 
