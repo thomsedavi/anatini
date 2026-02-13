@@ -1,55 +1,50 @@
 <script setup lang="ts">
+  import type { Content, ErrorMessage, StatusActions } from '@/types';
+  import { nextTick, ref, watch } from 'vue';
+  import { parseSource, type Source } from './common/utils';
+  import { useRoute } from 'vue-router';
+  import { apiFetch } from './common/apiFetch';
 
+  const route = useRoute();
+
+  const content = ref<Content | ErrorMessage | null>(null);
+
+  watch([() => route.params.channelId, () => route.params.contentId], (source: Source) => fetchContent(parseSource(source)), { immediate: true });
+
+  async function fetchContent(params: string[]) {
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: Content) => {
+            content.value = value;
+
+            nextTick(() => {
+              document.querySelector('h1')?.focus();
+            });
+          })
+          .catch(() => { content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
+      },
+      404: () => {
+        content.value = { error: true, heading: '404 Not Found', body: 'Content not found' };
+      }
+    }
+
+    apiFetch(`channels/${params[0]}/contents/${params[1]}`, statusActions);
+  }
+
+  function getMainHtml(): string {
+    if (content.value === null) {
+      return '<p>Loading...</p>';
+    } else if ('heading' in content.value) {
+      return `<h1>${ content.value.heading }</h1>`;
+    } else if ('version' in content.value && content.value.version.article !== null) {
+      return content.value.version.article;
+    } else {
+      return '<h1>Unknown Error</h1>';
+    }
+  }
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
-    <article aria-labelledby="heading-main">
-      <header>
-        <h1 id="heading-main">Title Of Main Article</h1>
-
-        <address>
-          <a href="/channels/channel-name">Island Style</a>
-        </address>
-
-        <time datetime="2025-10-10">October 10, 2025</time>
-      </header>
-
-      <p>Lorem ipsum dolor sit amet.</p>
-
-      <p>Lorem ipsum dolor sit amet.</p>
-
-      <aside aria-labelledby="comp1">
-        <article>
-          <header>
-            <h2 id="comp1">
-              <a href="/channels/my-channel/contents/my-content">Title Of Related Article With Embedded Card</a>
-            </h2>
-          </header>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <footer>
-            <time datetime="2025-10-10">October 10, 2025</time>
-          </footer>
-        </article>
-      </aside>
-
-      <section aria-labelledby="h2">
-        <h2 id="h2">Lorem ipsum dolor sit amet.</h2>
-
-        <p>Lorem ipsum dolor sit amet.</p>
-
-        <section aria-labelledby="h3">
-          <h3 id="h3">Lorem ipsum dolor sit amet.</h3>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-        </section>
-      </section>
-
-      <footer>
-        <p><a href="#">Back to top</a></p>
-      </footer>
-    </article>
-  </main>
+  <main id="main" tabindex="-1" :aria-busy="content === null" v-html="getMainHtml()"></main>
 </template>

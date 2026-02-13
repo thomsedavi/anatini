@@ -1,4 +1,5 @@
-﻿using Anatini.Server.Enums;
+﻿using System.Xml.Linq;
+using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Context.Entities.Extensions
@@ -30,6 +31,8 @@ namespace Anatini.Server.Context.Entities.Extensions
 
         public static async Task<Content> AddContentAsync(this AnatiniContext context, string id, string name, string handle, bool? @protected, string channelId, EventData eventData)
         {
+            var article = new XElement("article", new XElement("header", new XElement("h1", new XAttribute("tabindex", -1), name)));
+
             var channelOwnedAlias = new ContentOwnedAlias
             {
                 Handle = handle,
@@ -43,7 +46,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Name = name,
                 ContentId = id,
                 DateNZ = eventData.DateOnlyNZNow,
-                Article = "<article><section><header><h2>Heading</h2></header><p>Paragraph</p></section></article>"
+                Article = article.ToString()
             };
 
             var content = new Content
