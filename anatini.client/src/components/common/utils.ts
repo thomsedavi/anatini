@@ -22,9 +22,9 @@ export function paragraphToMarkdown(paragraph: Element): string {
       const element = childNode as Element;
 
       if (element.tagName === 'STRONG') {
-        result += `**${element.textContent}**`;
+        result += `**${paragraphToMarkdown(element)}**`;
       } else if (element.tagName === 'EM') {
-        result += `*${element.textContent}*`;
+        result += `*${paragraphToMarkdown(element)}*`;
       } else {
         result += element.textContent;
       }
@@ -46,9 +46,9 @@ export function paragraphToHTML(paragraph: Element): string {
       const element = childNode as Element;
 
       if (element.tagName === 'STRONG') {
-        result += `<strong>${element.textContent}</strong>`;
+        result += `<strong>${paragraphToHTML(element)}</strong>`;
       } else if (element.tagName === 'EM') {
-        result += `<em>${element.textContent}</em>`;
+        result += `<em>${paragraphToHTML(element)}</em>`;
       } else {
         result += element.textContent;
       }

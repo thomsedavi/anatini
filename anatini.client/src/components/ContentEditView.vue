@@ -12,8 +12,10 @@
 
   const content = ref<ContentEdit | ErrorMessage | null>(null);
   const article = ref<Node | null>(null);
+  const addText = ref<string | null>(null);
   const editText = ref<string | null>(null);
   const editIndex = ref<number | null>(null);
+  const addIndex = ref<number | null>(null);
   const eTag = ref<string | null>(null);
 
   watch([() => route.params.channelId, () => route.params.contentId], (source: Source) => fetchContent(parseSource(source)), { immediate: true });
@@ -58,6 +60,44 @@
   function setEdit(text: string, index: number): void {
     editText.value = text;
     editIndex.value = index;
+  }
+
+  function cancelSave(): void {
+    editText.value = null;
+    editIndex.value = null;
+  }
+
+  function addParagraph(): void {
+    if (eTag.value === null || content.value === null || 'error' in content.value || addText.value === null || article.value == null) {
+      return;
+    }
+
+    const node = parseFromString(markdownToHtml(`<p>${addText.value}</p>`));
+
+    if (node !== null) {
+      article.value.childNodes.forEach((value, index) => {
+        if (index === addIndex.value) {
+          value.after(node);
+        }
+      });
+
+      const body = new FormData();
+      
+      body.append('article', serializeToString(article.value));
+
+      const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
+
+      const statusActions: StatusActions = {
+        204: (response?: Response) => {
+          eTag.value = response?.headers.get("ETag") ?? null;
+
+          addText.value = null;
+          addIndex.value = null;
+        }
+      }
+
+      apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+    }
   }
 
   function saveParagraph(): void {
@@ -124,10 +164,20 @@
                 name="p"
                 id="p" />
               <button @click="saveParagraph">Save</button>
+              <button @click="cancelSave">Cancel</button>
             </template>
           </template>
           <template v-else>
             <p>Unknown Element</p>
+          </template>
+          <button @click="addIndex = index; addText = ''" v-if="addIndex === null">Add Paragraph</button>
+          <template v-if="index === addIndex && addText !== null">
+            <InputText
+              v-model="addText"
+              name = "p"
+              id="p" />
+            <button @click="addParagraph">Save</button>
+            <button @click="addIndex = null">Cancel</button>
           </template>
         </section>
       </template>
