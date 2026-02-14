@@ -1,3 +1,75 @@
+export function serializeToString(node: Node): string {
+  const serializer = new XMLSerializer();
+  const xml = serializer.serializeToString(node);
+  return xml.replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
+}
+
+export function parseFromString(string: string): ChildNode | null {
+  const parser = new DOMParser();
+  const newDoc = parser.parseFromString(string, 'text/html');
+  return newDoc.body.firstChild;
+}
+
+export function paragraphToMarkdown(paragraph: Element): string {
+  let result = '';
+
+  paragraph.childNodes.forEach(childNode => {
+    if (childNode.nodeType === Node.TEXT_NODE) {
+      const text = childNode as Text;
+
+      result += text.textContent;
+    } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+      const element = childNode as Element;
+
+      if (element.tagName === 'STRONG') {
+        result += `**${element.textContent}**`;
+      } else if (element.tagName === 'EM') {
+        result += `*${element.textContent}*`;
+      } else {
+        result += element.textContent;
+      }
+    }
+  });
+
+  return result;
+}
+
+export function paragraphToHTML(paragraph: Element): string {
+  let result = '';
+
+  paragraph.childNodes.forEach(childNode => {
+    if (childNode.nodeType === Node.TEXT_NODE) {
+      const text = childNode as Text;
+
+      result += text.textContent;
+    } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+      const element = childNode as Element;
+
+      if (element.tagName === 'STRONG') {
+        result += `<strong>${element.textContent}</strong>`;
+      } else if (element.tagName === 'EM') {
+        result += `<em>${element.textContent}</em>`;
+      } else {
+        result += element.textContent;
+      }
+    }
+  });
+
+  return result;
+}
+
+export function markdownToHtml(line: string): string {
+  const cleanedLine = tidy(line);
+
+  const replacementTags = [
+    { asteriskCount: 3, openingTags: '<em><strong>', closingTags: '</strong></em>' },
+    { asteriskCount: 2, openingTags: '<strong>', closingTags: '</strong>' },
+    { asteriskCount: 1, openingTags: '<em>', closingTags: '</em>' }
+  ];
+
+  return replaceAsterisks(cleanedLine, replacementTags);
+}
+
 function replaceAsterisks(text: string, replacementTags: {asteriskCount: number, openingTags: string, closingTags: string}[]): string {
   if (replacementTags.length === 0) {
     return text;

@@ -35,7 +35,7 @@
         channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };
       },
       404: () => {
-        channel.value = { error: true, heading: 'Unknown Error', body: 'Channel not found' };
+        channel.value = { error: true, heading: '404 Not Found', body: 'Channel not found' };
       },
       500: () => {
         channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };

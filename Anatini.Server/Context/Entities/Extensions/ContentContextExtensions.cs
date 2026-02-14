@@ -46,7 +46,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Name = name,
                 ContentId = id,
                 DateNZ = eventData.DateOnlyNZNow,
-                Article = article.ToString()
+                Article = article.ToString(SaveOptions.DisableFormatting)
             };
 
             var content = new Content

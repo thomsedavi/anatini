@@ -57,6 +57,11 @@ namespace Anatini.Server.Contents
                 content.DraftVersion.Name = updateContent.Name;
             }
 
+            if (!string.IsNullOrEmpty(updateContent.Article))
+            {
+                content.DraftVersion.Article = updateContent.Article;
+            }
+
             if (updateContent.Status == "Published")
             {
                 var publishedVersion = new ContentOwnedVersion

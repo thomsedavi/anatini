@@ -2,7 +2,7 @@
   const model = defineModel<string>();
 
   defineProps({
-    label: { type: String, required: true },
+    label: { type: String, required: false },
     name: { type: String, required: true },
     id: { type: String, required: true },
     error: { type: String, required: false },
@@ -17,7 +17,7 @@
 </script>
 
 <template>
-  <label :for="`input-${id}`">{{ label }}</label>
+  <label v-if="label" :for="`input-${id}`">{{ label }}</label>
   <input
     :type="type ?? 'text'"
     :id="`input-${id}`"

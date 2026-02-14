@@ -24,6 +24,8 @@ namespace Anatini.Server.Contents
         public DateOnly? DateNZ { get; set; }
 
         public string? Status { get; set; }
+
+        public string? Article { get;  set; }
     }
 
     public class CreateElement
