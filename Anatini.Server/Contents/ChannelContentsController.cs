@@ -79,6 +79,14 @@ namespace Anatini.Server.Contents
                 await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
                 await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
             }
+            else if (updateContent.Status == "Draft")
+            {
+                content.Status = updateContent.Status;
+                content.PublishedVersion = null;
+
+                await context.RemoveAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
+                await context.RemoveAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
+            }
 
             await context.UpdateAsync(content);
 

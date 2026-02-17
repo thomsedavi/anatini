@@ -34,7 +34,8 @@ namespace Anatini.Server.Contents.Extensions
                 ChannelId = content.ChannelId,
                 DefaultHandle = content.DefaultHandle,
                 Version = content.DraftVersion.ToContentVersionDto(),
-                Protected = content.Protected
+                Protected = content.Protected,
+                Status = content.Status
             };
         }
 

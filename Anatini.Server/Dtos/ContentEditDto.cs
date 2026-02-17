@@ -7,6 +7,7 @@
         public required string DefaultHandle { get; set; }
         public required ContentVersionDto Version { get; set; }
         public bool? Protected { get; set; }
+        public required string Status { get; set; }
     }
 
     public class ContentVersionDto

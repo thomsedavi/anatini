@@ -29,6 +29,18 @@ namespace Anatini.Server.Context.Entities.Extensions
             return attributeContent;
         }
 
+        public static async Task RemoveAttributeContent(this AnatiniContext context, AttributeContentType attributeType, string attributeValue, Channel channel, Content content)
+        {
+            var value = $"{Enum.GetName(attributeType)!}:{attributeValue}";
+
+            var attributeContent = await context.Context.AttributeContents.FindAsync(value, channel.Id, content.Id);
+
+            if (attributeContent != null)
+            {
+                await context.RemoveAsync(attributeContent);
+            }
+        }
+
         public static async Task<Content> AddContentAsync(this AnatiniContext context, string id, string name, string handle, bool? @protected, string channelId, EventData eventData)
         {
             var article = new XElement("article", new XElement("header", new XElement("h1", new XAttribute("tabindex", -1), name)));

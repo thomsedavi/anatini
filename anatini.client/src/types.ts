@@ -94,6 +94,7 @@ export type ContentEdit = {
   defaultHandle: string;
   version: ContentVersion;
   protected: boolean | null;
+  status: 'Draft' | 'Published';
 }
 
 export type Content = {
