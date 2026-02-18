@@ -50,6 +50,7 @@ namespace Anatini.Server.Context.Entities
         public required string ContentChannelHandle { get; set; }
         public required string ContentName { get; set; }
         public required string ChannelName { get; set; }
+        public required DateOnly DateNZ { get; set; }
         public string? ChannelDefaultCardImageId { get; set; }
         public string? CardImageId { get; set; }
     }

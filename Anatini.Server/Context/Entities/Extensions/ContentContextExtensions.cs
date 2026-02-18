@@ -21,7 +21,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ContentName = content.DraftVersion.Name,
                 ChannelName = channel.Name,
                 ChannelDefaultCardImageId = channel.DefaultCardImageId,
-                CardImageId = content.DraftVersion.CardImageId
+                CardImageId = content.DraftVersion.CardImageId,
+                DateNZ = content.DraftVersion.DateNZ
             };
 
             await context.AddAsync(attributeContent);

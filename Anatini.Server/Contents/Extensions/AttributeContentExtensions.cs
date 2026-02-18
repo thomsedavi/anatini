@@ -11,7 +11,8 @@ namespace Anatini.Server.Contents.Extensions
             {
                 Name = attributeContent.ContentName,
                 ContentHandle = attributeContent.ContentHandle,
-                ContentChannelHandle = attributeContent.ContentChannelHandle
+                ContentChannelHandle = attributeContent.ContentChannelHandle,
+                DateNZ = attributeContent.DateNZ
             };
         }
     }
