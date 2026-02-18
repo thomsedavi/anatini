@@ -2,7 +2,7 @@
   import type { ContentEdit, ErrorMessage, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, type Source } from './common/utils';
+  import { formatDate, getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import InputText from './common/InputText.vue';
   import TabButton from './common/TabButton.vue';
@@ -19,6 +19,7 @@
   const addIndex = ref<number | null>(null);
   const eTag = ref<string | null>(null);
   const tabIndex = ref<number>(0);
+  const dateNZ = ref<string | null>(null);
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
@@ -35,6 +36,8 @@
         response?.json()
           .then((value: ContentEdit) => {
             content.value = value;
+            dateNZ.value = value.version.dateNZ;
+
             eTag.value = response.headers.get("ETag");
 
             if (content.value.version.article !== null) {
@@ -180,6 +183,58 @@
 
     apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
   }
+
+  function update(): void {
+    if (eTag.value === null || content.value === null || 'error' in content.value) {
+      return;
+    }
+
+    const body = new FormData();
+
+    if (dateNZ.value !== null && dateNZ.value !== content.value.version.dateNZ) {
+      body.append('dateNZ', dateNZ.value);
+    }
+
+    const init = { method: "PATCH", headers: { "If-Match": eTag.value }, body: body };
+
+    const statusActions: StatusActions = {
+      204: (response?: Response) => {
+        eTag.value = response?.headers.get("ETag") ?? null;
+
+        if (content.value !== null &&  'version' in content.value) {
+          if (dateNZ.value !== null) {
+            content.value.version.dateNZ = dateNZ.value;            
+          }
+        }
+      }
+    }
+
+    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+  }
+
+  function addYear(years: number): void {
+    if (dateNZ.value !== null) {
+      const date = new Date(dateNZ.value);
+      date.setFullYear(date.getFullYear() + years);
+      dateNZ.value = formatDate(date);
+    }
+  }
+
+  function addMonth(years: number): void {
+    if (dateNZ.value !== null) {
+      const date = new Date(dateNZ.value);
+      date.setMonth(date.getMonth() + years);
+      dateNZ.value = formatDate(date);
+    }
+  }
+
+  function addDay(years: number): void {
+    if (dateNZ.value !== null) {
+      const date = new Date(dateNZ.value);
+      date.setDate(date.getDate() + years);
+      dateNZ.value = formatDate(date);
+    }
+  }
 </script>
 
 <template>
@@ -252,6 +307,19 @@
           <h2>Details</h2>
         </header>
 
+        <template v-if="dateNZ !== null">
+          <p>{{ dateNZ }}</p>
+          <button @click="() => addYear(-1)">Remove Year</button>
+          <button @click="() => addYear(1)">Add Year</button>
+          <button @click="() => addMonth(-1)">Remove Month</button>
+          <button @click="() => addMonth(1)">Add Month</button>
+          <button @click="() => addDay(-1)">Remove Day</button>
+          <button @click="() => addDay(1)">Add Day</button>
+        </template>
+
+        <br>
+        <button @click="update">Update</button>
+        <br>
         <button @click="() => setStatus('Published')">{{ content.status === 'Published' ? 'Republish' : 'Publish' }}</button>
         <button @click="() => setStatus('Draft')" v-if="content.status !== 'Draft'">Unpublish</button>
       </section>

@@ -64,6 +64,19 @@ namespace Anatini.Server.Contents
 
             if (updateContent.Status == "Published")
             {
+                if (content.PublishedVersion == null)
+                {
+                    await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
+                    await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
+                }
+                else if (content.PublishedVersion != null && content.PublishedVersion.DateNZ != content.DraftVersion.DateNZ)
+                {
+                    await context.RemoveAttributeContent(AttributeContentType.Date, content.PublishedVersion.DateNZ.GetDate(), channel, content);
+                    await context.RemoveAttributeContent(AttributeContentType.Week, content.PublishedVersion.DateNZ.GetWeek(), channel, content);
+                    await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
+                    await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
+                }
+
                 var publishedVersion = new ContentOwnedVersion
                 {
                     Name = content.DraftVersion.Name,
@@ -75,17 +88,17 @@ namespace Anatini.Server.Contents
 
                 content.Status = updateContent.Status;
                 content.PublishedVersion = publishedVersion;
-
-                await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
-                await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
             }
             else if (updateContent.Status == "Draft")
             {
+                if (content.PublishedVersion != null)
+                {
+                    await context.RemoveAttributeContent(AttributeContentType.Date, content.PublishedVersion.DateNZ.GetDate(), channel, content);
+                    await context.RemoveAttributeContent(AttributeContentType.Week, content.PublishedVersion.DateNZ.GetWeek(), channel, content);
+                }
+
                 content.Status = updateContent.Status;
                 content.PublishedVersion = null;
-
-                await context.RemoveAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
-                await context.RemoveAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
             }
 
             await context.UpdateAsync(content);
