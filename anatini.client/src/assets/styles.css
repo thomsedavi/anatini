@@ -98,7 +98,7 @@ main > section, main > article {
   max-width: 50rem;
 }
 
-main > section:has(form), main > section:has(progress) {
+main > section:has(form), main > section:has(menu), main > section:has(progress) {
   flex-direction: column;
   align-items: center;
 
@@ -251,7 +251,7 @@ ul[role="list"] {
     border-color: var(--border-hover);
   }
 
-  article h3 {
+  article h3, article h4 {
     margin: 0 0 0.5rem 0;
   }
 
@@ -289,6 +289,36 @@ main > article {
 
   footer a {
     color: var(--text-light);
+  }
+}
+
+form, menu {
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  button {
+    background-color: var(--button);
+    color: var(--button-text);
+    border: 2px solid var(--button);
+
+    &:hover {
+      background-color: var(--button-hover);
+    }
+  }
+
+  button[aria-disabled="true"] {
+    background-color: var(--button-disabled);
+    pointer-events: none;
   }
 }
 
@@ -370,45 +400,6 @@ form {
     font-weight: 500;
   }
 
-  button {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: var(--border-radius);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:not(:last-child) {
-      margin-bottom: 1rem;
-    }
-  }
-
-  button[type="submit"] {
-    background-color: var(--button);
-    color: var(--button-text);
-    border: 2px solid var(--button);
-
-    &:hover {
-      background-color: var(--button-hover);
-    }
-  }
-
-  button[type="submit"][aria-disabled="true"] {
-    background-color: var(--button-disabled);
-    pointer-events: none;
-  }
-
-  button[type="button"] {
-    background-color: transparent;
-    color: var(--button-text);
-    border: 2px solid var(--button);
-    color: var(--button);
-
-    &:hover {
-      background-color: var(--button-secondary-hover);
-    }
-  }
-
   figure {
     margin: 1rem 0;
     display: flex;
@@ -425,6 +416,33 @@ form {
 
   figcaption {
     font-size: 0.875rem;
+  }
+
+  button[type="button"] {
+    background-color: transparent;
+    color: var(--button-text);
+    border: 2px solid var(--button);
+    color: var(--button);
+
+    &:hover {
+      background-color: var(--button-secondary-hover);
+    }
+  }
+}
+
+menu {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  flex-direction: row;
+}
+
+@media (max-width: 600px) {
+  menu {
+    flex-direction: column;
+    max-width: 19rem;
+    width: 100%;
   }
 }
 

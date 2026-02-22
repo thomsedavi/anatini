@@ -69,7 +69,7 @@ namespace Anatini.Server.Contents
                     await context.AddAttributeContent(AttributeContentType.Date, content.DraftVersion.DateNZ.GetDate(), channel, content);
                     await context.AddAttributeContent(AttributeContentType.Week, content.DraftVersion.DateNZ.GetWeek(), channel, content);
                 }
-                else if (content.PublishedVersion != null && content.PublishedVersion.DateNZ != content.DraftVersion.DateNZ)
+                else if (content.PublishedVersion != null && (content.PublishedVersion.DateNZ != content.DraftVersion.DateNZ || content.PublishedVersion.Name != content.DraftVersion.Name || content.PublishedVersion.CardImageId != content.DraftVersion.CardImageId))
                 {
                     await context.RemoveAttributeContent(AttributeContentType.Date, content.PublishedVersion.DateNZ.GetDate(), channel, content);
                     await context.RemoveAttributeContent(AttributeContentType.Week, content.PublishedVersion.DateNZ.GetWeek(), channel, content);

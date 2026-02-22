@@ -2,10 +2,11 @@
   import type { ContentEdit, ErrorMessage, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { formatDate, getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, type Source } from './common/utils';
+  import { getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import InputText from './common/InputText.vue';
   import TabButton from './common/TabButton.vue';
+  import SubmitButton from './common/SubmitButton.vue';
 
   const headingMainRef = ref<HTMLElement | null>(null);
 
@@ -20,12 +21,15 @@
   const eTag = ref<string | null>(null);
   const tabIndex = ref<number>(0);
   const dateNZ = ref<string | null>(null);
+  const name = ref<string | null>(null);
+  const pageStatus = ref<string>('Loading content...');
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
   const tabs = ref([
     { id: 'article', text: 'Article' },
-    { id: 'details', text: 'Details' }
+    { id: 'details', text: 'Details' },
+    { id: 'status', text: 'Status' }
   ]);
 
   watch([() => route.params.channelId, () => route.params.contentId], (source: Source) => fetchContent(parseSource(source)), { immediate: true });
@@ -37,6 +41,8 @@
           .then((value: ContentEdit) => {
             content.value = value;
             dateNZ.value = value.version.dateNZ;
+            name.value = value.version.name;
+            pageStatus.value = 'Ready';
 
             eTag.value = response.headers.get("ETag");
 
@@ -165,6 +171,8 @@
       return;
     }
 
+    pageStatus.value = status === 'Draft' ? 'Unpublishing...' : 'Publishing...';
+
     const body = new FormData();
       
     body.append('status', status);
@@ -178,18 +186,26 @@
           if (content.value !== null && 'status' in content.value) {
             content.value.status = status;
           }
+
+          pageStatus.value = 'Ready';
         }
     }
 
     apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
   }
 
-  function update(): void {
+  function patchContentDetail(): void {
     if (eTag.value === null || content.value === null || 'error' in content.value) {
       return;
     }
 
+    pageStatus.value = 'Updating...';
+
     const body = new FormData();
+
+    if (name.value !== null && name.value !== content.value.version.name) {
+      body.append('name', tidy(name.value));
+    }
 
     if (dateNZ.value !== null && dateNZ.value !== content.value.version.dateNZ) {
       body.append('dateNZ', dateNZ.value);
@@ -205,35 +221,30 @@
           if (dateNZ.value !== null) {
             content.value.version.dateNZ = dateNZ.value;            
           }
+
+          if (name.value !== null) {
+            content.value.version.name = name.value;
+          }
         }
+
+        pageStatus.value = 'Ready';
       }
     }
 
     apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
   }
 
-  function addYear(years: number): void {
-    if (dateNZ.value !== null) {
-      const date = new Date(dateNZ.value);
-      date.setFullYear(date.getFullYear() + years);
-      dateNZ.value = formatDate(date);
+  function detailChanged(): boolean {
+    if (content.value !== null && !('error' in content.value)) {
+      if (name.value !== null && tidy(name.value) !== content.value.version.name) {
+        return true;
+      }
+      else if (dateNZ.value !== null && dateNZ.value !== content.value.version.dateNZ) {
+        return true;
+      }
     }
-  }
 
-  function addMonth(years: number): void {
-    if (dateNZ.value !== null) {
-      const date = new Date(dateNZ.value);
-      date.setMonth(date.getMonth() + years);
-      dateNZ.value = formatDate(date);
-    }
-  }
-
-  function addDay(years: number): void {
-    if (dateNZ.value !== null) {
-      const date = new Date(dateNZ.value);
-      date.setDate(date.getDate() + years);
-      dateNZ.value = formatDate(date);
-    }
+    return false;
   }
 </script>
 
@@ -307,22 +318,67 @@
           <h2>Details</h2>
         </header>
 
-        <template v-if="dateNZ !== null">
-          <p>{{ dateNZ }}</p>
-          <button @click="() => addYear(-1)">Remove Year</button>
-          <button @click="() => addYear(1)">Add Year</button>
-          <button @click="() => addMonth(-1)">Remove Month</button>
-          <button @click="() => addMonth(1)">Add Month</button>
-          <button @click="() => addDay(-1)">Remove Day</button>
-          <button @click="() => addDay(1)">Add Day</button>
-        </template>
+        <form @submit.prevent="patchContentDetail" :action="`/api/channels/${content.channelId}/contents/${content.id}`" method="POST" novalidate>
+          <fieldset>
+            <legend class="visuallyhidden">Content Details</legend>
 
-        <br>
-        <button @click="update">Update</button>
-        <br>
-        <button @click="() => setStatus('Published')">{{ content.status === 'Published' ? 'Republish' : 'Publish' }}</button>
-        <button @click="() => setStatus('Draft')" v-if="content.status !== 'Draft'">Unpublish</button>
+            <template v-if="name !== null">
+              <InputText
+                v-model="name"
+                label="Name"
+                name="name"
+                id="name-content"
+                :maxlength="64"
+                :error="undefined"
+                help="Article name"
+                :required="true" />
+            </template>
+
+            <template v-if="dateNZ !== null">
+              <label for="input-date-content">Publication Date</label>
+              <input 
+                type="date" 
+                v-model="dateNZ"
+                id="input-date-content" 
+                name="date"
+                aria-describedby="help-date-content"
+                :aria-disabled="pageStatus !== 'Ready' ? true : undefined"
+                required >
+
+              <small id="help-date-content">
+                Articles dated in the future will not be visible until that date is reached
+              </small>
+            </template>
+          </fieldset>
+
+          <SubmitButton
+            :busy="pageStatus === 'Updating...'"
+            :disabled="detailChanged() === false"
+            text="Update"
+            busy-text="Updating..." />
+        </form>
+      </section>
+
+      <section id="panel-status" role="tabpanel" aria-labelledby="tab-status" :hidden="tabIndex !== 2">
+        <header>
+          <h2>Status</h2>
+        </header>
+
+        <p>This article is currently {{ content.status.toLowerCase() }}.</p>
+
+        <p v-if="content.status === 'Published'">Republish to update with any changes.</p>
+
+        <menu>
+          <li>
+            <button type="button" @click="() => setStatus('Published')" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">{{ content.status === 'Published' ? 'Republish' : 'Publish' }}</button>
+          </li>
+          <li>
+            <button type="button" @click="() => setStatus('Draft')" v-if="content.status !== 'Draft'" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">Unpublish</button>
+          </li>
+        </menu>
       </section>
     </template>
+
+    <p role="status" class="visuallyhidden">{{ pageStatus }}</p>
   </main>
 </template>
