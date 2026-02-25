@@ -62,7 +62,7 @@
       }
     }
 
-    apiFetchAuthenticated(`channels/${params[0]}/contents/${params[1]}/edit`, statusActions);
+    apiFetchAuthenticated(`channels/${params[0]}/posts/${params[1]}/edit`, statusActions);
   }
 
   function getHeading(): string {
@@ -114,7 +114,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+      apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
     }
   }
 
@@ -147,7 +147,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+      apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
     }
   }
 
@@ -191,7 +191,7 @@
         }
     }
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
   }
 
   function patchContentDetail(): void {
@@ -231,7 +231,7 @@
       }
     }
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/contents/${content.value.id}`, statusActions, init);
+    apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
   }
 
   function detailChanged(): boolean {
@@ -318,7 +318,7 @@
           <h2>Details</h2>
         </header>
 
-        <form @submit.prevent="patchContentDetail" :action="`/api/channels/${content.channelId}/contents/${content.id}`" method="POST" novalidate>
+        <form @submit.prevent="patchContentDetail" :action="`/api/channels/${content.channelId}/posts/${content.id}`" method="POST" novalidate>
           <fieldset>
             <legend class="visuallyhidden">Content Details</legend>
 

@@ -38,22 +38,22 @@ const routes = [
     component: AccountView,
   },
   {
-    path: '/channels/:channelId/contents/create',
+    path: '/channels/:channelId/posts/create',
     component: ContentCreateView,
     name: 'ContentCreate',
   },
   {
-    path: '/channels/:channelId/contents/:contentId/edit',
+    path: '/channels/:channelId/posts/:contentId/edit',
     component: ContentEditView,
     name: 'ContentEdit',
   },
   {
-    path: '/channels/:channelId/contents/:contentId/preview',
+    path: '/channels/:channelId/posts/:contentId/preview',
     component: ContentPreviewView,
     name: 'ContentPreview',
   },
   {
-    path: '/channels/:channelId/contents/:contentId',
+    path: '/channels/:channelId/posts/:contentId',
     component: ContentView,
     name: 'Content',
   },

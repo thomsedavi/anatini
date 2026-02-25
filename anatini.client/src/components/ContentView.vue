@@ -29,7 +29,7 @@
       }
     }
 
-    apiFetch(`channels/${params[0]}/contents/${params[1]}`, statusActions);
+    apiFetch(`channels/${params[0]}/posts/${params[1]}`, statusActions);
   }
 
   function getMainHtml(): string {

@@ -30,7 +30,7 @@
       }
     };
 
-    await apiFetchAuthenticated(`channels/${array[0]}/contents/${array[1]}/preview`, statusActions);
+    await apiFetchAuthenticated(`channels/${array[0]}/posts/${array[1]}/preview`, statusActions);
   }
 
   function sanitizeElementContent(elementContent: string): string {

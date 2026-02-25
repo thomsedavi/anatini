@@ -29,7 +29,7 @@
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       401: () => {
-        router.replace({ path: '/login', query: { redirect: `/channels/${params[0]}/contents/create` } });
+        router.replace({ path: '/login', query: { redirect: `/channels/${params[0]}/posts/create` } });
       },
       403: () => {
         channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };
@@ -122,7 +122,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`channels/${channel.value.id}/contents`, statusActions, init);
+    apiFetchAuthenticated(`channels/${channel.value.id}/posts`, statusActions, init);
   }
 </script>
 
@@ -154,7 +154,7 @@
         </ul>
       </section>
 
-      <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/contents`" method="POST" novalidate>
+      <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/posts`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Create Content</legend>
 
