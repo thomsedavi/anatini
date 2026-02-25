@@ -7,7 +7,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<AttributePost> attributePostBuilder)
         {
-            attributePostBuilder.ToContainer("attributePosts");
+            attributePostBuilder.ToContainer("AttributePosts");
             attributePostBuilder.HasKey(attributePost => new { attributePost.Value, attributePost.PostChannelId, attributePost.PostId });
             attributePostBuilder.HasPartitionKey(attributePost => new { attributePost.Value, attributePost.PostChannelId, attributePost.PostId });
             attributePostBuilder.Property(attributePost => attributePost.ItemId).ToJsonProperty("id");
