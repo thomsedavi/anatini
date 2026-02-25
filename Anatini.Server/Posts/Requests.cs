@@ -3,7 +3,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Posts
 {
-    public class CreateArticle
+    public class CreatePost
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }

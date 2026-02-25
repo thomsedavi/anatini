@@ -42,14 +42,14 @@ namespace Anatini.Server.Context
         public DbSet<UserEvent> UserEvents { get; set; }
         public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<Content> Contents { get; set; }
-        public DbSet<AttributeContent> AttributeContents { get; set; }
+        public DbSet<Post> Post { get; set; }
+        public DbSet<AttributePost> AttributePosts { get; set; }
         public DbSet<UserAlias> UserAliases { get; set; }
         public DbSet<UserImage> UserImages { get; set; }
         public DbSet<ChannelAlias> ChannelAliases { get; set; }
         public DbSet<ChannelImage> ChannelImages { get; set; }
-        public DbSet<ContentAlias> ContentAliases { get; set; }
-        public DbSet<ContentImage> ContentImages { get; set; }
+        public DbSet<PostAlias> PostAliases { get; set; }
+        public DbSet<PostImage> PostImages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -68,8 +68,8 @@ namespace Anatini.Server.Context
         {
             modelBuilder.Entity<User>().Configure();
             modelBuilder.Entity<Channel>().Configure();
-            modelBuilder.Entity<Content>().Configure();
-            modelBuilder.Entity<AttributeContent>().Configure();
+            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<AttributePost>().Configure();
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();
@@ -77,8 +77,8 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<UserImage>().Configure();
             modelBuilder.Entity<ChannelAlias>().Configure();
             modelBuilder.Entity<ChannelImage>().Configure();
-            modelBuilder.Entity<ContentAlias>().Configure();
-            modelBuilder.Entity<ContentImage>().Configure();
+            modelBuilder.Entity<PostAlias>().Configure();
+            modelBuilder.Entity<PostImage>().Configure();
         }
     }
 
