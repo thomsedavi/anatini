@@ -1,4 +1,4 @@
-﻿namespace Anatini.Server.Contents.Extensions
+﻿namespace Anatini.Server.Posts.Extensions
 {
     public static class RequestExtensions
     {

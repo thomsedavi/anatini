@@ -2,6 +2,6 @@
 {
     public class PostDto
     {
-        public required ArticleVersionDto Version { get; set; }
+        public required PostVersionDto Version { get; set; }
     }
 }

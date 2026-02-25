@@ -6,39 +6,39 @@ namespace Anatini.Server.Channels.Extensions
 {
     public static class ChannelExtensions
     {
-        public static Channel AddDraftContent(this Channel channel, Content content, EventData eventData)
+        public static Channel AddDraftPost(this Channel channel, Post post, EventData eventData)
         {
-            var channelOwnedContent = new ChannelOwnedContent
+            var channelOwnedPost = new ChannelOwnedPost
             {
-                Id = content.Id,
+                Id = post.Id,
                 ChannelId = channel.Id,
-                Name = content.DraftVersion.Name,
-                DefaultHandle = content.DefaultHandle,
+                Name = post.DraftVersion.Name,
+                DefaultHandle = post.DefaultHandle,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
-            var topDraftContents = channel.TopDraftContents ?? [];
-            topDraftContents.Add(channelOwnedContent);
-            channel.TopDraftContents = [.. topDraftContents.OrderByDescending(content => content.UpdatedDateTimeUTC).Take(8)];
+            var topDraftPosts = channel.TopDraftPosts ?? [];
+            topDraftPosts.Add(channelOwnedPost);
+            channel.TopDraftPosts = [.. topDraftPosts.OrderByDescending(post => post.UpdatedDateTimeUTC).Take(8)];
 
             return channel;
         }
 
-        public static Channel AddPublishedContent(this Channel channel, Content content, EventData eventData)
+        public static Channel AddPublishedPost(this Channel channel, Post post, EventData eventData)
         {
-            var channelOwnedContent = new ChannelOwnedContent
+            var channelOwnedPost = new ChannelOwnedPost
             {
-                Id = content.Id,
+                Id = post.Id,
                 ChannelId = channel.Id,
-                Name = content.PublishedVersion?.Name ?? "(unknown)",
-                DefaultHandle = content.DefaultHandle,
+                Name = post.PublishedVersion?.Name ?? "(unknown)",
+                DefaultHandle = post.DefaultHandle,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc
             };
 
             // TODO top 8
-            var topPublishedContents = channel.TopPublishedContents ?? [];
-            topPublishedContents.Add(channelOwnedContent);
-            channel.TopPublishedContents = topPublishedContents;
+            var topPublishedPosts = channel.TopPublishedPosts ?? [];
+            topPublishedPosts.Add(channelOwnedPost);
+            channel.TopPublishedPosts = topPublishedPosts;
 
             return channel;
         }
@@ -49,17 +49,17 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channel.Id,
                 Name = channel.Name,
-                TopContents = channel.TopPublishedContents?.Select(ToChannelContentDto),
+                TopPosts = channel.TopPublishedPosts?.Select(ToChannelPostDto),
                 DefaultHandle = channel.DefaultHandle
             };
         }
 
-        public static ChannelContentDto ToChannelContentDto(this ChannelOwnedContent channelOwnedContent)
+        public static ChannelPostDto ToChannelPostDto(this ChannelOwnedPost channelOwnedPost)
         {
-            return new ChannelContentDto
+            return new ChannelPostDto
             {
-                Name = channelOwnedContent.Name,
-                DefaultHandle = channelOwnedContent.DefaultHandle
+                Name = channelOwnedPost.Name,
+                DefaultHandle = channelOwnedPost.DefaultHandle
             };
         }
 
@@ -69,7 +69,7 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channel.Id,
                 Name = channel.Name,
-                TopDraftContents = channel.TopDraftContents?.Select(ToChannelEditContentDto),
+                TopDraftPosts = channel.TopDraftPosts?.Select(ToChannelEditPostDto),
                 Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
                 DefaultCardImageId = channel.DefaultCardImageId,
                 DefaultHandle = channel.DefaultHandle,
@@ -77,14 +77,14 @@ namespace Anatini.Server.Channels.Extensions
             };
         }
 
-        public static ChannelEditContentDto ToChannelEditContentDto(this ChannelOwnedContent channelOwnedContent)
+        public static ChannelEditPostDto ToChannelEditPostDto(this ChannelOwnedPost channelOwnedPost)
         {
-            return new ChannelEditContentDto
+            return new ChannelEditPostDto
             {
-                Id = channelOwnedContent.Id,
-                Name = channelOwnedContent.Name,
-                DefaultHandle = channelOwnedContent.DefaultHandle,
-                UpdatedDateTimeUTC = channelOwnedContent.UpdatedDateTimeUTC
+                Id = channelOwnedPost.Id,
+                Name = channelOwnedPost.Name,
+                DefaultHandle = channelOwnedPost.DefaultHandle,
+                UpdatedDateTimeUTC = channelOwnedPost.UpdatedDateTimeUTC
             };
         }
 

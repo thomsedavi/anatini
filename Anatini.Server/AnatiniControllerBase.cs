@@ -46,17 +46,17 @@ namespace Anatini.Server
         }, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContentContextAsync(string channelId, string contentId, Func<Content, Channel, AnatiniContext, Task<IActionResult>> contentContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
+        public async Task<IActionResult> UsingPostContextAsync(string channelId, string postId, Func<Post, Channel, AnatiniContext, Task<IActionResult>> postContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingPostAsync(channelId, postId, async (post, channel) =>
         {
             using var innerContext = new ContextBase();
 
-            return await contentContextFunction(content, channel, new AnatiniContext(innerContext));
+            return await postContextFunction(post, channel, new AnatiniContext(innerContext));
         }, eTag, refreshETag, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContent(string channelId, string contentId, Func<Content, IActionResult> contentFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingContentAsync(channelId, contentId, async (content, channel) =>
+        public async Task<IActionResult> UsingPost(string channelId, string postId, Func<Post, IActionResult> postFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingPostAsync(channelId, postId, async (post, channel) =>
         {
-            var result = contentFunction(content);
+            var result = postFunction(post);
 
             return await Task.FromResult(result);
         }, eTag, refreshETag, requiresAccess);
@@ -70,7 +70,7 @@ namespace Anatini.Server
         }, requiresAccess);
 
         [NonAction]
-        public async Task<IActionResult> UsingContentAsync(string channelId, string contentId, Func<Content, Channel, Task<IActionResult>> contentFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
+        public async Task<IActionResult> UsingPostAsync(string channelId, string postId, Func<Post, Channel, Task<IActionResult>> postFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
         {
             using var innerContext = new ContextBase();
             
@@ -101,43 +101,43 @@ namespace Anatini.Server
                 }
             }
             
-            if (!RandomHex.IsX16(contentId))
+            if (!RandomHex.IsX16(postId))
             {
-                var contentAlias = await innerContext.ContentAliases.FindAsync(channelId, contentId);
+                var postAlias = await innerContext.PostAliases.FindAsync(channelId, postId);
             
-                if (contentAlias == null)
+                if (postAlias == null)
                 {
                     return NotFound();
                 }
             
-                contentId = contentAlias.ContentId.ToString();
+                postId = postAlias.PostId.ToString();
             }
             
-            var content = await innerContext.Contents.FindAsync(channelId, contentId);
+            var post = await innerContext.Post.FindAsync(channelId, postId);
             
-            if (content == null)
+            if (post == null)
             {
                 return Problem();
             }
             
-            if (eTag != null && eTag != content.ETag)
+            if (eTag != null && eTag != post.ETag)
             {
                 return ValidationProblem(statusCode: StatusCodes.Status412PreconditionFailed);
             }
             
-            var result = await contentFunctionAsync(content, channel);
+            var result = await postFunctionAsync(post, channel);
             
             if (refreshETag)
             {
                 using var newInnerContext = new ContextBase();
             
-                var newContent = await newInnerContext.Contents.FindAsync(channelId, contentId);
+                var newPost = await newInnerContext.Post.FindAsync(channelId, postId);
             
-                Response.Headers.ETag = newContent?.ETag ?? Response.Headers.ETag;
+                Response.Headers.ETag = newPost?.ETag ?? Response.Headers.ETag;
             }
             else
             {
-                Response.Headers.ETag = content.ETag;
+                Response.Headers.ETag = post.ETag;
             }
             
             return result;
