@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum AttributeContentType
+    public enum AttributePostType
     {
         Date,
         Week
