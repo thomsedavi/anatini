@@ -16,8 +16,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             channelBuilder.Property(channel => channel.Timestamp).ToJsonProperty("_ts");
             channelBuilder.OwnsMany(channel => channel.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(channelOwnedAlias => channelOwnedAlias.Handle); });
             channelBuilder.OwnsMany(channel => channel.Users, userBuildAction => { userBuildAction.HasKey(channelOwnedUser => channelOwnedUser.Id); });
-            channelBuilder.OwnsMany(channel => channel.TopDraftContents, contentBuildAction => { contentBuildAction.HasKey(channelOwnedContent => channelOwnedContent.Id); });
-            channelBuilder.OwnsMany(channel => channel.TopPublishedContents, contentBuildAction => { contentBuildAction.HasKey(channelOwnedContent => channelOwnedContent.Id); });
+            channelBuilder.OwnsMany(channel => channel.TopDraftPosts, postBuildAction => { postBuildAction.HasKey(channelOwnedPost => channelOwnedPost.Id); });
+            channelBuilder.OwnsMany(channel => channel.TopPublishedPosts, postBuildAction => { postBuildAction.HasKey(channelOwnedPost => channelOwnedPost.Id); });
         }
     }
 }

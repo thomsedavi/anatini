@@ -8,8 +8,8 @@ namespace Anatini.Server.Context.Entities
         public string? About { get; set; }
         public required ICollection<ChannelOwnedUser> Users { get; set; }
         public required ICollection<ChannelOwnedAlias> Aliases { get; set; }
-        public ICollection<ChannelOwnedContent>? TopDraftContents { get; set; }
-        public ICollection<ChannelOwnedContent>? TopPublishedContents { get; set; }
+        public ICollection<ChannelOwnedPost>? TopDraftPosts { get; set; }
+        public ICollection<ChannelOwnedPost>? TopPublishedPosts { get; set; }
         public required string DefaultHandle { get; set; }
         public string? IconImageId { get; set; }
         public string? BannerImageId { get; set; }
@@ -31,7 +31,7 @@ namespace Anatini.Server.Context.Entities
     }
 
     [Owned]
-    public class ChannelOwnedContent : ChannelOwnedEntity
+    public class ChannelOwnedPost : ChannelOwnedEntity
     {
         public required string Id { get; set; }
         public required string Name { get; set; }

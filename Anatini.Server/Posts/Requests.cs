@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Contents
+namespace Anatini.Server.Posts
 {
-    public class CreateContent
+    public class CreateArticle
     {
         [MaxLength(64), DataType(DataType.Text)]
         public required string Name { get; set; }
@@ -16,7 +16,7 @@ namespace Anatini.Server.Contents
         public string Id { get; set; } = RandomHex.NextX16();
     }
 
-    public class UpdateContent
+    public class UpdatePost
     {
         [MaxLength(64), DataType(DataType.Text)]
         public string? Name { get; set; }
@@ -26,24 +26,5 @@ namespace Anatini.Server.Contents
         public string? Status { get; set; }
 
         public string? Article { get;  set; }
-    }
-
-    public class CreateElement
-    {
-        public required int InsertAfter { get; set; }
-
-        [Tag, DataType(DataType.Text)]
-        public required string Tag { get; set; }
-
-        [DataType(DataType.Text)]
-        public string? Content { get; set; }
-    }
-
-    public class UpdateElement
-    {
-        public required int Index { get; set; }
-
-        [DataType(DataType.Text)]
-        public required string Content { get; set; }
     }
 }
