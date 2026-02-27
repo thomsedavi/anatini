@@ -74,6 +74,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Post>().Configure();
             modelBuilder.Entity<Note>().Configure();
             modelBuilder.Entity<AttributePost>().Configure();
+            modelBuilder.Entity<AttributeNote>().Configure();
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();
             modelBuilder.Entity<UserToUserRelationship>().Configure();

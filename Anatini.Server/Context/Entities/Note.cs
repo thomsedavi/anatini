@@ -6,7 +6,7 @@
         public bool? Protected { get; set; }
     }
 
-    public class AttributeNote : PostEntity
+    public class AttributeNote : NoteEntity
     {
         public required string Value { get; set; }
     }
