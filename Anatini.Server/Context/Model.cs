@@ -42,8 +42,11 @@ namespace Anatini.Server.Context
         public DbSet<UserEvent> UserEvents { get; set; }
         public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<Post> Post { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Note> Notes { get; set; }
+        public DbSet<Event> Events { get; set; }
         public DbSet<AttributePost> AttributePosts { get; set; }
+        public DbSet<AttributeNote> AttributeNotes { get; set; }
         public DbSet<UserAlias> UserAliases { get; set; }
         public DbSet<UserImage> UserImages { get; set; }
         public DbSet<ChannelAlias> ChannelAliases { get; set; }
@@ -69,6 +72,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<User>().Configure();
             modelBuilder.Entity<Channel>().Configure();
             modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<Note>().Configure();
             modelBuilder.Entity<AttributePost>().Configure();
             modelBuilder.Entity<UserEmail>().Configure();
             modelBuilder.Entity<UserEvent>().Configure();

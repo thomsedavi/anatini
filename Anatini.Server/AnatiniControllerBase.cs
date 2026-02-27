@@ -113,7 +113,7 @@ namespace Anatini.Server
                 postId = postAlias.PostId.ToString();
             }
             
-            var post = await innerContext.Post.FindAsync(channelId, postId);
+            var post = await innerContext.Posts.FindAsync(channelId, postId);
             
             if (post == null)
             {
@@ -131,7 +131,7 @@ namespace Anatini.Server
             {
                 using var newInnerContext = new ContextBase();
             
-                var newPost = await newInnerContext.Post.FindAsync(channelId, postId);
+                var newPost = await newInnerContext.Posts.FindAsync(channelId, postId);
             
                 Response.Headers.ETag = newPost?.ETag ?? Response.Headers.ETag;
             }
