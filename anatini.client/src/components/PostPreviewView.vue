@@ -2,31 +2,31 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
-  import type { Content, ContentElement, ErrorMessage, StatusActions } from '@/types';
+  import type { Post, PostElement, ErrorMessage, StatusActions } from '@/types';
   import { formatParagraph } from './common/utils';
 
   const route = useRoute();
 
-  const content = ref<Content | ErrorMessage | null>(null);
+  const post = ref<Post | ErrorMessage | null>(null);
 
-  watch([() => route.params.channelId, () => route.params.contentId], fetchContent, { immediate: true });
+  watch([() => route.params.channelId, () => route.params.postId], fetchPost, { immediate: true });
 
-  async function fetchContent(array: (() => string | string[])[]) {
-    content.value = null;
+  async function fetchPost(array: (() => string | string[])[]) {
+    post.value = null;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: Content) => {
-            content.value = value;
+          .then((value: Post) => {
+            post.value = value;
           })
-          .catch(() => { content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
+          .catch(() => { post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }});
       },
       404: () => {
-        content.value = { error: true, heading: '404 Not Found', body: 'This content cannot be found' };
+        post.value = { error: true, heading: '404 Not Found', body: 'This post cannot be found' };
       },
       500: () => {
-        content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this content, please reload the page' };
+        post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this post, please reload the page' };
       }
     };
 
@@ -39,13 +39,13 @@
       .replace(/>/g, '&gt;');
   }
 
-  function getContents(elements: ContentElement[]): string {
+  function getPosts(elements: PostElement[]): string {
     let result = '';
 
     elements.sort((a, b) => a.index - b.index).forEach(element => {
-      if (element.content !== null)
+      if (element.post !== null)
       {
-        const elementContent = sanitizeElementContent(element.content);
+        const elementContent = sanitizeElementContent(element.post);
 
         if (element.tag === 'p') {
           result += formatParagraph(elementContent);
@@ -60,12 +60,12 @@
   }
 
   function getMainHtml(): string {
-    if (content.value === null) {
+    if (post.value === null) {
       return '<p>Loading...</p>';
-    } else if ('heading' in content.value) {
-      return `<h1>${ content.value.heading }</h1>`;
-    } else if (content.value.version.elements) {
-      return getContents(content.value.version.elements);
+    } else if ('heading' in post.value) {
+      return `<h1>${ post.value.heading }</h1>`;
+    } else if (post.value.version.elements) {
+      return getPosts(post.value.version.elements);
     } else {
       return '<h1>Unknown Error</h1>';
     }

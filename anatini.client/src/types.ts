@@ -53,13 +53,13 @@ export type Channel = {
   name: string;
   about: string | null;
   defaultHandle: string;
-  topContents: {
+  topPosts: {
     defaultHandle: string;
     name: string;
   }[] | null;
 };
 
-export type DraftContent = {
+export type DraftPost = {
   id: string;
   defaultHandle: string;
   name: string;
@@ -73,32 +73,32 @@ export type ChannelEdit = {
   aliases: {
     handle: string;
   }[];
-  topDraftContents: DraftContent[] | null;
+  topDraftPosts: DraftPost[] | null;
 };
 
-export type ContentElement = {
+export type PostElement = {
   index: number;
   tag: string;
-  content: string | null;
+  post: string | null;
 }
 
-export type ContentVersion = {
+export type PostVersion = {
   name: string;
   article: string | null;
   dateNZ: string;
 }
 
-export type ContentEdit = {
+export type PostEdit = {
   id: string;
   channelId: string;
   defaultHandle: string;
-  version: ContentVersion;
+  version: PostVersion;
   protected: boolean | null;
   status: 'Draft' | 'Published';
 }
 
-export type Content = {
-  version: ContentVersion;
+export type Post = {
+  version: PostVersion;
 }
 
 export type IsAuthenticated = {

@@ -3,10 +3,10 @@ import { createWebHistory, createRouter } from 'vue-router'
 import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
-import ContentCreateView from './components/ContentCreateView.vue';
-import ContentEditView from './components/ContentEditView.vue';
-import ContentPreviewView from './components/ContentPreviewView.vue';
-import ContentView from './components/ContentView.vue';
+import PostCreateView from './components/PostCreateView.vue';
+import PostEditView from './components/PostEditView.vue';
+import PostPreviewView from './components/PostPreviewView.vue';
+import PostView from './components/PostView.vue';
 import AccountView from './components/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
@@ -39,23 +39,23 @@ const routes = [
   },
   {
     path: '/channels/:channelId/posts/create',
-    component: ContentCreateView,
-    name: 'ContentCreate',
+    component: PostCreateView,
+    name: 'PostCreate',
   },
   {
-    path: '/channels/:channelId/posts/:contentId/edit',
-    component: ContentEditView,
-    name: 'ContentEdit',
+    path: '/channels/:channelId/posts/:postId/edit',
+    component: PostEditView,
+    name: 'PostEdit',
   },
   {
-    path: '/channels/:channelId/posts/:contentId/preview',
-    component: ContentPreviewView,
-    name: 'ContentPreview',
+    path: '/channels/:channelId/posts/:postId/preview',
+    component: PostPreviewView,
+    name: 'PostPreview',
   },
   {
-    path: '/channels/:channelId/posts/:contentId',
-    component: ContentView,
-    name: 'Content',
+    path: '/channels/:channelId/posts/:postId',
+    component: PostView,
+    name: 'Post',
   },
   {
     path: '/users/:userId',

@@ -18,7 +18,7 @@
   const errorSectionRef = ref<HTMLElement | null>(null);
 
   const tabs = ref([
-    { id: 'contents', text: 'Contents' },
+    { id: 'posts', text: 'Posts' },
     { id: 'public', text: 'Display' },
   ]);
 
@@ -171,36 +171,36 @@
           :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
       </ul>
 
-      <section id="panel-contents" role="tabpanel" aria-labelledby="tab-contents" :hidden="tabIndex !== 0">
+      <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts" :hidden="tabIndex !== 0">
         <header>
-          <h2>Contents</h2>
-          <RouterLink :to="{ name: 'ContentCreate' }">+ Create Content</RouterLink>
+          <h2>Posts</h2>
+          <RouterLink :to="{ name: 'PostCreate' }">+ Create Post</RouterLink>
         </header>
 
-        <section aria-labelledby="section-your-contents">
+        <section aria-labelledby="section-your-posts">
           <header>
-            <h3 id="section-your-contents">Your Contents</h3>
+            <h3 id="section-your-posts">Your Posts</h3>
           </header>
 
-          <ul role="list" v-if="(channel.topDraftContents?.length ?? 0) > 0">
-            <li v-for="content in channel.topDraftContents" :key="`content-${content.defaultHandle}`">
-              <article :aria-labelledby="`content-${content.defaultHandle}`">
+          <ul role="list" v-if="(channel.topDraftPosts?.length ?? 0) > 0">
+            <li v-for="post in channel.topDraftPosts" :key="`post-${post.defaultHandle}`">
+              <article :aria-labelledby="`post-${post.defaultHandle}`">
                 <header>
-                  <h4 :id="`content-${content.defaultHandle}`">
-                    <RouterLink :to="{ name: 'ContentEdit', params: { channelId: channel.defaultHandle, contentId: content.defaultHandle }}">{{ content.name }}</RouterLink>
+                  <h4 :id="`post-${post.defaultHandle}`">
+                    <RouterLink :to="{ name: 'PostEdit', params: { channelId: channel.defaultHandle, postId: post.defaultHandle }}">{{ post.name }}</RouterLink>
                   </h4>
                 </header>
 
-                <p>Content Description Goes Here</p>
+                <p>Post Description Goes Here</p>
 
                 <footer>
-                  <small>Handle: <code>{{ content.defaultHandle }}</code></small>
+                  <small>Handle: <code>{{ post.defaultHandle }}</code></small>
                 </footer>
               </article>
             </li>
           </ul>
 
-          <p v-else>You do not have any contents</p>
+          <p v-else>You do not have any posts</p>
         </section>
       </section>
 

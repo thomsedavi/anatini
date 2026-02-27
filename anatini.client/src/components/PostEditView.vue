@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ContentEdit, ErrorMessage, StatusActions } from '@/types';
+  import type { PostEdit, ErrorMessage, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, tidy, type Source } from './common/utils';
@@ -12,7 +12,7 @@
 
   const route = useRoute();
 
-  const content = ref<ContentEdit | ErrorMessage | null>(null);
+  const post = ref<PostEdit | ErrorMessage | null>(null);
   const article = ref<Node | null>(null);
   const addText = ref<string | null>(null);
   const editText = ref<string | null>(null);
@@ -22,7 +22,7 @@
   const tabIndex = ref<number>(0);
   const dateNZ = ref<string | null>(null);
   const name = ref<string | null>(null);
-  const pageStatus = ref<string>('Loading content...');
+  const pageStatus = ref<string>('Loading post...');
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
@@ -32,22 +32,22 @@
     { id: 'status', text: 'Status' }
   ]);
 
-  watch([() => route.params.channelId, () => route.params.contentId], (source: Source) => fetchContent(parseSource(source)), { immediate: true });
+  watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
-  async function fetchContent(params: string[]) {
+  async function fetchPost(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: ContentEdit) => {
-            content.value = value;
+          .then((value: PostEdit) => {
+            post.value = value;
             dateNZ.value = value.version.dateNZ;
             name.value = value.version.name;
             pageStatus.value = 'Ready';
 
             eTag.value = response.headers.get("ETag");
 
-            if (content.value.version.article !== null) {
-              const node = parseFromString(content.value.version.article);
+            if (post.value.version.article !== null) {
+              const node = parseFromString(post.value.version.article);
 
               if (node?.nodeName === 'ARTICLE') {
                 article.value = node;
@@ -58,7 +58,7 @@
               headingMainRef.value?.focus();
             });
           })
-          .catch(() => { content.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your content, please reload the page' }});
+          .catch(() => { post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }});
       }
     }
 
@@ -66,12 +66,12 @@
   }
 
   function getHeading(): string {
-    if (content.value === null) {
+    if (post.value === null) {
       return 'Fetching...';
-    } if ('error' in content.value) {
-      return content.value.heading;
+    } if ('error' in post.value) {
+      return post.value.heading;
     } else {
-      return 'Content Edit';
+      return 'Post Edit';
     }
   }
 
@@ -86,7 +86,7 @@
   }
 
   function addParagraph(): void {
-    if (eTag.value === null || content.value === null || 'error' in content.value || addText.value === null || article.value == null) {
+    if (eTag.value === null || post.value === null || 'error' in post.value || addText.value === null || article.value == null) {
       return;
     }
 
@@ -114,12 +114,12 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
+      apiFetchAuthenticated(`channels/${post.value.channelId}/posts/${post.value.id}`, statusActions, init);
     }
   }
 
   function saveParagraph(): void {
-    if (eTag.value === null || content.value === null || 'error' in content.value || editText.value === null || article.value == null) {
+    if (eTag.value === null || post.value === null || 'error' in post.value || editText.value === null || article.value == null) {
       return;
     }
 
@@ -147,7 +147,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
+      apiFetchAuthenticated(`channels/${post.value.channelId}/posts/${post.value.id}`, statusActions, init);
     }
   }
 
@@ -167,7 +167,7 @@
   }
 
   function setStatus(status: 'Draft' | 'Published'): void {
-    if (eTag.value === null || content.value === null || 'error' in content.value) {
+    if (eTag.value === null || post.value === null || 'error' in post.value) {
       return;
     }
 
@@ -183,19 +183,19 @@
         204: (response?: Response) => {
           eTag.value = response?.headers.get("ETag") ?? null;
 
-          if (content.value !== null && 'status' in content.value) {
-            content.value.status = status;
+          if (post.value !== null && 'status' in post.value) {
+            post.value.status = status;
           }
 
           pageStatus.value = 'Ready';
         }
     }
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
+    apiFetchAuthenticated(`channels/${post.value.channelId}/posts/${post.value.id}`, statusActions, init);
   }
 
-  function patchContentDetail(): void {
-    if (eTag.value === null || content.value === null || 'error' in content.value) {
+  function patchPostDetail(): void {
+    if (eTag.value === null || post.value === null || 'error' in post.value) {
       return;
     }
 
@@ -203,11 +203,11 @@
 
     const body = new FormData();
 
-    if (name.value !== null && name.value !== content.value.version.name) {
+    if (name.value !== null && name.value !== post.value.version.name) {
       body.append('name', tidy(name.value));
     }
 
-    if (dateNZ.value !== null && dateNZ.value !== content.value.version.dateNZ) {
+    if (dateNZ.value !== null && dateNZ.value !== post.value.version.dateNZ) {
       body.append('dateNZ', dateNZ.value);
     }
 
@@ -217,13 +217,13 @@
       204: (response?: Response) => {
         eTag.value = response?.headers.get("ETag") ?? null;
 
-        if (content.value !== null &&  'version' in content.value) {
+        if (post.value !== null &&  'version' in post.value) {
           if (dateNZ.value !== null) {
-            content.value.version.dateNZ = dateNZ.value;            
+            post.value.version.dateNZ = dateNZ.value;            
           }
 
           if (name.value !== null) {
-            content.value.version.name = name.value;
+            post.value.version.name = name.value;
           }
         }
 
@@ -231,15 +231,15 @@
       }
     }
 
-    apiFetchAuthenticated(`channels/${content.value.channelId}/posts/${content.value.id}`, statusActions, init);
+    apiFetchAuthenticated(`channels/${post.value.channelId}/posts/${post.value.id}`, statusActions, init);
   }
 
   function detailChanged(): boolean {
-    if (content.value !== null && !('error' in content.value)) {
-      if (name.value !== null && tidy(name.value) !== content.value.version.name) {
+    if (post.value !== null && !('error' in post.value)) {
+      if (name.value !== null && tidy(name.value) !== post.value.version.name) {
         return true;
       }
-      else if (dateNZ.value !== null && dateNZ.value !== content.value.version.dateNZ) {
+      else if (dateNZ.value !== null && dateNZ.value !== post.value.version.dateNZ) {
         return true;
       }
     }
@@ -249,23 +249,23 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" :aria-busy="content === null">
+  <main id="main" tabindex="-1" :aria-busy="post === null">
     <header>
       <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="content === null">                
-      <progress max="100">Fetching content...</progress>
+    <section v-if="post === null">                
+      <progress max="100">Fetching post...</progress>
     </section>
 
-    <section v-else-if="'error' in content">
+    <section v-else-if="'error' in post">
       <p>
-        {{ content.body }}
+        {{ post.body }}
       </p>
     </section>
 
     <template v-else>
-      <ul role="tablist" aria-label="Content Settings">
+      <ul role="tablist" aria-label="Post Settings">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
@@ -318,16 +318,16 @@
           <h2>Details</h2>
         </header>
 
-        <form @submit.prevent="patchContentDetail" :action="`/api/channels/${content.channelId}/posts/${content.id}`" method="POST" novalidate>
+        <form @submit.prevent="patchPostDetail" :action="`/api/channels/${post.channelId}/posts/${post.id}`" method="POST" novalidate>
           <fieldset>
-            <legend class="visuallyhidden">Content Details</legend>
+            <legend class="visuallyhidden">Post Details</legend>
 
             <template v-if="name !== null">
               <InputText
                 v-model="name"
                 label="Name"
                 name="name"
-                id="name-content"
+                id="name-post"
                 :maxlength="64"
                 :error="undefined"
                 help="Article name"
@@ -335,17 +335,17 @@
             </template>
 
             <template v-if="dateNZ !== null">
-              <label for="input-date-content">Publication Date</label>
+              <label for="input-date-post">Publication Date</label>
               <input 
                 type="date" 
                 v-model="dateNZ"
-                id="input-date-content" 
+                id="input-date-post" 
                 name="date"
-                aria-describedby="help-date-content"
+                aria-describedby="help-date-post"
                 :aria-disabled="pageStatus !== 'Ready' ? true : undefined"
                 required >
 
-              <small id="help-date-content">
+              <small id="help-date-post">
                 Articles dated in the future will not be visible until that date is reached
               </small>
             </template>
@@ -364,16 +364,16 @@
           <h2>Status</h2>
         </header>
 
-        <p>This article is currently {{ content.status.toLowerCase() }}.</p>
+        <p>This article is currently {{ post.status.toLowerCase() }}.</p>
 
-        <p v-if="content.status === 'Published'">Republish to update with any changes.</p>
+        <p v-if="post.status === 'Published'">Republish to update with any changes.</p>
 
         <menu>
           <li>
-            <button type="button" @click="() => setStatus('Published')" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">{{ content.status === 'Published' ? 'Republish' : 'Publish' }}</button>
+            <button type="button" @click="() => setStatus('Published')" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">{{ post.status === 'Published' ? 'Republish' : 'Publish' }}</button>
           </li>
           <li>
-            <button type="button" @click="() => setStatus('Draft')" v-if="content.status !== 'Draft'" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">Unpublish</button>
+            <button type="button" @click="() => setStatus('Draft')" v-if="post.status !== 'Draft'" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">Unpublish</button>
           </li>
         </menu>
       </section>

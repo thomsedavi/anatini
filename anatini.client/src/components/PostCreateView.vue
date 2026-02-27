@@ -12,8 +12,8 @@
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
   const inputErrors = ref<InputError[]>([]);
-  const inputContentName = ref<string>('');
-  const inputContentHandle = ref<string>('');
+  const inputPostName = ref<string>('');
+  const inputPostHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -49,22 +49,22 @@
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postContent() {
+  async function postPost() {
     inputErrors.value = [];
 
     if (channel.value === null || 'error' in channel.value) {
       return;
     }
 
-    const tidiedName = tidy(inputContentName.value);
-    const tidiedHandle = tidy(inputContentHandle.value);
+    const tidiedName = tidy(inputPostName.value);
+    const tidiedHandle = tidy(inputPostHandle.value);
 
     if (tidiedName === '') {
-      inputErrors.value.push({id: 'name', message: 'Content name is required'});
+      inputErrors.value.push({id: 'name', message: 'Post name is required'});
     }
 
     if (tidiedHandle === '') {
-      inputErrors.value.push({id: 'handle', message: 'Content handle is required'});
+      inputErrors.value.push({id: 'handle', message: 'Post handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -82,7 +82,7 @@
         status.value = 'success';
 
         if (channel.value !== null && 'id' in channel.value) {
-          router.push({ name: 'ContentEdit', params: { channelId: channel.value.id, contentId: tidiedHandle } });
+          router.push({ name: 'PostEdit', params: { channelId: channel.value.id, postId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -129,7 +129,7 @@
 <template>
   <main id="main" tabindex="-1">
     <header>
-      <h1>Create Content</h1>
+      <h1>Create Post</h1>
     </header>
 
     <section v-if="channel === null">
@@ -146,7 +146,7 @@
 
     <template v-else>
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-        <h2 id="heading-errors">There was a problem creating your content</h2>
+        <h2 id="heading-errors">There was a problem creating your post</h2>
         <ul>
           <li v-for="error in inputErrors" :key="'error' + error.id">
             <a :href="'#input-' + error.id">{{ error.message }}</a>
@@ -154,32 +154,32 @@
         </ul>
       </section>
 
-      <form @submit.prevent="postContent" :action="`/api/channels/${channel.id}/posts`" method="POST" novalidate>
+      <form @submit.prevent="postPost" :action="`/api/channels/${channel.id}/posts`" method="POST" novalidate>
         <fieldset>
-          <legend class="visuallyhidden">Create Content</legend>
+          <legend class="visuallyhidden">Create Post</legend>
 
           <InputText
-            v-model="inputContentName"
+            v-model="inputPostName"
             label="Name"
             name="name"
             id="name"
             :maxlength="64"
-            help="The display name of your content"
+            help="The display name of your post"
             :error="getError('name')" />
 
           <InputText
-            v-model="inputContentHandle"
+            v-model="inputPostHandle"
             label="Handle"
             name="handle"
             id="handle"
             :maxlength="64"
-            help="lower case with hyphens (e.g. 'my-anatini-content')"
+            help="lower case with hyphens (e.g. 'my-anatini-post')"
             :error="getError('handle')" />
         </fieldset>
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="tidy(inputContentName) === '' || tidy(inputContentHandle) === ''"
+          :disabled="tidy(inputPostName) === '' || tidy(inputPostHandle) === ''"
           text="Create"
           busy-text="Creating..." />
       </form>
