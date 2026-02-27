@@ -135,7 +135,7 @@
     <section v-if="channel === null">
       <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the channel information is fetched.</p>
                 
-      <progress max="100">Fetching account...</progress>
+      <progress max="100">Fetching channel...</progress>
     </section>
 
     <section v-else-if="'error' in channel">

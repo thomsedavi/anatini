@@ -4,6 +4,7 @@ import AboutView from './components/AboutView.vue';
 import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import PostCreateView from './components/PostCreateView.vue';
+import NoteCreateView from './components/NoteCreateView.vue';
 import PostEditView from './components/PostEditView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
@@ -41,6 +42,11 @@ const routes = [
     path: '/channels/:channelId/posts/create',
     component: PostCreateView,
     name: 'PostCreate',
+  },
+  {
+    path: '/channels/:channelId/notes/create',
+    component: NoteCreateView,
+    name: 'NoteCreate',
   },
   {
     path: '/channels/:channelId/posts/:postId/edit',

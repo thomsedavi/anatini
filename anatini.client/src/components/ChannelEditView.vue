@@ -19,6 +19,7 @@
 
   const tabs = ref([
     { id: 'posts', text: 'Posts' },
+    { id: 'notes', text: 'Notes' },
     { id: 'public', text: 'Display' },
   ]);
 
@@ -204,7 +205,14 @@
         </section>
       </section>
 
-      <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 1">
+      <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" :hidden="tabIndex !== 1">
+        <header>
+          <h2>Notes</h2>
+          <RouterLink :to="{ name: 'NoteCreate' }">+ Create Note</RouterLink>
+        </header>
+      </section>
+
+      <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 2">
         <header>
           <h2>Display</h2>
         </header>
