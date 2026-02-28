@@ -13,7 +13,7 @@
     public class PostVersionDto
     {
         public required string Name { get; set; }
-        public string? Article { get; set; }
+        public required string Article { get; set; }
         public required DateOnly DateNZ { get; set; }
     }
 }

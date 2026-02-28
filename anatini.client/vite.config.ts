@@ -70,6 +70,10 @@ export default defineConfig({
             '^/api/posts': {
                 target,
                 secure: false
+            },
+            '^/api/notes': {
+                target,
+                secure: false
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '57850'),

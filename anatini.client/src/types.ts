@@ -84,7 +84,7 @@ export type PostElement = {
 
 export type PostVersion = {
   name: string;
-  article: string | null;
+  article: string;
   dateNZ: string;
 }
 

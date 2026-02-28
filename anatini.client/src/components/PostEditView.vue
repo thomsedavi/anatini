@@ -46,12 +46,10 @@
 
             eTag.value = response.headers.get("ETag");
 
-            if (post.value.version.article !== null) {
-              const node = parseFromString(post.value.version.article);
+            const node = parseFromString(post.value.version.article);
 
-              if (node?.nodeName === 'ARTICLE') {
-                article.value = node;
-              }
+            if (node?.nodeName === 'ARTICLE') {
+              article.value = node;
             }
 
             nextTick(() => {

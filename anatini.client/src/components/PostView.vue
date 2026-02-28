@@ -37,7 +37,7 @@
       return '<p>Loading...</p>';
     } else if ('heading' in post.value) {
       return `<h1>${ post.value.heading }</h1>`;
-    } else if ('version' in post.value && post.value.version.article !== null) {
+    } else if ('version' in post.value) {
       return post.value.version.article;
     } else {
       return '<h1>Unknown Error</h1>';

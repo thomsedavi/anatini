@@ -62,6 +62,14 @@ namespace Anatini.Server
         }, eTag, refreshETag, requiresAccess);
 
         [NonAction]
+        public async Task<IActionResult> UsingNote(string channelId, string noteId, Func<Note, IActionResult> noteFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingNoteAsync(channelId, noteId, async (note, channel) =>
+        {
+            var result = noteFunction(note);
+
+            return await Task.FromResult(result);
+        }, eTag, refreshETag, requiresAccess);
+
+        [NonAction]
         public async Task<IActionResult> UsingChannel(string channelId, Func<Channel, IActionResult> channelFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
         {
             var result = channelFunction(channel);
@@ -140,6 +148,73 @@ namespace Anatini.Server
                 Response.Headers.ETag = post.ETag;
             }
             
+            return result;
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingNoteAsync(string channelId, string noteId, Func<Note, Channel, Task<IActionResult>> noteFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
+        {
+            if (!RandomHex.IsX16(noteId))
+            {
+                return BadRequest();
+            }
+
+            using var innerContext = new ContextBase();
+
+            if (!RandomHex.IsX16(channelId))
+            {
+                var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
+
+                if (channelAlias == null)
+                {
+                    return NotFound();
+                }
+
+                channelId = channelAlias.ChannelId.ToString();
+            }
+
+            var channel = await innerContext.Channels.FindAsync(channelId);
+
+            if (channel == null)
+            {
+                return Problem();
+            }
+
+            if (requiresAccess)
+            {
+                if (UserId == null || !channel.Users.Any(user => user.Id == UserId))
+                {
+                    return Forbid();
+                }
+            }
+
+            var note = await innerContext.Notes.FindAsync(channelId, noteId);
+
+            if (note == null)
+            {
+                return Problem();
+            }
+
+            if (eTag != null && eTag != note.ETag)
+            {
+                return ValidationProblem(statusCode: StatusCodes.Status412PreconditionFailed);
+            }
+
+            var result = await noteFunctionAsync(note, channel);
+
+            if (refreshETag)
+            {
+                using var newInnerContext = new ContextBase();
+
+                var newNote = await newInnerContext.Notes.FindAsync(channelId, noteId);
+
+                Response.Headers.ETag = newNote?.ETag ?? Response.Headers.ETag;
+            }
+            else
+            {
+                Response.Headers.ETag = note.ETag;
+            }
+
             return result;
         }
 

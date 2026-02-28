@@ -3,6 +3,8 @@
     public class Note : BaseEntity
     {
         public required string ChannelId { get; set; }
+        public required string Article { get; set; }
+        public required DateTime UpdatedDateTimeUTC { get; set; }
         public bool? Protected { get; set; }
     }
 
