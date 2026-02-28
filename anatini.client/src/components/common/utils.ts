@@ -4,7 +4,7 @@ export function serializeToString(node: Node): string {
   return xml.replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", "");
 }
 
-export function parseFromString(string: string): ChildNode | null {
+export function parseFromString(string: string): Node | null {
   const parser = new DOMParser();
   const newDoc = parser.parseFromString(string, 'text/html');
   return newDoc.body.firstChild;

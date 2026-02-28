@@ -2,7 +2,7 @@
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { parseSource, tidy, type Source } from './common/utils';
+  import { formatParagraph, parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import SubmitButton from './common/SubmitButton.vue';
   import InputTextArea from './common/InputTextArea.vue';
@@ -58,7 +58,7 @@
     const tidiedArticle = tidy(inputArticle.value);
 
     if (tidiedArticle === '') {
-      inputErrors.value.push({id: 'article', message: 'Article is required'});
+      inputErrors.value.push({id: 'article', message: 'Content is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -75,14 +75,20 @@
       201: () => {
         status.value = 'success';
 
-        // TODO and whatever else
+        if (channel.value !== null && 'id' in channel.value) {
+          router.push({ name: 'ChannelEdit', params: { channelId: channel.value.id } });
+        }
+      },
+      400: () => {
+        status.value = 'error';
       }
     }
 
     const body = new FormData();
 
-    // TODO actually create html from article text
-    body.append('article', `<article><p>${tidiedArticle}</p></article>`);
+    const formattedArticle = formatParagraph(tidiedArticle);
+
+    body.append('article', `<article>${formattedArticle}</article>`);
 
     const init = { method: "POST", body: body };
 

@@ -19,9 +19,20 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostNote(string channelId, [FromForm] CreateNote createNote) => await UsingChannelContextAsync(channelId, async (channel, context) =>
         {
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createNote.Article);
+
+            if (validationResult.ErrorMessage != null)
+            {
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
+            }
+
             var eventData = new EventData(HttpContext);
 
-            var note = await context.AddNoteAsync(createNote.Id, createNote.Article, createNote.Protected, channel.Id, eventData);
+            var note = await context.AddNoteAsync(createNote.Id, validationResult.SanitizedHtml, createNote.Protected, channel.Id, eventData);
 
             return CreatedAtAction(nameof(GetNote), new { channelId = channel.DefaultHandle, noteId = note.Id }, note.ToNoteDto());
         }, requiresAccess: true);
