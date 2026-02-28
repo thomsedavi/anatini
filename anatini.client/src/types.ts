@@ -53,10 +53,6 @@ export type Channel = {
   name: string;
   about: string | null;
   defaultHandle: string;
-  topPosts: {
-    defaultHandle: string;
-    name: string;
-  }[] | null;
 };
 
 export type DraftPost = {
@@ -73,7 +69,6 @@ export type ChannelEdit = {
   aliases: {
     handle: string;
   }[];
-  topDraftPosts: DraftPost[] | null;
 };
 
 export type PostElement = {

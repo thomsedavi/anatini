@@ -23,7 +23,7 @@ namespace Anatini.Server.Notes
 
             var note = await context.AddNoteAsync(createNote.Id, createNote.Article, createNote.Protected, channel.Id, eventData);
 
-            return CreatedAtAction(nameof(GetNote), new { channelId = channel.DefaultHandle, noteId = note.Id }, new { test = "test" });
+            return CreatedAtAction(nameof(GetNote), new { channelId = channel.DefaultHandle, noteId = note.Id }, note.ToNoteDto());
         }, requiresAccess: true);
 
         [HttpGet("{noteId}")]

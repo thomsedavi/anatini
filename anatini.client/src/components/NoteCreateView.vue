@@ -72,7 +72,11 @@
     status.value = 'pending';
 
     const statusActions: StatusActions = {
-      // TODO obviously
+      201: () => {
+        status.value = 'success';
+
+        // TODO and whatever else
+      }
     }
 
     const body = new FormData();

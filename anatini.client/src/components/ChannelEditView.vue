@@ -183,19 +183,19 @@
             <h3 id="section-your-posts">Your Posts</h3>
           </header>
 
-          <ul role="list" v-if="(channel.topDraftPosts?.length ?? 0) > 0">
-            <li v-for="post in channel.topDraftPosts" :key="`post-${post.defaultHandle}`">
-              <article :aria-labelledby="`post-${post.defaultHandle}`">
+          <ul role="list" v-if="true">
+            <li>
+              <article :aria-labelledby="`post-handle`">
                 <header>
-                  <h4 :id="`post-${post.defaultHandle}`">
-                    <RouterLink :to="{ name: 'PostEdit', params: { channelId: channel.defaultHandle, postId: post.defaultHandle }}">{{ post.name }}</RouterLink>
+                  <h4 :id="`post-handle`">
+                    <RouterLink :to="{ name: 'PostEdit', params: { channelId: channel.defaultHandle, postId: 'handle' }}">Name</RouterLink>
                   </h4>
                 </header>
 
                 <p>Post Description Goes Here</p>
 
                 <footer>
-                  <small>Handle: <code>{{ post.defaultHandle }}</code></small>
+                  <small>Handle: <code>handle</code></small>
                 </footer>
               </article>
             </li>

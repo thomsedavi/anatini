@@ -1,9 +1,8 @@
 ﻿using System.Net.Mime;
-using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
+using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +27,6 @@ namespace Anatini.Server.Posts
 
             var postAlias = await context.AddPostAliasAsync(createPost.Id, channel.Id, createPost.Handle, createPost.Name, createPost.Protected);
             var post = await context.AddPostAsync(createPost.Id, createPost.Name, createPost.Handle, createPost.Protected, channel.Id, eventData);
-
-            channel.AddDraftPost(post, eventData);
-            await context.UpdateAsync(channel);
 
             return CreatedAtAction(nameof(GetPost), new { channelId = channel.DefaultHandle, postId = createPost.Handle }, new { createPost.Id, DefaultHandle = createPost.Handle, createPost.Name });
         }, requiresAccess: true);
