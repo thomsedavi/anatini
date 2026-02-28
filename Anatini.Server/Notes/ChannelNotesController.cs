@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Notes.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingNote(channelId, noteId, note =>
         {
-            return Ok();
+            return Ok(note.ToNoteDto());
         });
     }
 }

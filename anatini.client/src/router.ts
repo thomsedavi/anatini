@@ -5,6 +5,7 @@ import HomeView from './components/HomeView.vue';
 import LoginView from './components/LoginView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteCreateView from './components/NoteCreateView.vue';
+import NoteView from './components/NoteView.vue';
 import PostEditView from './components/PostEditView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
@@ -62,6 +63,11 @@ const routes = [
     path: '/channels/:channelId/posts/:postId',
     component: PostView,
     name: 'Post',
+  },
+  {
+    path: '/channels/:channelId/notes/:noteId',
+    component: NoteView,
+    name: 'Note',
   },
   {
     path: '/users/:userId',

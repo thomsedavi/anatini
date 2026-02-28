@@ -5,13 +5,14 @@
   import { parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import SubmitButton from './common/SubmitButton.vue';
+  import InputTextArea from './common/InputTextArea.vue';
 
   const route = useRoute();
   const router = useRouter();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
   const inputErrors = ref<InputError[]>([]);
-  const inputNote = ref<string>('');
+  const inputArticle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -43,6 +44,10 @@
     apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
   };
 
+  function getError(id: string): string | undefined {
+    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+  }
+
   async function postNote() {
     inputErrors.value = [];
 
@@ -50,10 +55,10 @@
       return;
     }
 
-    const tidiedNote = tidy(inputNote.value);
+    const tidiedArticle = tidy(inputArticle.value);
 
-    if (tidiedNote === '') {
-      inputErrors.value.push({id: 'note', message: 'Note is required'});
+    if (tidiedArticle === '') {
+      inputErrors.value.push({id: 'article', message: 'Article is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -65,6 +70,19 @@
     }
 
     status.value = 'pending';
+
+    const statusActions: StatusActions = {
+      // TODO obviously
+    }
+
+    const body = new FormData();
+
+    // TODO actually create html from article text
+    body.append('article', `<article><p>${tidiedArticle}</p></article>`);
+
+    const init = { method: "POST", body: body };
+
+    apiFetchAuthenticated(`channels/${channel.value.id}/notes`, statusActions, init);
   }
 </script>
 
@@ -100,11 +118,19 @@
         <fieldset>
           <legend class="visuallyhidden">Create Note</legend>
 
+          <InputTextArea
+              v-model="inputArticle"
+              label="Content"
+              name="article"
+              id="article"
+              :maxlength="256"
+              :error="getError('article')"
+              help="This is your note" />
         </fieldset>
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="tidy(inputNote) === ''"
+          :disabled="tidy(inputArticle) === ''"
           text="Create"
           busy-text="Creating..." />
       </form>

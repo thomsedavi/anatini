@@ -101,6 +101,10 @@ export type Post = {
   version: PostVersion;
 }
 
+export type Note = {
+  article: string;
+}
+
 export type IsAuthenticated = {
   isAuthenticated: boolean;
   expiresUtc: string | null;
