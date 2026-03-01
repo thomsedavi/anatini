@@ -55,6 +55,12 @@ export type Channel = {
   defaultHandle: string;
 };
 
+export type Tab = {
+  id: string;
+  text: string;
+  name: string;
+}
+
 export type DraftPost = {
   id: string;
   defaultHandle: string;

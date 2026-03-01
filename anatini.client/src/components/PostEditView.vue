@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { PostEdit, ErrorMessage, StatusActions } from '@/types';
+  import type { PostEdit, ErrorMessage, StatusActions, Tab } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { getTabIndex, markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, parseSource, serializeToString, tidy, type Source } from './common/utils';
@@ -26,11 +26,11 @@
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
-  const tabs = ref([
-    { id: 'article', text: 'Article' },
-    { id: 'details', text: 'Details' },
-    { id: 'status', text: 'Status' }
-  ]);
+  const tabs: Tab[] = [
+    { id: 'article', text: 'Article', name: 'TODO' },
+    { id: 'details', text: 'Details', name: 'TODO' },
+    { id: 'status', text: 'Status', name: 'TODO' }
+  ];
 
   watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
@@ -150,7 +150,7 @@
   }
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
-    const newIndex = getTabIndex(event.key, index, tabs.value.length);
+    const newIndex = getTabIndex(event.key, index, tabs.length);
 
     if (newIndex === undefined) {
       return;
@@ -271,7 +271,7 @@
           @keydown="handleKeyDown($event, index)"
           :text="tab.text"
           :id="tab.id"
-          :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
+          :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
       </ul>
 
       <section id="panel-article" role="tabpanel" aria-labelledby="tab-article" :hidden="tabIndex !== 0">

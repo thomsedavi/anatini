@@ -3,14 +3,14 @@
 
   const model = defineModel<string>();
 
-  defineProps({
-    label: { type: String, required: true },
-    name: { type: String, required: true },
-    id: { type: String, required: true },
-    error: { type: String, required: false },
-    maxlength: { type: Number, required: false },
-    help: { type: String, required: false },
-  });
+  defineProps<{
+    label: string,
+    name: string,
+    id: string,
+    error?: string,
+    maxlength?: number,
+    help?: string,
+  }>();
 </script>
 
 <template>

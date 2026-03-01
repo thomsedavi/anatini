@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, Status, StatusActions, UserEdit } from '@/types';
+  import type { ErrorMessage, InputError, Status, StatusActions, Tab, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
@@ -25,11 +25,11 @@
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');
 
-  const tabs = ref([
-    { id: 'public', text: 'Display' },
-    { id: 'private', text: 'Privacy & Security' },
-    { id: 'channels', text: 'Channels' },
-  ]);
+  const tabs: Tab[] = [
+    { id: 'public', text: 'Display', name: 'TODO' },
+    { id: 'private', text: 'Privacy & Security', name: 'TODO' },
+    { id: 'channels', text: 'Channels', name: 'TODO' },
+  ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
@@ -285,7 +285,7 @@
   }
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
-    const newIndex = getTabIndex(event.key, index, tabs.value.length);
+    const newIndex = getTabIndex(event.key, index, tabs.length);
 
     if (newIndex === undefined) {
       return;
@@ -334,7 +334,7 @@
           @keydown="handleKeyDown($event, index)"
           :text="tab.text"
           :id="tab.id"
-          :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
+          :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
       </ul>
 
       <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 0">

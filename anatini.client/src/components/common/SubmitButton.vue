@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  defineProps({
-    busy: { type: Boolean, required: true },
-    text: { type: String, required: true },
-    busyText: { type: String, required: true },
-    disabled: { type: Boolean, required: true }
-  });
+  defineProps<{
+    busy: boolean,
+    text: string,
+    busyText: string,
+    disabled: boolean,
+  }>();
 </script>
 
 <template>

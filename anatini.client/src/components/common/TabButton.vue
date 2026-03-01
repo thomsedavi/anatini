@@ -4,18 +4,18 @@
     (e: 'keydown', event: KeyboardEvent): void;
   }>();
 
-  defineProps({
-    selected: { type: Boolean, required: true },
-    text: { type: String, required: true },
-    id: { type: String, required: true },
-    addButtonRef: { type: Function, required: true},
-  });
+  defineProps<{
+    selected: boolean,
+    text: string,
+    id: string,
+    addButtonRef: (ref: HTMLButtonElement) => void,
+  }>();
 </script>
 
 <template>
   <li role="presentation">
     <button 
-      :ref="(ref) => addButtonRef(ref)"
+      :ref="(ref) => addButtonRef(ref as HTMLButtonElement)"
       :id="`tab-${id}`" 
       role="tab" 
       :aria-selected="selected"

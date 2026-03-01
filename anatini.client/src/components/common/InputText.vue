@@ -1,19 +1,19 @@
 <script setup lang="ts">
   const model = defineModel<string>();
 
-  defineProps({
-    label: { type: String, required: false },
-    name: { type: String, required: true },
-    id: { type: String, required: true },
-    error: { type: String, required: false },
-    maxlength: { type: Number, required: false },
-    help: { type: String, required: false },
-    autocomplete: { type: String, required: false },
-    type: { type: String, required: false },
-    required: { type: Boolean, required: false },
-    disabled: { type: Boolean, required: false},
-    readonly: { type: Boolean, required: false},
-  });
+  defineProps<{
+    label?: string,
+    name: string,
+    id: string,
+    error?: string,
+    maxlength?: number,
+    help?: string,
+    autocomplete?: string,
+    type?: string,
+    required?: boolean,
+    disabled?: boolean,
+    readonly?: boolean,
+  }>();
 </script>
 
 <template>

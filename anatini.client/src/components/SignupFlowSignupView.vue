@@ -10,14 +10,13 @@
 
   const router = useRouter();
 
-  const props = defineProps({
-    emailAddress: { type: String, required: false },
-    verificationFailed: { type: Boolean, required: true },
-  });
+  const props = defineProps<{
+    emailAddress?: string,
+    verificationFailed: boolean,
+  }>();
 
   const emit = defineEmits<{
     goBack: [];
-    failVerification: [];
   }>();
   
   const inputErrors = ref<InputError[]>([]);
