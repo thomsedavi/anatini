@@ -23,7 +23,7 @@
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       404: () => {
-        user.value = { error: true, heading: '404 Not Found', body: 'This user cannot be found' };
+        user.value = { error: true, heading: '404 Not Found', body: 'User not found' };
       },
       500: () => {
         user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };

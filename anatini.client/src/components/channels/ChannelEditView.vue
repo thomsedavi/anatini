@@ -1,14 +1,15 @@
 <script setup lang="ts">
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
-  import { apiFetchAuthenticated } from './common/apiFetch';
-  import { useRoute } from 'vue-router';
-  import { getTabIndex, parseSource, tidy, type Source } from './common/utils';
-  import InputText from './common/InputText.vue';
-  import TabButton from './common/TabButton.vue';
-  import SubmitButton from './common/SubmitButton.vue';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { useRoute, useRouter } from 'vue-router';
+  import { getTabIndex, parseSource, tidy, type Source } from '../common/utils';
+  import InputText from '../common/InputText.vue';
+  import TabButton from '../common/TabButton.vue';
+  import SubmitButton from '../common/SubmitButton.vue';
 
   const route = useRoute();
+  const router = useRouter();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
   const tabIndex = ref<number>(0);
@@ -18,9 +19,9 @@
   const errorSectionRef = ref<HTMLElement | null>(null);
 
   const tabs = ref([
-    { id: 'posts', text: 'Posts' },
-    { id: 'notes', text: 'Notes' },
-    { id: 'public', text: 'Display' },
+    { id: 'posts', text: 'Posts', name: 'ChannelEditPosts' },
+    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes' },
+    { id: 'public', text: 'Display', name: 'ChannelEditDisplay' },
   ]);
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -36,6 +37,9 @@
             inputName.value = value.name;
           })
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+      },
+      404: () => {
+        channel.value = { error: true, heading: '404 Not Found', body: 'Channel not found' };
       },
       500: () => {
         channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
@@ -128,9 +132,21 @@
 
     event.preventDefault();
     tabIndex.value = newIndex;
+
+    router.push({ name: tabs.value[newIndex].name });
     
     nextTick(() => {
       tabRefs.value[newIndex].focus();
+    })
+  }
+
+  function handleClick(index: number): void {
+    tabIndex.value = index;
+
+    router.push({ name: tabs.value[index].name });
+    
+    nextTick(() => {
+      tabRefs.value[index].focus();
     })
   }
 </script>
@@ -165,8 +181,8 @@
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
-          @click="tabIndex = index"
-          @keydown="handleKeyDown($event, index)"
+          @click="() => handleClick(index)"
+          @keydown="event => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement | null) => {if (el) tabRefs.push(el)}" />
@@ -205,13 +221,6 @@
         </section>
       </section>
 
-      <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" :hidden="tabIndex !== 1">
-        <header>
-          <h2>Notes</h2>
-          <RouterLink :to="{ name: 'NoteCreate' }">+ Create Note</RouterLink>
-        </header>
-      </section>
-
       <section id="panel-public" role="tabpanel" aria-labelledby="tab-public" :hidden="tabIndex !== 2">
         <header>
           <h2>Display</h2>
@@ -235,6 +244,8 @@
             busy-text="Saving..." />
         </form>
       </section>
+
+      <router-view />
     </template>
 
     <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>

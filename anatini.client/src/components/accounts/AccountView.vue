@@ -2,12 +2,12 @@
   import type { ErrorMessage, InputError, Status, StatusActions, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { apiFetchAuthenticated } from './common/apiFetch';
-  import { getTabIndex, tidy } from './common/utils';
-  import InputText from './common/InputText.vue';
-  import TabButton from './common/TabButton.vue';
-  import SubmitButton from './common/SubmitButton.vue';
-  import InputTextArea from './common/InputTextArea.vue';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { getTabIndex, tidy } from '../common/utils';
+  import InputText from '../common/InputText.vue';
+  import TabButton from '../common/TabButton.vue';
+  import SubmitButton from '../common/SubmitButton.vue';
+  import InputTextArea from '../common/InputTextArea.vue';
 
   const router = useRouter();
   const user = ref<UserEdit | ErrorMessage | null>(null);

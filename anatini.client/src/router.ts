@@ -9,11 +9,14 @@ import NoteView from './components/NoteView.vue';
 import PostEditView from './components/PostEditView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
-import AccountView from './components/AccountView.vue';
+import AccountView from './components/accounts/AccountView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
 import ChannelCreateView from './components/ChannelCreateView.vue';
-import ChannelEditView from './components/ChannelEditView.vue';
+import ChannelEditView from './components/channels/ChannelEditView.vue';
+import ChannelEditNotesView from './components/channels/ChannelEditNotesView.vue';
+import ChannelEditPostsView from './components/channels/ChannelEditPostsView.vue';
+import ChannelEditDisplayView from './components/channels/ChannelEditDisplayView.vue';
 import ChannelView from './components/ChannelView.vue';
 import UsersView from './components/UsersView.vue';
 import TagsView from './components/TagsView.vue';
@@ -82,6 +85,23 @@ const routes = [
     path: '/channels/:channelId/edit',
     component: ChannelEditView,
     name: 'ChannelEdit',
+    children: [
+      {
+        path: 'notes',
+        component: ChannelEditNotesView,
+        name: 'ChannelEditNotes'
+      },
+      {
+        path: 'posts',
+        component: ChannelEditPostsView,
+        name: 'ChannelEditPosts'
+      },
+      {
+        path: 'display',
+        component: ChannelEditDisplayView,
+        name: 'ChannelEditDisplay'
+      },
+    ],
   },
   {
     path: '/channels/:channelId',

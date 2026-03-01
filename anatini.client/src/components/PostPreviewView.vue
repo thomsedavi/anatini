@@ -23,7 +23,7 @@
           .catch(() => { post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }});
       },
       404: () => {
-        post.value = { error: true, heading: '404 Not Found', body: 'This post cannot be found' };
+        post.value = { error: true, heading: '404 Not Found', body: 'Post not found' };
       },
       500: () => {
         post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this post, please reload the page' };
