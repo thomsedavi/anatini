@@ -29,6 +29,8 @@
   async function fetchChannel(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
+        tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+
         response?.json()
           .then((value: ChannelEdit) => {
             channel.value = value;
