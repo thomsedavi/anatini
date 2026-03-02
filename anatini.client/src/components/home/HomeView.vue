@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const tabIndex = ref<number>(0);
+  const tabIndex = ref<number>(-1);
   const attributePosts = ref<{ name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] | null>(null);
 
   const tabs: Tab[] = [
@@ -20,10 +20,10 @@
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
   onMounted(() => {
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
-        tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
-
         response?.json()
           .then((value: { attributePosts: { name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] }) => {
             attributePosts.value = value.attributePosts

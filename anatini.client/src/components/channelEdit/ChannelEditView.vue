@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions, Tab } from '@/types';
-  import { nextTick, ref, watch } from 'vue';
+  import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
   import { getTabIndex, parseSource, type Source } from '../common/utils';
@@ -10,7 +10,7 @@
   const router = useRouter();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
-  const tabIndex = ref<number>(0);
+  const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
@@ -24,12 +24,15 @@
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
+  onMounted(() => {
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+  });
+
   watch([() => route.params.channelId], (source: Source) => fetchChannel(parseSource(source)), { immediate: true });
 
   async function fetchChannel(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
-        tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
 
         response?.json()
           .then((value: ChannelEdit) => {

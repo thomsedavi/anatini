@@ -15,7 +15,7 @@
   const inputUserName = ref<string>('');
   const inputUserAbout = ref<string>('');
   const status = ref<Status>('idle');
-  const tabIndex = ref<number>(0);
+  const tabIndex = ref<number>(-1);
   const pageStatus = ref<string>('Loading account information...'); // TODO add other statuses
   const headingMainRef = ref<HTMLElement | null>(null);
 
@@ -28,10 +28,10 @@
   const tabRefs = ref<HTMLButtonElement[]>([]);
   
   onMounted(() => {
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
-        tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
-
         response?.json()
           .then((value: UserEdit) => {
             user.value = value;
