@@ -8,7 +8,10 @@ import LoginView from './components/LoginView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteCreateView from './components/NoteCreateView.vue';
 import NoteView from './components/NoteView.vue';
-import PostEditView from './components/PostEditView.vue';
+import PostEditView from './components/postEdit/PostEditView.vue';
+import PostEditArticleView from './components/postEdit/PostEditArticleView.vue';
+import PostEditDetailsView from './components/postEdit/PostEditDetailsView.vue';
+import PostEditStatusView from './components/postEdit/PostEditStatusView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
 import AccountView from './components/account/AccountView.vue';
@@ -94,6 +97,24 @@ const routes = [
     path: '/channels/:channelId/posts/:postId/edit',
     component: PostEditView,
     name: 'PostEdit',
+    redirect: { name: 'PostEditArticle' },
+    children: [
+      {
+        path: 'article',
+        component: PostEditArticleView,
+        name: 'PostEditArticle'
+      },
+      {
+        path: 'details',
+        component: PostEditDetailsView,
+        name: 'PostEditDetails'
+      },
+      {
+        path: 'status',
+        component: PostEditStatusView,
+        name: 'PostEditStatus'
+      },
+    ],
   },
   {
     path: '/channels/:channelId/posts/:postId/preview',

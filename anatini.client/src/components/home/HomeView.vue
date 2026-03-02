@@ -82,7 +82,7 @@
 
     <RouterView v-slot="{ Component }">
       <component
-        :is="Component"    
+        :is="Component"
         :attribute-posts="attributePosts"
       />
     </RouterView>

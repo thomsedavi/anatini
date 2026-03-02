@@ -166,7 +166,7 @@
 
       <RouterView v-slot="{ Component }">
         <component
-          :is="Component"    
+          :is="Component"
           :name="user.name"
           :about="user.about"
           :icon-image="user.iconImage"
