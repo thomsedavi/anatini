@@ -3,6 +3,8 @@
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { tidy } from '../common/utils';
   import type { StatusActions } from '@/types';
+  import InputText from '../common/InputText.vue';
+  import SubmitButton from '../common/SubmitButton.vue';
 
   const props = defineProps<{
     channelId: string,

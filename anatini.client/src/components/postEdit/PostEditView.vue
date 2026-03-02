@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { PostEdit, ErrorMessage, StatusActions, Tab } from '@/types';
-  import { nextTick, ref, watch } from 'vue';
+  import { nextTick, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getTabIndex, parseFromString, parseSource, type Source } from '../common/utils';
   import { apiFetchAuthenticated } from '../common/apiFetch';
@@ -24,6 +24,10 @@
     { id: 'details', text: 'Details', name: 'PostEditDetails' },
     { id: 'status', text: 'Status', name: 'PostEditStatus' }
   ];
+
+  onMounted(() => {
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+  });
 
   watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
