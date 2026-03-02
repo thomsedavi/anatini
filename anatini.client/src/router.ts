@@ -1,7 +1,9 @@
 import { createWebHistory, createRouter } from 'vue-router'
 
 import AboutView from './components/AboutView.vue';
-import HomeView from './components/HomeView.vue';
+import HomeView from './components/home/HomeView.vue';
+import HomePostsView from './components/home/HomePostsView.vue';
+import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import LoginView from './components/LoginView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteCreateView from './components/NoteCreateView.vue';
@@ -28,6 +30,20 @@ const routes = [
   {
     path: '/',
     component: HomeView,
+    name: 'Home',
+    redirect: { name: 'HomePosts' },
+    children: [
+      {
+        path: 'home/posts',
+        component: HomePostsView,
+        name: 'HomePosts'
+      },
+      {
+        path: 'home/calendar',
+        component: HomeCalendarView,
+        name: 'HomeCalendar'
+      },
+    ],
   },
   {
     path: '/about',
