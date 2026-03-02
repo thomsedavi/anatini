@@ -30,7 +30,7 @@
   }
 
   async function patchChannel() {
-    emit('update-errors', [])
+    emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
 

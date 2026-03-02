@@ -10,6 +10,9 @@ import PostEditView from './components/PostEditView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
 import AccountView from './components/account/AccountView.vue';
+import AccountPublicView from './components/account/AccountPublicView.vue';
+import AccountPrivateView from './components/account/AccountPrivateView.vue';
+import AccountChannelsView from './components/account/AccountChannelsView.vue';
 import SignupFlowView from './components/SignupFlowView.vue';
 import UserView from './components/UserView.vue';
 import ChannelCreateView from './components/ChannelCreateView.vue';
@@ -41,6 +44,25 @@ const routes = [
   {
     path: '/account',
     component: AccountView,
+    name: 'Account',
+    redirect: { name: 'AccountPublic' },
+    children: [
+      {
+        path: 'public',
+        component: AccountPublicView,
+        name: 'AccountPublic'
+      },
+      {
+        path: 'private',
+        component: AccountPrivateView,
+        name: 'AccountPrivate'
+      },
+      {
+        path: 'channels',
+        component: AccountChannelsView,
+        name: 'AccountChannels'
+      },
+    ],
   },
   {
     path: '/channels/:channelId/posts/create',

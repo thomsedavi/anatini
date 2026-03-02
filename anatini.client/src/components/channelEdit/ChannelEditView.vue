@@ -86,14 +86,14 @@
     })
   }
 
-  function handleUpdateStatus(newStatus: Status): void {
-    status.value = newStatus;
-  }
-
   function handleUpdateName(newName: string): void {
     if (channel.value !== null && 'name' in channel.value) {
      channel.value.name = newName;
     }
+  }
+
+  function handleUpdateStatus(newStatus: Status): void {
+    status.value = newStatus;
   }
 
   function handleUpdateErrors(newInputErrors: InputError[]): void {
@@ -151,8 +151,8 @@
           :name="channel.name"
           :status="status"
           :inputErrors="inputErrors"
-          @update-status="handleUpdateStatus"
           @update-name="handleUpdateName"
+          @update-status="handleUpdateStatus"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>
