@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Id = id,
                 ChannelId = channelId,
                 Article = article,
+                DateTimeUTC = eventData.DateTimeUtc,
                 UpdatedDateTimeUTC = eventData.DateTimeUtc,
                 Protected = @protected
             };

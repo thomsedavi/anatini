@@ -9,7 +9,8 @@ namespace Anatini.Server.Notes.Extensions
         {
             return new NoteDto
             {
-                Article = note.Article
+                Article = note.Article,
+                DateTimeUTC = note.DateTimeUTC
             };
         }
     }

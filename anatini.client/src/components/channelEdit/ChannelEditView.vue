@@ -33,7 +33,6 @@
   async function fetchChannel(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
-
         response?.json()
           .then((value: ChannelEdit) => {
             channel.value = value;
