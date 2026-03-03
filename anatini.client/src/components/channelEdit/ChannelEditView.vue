@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions, Tab } from '@/types';
+  import type { ChannelEdit, ErrorMessage, InputError, Note, Status, StatusActions, Tab } from '@/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
@@ -10,6 +10,8 @@
   const router = useRouter();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
+  const notes = ref<Note[] | null>(null);
+  const notesContinuationToken = ref<string | null>(null);
   const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
@@ -37,6 +39,8 @@
           .then((value: ChannelEdit) => {
             channel.value = value;
             inputName.value = value.name;
+
+            fetchNotes(value.id);
           })
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
@@ -50,6 +54,20 @@
 
     apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
   };
+
+  async function fetchNotes(channelId: string) {
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: { notes: Note[], continuationToken: string | null }) => {
+            notes.value = value.notes;
+            notesContinuationToken.value = value.continuationToken;
+          });
+      }
+    }
+
+    apiFetchAuthenticated(`channels/${channelId}/notes`, statusActions);
+  }
 
   function getHeading(): string {
     if (channel.value === null) {
@@ -150,9 +168,11 @@
         <component
           :is="Component"
           :channelId="channel.defaultHandle"
+          :notes="notes"
           :name="channel.name"
           :status="status"
           :inputErrors="inputErrors"
+          :notesContinuationToken="notesContinuationToken"
           @update-name="handleUpdateName"
           @update-status="handleUpdateStatus"
           @update-errors="handleUpdateErrors"

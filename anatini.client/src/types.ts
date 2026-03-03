@@ -103,7 +103,10 @@ export type Post = {
 }
 
 export type Note = {
+  id: string;
+  channelId: string;
   article: string;
+  dateTimeUTC: string;
 }
 
 export type IsAuthenticated = {

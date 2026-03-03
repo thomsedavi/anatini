@@ -76,7 +76,7 @@
         status.value = 'success';
 
         if (channel.value !== null && 'id' in channel.value) {
-          router.push({ name: 'ChannelEdit', params: { channelId: channel.value.id } });
+          router.push({ name: 'ChannelEditNotes', params: { channelId: channel.value.id } });
         }
       },
       400: () => {
