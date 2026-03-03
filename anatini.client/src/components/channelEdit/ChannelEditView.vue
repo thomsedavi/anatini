@@ -69,6 +69,22 @@
     apiFetchAuthenticated(`channels/${channelId}/notes`, statusActions);
   }
 
+  async function fetchMoreNotes() {
+    if (channel.value !== null && 'id' in channel.value && notesContinuationToken.value !== null) {
+      const statusActions: StatusActions = {
+        200: (response?: Response) => {
+          response?.json()
+            .then((value: { notes: Note[], continuationToken: string | null }) => {
+              notes.value = [...notes.value ?? [], ...value.notes];
+              notesContinuationToken.value = value.continuationToken;
+            });
+        }
+      }
+
+      apiFetchAuthenticated(`channels/${channel.value.id}/notes?continuationToken=${encodeURIComponent(notesContinuationToken.value)}`, statusActions);
+    }
+  }
+
   function getHeading(): string {
     if (channel.value === null) {
       return 'Fetching...';
@@ -172,10 +188,11 @@
           :name="channel.name"
           :status="status"
           :inputErrors="inputErrors"
-          :notesContinuationToken="notesContinuationToken"
+          :hasNotesContinuationToken="notesContinuationToken !== null"
           @update-name="handleUpdateName"
           @update-status="handleUpdateStatus"
           @update-errors="handleUpdateErrors"
+          @get-more-notes="fetchMoreNotes"
         />
       </RouterView>
     </template>

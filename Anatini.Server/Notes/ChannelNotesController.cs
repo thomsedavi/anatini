@@ -13,7 +13,7 @@ namespace Anatini.Server.Notes
     public class ChannelNotesController : AnatiniControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetNotes(string channelId) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> GetNotes(string channelId, [FromQuery] GetNotesQuery query) => await UsingContextAsync(async context =>
         {
             if (!RandomHex.IsX16(channelId))
             {
@@ -27,10 +27,15 @@ namespace Anatini.Server.Notes
                 channelId = channelAlias.ChannelId.ToString();
             }
 
-            var notesPage = await context.Context.Notes.WithPartitionKey(channelId).OrderByDescending(a => a.DateTimeUTC).ToPageAsync(10, null);
+            var notesPage = await context.Context.Notes.WithPartitionKey(channelId).OrderByDescending(a => a.DateTimeUTC).ToPageAsync(10, query.ContinuationToken);
 
             return Ok(new { Notes = notesPage.Values.Select(note => note.ToNoteDto()), notesPage.ContinuationToken });
         });
+
+        public class GetNotesQuery
+        {
+            public string? ContinuationToken { get; set; }
+        }
 
         [Authorize]
         [HttpPost]

@@ -4,7 +4,11 @@
 
   defineProps<{
     notes: Note[] | null,
-    notesContinuationToken: string | null,
+    hasNotesContinuationToken: boolean,
+  }>();
+
+  const emit = defineEmits<{
+    'get-more-notes': [],
   }>();
 </script>
 
@@ -29,7 +33,7 @@
 
       <p v-else>You do not have any notes</p>
 
-      <p v-if="notesContinuationToken !== null">Continuation Token: {{ notesContinuationToken }}</p>
+      <button v-if="hasNotesContinuationToken" @click="emit('get-more-notes')">Continuation Token</button>
     </section>
   </section>
 </template>

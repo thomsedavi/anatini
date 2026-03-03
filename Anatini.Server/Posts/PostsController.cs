@@ -10,13 +10,13 @@ namespace Anatini.Server.Posts
     public class PostsController : AnatiniControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] Query query) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> GetPosts([FromQuery] GetPostQuery query) => await UsingContextAsync(async (context) =>
         {
             if (query.Week != null)
             {
                 var value = $"{AttributePostType.Week}:{query.Week}";
 
-                var attributePostsPage = await context.Context.AttributePosts.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, null);
+                var attributePostsPage = await context.Context.AttributePosts.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, query.ContinuationToken);
 
                 return Ok(new { AttributePosts = attributePostsPage.Values.Select(attributePost => attributePost.ToAttributePostDto()), attributePostsPage.ContinuationToken });
             }
@@ -25,8 +25,9 @@ namespace Anatini.Server.Posts
         });
     }
 
-    public class Query
+    public class GetPostQuery
     {
         public string? Week { get; set; }
+        public string? ContinuationToken { get; set; }
     }
 }
