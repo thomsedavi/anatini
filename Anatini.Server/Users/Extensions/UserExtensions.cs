@@ -104,16 +104,16 @@ namespace Anatini.Server.Users.Extensions
 
             if (user.IconImageId != null && context != null && blobService != null)
             {
-                var userImage = await context.Context.UserImages.FindAsync(user.Id, user.IconImageId);
-
-                if (userImage != null)
-                {
-                    iconImage = new ImageDto
-                    {
-                        Uri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName),
-                        AltText = userImage.AltText,
-                    };
-                }
+                //var userImage = await context.Context.UserImages.FindAsync(user.Id, user.IconImageId);
+                //
+                //if (userImage != null)
+                //{
+                //    iconImage = new ImageDto
+                //    {
+                //        Uri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName),
+                //        AltText = userImage.AltText,
+                //    };
+                //}
             }
 
             return new UserEditDto

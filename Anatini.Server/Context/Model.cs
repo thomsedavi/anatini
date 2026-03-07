@@ -37,22 +37,22 @@ namespace Anatini.Server.Context
 
     public class ContextBase : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserEmail> UserEmails { get; set; }
-        public DbSet<UserEvent> UserEvents { get; set; }
-        public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
-        public DbSet<Channel> Channels { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Note> Notes { get; set; }
-        public DbSet<Event> Events { get; set; }
-        public DbSet<AttributePost> AttributePosts { get; set; }
-        public DbSet<AttributeNote> AttributeNotes { get; set; }
-        public DbSet<UserAlias> UserAliases { get; set; }
-        public DbSet<UserImage> UserImages { get; set; }
-        public DbSet<ChannelAlias> ChannelAliases { get; set; }
-        public DbSet<ChannelImage> ChannelImages { get; set; }
-        public DbSet<PostAlias> PostAliases { get; set; }
-        public DbSet<PostImage> PostImages { get; set; }
+        //public DbSet<User> Users { get; set; }
+        //public DbSet<UserEmail> UserEmails { get; set; }
+        //public DbSet<UserEvent> UserEvents { get; set; }
+        //public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
+        //public DbSet<Channel> Channels { get; set; }
+        //public DbSet<Post> Posts { get; set; }
+        //public DbSet<Note> Notes { get; set; }
+        //public DbSet<Event> Events { get; set; }
+        //public DbSet<AttributePost> AttributePosts { get; set; }
+        //public DbSet<AttributeNote> AttributeNotes { get; set; }
+        //public DbSet<UserAlias> UserAliases { get; set; }
+        //public DbSet<UserImage> UserImages { get; set; }
+        //public DbSet<ChannelAlias> ChannelAliases { get; set; }
+        //public DbSet<ChannelImage> ChannelImages { get; set; }
+        //public DbSet<PostAlias> PostAliases { get; set; }
+        //public DbSet<PostImage> PostImages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,7 +64,7 @@ namespace Anatini.Server.Context
             var accountKey = "TODO";
             var databaseName = "TODO";
 
-            optionsBuilder.UseCosmos(accountEndpoint, accountKey, databaseName);
+            //optionsBuilder.UseCosmos(accountEndpoint, accountKey, databaseName).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddDebug())).EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

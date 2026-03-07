@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using CosmosException = Microsoft.Azure.Cosmos.CosmosException;
 
 namespace Anatini.Server.Authentication
 {
@@ -35,18 +34,18 @@ namespace Anatini.Server.Authentication
             {
                 await context.AddUserEmailAsync(form.EmailAddress, userId);
             }
-            catch (DbUpdateException dbUpdateException)
+            catch
             {
-                if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                {
-                    // do not confirm that a user with this email already exists
-                    return NoContent();
-                }
-                else
-                {
+                //if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
+                //{
+                //    // do not confirm that a user with this email already exists
+                //    return NoContent();
+                //}
+                //else
+                //{
                     // handle the error in UsingContextAsync
                     throw;
-                }
+                //}
             }
 
             await context.AddUserEventAsync(userId, EventType.EmailCreated, eventData);

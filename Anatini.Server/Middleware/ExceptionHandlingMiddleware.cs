@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Middleware;
 
@@ -20,7 +18,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
             {
                 UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 KeyNotFoundException => HttpStatusCode.NotFound,
-                DbUpdateException dbEx when dbEx.InnerException is CosmosException { StatusCode: HttpStatusCode.Conflict } => HttpStatusCode.Conflict,
+                //DbUpdateException dbEx when dbEx.InnerException is CosmosException { StatusCode: HttpStatusCode.Conflict } => HttpStatusCode.Conflict,
                 _ => HttpStatusCode.InternalServerError
             };
         

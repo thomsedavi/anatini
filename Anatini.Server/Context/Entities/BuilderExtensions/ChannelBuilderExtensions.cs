@@ -7,15 +7,15 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<Channel> channelBuilder)
         {
-            channelBuilder.ToContainer("Channels");
-            channelBuilder.HasKey(channel => channel.Id);
-            channelBuilder.HasPartitionKey(channel => channel.Id);
-            channelBuilder.Property(channel => channel.ItemId).ToJsonProperty("id");
-            channelBuilder.Property(channel => channel.Id).ToJsonProperty("Id");
-            channelBuilder.Property(channel => channel.ETag).ToJsonProperty("_etag");
-            channelBuilder.Property(channel => channel.Timestamp).ToJsonProperty("_ts");
-            channelBuilder.OwnsMany(channel => channel.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(channelOwnedAlias => channelOwnedAlias.Handle); });
-            channelBuilder.OwnsMany(channel => channel.Users, userBuildAction => { userBuildAction.HasKey(channelOwnedUser => channelOwnedUser.Id); });
+            //channelBuilder.ToContainer("Channels");
+            //channelBuilder.HasKey(channel => channel.Id);
+            //channelBuilder.HasPartitionKey(channel => channel.Id);
+            //channelBuilder.Property(channel => channel.ItemId).ToJsonProperty("id");
+            //channelBuilder.Property(channel => channel.Id).ToJsonProperty("Id");
+            //channelBuilder.Property(channel => channel.ETag).ToJsonProperty("_etag");
+            //channelBuilder.Property(channel => channel.Timestamp).ToJsonProperty("_ts");
+            //channelBuilder.OwnsMany(channel => channel.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(channelOwnedAlias => channelOwnedAlias.Handle); });
+            //channelBuilder.OwnsMany(channel => channel.Users, userBuildAction => { userBuildAction.HasKey(channelOwnedUser => channelOwnedUser.Id); });
         }
     }
 }

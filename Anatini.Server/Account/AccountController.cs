@@ -38,13 +38,13 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-
-                    if (userAlias != null)
-                    {
-                        userAlias.UserName = updateUser.Name;
-                        await context.UpdateAsync(userAlias);
-                    }
+                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
+                    //
+                    //if (userAlias != null)
+                    //{
+                    //    userAlias.UserName = updateUser.Name;
+                    //    await context.UpdateAsync(userAlias);
+                    //}
                 }
             }
 
@@ -54,13 +54,13 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-
-                    if (userAlias != null)
-                    {
-                        userAlias.UserAbout = updateUser.About;
-                        await context.UpdateAsync(userAlias);
-                    }
+                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
+                    //
+                    //if (userAlias != null)
+                    //{
+                    //    userAlias.UserAbout = updateUser.About;
+                    //    await context.UpdateAsync(userAlias);
+                    //}
                 }
             }
 
@@ -70,13 +70,13 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-
-                    if (userAlias != null)
-                    {
-                        userAlias.IconImageId = updateUser.IconImageId;
-                        await context.UpdateAsync(userAlias);
-                    }
+                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
+                    //
+                    //if (userAlias != null)
+                    //{
+                    //    userAlias.IconImageId = updateUser.IconImageId;
+                    //    await context.UpdateAsync(userAlias);
+                    //}
                 }
             }
 
@@ -86,13 +86,13 @@ namespace Anatini.Server.Account
 
                 foreach (var alias in user.Aliases)
                 {
-                    var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-
-                    if (userAlias != null)
-                    {
-                        userAlias.Protected = updateUser.Protected.Value ? true : null;
-                        await context.UpdateAsync(userAlias);
-                    }
+                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
+                    //
+                    //if (userAlias != null)
+                    //{
+                    //    userAlias.Protected = updateUser.Protected.Value ? true : null;
+                    //    await context.UpdateAsync(userAlias);
+                    //}
                 }
             }
 

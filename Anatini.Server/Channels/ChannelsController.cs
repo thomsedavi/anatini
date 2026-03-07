@@ -54,13 +54,13 @@ namespace Anatini.Server.Channels
 
                 foreach (var alias in channel.Aliases)
                 {
-                    var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
-
-                    if (channelAlias != null)
-                    {
-                        channelAlias.ChannelName = updateChannel.Name;
-                        await context.UpdateAsync(channelAlias);
-                    }
+                    //var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
+                    //
+                    //if (channelAlias != null)
+                    //{
+                    //    channelAlias.ChannelName = updateChannel.Name;
+                    //    await context.UpdateAsync(channelAlias);
+                    //}
                 }
             }
 
@@ -70,13 +70,13 @@ namespace Anatini.Server.Channels
 
                 foreach (var alias in channel.Aliases)
                 {
-                    var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
-
-                    if (channelAlias != null)
-                    {
-                        channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId;
-                        await context.UpdateAsync(channelAlias);
-                    }
+                    //var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
+                    //
+                    //if (channelAlias != null)
+                    //{
+                    //    channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId;
+                    //    await context.UpdateAsync(channelAlias);
+                    //}
                 }
             }
 

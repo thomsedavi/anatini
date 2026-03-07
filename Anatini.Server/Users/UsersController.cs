@@ -41,9 +41,10 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvents() => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
         {
-            var userEvents = await context.Context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
-
-            return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
+            //var userEvents = await context.Context.UserEvents.WithPartitionKey(user.Id).Where(userEvent => userEvent.UserId == user.Id).ToListAsync();
+            //
+            //return Ok(new { Events = userEvents.Select(userEvent => userEvent.ToUserEventDto()) });
+            return Ok();
         });
 
         [HttpGet("{handle}")]

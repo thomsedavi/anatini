@@ -34,12 +34,12 @@ namespace Anatini.Server.Context.Entities.Extensions
         {
             var value = $"{Enum.GetName(attributeType)!}:{attributeValue}";
 
-            var attributePost = await context.Context.AttributePosts.FindAsync(value, channel.Id, post.Id);
-
-            if (attributePost != null)
-            {
-                await context.RemoveAsync(attributePost);
-            }
+            //var attributePost = await context.Context.AttributePosts.FindAsync(value, channel.Id, post.Id);
+            //
+            //if (attributePost != null)
+            //{
+            //    await context.RemoveAsync(attributePost);
+            //}
         }
 
         public static async Task<Post> AddPostAsync(this AnatiniContext context, string id, string name, string handle, bool? @protected, string channelId, EventData eventData)

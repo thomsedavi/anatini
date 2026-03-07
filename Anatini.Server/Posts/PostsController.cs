@@ -16,9 +16,10 @@ namespace Anatini.Server.Posts
             {
                 var value = $"{AttributePostType.Week}:{query.Week}";
 
-                var attributePostsPage = await context.Context.AttributePosts.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, query.ContinuationToken);
+                //var attributePostsPage = await context.Context.AttributePosts.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, query.ContinuationToken);
 
-                return Ok(new { AttributePosts = attributePostsPage.Values.Select(attributePost => attributePost.ToAttributePostDto()), attributePostsPage.ContinuationToken });
+                //return Ok(new { AttributePosts = attributePostsPage.Values.Select(attributePost => attributePost.ToAttributePostDto()), attributePostsPage.ContinuationToken });
+                return Ok();
             }
 
             return BadRequest();
