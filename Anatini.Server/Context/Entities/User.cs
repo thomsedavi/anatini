@@ -1,102 +1,125 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Anatini.Server.Context.Entities
 {
-    public class User : BaseEntity
+    public class User : IdentityUser<Guid>
     {
         public required string Name { get; set; }
         public string? About { get; set; }
-        public required string HashedPassword { get; set; }
-        public required string DefaultHandle { get; set; }
-        public required ICollection<UserOwnedEmail> Emails { get; set; }
-        public ICollection<UserOwnedSession>? Sessions { get; set; }
-        public required ICollection<UserOwnedAlias> Aliases { get; set; }
-        public ICollection<UserOwnedChannel>? Channels { get; set; }
-        public IList<string>? Permissions { get; set; }
-        public string? IconImageId { get; set; }
-        public string? BannerImageId { get; set; }
-        public bool? Protected { get; set; }
+        public Guid? IconImageId { get; set; }
+        public Guid? BannerImageId { get; set; }
+        public required string Visibility { get; set; }
+
+        public virtual ICollection<UserEmail> Emails { get; set; } = [];
+        public virtual ICollection<UserSession> Sessions { get; set; } = [];
+        public virtual ICollection<UserAlias> Aliases { get; set; } = [];
+        public virtual ICollection<UserAction> Actions { get; set; } = [];
+        public virtual ICollection<UserRole> Roles { get; set; } = [];
+        public virtual ICollection<UserToken> Tokens { get; set; } = [];
+        public virtual ICollection<UserLogin> Logins { get; set; } = [];
+        public virtual ICollection<UserClaim> Claims { get; set; } = [];
+
+        public UserEmail DefaultEmail => Emails.First(e => e.IsDefault);
+        public UserAlias DefaultAlias => Aliases.First(e => e.IsDefault);
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 
-    [Owned]
-    public class UserOwnedChannel : UserOwnedEntity
+    public class UserEmail : Entity
     {
-        public required string Id { get; set; }
-        public required string Name { get; set; }
-        public string? About { get; set; }
-        public required string DefaultHandle { get; set; }
+        public required string Email { get; set; }
+        public required string NormalizedEmail { get; set; }
+        public string? ConfirmationCode { get; set; }
+        public bool EmailConfirmed { get; set; } = false;
+        public required bool IsDefault { get; set; }
+
+        public Guid? UserId { get; set; }
+        public virtual User? User { get; set; }
     }
 
-    [Owned]
-    public class UserOwnedEmail : UserOwnedEntity
+    public class UserSession : Entity
     {
-        public required string Address { get; set; }
-        public required bool Verified { get; set; }
-    }
-
-    [Owned]
-    public class UserOwnedAlias : UserOwnedEntity
-    {
-        public required string Handle { get; set; }
-    }
-
-    [Owned]
-    public class UserOwnedSession : UserOwnedEntity
-    {
-        public required string Id { get; set; }
         public required string RefreshToken { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
-        public required DateTime CreatedDateTimeUtc { get; set; }
-        public required DateTime UpdatedDateTimeUtc { get; set; }
-        public required bool Revoked { get; set; }
+        public required bool IsRevoked { get; set; } = false;
+
+        public required Guid UserId { get; set; }
+        public virtual User User { get; set; } = null!;
     }
 
-    public class UserEvent : UserEntity
+    public class UserAlias : Entity
     {
-        public required string EventType { get; set; }
-        public required DateTime DateTimeUtc { get; set; }
-        public required IDictionary<string, string> Data { get; set; }
+        public required string Handle { get; set; }
+        public required string NormalizedHandle { get; set; }
+        public required bool IsDefault { get; set; }
+
+        public required Guid UserId { get; set; }
+        public virtual User User { get; set; } = null!;
     }
 
-    public class UserEmail : UserEntity
+    public class UserAction
     {
-        public required string Address { get; set; }
-        public string? VerificationCode { get; set; }
-        public required bool Verified { get; set; }
+        public Guid Id { get; set; } = Guid.CreateVersion7();
+        public required string ActionType { get; set; }
+        public DateTime DateTimeUtc { get; set; } = DateTime.UtcNow;
+        public required UserEventData Data { get; set; }
+
+        public required Guid UserId { get; set; }
+        public virtual User User { get; set; } = null!;
     }
 
-    public class UserToUserRelationship : UserEntity
+    public class UserEventData
     {
-        public required string ToUserId { get; set; }
+        public required string IPAddress { get; set; }
+    }
+
+    public class UserToUserRelationship
+    {
+        public required Guid Id { get; set; }
+        public required Guid FromUserId { get; set; }
+        public required Guid ToUserId { get; set; }
         public required string RelationshipType { get; set; }
     }
 
-    public class UserAlias : AliasEntity
+    public class UserImage
     {
-        public required string UserId { get; set; }
-        public required string UserName { get; set; }
-        public string? UserAbout { get; set; }
-        public string? IconImageId { get; set; }
-        public string? BannerImageId { get; set; }
-        public bool? Protected { get; set; }
-    }
-
-    public class UserImage : UserEntity
-    {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string BlobContainerName { get; set; }
         public required string BlobName { get; set; }
         public string? AltText {  get; set; }
     }
 
-    public abstract class UserEntity : Entity
+    public class Role : IdentityRole<Guid>
     {
-        public required string UserId { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; } = [];
+        public virtual ICollection<RoleClaim> RoleClaims { get; set; } = [];
     }
 
-    public abstract class UserOwnedEntity
+    public class UserRole : IdentityUserRole<Guid>
     {
-        public required string UserId { get; set; }
+        public virtual User User { get; set; } = null!;
+        public virtual Role Role { get; set; } = null!;
+    }
+
+    public class RoleClaim : IdentityRoleClaim<Guid>
+    {
+        public virtual Role Role { get; set; } = null!;
+    }
+
+    public class UserClaim : IdentityUserClaim<Guid>
+    {
+        public virtual User User { get; set; } = null!;
+    }
+
+    public class UserLogin : IdentityUserLogin<Guid>
+    {
+        public virtual User User { get; set; } = null!;
+    }
+
+    public class UserToken : IdentityUserToken<Guid>
+    {
+        public virtual User User { get; set; } = null!;
     }
 }
