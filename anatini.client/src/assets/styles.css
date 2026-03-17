@@ -353,7 +353,7 @@ form {
     font-weight: 500;
   }
 
-  input:not([type="checkbox"]), textarea {
+  input:not([type="checkbox"]), textarea, select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -368,6 +368,10 @@ form {
   textarea {
     min-height: 100px;
     resize: vertical;
+  }
+
+  select:focus {
+    outline-offset: -1px;
   }
 
   input[readonly] {

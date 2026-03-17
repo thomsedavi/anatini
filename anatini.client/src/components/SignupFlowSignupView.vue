@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { nextTick, ref, useTemplateRef } from 'vue';
+  import { nextTick, ref } from 'vue';
   import type { InputError, IsAuthenticated, Status, StatusActions } from '@/types';
   import { tidy } from './common/utils';
   import InputText from './common/InputText.vue';
@@ -24,10 +24,16 @@
   const inputName = ref<string>('');
   const inputVerificationCode = ref<string>('');
   const inputHandle = ref<string>('');
+  const inputVisibility = ref<string>('Public');
   const inputPassword = ref<string>('');
   const errorSectionRef = ref<HTMLElement | null>(null);
-  const protectedInput = useTemplateRef<HTMLInputElement>('protected');
   const status = ref<Status>('idle');
+
+  const visibilityOptions = ref([
+    { text: 'Public', value: 'Public' },
+    { text: 'Protected', value: 'Protected' },
+    { text: 'Private', value: 'Private' }
+  ]);
 
   function getError(id: string): string | undefined {
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
@@ -118,10 +124,7 @@
     body.append('handle', tidiedHandle);
     body.append('password', tidiedPassword);
     body.append('verificationCode', tidiedVerificationCode);
-
-    if (protectedInput.value!.checked) {
-      body.append('protected', 'true');
-    }
+    body.append('visibility', inputVisibility.value);
 
     const init = { method: "POST", body: body };
 
@@ -156,7 +159,7 @@
           id="emailAddress"
           :error="getError('emailAddress')"
           autocomplete="email"
-          :readonly="emailAddress !== null"
+          :readonly="emailAddress !== undefined"
           :required="true" />
 
         <InputText
@@ -197,9 +200,13 @@
           :error="getError('verificationCode')"
           :required="true" />
 
-        <input id="protected" type="checkbox" name="protected" ref="protected" />
-        <label for="protected" aria-describedby="help-protected">Protected</label>
-        <small id="help-protected">your account will only be visible to other verified users</small>
+        <label for="input-visibility">Privacy Level</label>
+        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
+          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
+            {{ option.text }}
+          </option>
+        </select>
+        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
       </fieldset>
 
       <SubmitButton
