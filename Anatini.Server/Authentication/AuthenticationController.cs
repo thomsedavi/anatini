@@ -1,19 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Authentication.Extensions;
 using Anatini.Server.Authentication.Responses;
-using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
-using Anatini.Server.Enums;
-using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 namespace Anatini.Server.Authentication
 {
@@ -27,28 +24,15 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEmail([FromForm] EmailForm form) => await UsingContextAsync(async context =>
         {
-            var eventData = new EventData(HttpContext).Add("emailAddress", form.EmailAddress);
-            var userId = RandomHex.NextX16();
-
             try
             {
-                await context.AddUserEmailAsync(form.EmailAddress, userId);
+                await context.AddUserEmailAsync(form.EmailAddress);
             }
-            catch
+            catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
             {
-                //if (dbUpdateException.InnerException is CosmosException cosmosException && cosmosException.StatusCode == HttpStatusCode.Conflict)
-                //{
-                //    // do not confirm that a user with this email already exists
-                //    return NoContent();
-                //}
-                //else
-                //{
-                    // handle the error in UsingContextAsync
-                    throw;
-                //}
+                // do not confirm that a user with this email already exists
+                return NoContent();
             }
-
-            await context.AddUserEventAsync(userId, EventType.EmailCreated, eventData);
 
             return NoContent();
         });
