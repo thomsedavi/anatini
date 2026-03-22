@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Authentication
@@ -26,11 +27,10 @@ namespace Anatini.Server.Authentication
         public required string Password { get; set; }
 
         [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
-        public required string VerificationCode { get; set; }
+        public required string ConfirmationCode { get; set; }
 
-        public bool? Protected { get; set; }
-
-        public string Id { get; set; } = RandomHex.NextX16();
+        [EnumDataType(typeof(Visibility))]
+        public required Visibility Visibility { get; set; }
     }
 
     public class LoginForm
