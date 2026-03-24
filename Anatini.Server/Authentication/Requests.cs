@@ -9,16 +9,16 @@ namespace Anatini.Server.Authentication
     public class EmailForm
     {
         [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
-        public required string EmailAddress { get; set; }
+        public required string Email { get; set; }
     }
 
     public class NewUser
     {
         [MaxLength(64), DataType(DataType.Text)]
-        public required string Name { get; set; }
+        public required string DisplayName { get; set; }
 
         [Handle, MaxLength(64), DataType(DataType.Text)]
-        public required string Handle { get; set; }
+        public required string UserName { get; set; }
 
         [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
         public required string EmailAddress { get; set; }

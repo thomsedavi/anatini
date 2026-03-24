@@ -4,9 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using Anatini.Server.Authentication.Extensions;
 using Anatini.Server.Authentication.Responses;
+using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Context.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +20,7 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/authentication")]
-    public class AuthenticationController : AnatiniControllerBase
+    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : AnatiniControllerBase(context)
     {
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
@@ -26,7 +30,8 @@ namespace Anatini.Server.Authentication
         {
             try
             {
-                await context.AddUserEmailAsync(form.EmailAddress);
+                context.AddUserEmailAsync(form.Email, userManager.NormalizeEmail(form.Email));
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
             {
