@@ -31,6 +31,9 @@ namespace Anatini.Server.Authentication
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
+
+        [Display(Name = "Is Persistent")]
+        public bool? IsPersistent { get; set; }
     }
 
     public class LoginForm
