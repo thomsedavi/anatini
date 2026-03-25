@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import SignUpFlowEmailView from './SignUppFlowEmailView.vue';
-  import SignUpFlowSignupView from './SignUppFlowSignupView.vue';
+  import SignUpFlowEmailView from './SignUpFlowEmailView.vue';
+  import SignUpFlowSignupView from './SignUpFlowSignupView.vue';
 
   const page = ref<'email' | 'signup'>('email');
   const email = ref<string | undefined>(undefined);
