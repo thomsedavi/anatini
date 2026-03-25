@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, IsAuthenticated, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions } from '@/types';
   import InputText from './common/InputText.vue';
   import { nextTick, ref } from 'vue';
   import { tidy } from './common/utils';
@@ -11,7 +11,7 @@
   const router = useRouter();
   const route = useRoute();
 
-  const inputEmailAddress = ref<string>('');
+  const inputEmail = ref<string>('');
   const inputPassword = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
@@ -21,7 +21,7 @@
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
-  async function login(event: Event) {
+  async function signIn(event: Event) {
     if ((event as SubmitEvent).submitter?.ariaDisabled === 'true')
     {
       return;
@@ -29,10 +29,10 @@
 
     inputErrors.value = [];
 
-    const tidiedEmailAddress = tidy(inputEmailAddress.value);
+    const tidiedEmail = tidy(inputEmail.value);
 
-    if (tidiedEmailAddress === '') {
-      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    if (tidiedEmail === '') {
+      inputErrors.value.push({id: 'email', message: 'Email is required'});
     }
 
     if (inputPassword.value === '') {
@@ -50,30 +50,23 @@
     status.value = 'pending';
 
     const statusActions: StatusActions = {
-      200: (response?: Response) => {
+      200: () => {
         status.value = 'success';
 
-        response?.json()
-          .then((value: IsAuthenticated) => {
-            store.isLoggedIn = value.isAuthenticated;
-            store.expiresUtc = value.expiresUtc;
+        store.isAuthenticated = true;
 
-            let path = '/';
+        let path = '/';
 
-            if (typeof route.query.redirect === 'string') {
-              path = route.query.redirect;
-            }
+        if (typeof route.query.redirect === 'string') {
+          path = route.query.redirect;
+        }
 
-            router.replace({ path: path });
-          })
-          .catch(() => {
-            store.isLoggedIn = false;
-          });
+        router.replace({ path: path });
       },
       404: () => {
         status.value = 'error';
 
-        inputErrors.value.push({id: 'password', message: 'Unable to match email address and password'});
+        inputErrors.value.push({id: 'password', message: 'Unable to match email and password'});
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -92,12 +85,12 @@
 
     const body = new FormData();
 
-    body.append('emailAddress', tidiedEmailAddress);
+    body.append('email', tidiedEmail);
     body.append('password', inputPassword.value);
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/login', statusActions, init);
+    apiFetch('authentication/sign-in', statusActions, init);
   }
 </script>
 
@@ -116,17 +109,17 @@
       </ul>
     </section>
 
-    <form @submit.prevent="login" action="/api/authentication/login" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
+    <form @submit.prevent="signIn" action="/api/authentication/sign-in" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
       <fieldset>
         <legend>Credentials</legend>
 
         <InputText
           type="email"
-          v-model="inputEmailAddress"
+          v-model="inputEmail"
           label="Email"
-          name="emailAddress"
-          id="emailAddress"
-          :error="getError('emailAddress')"
+          name="email"
+          id="email"
+          :error="getError('email')"
           autocomplete="email" />
 
         <InputText
@@ -141,7 +134,7 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputEmailAddress) === '' || inputPassword === ''"
+        :disabled="tidy(inputEmail) === '' || inputPassword === ''"
         text="Log In"
         busy-text="Logging In..." />
     </form>

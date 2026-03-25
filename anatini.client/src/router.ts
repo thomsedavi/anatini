@@ -4,7 +4,7 @@ import AboutView from './components/AboutView.vue';
 import HomeView from './components/home/HomeView.vue';
 import HomePostsView from './components/home/HomePostsView.vue';
 import HomeCalendarView from './components/home/HomeCalendarView.vue';
-import LoginView from './components/LoginView.vue';
+import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteCreateView from './components/NoteCreateView.vue';
 import NoteView from './components/NoteView.vue';
@@ -18,7 +18,7 @@ import AccountView from './components/account/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountChannelsView from './components/account/AccountChannelsView.vue';
-import SignupFlowView from './components/SignupFlowView.vue';
+import SignUpFlowView from './components/SignUpFlowView.vue';
 import UserView from './components/UserView.vue';
 import ChannelCreateView from './components/ChannelCreateView.vue';
 import ChannelEditView from './components/channelEdit/ChannelEditView.vue';
@@ -53,12 +53,12 @@ const routes = [
     component: AboutView,
   },
   {
-    path: '/signup',
-    component: SignupFlowView,
+    path: '/sign-up',
+    component: SignUpFlowView,
   },
   {
-    path: '/login',
-    component: LoginView,
+    path: '/sign-in',
+    component: SignInView,
   },
   {
     path: '/account',

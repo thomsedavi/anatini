@@ -11,7 +11,7 @@
   }>();
 
   const inputErrors = ref<InputError[]>([]);
-  const inputEmailAddress = ref<string>('');
+  const inputEmail = ref<string>('');
   const errorSectionRef = ref<HTMLElement | null>(null);
   const status = ref<Status>('idle');
 
@@ -27,10 +27,10 @@
 
     inputErrors.value = [];
 
-    const tidiedEmailAddress = tidy(inputEmailAddress.value);
+    const tidiedEmail = tidy(inputEmail.value);
 
-    if (tidiedEmailAddress === '') {
-      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    if (tidiedEmail === '') {
+      inputErrors.value.push({id: 'email', message: 'Email is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -45,7 +45,7 @@
 
     const statusActions: StatusActions = {
       204: () => {
-        emit('submitEmail', tidiedEmailAddress);
+        emit('submitEmail', tidiedEmail);
       },
       500: () => {
         status.value = 'error';
@@ -60,7 +60,7 @@
 
     const body = new FormData();
 
-    body.append('emailAddress', tidiedEmailAddress);
+    body.append('email', tidiedEmail);
 
     const init = { method: "POST", body: body };
 
@@ -89,18 +89,18 @@
 
         <InputText
           type="email"
-          v-model="inputEmailAddress"
+          v-model="inputEmail"
           label="Email"
-          name="emailAddress"
-          id="emailAddress"
-          :error="getError('emailAddress')"
+          name="email"
+          id="email"
+          :error="getError('email')"
           autocomplete="email"
           :required="true" />
       </fieldset>
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputEmailAddress) === ''"
+        :disabled="tidy(inputEmail) === ''"
         text="Sign Up"
         busy-text="Signing Up..." />
 

@@ -1,5 +1,5 @@
 import { store } from "@/store";
-import type { IsAuthenticated, StatusActions } from "@/types";
+import type { StatusActions } from "@/types";
 
 export async function apiFetch(
   input: RequestInfo | URL,
@@ -21,28 +21,9 @@ export async function apiFetchAuthenticated(
   init?: RequestInit,
   onfinally?: () => void,
 ): Promise<void> {
-  if (store.expiresUtc === null) {
+  if (store.isAuthenticated ?? false === false) {
     statusActions?.[401]?.();
     return;
-  }
-
-  const secondsRemaining = Math.abs(new Date(store.expiresUtc).valueOf() - Date.now().valueOf()) / 1000;
-
-  if (secondsRemaining < 600) {
-    await fetch("/api/authentication/refresh-token", { method: "POST" }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
-          .then((value: IsAuthenticated) => {
-            store.isLoggedIn = value.isAuthenticated;
-            store.expiresUtc = value.expiresUtc;
-          })
-          .catch(() => {
-            store.isLoggedIn = false;
-          });
-      } else {
-        store.isLoggedIn = false;
-      }
-    });
   }
 
   return await apiFetch(input, statusActions, init, onfinally);

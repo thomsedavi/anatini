@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { nextTick, ref } from 'vue';
-  import type { InputError, IsAuthenticated, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions } from '@/types';
   import { tidy } from './common/utils';
   import InputText from './common/InputText.vue';
   import SubmitButton from './common/SubmitButton.vue';
@@ -11,8 +11,8 @@
   const router = useRouter();
 
   const props = defineProps<{
-    emailAddress?: string,
-    verificationFailed: boolean,
+    email?: string,
+    confirmationFailed: boolean,
   }>();
 
   const emit = defineEmits<{
@@ -20,10 +20,10 @@
   }>();
   
   const inputErrors = ref<InputError[]>([]);
-  const inputEmailAddress = ref<string>(props.emailAddress ?? '');
-  const inputName = ref<string>('');
-  const inputVerificationCode = ref<string>('');
-  const inputHandle = ref<string>('');
+  const inputEmail = ref<string>(props.email ?? '');
+  const inputDisplayName = ref<string>('');
+  const inputConfirmationCode = ref<string>('');
+  const inputUserName = ref<string>('');
   const inputVisibility = ref<string>('Public');
   const inputPassword = ref<string>('');
   const errorSectionRef = ref<HTMLElement | null>(null);
@@ -47,34 +47,34 @@
 
     inputErrors.value = [];
 
-    const tidiedEmailAddress = tidy(inputEmailAddress.value);
-    const tidiedName = tidy(inputName.value);
-    const tidiedHandle = tidy(inputHandle.value);
+    const tidiedEmail = tidy(inputEmail.value);
+    const tidiedDisplayName = tidy(inputDisplayName.value);
+    const tidiedUserName = tidy(inputUserName.value);
     const tidiedPassword = tidy(inputPassword.value);
-    const tidiedVerificationCode = tidy(inputVerificationCode.value);
+    const tidiedConfirmationCode = tidy(inputConfirmationCode.value);
 
-    if (tidiedEmailAddress === '') {
-      inputErrors.value.push({id: 'emailAddress', message: 'Email address is required'});
+    if (tidiedEmail === '') {
+      inputErrors.value.push({id: 'email', message: 'Email is required'});
     }
 
-    if (tidiedName === '') {
-      inputErrors.value.push({id: 'name', message: 'Name is required'});
+    if (tidiedDisplayName === '') {
+      inputErrors.value.push({id: 'displayName', message: 'Display Name is required'});
     }
 
-    if (tidiedHandle === '') {
-      inputErrors.value.push({id: 'handle', message: 'Handle is required'});
-    }
-
-    if (tidiedPassword === '') {
-      inputErrors.value.push({id: 'password', message: 'Password is required'});
+    if (tidiedUserName === '') {
+      inputErrors.value.push({id: 'userName', message: 'User Name is required'});
     }
 
     if (tidiedPassword === '') {
       inputErrors.value.push({id: 'password', message: 'Password is required'});
     }
 
-    if (tidiedVerificationCode === '') {
-      inputErrors.value.push({id: 'verificationCode', message: 'Verification Code is required'});
+    if (tidiedPassword === '') {
+      inputErrors.value.push({id: 'password', message: 'Password is required'});
+    }
+
+    if (tidiedConfirmationCode === '') {
+      inputErrors.value.push({id: 'confirmationCode', message: 'Confirmation Code is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -88,19 +88,15 @@
     status.value = 'pending';
 
     const statusActions: StatusActions = {
-      200: (response?: Response) => {
-        response?.json()
-          .then((value: IsAuthenticated) => {
-            store.isLoggedIn = value.isAuthenticated;
-            store.expiresUtc = value.expiresUtc;
+      200: () => {
+        store.isAuthenticated = true;
 
-            router.replace({ path: '/account' });     
-          });
+        router.replace({ path: '/account' });     
       },
       404: () => {
         status.value = 'error';
 
-        inputErrors.value.push({id: 'verificationCode', message: 'Verification code does not match, please go back and resend email'});
+        inputErrors.value.push({id: 'confirmationCode', message: 'Confirmation code does not match, please go back and resend email'});
 
         nextTick(() => {
           errorSectionRef.value?.focus();
@@ -119,16 +115,16 @@
 
     const body = new FormData();
 
-    body.append('emailAddress', tidiedEmailAddress);
-    body.append('name', tidiedName);
-    body.append('handle', tidiedHandle);
+    body.append('email', tidiedEmail);
+    body.append('displayName', tidiedDisplayName);
+    body.append('userName', tidiedUserName);
     body.append('password', tidiedPassword);
-    body.append('verificationCode', tidiedVerificationCode);
+    body.append('confirmationCode', tidiedConfirmationCode);
     body.append('visibility', inputVisibility.value);
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/signup', statusActions, init);
+    apiFetch('authentication/sign-up', statusActions, init);
   }
 </script>
 
@@ -153,31 +149,31 @@
 
         <InputText
           type="email"
-          v-model="inputEmailAddress"
+          v-model="inputEmail"
           label="Email"
-          name="emailAddress"
-          id="emailAddress"
-          :error="getError('emailAddress')"
+          name="email"
+          id="email"
+          :error="getError('email')"
           autocomplete="email"
-          :readonly="emailAddress !== undefined"
+          :readonly="email !== undefined"
           :required="true" />
 
         <InputText
-          v-model="inputName"
-          label="Name"
-          name="name"
-          id="name"
+          v-model="inputDisplayName"
+          label="Display Name"
+          name="displayName"
+          id="displayName"
           autocomplete="name"
-          :error="getError('name')"
+          :error="getError('displayName')"
           :required="true" />
 
         <InputText
-          v-model="inputHandle"
-          label="Handle"
-          name="handle"
-          id="handle"
+          v-model="inputUserName"
+          label="User Name"
+          name="userName"
+          id="userName"
           autocomplete="username"
-          :error="getError('handle')"
+          :error="getError('userName')"
           :required="true"
           help="lower case characters, number, and hyphens" />
 
@@ -192,12 +188,12 @@
           :required="true" />
 
         <InputText
-          v-model="inputVerificationCode"
-          label="Verification Code"
-          name="verificationCode"
-          id="verificationCode"
+          v-model="inputConfirmationCode"
+          label="Confirmation Code"
+          name="confirmationCode"
+          id="confirmationCode"
           autocomplete="one-time-code"
-          :error="getError('verificationCode')"
+          :error="getError('confirmationCode')"
           :required="true" />
 
         <label for="input-visibility">Privacy Level</label>
@@ -211,7 +207,7 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputName) === '' || tidy(inputHandle) === '' || tidy(inputPassword) === '' || tidy(inputVerificationCode) === '' || tidy(inputEmailAddress) === '' || verificationFailed"
+        :disabled="tidy(inputDisplayName) === '' || tidy(inputUserName) === '' || tidy(inputPassword) === '' || tidy(inputConfirmationCode) === '' || tidy(inputEmail) === '' || confirmationFailed"
         text="Complete Sign Up"
         busy-text="Completing Sign Up..." />
 

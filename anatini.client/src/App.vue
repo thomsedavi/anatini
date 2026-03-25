@@ -17,33 +17,32 @@
       if (response.ok) {
         response.json()
           .then((value: IsAuthenticated) => {
-            store.isLoggedIn = value.isAuthenticated;
-            store.expiresUtc = value.expiresUtc;
+            store.isSignedIn = value.isAuthenticated;
           })
           .catch(() => {
-            store.isLoggedIn = false;
+            store.isSignedIn = false;
           });
       } else {
-        store.isLoggedIn = false;
+        store.isSignedIn = false;
       }
     }).catch(() => {
-      store.isLoggedIn = false;
+      store.isSignedIn = false;
     }).finally(() => {
       isFetching.value = false;
     });
   });
 
-  async function logout() {
-    fetch("/api/authentication/logout", {
+  async function signOut() {
+    fetch("/api/authentication/sign-out", {
       method: "POST",
     }).then((response: Response) => {
       if (response.ok) {
-        store.isLoggedIn = false;
+        store.isSignedIn = false;
       } else {
-        store.isLoggedIn = false;
+        store.isSignedIn = false;
       }
     }).catch(() => {
-      store.isLoggedIn = false;
+      store.isSignedIn = false;
     }).finally(() => {
       router.replace({ path: '/' });
     });
@@ -51,7 +50,7 @@
 </script>
 
 <template>
-  <template v-if="store.isLoggedIn !== null">
+  <template v-if="store.isSignedIn !== null">
     <a href="#main" id="skip">Skip to main content</a>
 
     <header>
@@ -60,13 +59,13 @@
       <nav aria-label="Main">
         <ul>
           <li><RouterLink to="/about">ABOUT</RouterLink></li>
-          <template v-if="!store.isLoggedIn">
-            <li><RouterLink to="/signup">SIGNUP</RouterLink></li>
-            <li><RouterLink to="/login">LOGIN</RouterLink></li>
+          <template v-if="!store.isSignedIn">
+            <li><RouterLink to="/sign-up">SIGN UP</RouterLink></li>
+            <li><RouterLink to="/sign-in">SIGN IN</RouterLink></li>
           </template>
           <template v-else>
             <li><RouterLink to="/account">ACCOUNT</RouterLink></li>
-            <li><a href="/" @click.prevent="logout">LOG OUT</a></li>
+            <li><a href="/" @click.prevent="signOut">SIGN OUT</a></li>
           </template>
         </ul>
       </nav>
