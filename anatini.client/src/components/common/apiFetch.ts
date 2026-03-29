@@ -21,7 +21,7 @@ export async function apiFetchAuthenticated(
   init?: RequestInit,
   onfinally?: () => void,
 ): Promise<void> {
-  if (store.isAuthenticated ?? false === false) {
+  if (store.isAuthenticated === null || !store.isAuthenticated) {
     statusActions?.[401]?.();
     return;
   }

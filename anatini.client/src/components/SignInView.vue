@@ -13,6 +13,7 @@
 
   const inputEmail = ref<string>('');
   const inputPassword = ref<string>('');
+  const inputIsPersistent = ref<boolean>(false);
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
@@ -63,7 +64,7 @@
 
         router.replace({ path: path });
       },
-      404: () => {
+      401: () => {
         status.value = 'error';
 
         inputErrors.value.push({id: 'password', message: 'Unable to match email and password'});
@@ -87,6 +88,10 @@
 
     body.append('email', tidiedEmail);
     body.append('password', inputPassword.value);
+
+    if (inputIsPersistent.value === true) {
+      body.append('isPersistent', 'true');
+    }
 
     const init = { method: "POST", body: body };
 
@@ -130,6 +135,10 @@
           id="password"
           :error="getError('password')"
           autocomplete="current-password" />
+
+        <input type="checkbox" id="input-is-persistent" name="is-persistent" v-model="inputIsPersistent" aria-describedby="help-is-persistent" />
+        <label for="input-is-persistent">Remember Me</label>
+        <small id="help-is-persistent">Remember you</small>
       </fieldset>
 
       <SubmitButton

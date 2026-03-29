@@ -17,16 +17,16 @@
       if (response.ok) {
         response.json()
           .then((value: IsAuthenticated) => {
-            store.isSignedIn = value.isAuthenticated;
+            store.isAuthenticated = value.isAuthenticated;
           })
           .catch(() => {
-            store.isSignedIn = false;
+            store.isAuthenticated = false;
           });
       } else {
-        store.isSignedIn = false;
+        store.isAuthenticated = false;
       }
     }).catch(() => {
-      store.isSignedIn = false;
+      store.isAuthenticated = false;
     }).finally(() => {
       isFetching.value = false;
     });
@@ -37,12 +37,12 @@
       method: "POST",
     }).then((response: Response) => {
       if (response.ok) {
-        store.isSignedIn = false;
+        store.isAuthenticated = false;
       } else {
-        store.isSignedIn = false;
+        store.isAuthenticated = false;
       }
     }).catch(() => {
-      store.isSignedIn = false;
+      store.isAuthenticated = false;
     }).finally(() => {
       router.replace({ path: '/' });
     });
@@ -50,7 +50,7 @@
 </script>
 
 <template>
-  <template v-if="store.isSignedIn !== null">
+  <template v-if="store.isAuthenticated !== null">
     <a href="#main" id="skip">Skip to main content</a>
 
     <header>
@@ -59,7 +59,7 @@
       <nav aria-label="Main">
         <ul>
           <li><RouterLink to="/about">ABOUT</RouterLink></li>
-          <template v-if="!store.isSignedIn">
+          <template v-if="store.isAuthenticated === null || !store.isAuthenticated">
             <li><RouterLink to="/sign-up">SIGN UP</RouterLink></li>
             <li><RouterLink to="/sign-in">SIGN IN</RouterLink></li>
           </template>

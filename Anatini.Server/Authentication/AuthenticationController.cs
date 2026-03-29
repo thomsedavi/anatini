@@ -79,7 +79,7 @@ namespace Anatini.Server.Authentication
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async context =>
         {
@@ -87,7 +87,7 @@ namespace Anatini.Server.Authentication
 
             if (user == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             var signInResult = await signInManager.PasswordSignInAsync(user, signInForm.Password, signInForm.IsPersistent ?? false, lockoutOnFailure: true);

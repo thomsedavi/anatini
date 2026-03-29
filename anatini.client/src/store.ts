@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 
 type Store = {
-  isSignedIn: boolean | null;
+  isAuthenticated: boolean | null;
 }
 
-export const store = reactive<Store>({ isSignedIn: null });
+export const store = reactive<Store>({ isAuthenticated: null });
