@@ -5,15 +5,19 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 {
     public static class UserImageBuilderExtensions
     {
-        public static void Configure(this EntityTypeBuilder<UserImage> userImageBuilder)
+        public static void Configure(this EntityTypeBuilder<ApplicationUserImage> userImageBuilder)
         {
-            //userImageBuilder.ToContainer("UserImages");
-            //userImageBuilder.HasKey(userImage => new { userImage.UserId, userImage.Id });
-            //userImageBuilder.HasPartitionKey(userImage => new { userImage.UserId, userImage.Id });
-            //userImageBuilder.Property(userImage => userImage.ItemId).ToJsonProperty("id");
-            //userImageBuilder.Property(userImage => userImage.Id).ToJsonProperty( "Id");
-            //userImageBuilder.Property(userImage => userImage.ETag).ToJsonProperty("_etag");
-            //userImageBuilder.Property(userImage => userImage.Timestamp).ToJsonProperty("_ts");
+            userImageBuilder.ToTable("user_images");
+
+            userImageBuilder.HasKey(userAlias => userAlias.Id);
+
+            userImageBuilder.Property(userImage => userImage.AltText).HasMaxLength(256);
+            userImageBuilder.Property(userAlias => userAlias.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            userImageBuilder.Property(userAlias => userAlias.UpdatedAtUtc).HasColumnType("timestamp with time zone");
+            userImageBuilder.Property(userImage => userImage.BlobName).HasMaxLength(1); // TODO determine this
+            userImageBuilder.Property(userImage => userImage.BlobContainerName).HasMaxLength(1); // TODO determine this
+
+            userImageBuilder.HasOne(userImage => userImage.User).WithMany(user => user.Images).HasForeignKey(userImage => userImage.UserId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

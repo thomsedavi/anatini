@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserEmail> Emails { get; set; } = [];
         public virtual ICollection<ApplicationUserImage> Images { get; set; } = [];
         public virtual ICollection<ApplicationUserHandle> Handles { get; set; } = [];
-        public virtual ICollection<ApplicationUserEvent> Events { get; set; } = [];
+        public virtual ICollection<ApplicationUserLog> Logs { get; set; } = [];
         public virtual ICollection<ApplicationUserRole> Roles { get; set; } = [];
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; } = [];
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; } = [];
@@ -56,7 +56,7 @@ namespace Anatini.Server.Context.Entities
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
     }
 
-    public class ApplicationUserEvent
+    public class ApplicationUserLog
     {
         public Guid Id { get; set; } = Guid.CreateVersion7();
         public required string Type { get; set; }
