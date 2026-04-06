@@ -5,8 +5,8 @@ namespace Anatini.Server.Context.Entities
     public class ApplicationUser : IdentityUser<Guid>
     {
         public required string Name { get; set; }
-        public string? Handle { get; set; }
-        public string? NormalizedHandle { get; set; }
+        public required string Handle { get; set; }
+        public required string NormalizedHandle { get; set; }
         public string? About { get; set; }
         public Guid? IconImageId { get; set; }
         public Guid? BannerImageId { get; set; }
@@ -28,7 +28,7 @@ namespace Anatini.Server.Context.Entities
         public DateTime UpdatedAtUtc { get; set; } = DateTime.UtcNow;
     }
 
-    public class ApplicationUserEmail : Entity
+    public class ApplicationUserEmail : MutableEntity
     {
         public required string Email { get; set; }
         public required string NormalizedEmail { get; set; }
@@ -39,11 +39,8 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser? User { get; set; }
     }
 
-    public class ApplicationUserHandle : Entity
+    public class ApplicationUserHandle : HandleEntity
     {
-        public required string Handle { get; set; }
-        public required string NormalizedHandle { get; set; }
-
         public required Guid UserId { get; set; }
         public virtual ApplicationUser User { get; set; } = null!;
     }
@@ -86,12 +83,8 @@ namespace Anatini.Server.Context.Entities
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
     }
 
-    public class ApplicationUserImage : Entity
+    public class ApplicationUserImage : ImageEntity
     {
-        public required string BlobContainerName { get; set; }
-        public required string BlobName { get; set; }
-        public string? AltText {  get; set; }
-
         public required Guid UserId { get; set; }
         public virtual ApplicationUser User { get; set; } = null!;
     }
