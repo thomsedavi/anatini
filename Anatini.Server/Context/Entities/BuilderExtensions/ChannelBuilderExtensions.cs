@@ -7,15 +7,19 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<Channel> channelBuilder)
         {
-            //channelBuilder.ToContainer("Channels");
-            //channelBuilder.HasKey(channel => channel.Id);
-            //channelBuilder.HasPartitionKey(channel => channel.Id);
-            //channelBuilder.Property(channel => channel.ItemId).ToJsonProperty("id");
-            //channelBuilder.Property(channel => channel.Id).ToJsonProperty("Id");
-            //channelBuilder.Property(channel => channel.ETag).ToJsonProperty("_etag");
-            //channelBuilder.Property(channel => channel.Timestamp).ToJsonProperty("_ts");
-            //channelBuilder.OwnsMany(channel => channel.Aliases, aliasBuildAction => { aliasBuildAction.HasKey(channelOwnedAlias => channelOwnedAlias.Handle); });
-            //channelBuilder.OwnsMany(channel => channel.Users, userBuildAction => { userBuildAction.HasKey(channelOwnedUser => channelOwnedUser.Id); });
+            channelBuilder.ToTable("channels");
+
+            channelBuilder.HasKey(channel => channel.Id);
+
+            channelBuilder.Property(channel => channel.Name).HasMaxLength(256);
+            channelBuilder.Property(channel => channel.Handle).HasMaxLength(256);
+            channelBuilder.Property(channel => channel.NormalizedHandle).HasMaxLength(256);
+            channelBuilder.Property(channel => channel.About).HasMaxLength(512);
+            channelBuilder.Property(channel => channel.Visibility).HasMaxLength(16);
+            channelBuilder.Property(channel => channel.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            channelBuilder.Property(channel => channel.UpdatedAtUtc).HasColumnType("timestamp with time zone");
+
+            channelBuilder.HasIndex(channel => channel.NormalizedHandle).IsUnique();
         }
     }
 }

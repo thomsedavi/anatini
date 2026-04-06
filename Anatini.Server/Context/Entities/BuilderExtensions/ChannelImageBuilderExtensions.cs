@@ -7,13 +7,17 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<ChannelImage> channelImageBuilder)
         {
-            //channelImageBuilder.ToContainer("ChannelImages");
-            //channelImageBuilder.HasKey(channelImage => new { channelImage.ChannelId, channelImage.Id });
-            //channelImageBuilder.HasPartitionKey(channelImage => new { channelImage.ChannelId, channelImage.Id });
-            //channelImageBuilder.Property(channelImage => channelImage.ItemId).ToJsonProperty("id");
-            //channelImageBuilder.Property(channelImage => channelImage.Id).ToJsonProperty( "Id");
-            //channelImageBuilder.Property(channelImage => channelImage.ETag).ToJsonProperty("_etag");
-            //channelImageBuilder.Property(channelImage => channelImage.Timestamp).ToJsonProperty("_ts");
+            channelImageBuilder.ToTable("channel_images");
+
+            channelImageBuilder.HasKey(channelImage => channelImage.Id);
+
+            channelImageBuilder.Property(channelImage => channelImage.AltText).HasMaxLength(256);
+            channelImageBuilder.Property(channelImage => channelImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            channelImageBuilder.Property(channelImage => channelImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
+            channelImageBuilder.Property(channelImage => channelImage.BlobName).HasMaxLength(1); // TODO determine this
+            channelImageBuilder.Property(channelImage => channelImage.BlobContainerName).HasMaxLength(1); // TODO determine this
+
+            channelImageBuilder.HasOne(channelImage => channelImage.Channel).WithMany(user => user.Images).HasForeignKey(channelImage => channelImage.ChannelId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
