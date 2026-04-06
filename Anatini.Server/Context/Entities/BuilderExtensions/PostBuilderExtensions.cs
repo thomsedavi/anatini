@@ -21,7 +21,10 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             postBuilder.OwnsOne(post => post.DraftVersion, builder => { builder.ToJson(); });
             postBuilder.OwnsOne(post => post.PublishedVersion, builder => { builder.ToJson(); });
 
-            postBuilder.HasIndex(post => post.NormalizedHandle).IsUnique();
+            var statusColumnName = postBuilder.GetColumnName(nameof(Post.Status));
+            postBuilder.HasIndex(post => new { post.ChannelId, post.NormalizedHandle }).IsUnique();
+            postBuilder.HasIndex(post => new { post.ChannelId, post.DateNZ });
+            postBuilder.HasIndex(post => post.DateNZ ).HasFilter($"{statusColumnName} = {(int)PostStatus.Published}").HasDatabaseName("ix_published_posts_date_nz");
         }
     }
 }
