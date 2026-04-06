@@ -5,6 +5,10 @@
         public required string Status { get; set; }
         public required PostOwnedVersion DraftVersion { get; set; }
         public PostOwnedVersion? PublishedVersion { get; set; }
+        public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
+        public virtual ICollection<PostHandle> Handles { get; set; } = [];
+        public virtual ICollection<PostImage> Images { get; set; } = [];
 
         public required Guid ChannelId { get; set; }
         public virtual Channel Channel { get; set; } = null!;

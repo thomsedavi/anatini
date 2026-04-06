@@ -11,6 +11,8 @@
         public virtual ICollection<ApplicationUserChannel> UserChannels { get; set; } = [];
         public virtual ICollection<Post> Posts { get; set; } = [];
         public virtual ICollection<ChannelHandle> Handles { get; set; } = [];
+        public virtual ICollection<PostHandle> PostHandles { get; set; } = [];
+        public virtual ICollection<ChannelImage> Images { get; set; } = [];
     }
 
     public class ChannelHandle : HandleEntity
