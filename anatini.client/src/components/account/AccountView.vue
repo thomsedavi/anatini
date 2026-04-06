@@ -12,7 +12,7 @@
   const user = ref<UserEdit | ErrorMessage | null>(null);
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
-  const inputUserName = ref<string>('');
+  const inputName = ref<string>('');
   const inputUserAbout = ref<string>('');
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
@@ -36,7 +36,7 @@
           .then((value: UserEdit) => {
             user.value = value;
             user.value.about = user.value.about?.replace(/\r\n/g, "\n") ?? null;
-            inputUserName.value = value.name;
+            inputName.value = value.name;
             inputUserAbout.value = value.about ?? '';
             pageStatus.value = '';
 
@@ -47,7 +47,7 @@
           .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       401: () => {
-        router.replace({ path: '/login', query: { redirect: '/account' } });
+        router.replace({ path: '/sign-in', query: { redirect: '/account' } });
       },
       500: () => {
         user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
@@ -95,8 +95,8 @@
   }
 
   function handleUpdateName(newName: string): void {
-    if (user.value !== null && 'name' in user.value) {
-     user.value.name = newName;
+    if (user.value !== null && 'displayName' in user.value) {
+     user.value.displayName = newName;
     }
   }
 

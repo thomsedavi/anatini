@@ -21,11 +21,12 @@
   
   const inputErrors = ref<InputError[]>([]);
   const inputEmail = ref<string>(props.email ?? '');
-  const inputDisplayName = ref<string>('');
+  const inputName = ref<string>('');
   const inputConfirmationCode = ref<string>('');
-  const inputUserName = ref<string>('');
+  const inputHandle = ref<string>('');
   const inputVisibility = ref<string>('Public');
   const inputPassword = ref<string>('');
+  const inputIsPersistent = ref<boolean>(false);
   const errorSectionRef = ref<HTMLElement | null>(null);
   const status = ref<Status>('idle');
 
@@ -48,8 +49,8 @@
     inputErrors.value = [];
 
     const tidiedEmail = tidy(inputEmail.value);
-    const tidiedDisplayName = tidy(inputDisplayName.value);
-    const tidiedUserName = tidy(inputUserName.value);
+    const tidiedName = tidy(inputName.value);
+    const tidiedHandle = tidy(inputHandle.value);
     const tidiedPassword = tidy(inputPassword.value);
     const tidiedConfirmationCode = tidy(inputConfirmationCode.value);
 
@@ -57,12 +58,12 @@
       inputErrors.value.push({id: 'email', message: 'Email is required'});
     }
 
-    if (tidiedDisplayName === '') {
-      inputErrors.value.push({id: 'displayName', message: 'Display Name is required'});
+    if (tidiedName === '') {
+      inputErrors.value.push({id: 'name', message: 'Name is required'});
     }
 
-    if (tidiedUserName === '') {
-      inputErrors.value.push({id: 'userName', message: 'User Name is required'});
+    if (tidiedHandle === '') {
+      inputErrors.value.push({id: 'handle', message: 'Handle is required'});
     }
 
     if (tidiedPassword === '') {
@@ -116,11 +117,15 @@
     const body = new FormData();
 
     body.append('email', tidiedEmail);
-    body.append('displayName', tidiedDisplayName);
-    body.append('userName', tidiedUserName);
+    body.append('name', tidiedName);
+    body.append('handle', tidiedHandle);
     body.append('password', tidiedPassword);
     body.append('confirmationCode', tidiedConfirmationCode);
     body.append('visibility', inputVisibility.value);
+
+    if (inputIsPersistent.value === true) {
+      body.append('isPersistent', 'true');
+    }
 
     const init = { method: "POST", body: body };
 
@@ -159,21 +164,21 @@
           :required="true" />
 
         <InputText
-          v-model="inputDisplayName"
-          label="Display Name"
-          name="displayName"
-          id="displayName"
+          v-model="inputName"
+          label="Name"
+          name="name"
+          id="name"
           autocomplete="name"
-          :error="getError('displayName')"
+          :error="getError('name')"
           :required="true" />
 
         <InputText
-          v-model="inputUserName"
-          label="User Name"
-          name="userName"
-          id="userName"
+          v-model="inputHandle"
+          label="Handle"
+          name="handle"
+          id="handle"
           autocomplete="username"
-          :error="getError('userName')"
+          :error="getError('handle')"
           :required="true"
           help="lower case characters, number, and hyphens" />
 
@@ -203,11 +208,15 @@
           </option>
         </select>
         <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+
+        <input type="checkbox" id="input-is-persistent" name="is-persistent" v-model="inputIsPersistent" aria-describedby="help-is-persistent" />
+        <label for="input-is-persistent">Remember Me</label>
+        <small id="help-is-persistent">Remember you</small>
       </fieldset>
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputDisplayName) === '' || tidy(inputUserName) === '' || tidy(inputPassword) === '' || tidy(inputConfirmationCode) === '' || tidy(inputEmail) === '' || confirmationFailed"
+        :disabled="tidy(inputName) === '' || tidy(inputHandle) === '' || tidy(inputPassword) === '' || tidy(inputConfirmationCode) === '' || tidy(inputEmail) === '' || confirmationFailed"
         text="Complete Sign Up"
         busy-text="Completing Sign Up..." />
 

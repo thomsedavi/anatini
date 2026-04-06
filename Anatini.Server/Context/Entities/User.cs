@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Anatini.Server.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Anatini.Server.Context.Entities
 {
@@ -10,7 +11,7 @@ namespace Anatini.Server.Context.Entities
         public string? About { get; set; }
         public Guid? IconImageId { get; set; }
         public Guid? BannerImageId { get; set; }
-        public required string Visibility { get; set; }
+        public required Visibility Visibility { get; set; }
 
         public virtual ICollection<ApplicationUserEmail> Emails { get; set; } = [];
         public virtual ICollection<ApplicationUserImage> Images { get; set; } = [];

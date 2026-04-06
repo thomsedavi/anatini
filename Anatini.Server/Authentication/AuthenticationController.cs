@@ -58,7 +58,13 @@ namespace Anatini.Server.Authentication
                 return NotFound();
             }
 
-            var user = await userManager.AddUserAsync(signUpForm.DisplayName, signUpForm.UserName, userManager.NormalizeName(signUpForm.UserName), signUpForm.Password, signUpForm.Visibility, userEmail);
+            var (identityResult, user) = await userManager.AddUserAsync(signUpForm.Handle, signUpForm.Name, userManager.NormalizeName(signUpForm.Handle), signUpForm.Password, signUpForm.Visibility, userEmail);
+
+            if (!identityResult.Succeeded)
+            {
+                // TODO log errors
+                return Problem();
+            }
 
             await signInManager.SignInAsync(user, isPersistent: signUpForm.IsPersistent ?? false);
 

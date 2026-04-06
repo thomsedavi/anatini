@@ -14,11 +14,11 @@ namespace Anatini.Server.Authentication
 
     public class SignUpForm
     {
-        [MaxLength(64), DataType(DataType.Text)]
-        public required string DisplayName { get; set; }
+        [MaxLength(256), DataType(DataType.Text)]
+        public required string Name { get; set; }
 
-        [Handle, MaxLength(64), DataType(DataType.Text)]
-        public required string UserName { get; set; }
+        [Handle, MaxLength(256), DataType(DataType.Text)]
+        public required string Handle { get; set; }
 
         [DataType(DataType.EmailAddress)]
         public required string Email { get; set; }
