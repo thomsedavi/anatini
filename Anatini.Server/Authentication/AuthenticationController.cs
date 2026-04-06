@@ -119,7 +119,9 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIsAuthenticated()
         {
-            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = User.Identity?.IsAuthenticated ?? false });
+            var isTrusted = User.HasClaim(c => c.Type == "http://anatini.com/claims/istrusted" && c.Value == "true");
+
+            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = User.Identity?.IsAuthenticated ?? false, IsTrusted = isTrusted });
         }
     }
 }

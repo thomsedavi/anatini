@@ -19,25 +19,9 @@ export type UserEdit = {
   id: string;
   name: string;
   about: string | null;
-  defaultHandle: string;
-  emails: {
-    address: string;
-    verified: boolean;
-  }[];
+  handle: string;
   channels: Channel[] | null;
-  sessions: {
-    id: string;
-    userAgent: string;
-    revoked: boolean;
-    createdDateTimeUtc: string;
-    updatedDateTimeUtc: string;
-    ipAddress: string;
-  }[];
-  aliases: {
-    handle: string;
-  }[];
-  permissions: string[] | null;
-  protected: boolean | null;
+  visibility: 'Private' | 'Protected' | 'Public';
   iconImage: Image | null;
 };
 
@@ -51,8 +35,8 @@ export type Events = {
 export type Channel = {
   id: string;
   name: string;
+  handle: string;
   about: string | null;
-  defaultHandle: string;
 };
 
 export type Tab = {
@@ -111,5 +95,5 @@ export type Note = {
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;
-  expiresUtc: string | null;
+  isTrusted: boolean;
 }

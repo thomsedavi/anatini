@@ -18,6 +18,7 @@
         response.json()
           .then((value: IsAuthenticated) => {
             store.isAuthenticated = value.isAuthenticated;
+            store.isTrusted = value.isTrusted;
           })
           .catch(() => {
             store.isAuthenticated = false;
