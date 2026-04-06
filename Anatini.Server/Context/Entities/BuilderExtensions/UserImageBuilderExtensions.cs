@@ -9,11 +9,11 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userImageBuilder.ToTable("user_images");
 
-            userImageBuilder.HasKey(userAlias => userAlias.Id);
+            userImageBuilder.HasKey(userImage => userImage.Id);
 
             userImageBuilder.Property(userImage => userImage.AltText).HasMaxLength(256);
-            userImageBuilder.Property(userAlias => userAlias.CreatedAtUtc).HasColumnType("timestamp with time zone");
-            userImageBuilder.Property(userAlias => userAlias.UpdatedAtUtc).HasColumnType("timestamp with time zone");
+            userImageBuilder.Property(userImage => userImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            userImageBuilder.Property(userImage => userImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
             userImageBuilder.Property(userImage => userImage.BlobName).HasMaxLength(1); // TODO determine this
             userImageBuilder.Property(userImage => userImage.BlobContainerName).HasMaxLength(1); // TODO determine this
 
