@@ -38,7 +38,25 @@ namespace Anatini.Server.Account
 
             if (Request.Form.Keys.Contains("about"))
             {
-                user.About = updateUser.About == string.Empty ? null : updateUser.About;
+                if (updateUser.About != null)
+                {
+                    var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateUser.About);
+
+                    if (validationResult.ErrorMessage != null)
+                    {
+                        return BadRequest(new { error = validationResult.ErrorMessage });
+                    }
+                    else if (validationResult.SanitizedHtml == null)
+                    {
+                        return BadRequest(new { error = "Unknown error" });
+                    }
+
+                    user.About = validationResult.SanitizedHtml;
+                }
+                else
+                {
+                    user.About = null;
+                }
             }
 
             if (updateUser.IconImageId != null)

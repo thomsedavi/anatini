@@ -30,7 +30,7 @@ namespace Anatini.Server.Utils
             var sanitizer = new HtmlSanitizer();
             sanitizer.AllowedTags.Clear();
 
-            var allowed = new HashSet<string> { "article", "p", "em", "strong" };
+            var allowed = new HashSet<string> { "article", "p", "em", "strong", "br" };
             foreach (var tag in allowed) sanitizer.AllowedTags.Add(tag);
 
             sanitizer.AllowedAttributes.Clear();
@@ -61,7 +61,7 @@ namespace Anatini.Server.Utils
 
                 foreach (var nested in child.Children)
                 {
-                    if (!nested.TagName.Equals("em", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("strong", StringComparison.CurrentCultureIgnoreCase))
+                    if (!nested.TagName.Equals("em", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("strong", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("br", StringComparison.CurrentCultureIgnoreCase))
                     {
                         return new HtmlValidationResult
                         {
