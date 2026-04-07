@@ -1,8 +1,7 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Common;
-using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Context;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Users;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +11,7 @@ namespace Anatini.Server.Account
 {
     [ApiController]
     [Route("api/account")]
-    public class AccountController(IBlobService blobService) : AnatiniControllerBase
+    public class AccountController(ApplicationDbContext context, IBlobService blobService) : AnatiniControllerBase(context)
     {
         [Authorize]
         [HttpGet]
@@ -35,71 +34,27 @@ namespace Anatini.Server.Account
             if (updateUser.Name != null)
             {
                 user.Name = updateUser.Name;
-
-                foreach (var alias in user.Aliases)
-                {
-                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-                    //
-                    //if (userAlias != null)
-                    //{
-                    //    userAlias.UserName = updateUser.Name;
-                    //    await context.UpdateAsync(userAlias);
-                    //}
-                }
             }
 
             if (Request.Form.Keys.Contains("about"))
             {
-                user.About = updateUser.About;
-
-                foreach (var alias in user.Aliases)
-                {
-                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-                    //
-                    //if (userAlias != null)
-                    //{
-                    //    userAlias.UserAbout = updateUser.About;
-                    //    await context.UpdateAsync(userAlias);
-                    //}
-                }
+                user.About = updateUser.About == string.Empty ? null : updateUser.About;
             }
 
             if (updateUser.IconImageId != null)
             {
                 user.IconImageId = updateUser.IconImageId;
-
-                foreach (var alias in user.Aliases)
-                {
-                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-                    //
-                    //if (userAlias != null)
-                    //{
-                    //    userAlias.IconImageId = updateUser.IconImageId;
-                    //    await context.UpdateAsync(userAlias);
-                    //}
-                }
             }
 
-            if (updateUser.Protected.HasValue)
+            if (updateUser.Visibility.HasValue)
             {
-                user.Protected = updateUser.Protected.Value ? true : null;
-
-                foreach (var alias in user.Aliases)
-                {
-                    //var userAlias = await context.Context.UserAliases.FindAsync(alias.Handle);
-                    //
-                    //if (userAlias != null)
-                    //{
-                    //    userAlias.Protected = updateUser.Protected.Value ? true : null;
-                    //    await context.UpdateAsync(userAlias);
-                    //}
-                }
+                user.Visibility = updateUser.Visibility.Value;
             }
 
-            await context.UpdateAsync(user);
+            await context.SaveChangesAsync();
 
             return NoContent();
-        });
+        }, track: true);
 
         [Authorize]
         [HttpPost("images")]

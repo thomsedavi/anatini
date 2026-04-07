@@ -171,7 +171,7 @@
           :about="user.about"
           :icon-image="user.iconImage"
           :channels="user.channels"
-          :protected="user.protected"
+          :visibility="user.visibility"
           :status="status"
           :inputErrors="inputErrors"
           @update-name="handleUpdateName"

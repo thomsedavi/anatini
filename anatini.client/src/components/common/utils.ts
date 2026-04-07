@@ -10,6 +10,28 @@ export function parseFromString(string: string): Node | null {
   return newDoc.body.firstChild;
 }
 
+// input: html article, e.g. "<article><p>My <em>text</em></p><p>With a...<br>...line <strong>break</strong></p></article>"
+// output: article markdown, e.g. "My *article*\n\nWith a...\n...line **break**"
+export function parseFromArticleString(string: string): string {
+  let result = '';
+
+  const node = parseFromString(string);
+
+  if (node?.nodeName === 'ARTICLE') {
+    node.childNodes.forEach((value, index) => {
+      result += paragraphToMarkdown(value as Element);
+
+      if (index < node.childNodes.length - 1) {
+        result += '\n\n';
+      }
+    });
+  }
+
+  return result;
+}
+
+// input: html element, e.g. "<p>Test<br>Is <strong>strong</strong><p>""
+// output: markdown, e.g. "Test\nIs **strong**"
 export function paragraphToMarkdown(paragraph: Element): string {
   let result = '';
 
@@ -25,6 +47,8 @@ export function paragraphToMarkdown(paragraph: Element): string {
         result += `**${paragraphToMarkdown(element)}**`;
       } else if (element.tagName === 'EM') {
         result += `*${paragraphToMarkdown(element)}*`;
+      } else if (element.tagName === 'BR') {
+        result += '\n';
       } else {
         result += element.textContent;
       }
@@ -58,6 +82,8 @@ export function paragraphToHTML(paragraph: Element): string {
   return result;
 }
 
+// input: single line with markdown, e.g. "I am writing *em* and **strong**"
+// output: single line with html, e.g. "I am writing <em>em</em> and <strong>strong</strong>"
 export function markdownToHtml(line: string): string {
   const cleanedLine = tidy(line);
 
@@ -70,6 +96,8 @@ export function markdownToHtml(line: string): string {
   return replaceAsterisks(cleanedLine, replacementTags);
 }
 
+// input: single line with markdown, e.g. "I am writing *em* and **strong**", along with replacement tags e.g. {1 (asterisks), <em>, </em>}
+// output: single line with html replaced for specific asterisk count, e.g. "I am writing <em>em</em> and **strong**"
 function replaceAsterisks(text: string, replacementTags: {asteriskCount: number, openingTags: string, closingTags: string}[]): string {
   if (replacementTags.length === 0) {
     return text;
@@ -104,6 +132,13 @@ function replaceAsterisks(text: string, replacementTags: {asteriskCount: number,
   return replaceAsterisks(result, replacementTags.slice(1));
 }
 
+// The below but wrapped in an article
+export function formatArticle(elementContent: string): string {
+  return `<article>${formatParagraph(elementContent)}</article>`;
+}
+
+// input: multi line string, e.g. "Line one\nLine two\n\nLine three with *em*"
+// output: multi line formatted html, e.g. "<p>Line one<br>Line two</p><p>Line three with <em>em</em></p>"
 export function formatParagraph(elementContent: string): string {
   let result = '';
 
@@ -200,38 +235,35 @@ messy
 Text
 ```
 */
-
-
 export function tidy(text: string): string {
-    const lines = text.split('\n');
+  const lines = text.split('\n');
 
-    let tidiedLines: string[] = [];
+  let tidiedLines: string[] = [];
 
-    let breakCounter = 0;
+  let breakCounter = 0;
 
-    lines.forEach(line => {
-        const tidiedLine = line.trim().replace(/\s+/g, ' ');
+  lines.forEach(line => {
+    const tidiedLine = line.trim().replace(/\s+/g, ' ');
 
-        if (tidiedLine === '') {
-            breakCounter++;
+    if (tidiedLine === '') {
+      breakCounter++;
 
-            if (breakCounter === 1) {
-                tidiedLines.push('');
-            }
-        } else {
-
-          tidiedLines.push(tidiedLine);
-          breakCounter = 0;
-        }
-    });
-
-    while (tidiedLines[0] === '') {
-        tidiedLines = tidiedLines.slice(1);
+      if (breakCounter === 1) {
+        tidiedLines.push('');
+      }
+    } else {
+      tidiedLines.push(tidiedLine);
+      breakCounter = 0;
     }
+  });
 
-    while (tidiedLines[tidiedLines.length - 1] === '') {
-        tidiedLines = tidiedLines.slice(0, tidiedLines.length - 1);
-    }
+  while (tidiedLines[0] === '') {
+    tidiedLines = tidiedLines.slice(1);
+  }
 
-    return tidiedLines.join('\n');
+  while (tidiedLines[tidiedLines.length - 1] === '') {
+    tidiedLines = tidiedLines.slice(0, tidiedLines.length - 1);
+  }
+
+  return tidiedLines.join('\n');
 }

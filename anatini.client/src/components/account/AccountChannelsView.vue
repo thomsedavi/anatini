@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { store } from '@/store';
   import type { Channel } from '@/types';
 
   defineProps<{
@@ -10,7 +11,7 @@
   <section id="panel-channels" role="tabpanel" aria-labelledby="tab-channels">
     <header>
       <h2>Channels</h2>
-      <RouterLink :to="{ name: 'ChannelCreate' }">+ Create Channel</RouterLink>
+      <RouterLink v-if="store.isTrusted" :to="{ name: 'ChannelCreate' }">+ Create Channel</RouterLink>
     </header>
 
     <section aria-labelledby="section-your-channels">
@@ -19,11 +20,11 @@
       </header>
 
       <ul role="list" v-if="(channels?.length ?? 0) > 0">
-        <li v-for="channel in channels" :key="`channel-${channel.defaultHandle}`">
-          <article :aria-labelledby="`channel-${channel.defaultHandle}`">
+        <li v-for="channel in channels" :key="`channel-${channel.handle}`">
+          <article :aria-labelledby="`channel-${channel.handle}`">
             <header>
-              <h4 :id="`channel-${channel.defaultHandle}`">
-                <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.defaultHandle }}">{{ channel.name }}</RouterLink>
+              <h4 :id="`channel-${channel.handle}`">
+                <RouterLink :to="{ name: 'ChannelEdit', params: { channelId: channel.handle }}">{{ channel.name }}</RouterLink>
               </h4>
             </header>
 

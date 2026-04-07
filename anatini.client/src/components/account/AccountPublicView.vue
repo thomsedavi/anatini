@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Image, InputError, Status, StatusActions } from '@/types';
-  import { tidy } from '../common/utils';
+  import { formatArticle, parseFromArticleString, tidy } from '../common/utils';
   import { ref } from 'vue';
   import InputText from '../common/InputText.vue';
   import SubmitButton from '../common/SubmitButton.vue';
@@ -23,17 +23,17 @@
   }>();
 
   const inputUserName = ref<string>(props.name);
-  const inputUserAbout = ref<string>(props.about ?? '');
+  const inputUserAbout = ref<string>(props.about != null ? parseFromArticleString(props.about) : '');
   const fileUserIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');
 
-  async function patch(body: FormData, tidiedName: string, tidiedAbout: string) {
+  async function patch(body: FormData, tidiedName: string, formattedAbout: string) {
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
         emit('update-name', tidiedName);
-        emit('update-about', tidiedAbout);
+        emit('update-about', formattedAbout);
       },
       400: (response?: Response) => {
         emit('update-status', 'error');
@@ -69,7 +69,7 @@
     emit('update-errors', []);
 
     const tidiedName = tidy(inputUserName.value);
-    const tidiedAbout = tidy(inputUserAbout.value);
+    const formattedAbout = tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value);
 
     if (tidiedName === '') {
       emit('update-errors', [{ id: 'name-user', message: 'Name is required' }]);
@@ -85,8 +85,8 @@
       body.append('name', tidiedName);
     }
 
-    if (props.about !== tidiedAbout) {
-      body.append('about', tidiedAbout);
+    if (props.about !== formattedAbout) {
+      body.append('about', formattedAbout);
     }
 
     if (fileUserIcon.value !== null) {
@@ -101,7 +101,7 @@
             .then((value: { id: string }) => {
               body.append('iconImageId', value.id);
 
-              patch(body, tidiedName, tidiedAbout);
+              patch(body, tidiedName, formattedAbout);
 
               fileUserIcon.value = null; 
             });
@@ -116,7 +116,7 @@
 
       apiFetchAuthenticated('account/images', statusActionsIcon, initIcon);
     } else {
-      patch(body, tidiedName, tidiedAbout);
+      patch(body, tidiedName, formattedAbout);
     }
   }
 
@@ -140,7 +140,7 @@
   };
 
   function noChangeDisplay(): boolean {
-    return props.name === tidy(inputUserName.value) && (props.about ?? '') === tidy(inputUserAbout.value) && fileUserIcon.value === null;
+    return props.name === tidy(inputUserName.value) && (props.about ?? '') === formatArticle(inputUserAbout.value) && fileUserIcon.value === null;
   }
 
   function getError(id: string): string | undefined {
