@@ -2,12 +2,14 @@
 {
     public class ChannelEditDto
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public required IEnumerable<ChannelEditAliasDto> Aliases { get; set; }
-        public required string DefaultHandle { get; set; }
-        public bool? Protected { get; set; }
-        public string? DefaultCardImageId { get; set; }
+        public string? About { get; set; }
+        public required string Handle { get; set; }
+        public required string Visibility { get; set; }
+        public Guid? BannerImageId { get; set; }
+        public Guid? DefaultCardImageId { get; set; }
+        public Guid? IconImageId { get; set; }
     }
 
     public class ChannelEditAliasDto

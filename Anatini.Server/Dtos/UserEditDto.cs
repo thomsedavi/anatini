@@ -2,45 +2,13 @@
 {
     public class UserEditDto
     {
-        public required string Id { get; set; }
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public required string DefaultHandle { get; set; }
         public string? About { get; set; }
-        public IEnumerable<UserEditChannelDto>? Channels { get; set; }
-        public required IEnumerable<UserEditEmailDto> Emails { get; set; }
-        public IEnumerable<UserEditSessionDto>? Sessions { get; set; }
-        public required IEnumerable<UserEditAliasDto> Aliases { get; set; }
-        public IList<string>? Permissions { get;  set; }
-        public bool? Protected { get; set; }
+        public required string Visibility { get; set; }
         public ImageDto? IconImage { get; set; }
-    }
-
-    public class UserEditChannelDto
-    {
-        public required string Id { get; set; }
-        public required string Name { get; set; }
-        public string? About { get; set; }
-        public required string DefaultHandle { get; set; }
-    }
-
-    public class UserEditAliasDto
-    {
+        public required IEnumerable<ChannelEditDto> Channels { get; set; }
         public required string Handle { get; set; }
-    }
-
-    public class UserEditEmailDto
-    {
-        public required string Address { get; set; }
-        public required bool Verified { get; set; }
-    }
-
-    public class UserEditSessionDto
-    {
-        public required string Id { get; set; }
-        public required string UserAgent { get; set; }
-        public required bool Revoked { get; set; }
-        public required DateTime CreatedDateTimeUtc { get; set; }
-        public required DateTime UpdatedDateTimeUtc { get; set; }
-        public required string IPAddress { get; set; }
+        public string? UserName { get; set; }
     }
 }

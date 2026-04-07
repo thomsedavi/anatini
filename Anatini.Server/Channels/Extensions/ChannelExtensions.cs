@@ -10,8 +10,7 @@ namespace Anatini.Server.Channels.Extensions
             return new ChannelDto
             {
                 Id = channel.Id,
-                Name = channel.Name,
-                DefaultHandle = channel.DefaultHandle
+                Name = channel.Name
             };
         }
 
@@ -21,18 +20,12 @@ namespace Anatini.Server.Channels.Extensions
             {
                 Id = channel.Id,
                 Name = channel.Name,
-                Aliases = channel.Aliases.Select(ToChannelEditAliasDto),
+                About = channel.About,
+                Handle = channel.Handle,
+                Visibility = channel.Visibility.ToString(),
+                BannerImageId = channel.BannerImageId,
                 DefaultCardImageId = channel.DefaultCardImageId,
-                DefaultHandle = channel.DefaultHandle,
-                Protected = channel.Protected
-            };
-        }
-
-        public static ChannelEditAliasDto ToChannelEditAliasDto(this ChannelOwnedAlias channelOwnedAlias)
-        {
-            return new ChannelEditAliasDto
-            {
-                Handle = channelOwnedAlias.Handle
+                IconImageId = channel.IconImageId
             };
         }
     }
