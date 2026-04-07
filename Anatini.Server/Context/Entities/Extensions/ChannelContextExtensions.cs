@@ -1,36 +1,31 @@
-﻿using Anatini.Server.Utils;
+﻿using Anatini.Server.Enums;
 
 namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ChannelContextExtensions
     {
-        public static async Task<Channel> AddChannelAsync(this AnatiniContext context, string id, string name, string handle, bool? @protected, string userId, string userName)
+        public static Channel AddChannel(this ApplicationDbContext context, Guid userId, string handle, string normalizedHandle, string name, Visibility visibility)
         {
-            var channelOwnedUser = new ChannelOwnedUser
-            {
-                Id = userId,
-                Name = userName,
-                ChannelId = id
-            };
+            var id = Guid.CreateVersion7();
 
-            var channelOwnedAlias = new ChannelOwnedAlias
+            var channelHandle = new ChannelHandle
             {
+                ChannelId = id,
                 Handle = handle,
-                ChannelId = id
+                NormalizedHandle = normalizedHandle
             };
 
             var channel = new Channel
             {
-                ItemId = ItemId.Get(id),
                 Id = id,
                 Name = name,
-                DefaultHandle = handle,
-                Aliases = [channelOwnedAlias],
-                Users = [channelOwnedUser],
-                Protected = @protected
+                Handle = handle,
+                NormalizedHandle = normalizedHandle,
+                Visibility = visibility,
+                Handles = [channelHandle]
             };
 
-            await context.AddAsync(channel);
+            context.Add(channel);
 
             return channel;
         }

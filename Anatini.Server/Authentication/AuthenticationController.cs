@@ -24,7 +24,7 @@ namespace Anatini.Server.Authentication
         {
             try
             {
-                context.AddUserEmailAsync(emailForm.Email, userManager.NormalizeEmail(emailForm.Email));
+                context.AddUserEmail(emailForm.Email, userManager.NormalizeEmail(emailForm.Email));
                 await context.SaveChangesAsync();
             }
             catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)

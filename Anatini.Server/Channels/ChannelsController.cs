@@ -124,7 +124,7 @@ namespace Anatini.Server.Channels
             return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
         });
 
-        [Authorize]
+        [Authorize(Policy = "IsTrusted")]
         [HttpPost]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
@@ -132,15 +132,12 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
+        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingContextAsync(async (context) =>
         {
-            await context.AddChannelAliasAsync(createChannel.Handle, createChannel.Id, createChannel.Name, createChannel.Protected);
-            var channel = await context.AddChannelAsync(createChannel.Id, createChannel.Name, createChannel.Handle, createChannel.Protected, user.Id, user.Name);
-
-            user.AddChannel(channel);
-            await context.UpdateAsync(user);
+            var channel = context.AddChannel(RequiredUserId, createChannel.Handle, userManager.NormalizeName(createChannel.Handle), createChannel.Name, createChannel.Visibility);
+            await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Handle }, channel.ToChannelDto());
-        }, UserPermission.Admin, UserPermission.Trusted);
+        });
     }
 }
