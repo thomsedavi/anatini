@@ -14,8 +14,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             channelImageBuilder.Property(channelImage => channelImage.AltText).HasMaxLength(256);
             channelImageBuilder.Property(channelImage => channelImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
             channelImageBuilder.Property(channelImage => channelImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
-            channelImageBuilder.Property(channelImage => channelImage.BlobName).HasMaxLength(1); // TODO determine this
-            channelImageBuilder.Property(channelImage => channelImage.BlobContainerName).HasMaxLength(1); // TODO determine this
+            channelImageBuilder.Property(channelImage => channelImage.BlobName).HasMaxLength(64);
+            channelImageBuilder.Property(channelImage => channelImage.BlobContainerName).HasMaxLength(16);
 
             channelImageBuilder.HasOne(channelImage => channelImage.Channel).WithMany(user => user.Images).HasForeignKey(channelImage => channelImage.ChannelId).OnDelete(DeleteBehavior.Cascade);
         }

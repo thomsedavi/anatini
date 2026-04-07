@@ -4,12 +4,12 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserEmailContextExtensions
     {
-        public static ApplicationUserEmail AddUserEmailAsync(this ApplicationDbContext context, string address)
+        public static ApplicationUserEmail AddUserEmail(this ApplicationDbContext context, string email, string normalizedEmail)
         {
             var userEmail = new ApplicationUserEmail
             {
-                Email = address,
-                NormalizedEmail = address.ToUpperInvariant(),
+                Email = email,
+                NormalizedEmail = normalizedEmail,
                 ConfirmationCode = RandomHex.NextX8()
             };
 

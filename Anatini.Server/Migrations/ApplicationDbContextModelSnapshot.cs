@@ -367,14 +367,14 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name");
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name");
 
                     b.Property<DateTime>("CreatedAtUtc")
@@ -646,14 +646,14 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name");
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name");
 
                     b.Property<Guid>("ChannelId")
@@ -801,14 +801,14 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name");
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name");
 
                     b.Property<DateTime>("CreatedAtUtc")

@@ -14,8 +14,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userImageBuilder.Property(userImage => userImage.AltText).HasMaxLength(256);
             userImageBuilder.Property(userImage => userImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
             userImageBuilder.Property(userImage => userImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
-            userImageBuilder.Property(userImage => userImage.BlobName).HasMaxLength(1); // TODO determine this
-            userImageBuilder.Property(userImage => userImage.BlobContainerName).HasMaxLength(1); // TODO determine this
+            userImageBuilder.Property(userImage => userImage.BlobName).HasMaxLength(64);
+            userImageBuilder.Property(userImage => userImage.BlobContainerName).HasMaxLength(16);
 
             userImageBuilder.HasOne(userImage => userImage.User).WithMany(user => user.Images).HasForeignKey(userImage => userImage.UserId).OnDelete(DeleteBehavior.Cascade);
         }

@@ -1,7 +1,9 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Common;
 using Anatini.Server.Context;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Users;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -94,16 +96,19 @@ namespace Anatini.Server.Account
                 return issue ?? BadRequest();
             }
 
-            var imageId = RandomHex.NextX16();
+            var imageId = Guid.CreateVersion7();
 
             var blobContainerName = "anatini-dev";
             var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            await context.AddUserImageAsync(imageId, user.Id, blobContainerName, blobName, createImage.AltText);
+            context.AddUserImage(imageId, user.Id, blobContainerName, blobName, createImage.AltText);
+            await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId }, new { Id = imageId, UserId = user.Id });
         });
+
+        // TODO when filtering logs by date, ensure date time format like new DateTime(2026, 2, 19, 0, 0, 0, DateTimeKind.Utc);
     }
 }
