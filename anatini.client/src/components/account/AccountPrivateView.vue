@@ -1,25 +1,31 @@
 <script setup lang="ts">
   import type { InputError, Status, StatusActions } from '@/types';
   import { apiFetchAuthenticated } from '../common/apiFetch';
-  import { ref } from 'vue';
   import SubmitButton from '../common/SubmitButton.vue';
+  import { ref } from 'vue';
 
   const props = defineProps<{
-    protected: boolean | null;
+    visibility: 'Private' | 'Protected' | 'Public';
     status: Status,
     inputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
-    'update-protected': [newProtected: boolean | null],
+    'update-protected': [newProtected: string],
     'update-status': [newStatus: Status],
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputProtected = ref<boolean>(props.protected ?? false);
+  const visibilityOptions = ref([
+    { text: 'Public', value: 'Public' },
+    { text: 'Protected', value: 'Protected' },
+    { text: 'Private', value: 'Private' }
+  ]);
+
+  const inputVisibility = ref<string>(props.visibility);
 
   function noChangePrivacy(): boolean {
-    return (props.protected ?? false) === inputProtected.value;
+    return props.visibility === inputVisibility.value;
   }
 
   async function patchAccountPrivacy() {
@@ -29,7 +35,7 @@
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
-        emit('update-protected', inputProtected.value === false ? null : true);
+        emit('update-protected', inputVisibility.value);
       },
       400: (response?: Response) => {
         emit('update-status', 'error');
@@ -50,9 +56,7 @@
 
     const body = new FormData();
 
-    if ((props.protected ?? false) !== inputProtected.value) {
-      body.append('protected', inputProtected.value ? 'true' : 'false');
-    }
+    body.append('visibility', inputVisibility.value);
 
     const init = { method: "PATCH", body: body };
 
@@ -70,9 +74,13 @@
       <fieldset>
         <legend class="visuallyhidden">Privacy</legend>
 
-        <input type="checkbox" id="input-protected" name="protected" v-model="inputProtected" aria-describedby="help-protected" />
-        <label for="input-protected">Protected</label>
-        <small id="help-protected">Your account will only be visible to trusted users</small>
+        <label for="input-visibility">Privacy Level</label>
+        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
+          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
+            {{ option.text }}
+          </option>
+        </select>
+        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
       </fieldset>
 
       <SubmitButton
