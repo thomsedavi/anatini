@@ -15,6 +15,12 @@ namespace Anatini.Server.Context.Entities.Extensions
                 NormalizedHandle = normalizedHandle
             };
 
+            var userChannel = new ApplicationUserChannel
+            {
+                UserId = userId,
+                ChannelId = id
+            };
+
             var channel = new Channel
             {
                 Id = id,
@@ -22,7 +28,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Handle = handle,
                 NormalizedHandle = normalizedHandle,
                 Visibility = visibility,
-                Handles = [channelHandle]
+                Handles = [channelHandle],
+                UserChannels = [userChannel]
             };
 
             context.Add(channel);
