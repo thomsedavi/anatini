@@ -11,7 +11,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userChannelBuilder.HasKey(uc => new { uc.UserId, uc.ChannelId });
 
-            userChannelBuilder.Property(user => user.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            userChannelBuilder.Property(user => user.UserId).HasColumnOrder(0);
+            userChannelBuilder.Property(user => user.ChannelId).HasColumnOrder(1);
+            userChannelBuilder.Property(user => user.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(2);
 
             userChannelBuilder.HasOne(uc => uc.User).WithMany(u => u.UserChannels).HasForeignKey(uc => uc.UserId);
             userChannelBuilder.HasOne(uc => uc.Channel).WithMany(c => c.UserChannels).HasForeignKey(uc => uc.ChannelId);

@@ -11,10 +11,12 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userTrustBuilder.HasKey(userTrust => new { userTrust.SourceUserId, userTrust.TargetUserId });
 
-            userTrustBuilder.Property(userTrust => userTrust.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            userTrustBuilder.Property(userTrust => userTrust.SourceUserId).HasColumnOrder(0);
+            userTrustBuilder.Property(userTrust => userTrust.TargetUserId).HasColumnOrder(1);
+            userTrustBuilder.Property(userTrust => userTrust.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(2);
 
-            userTrustBuilder.HasOne(userTrust => userTrust.SourceUser).WithMany(user => user.GivenTrusts).HasForeignKey(userTrust => userTrust.SourceUserId).OnDelete(DeleteBehavior.Restrict);
-            userTrustBuilder.HasOne(userTrust => userTrust.TargetUser).WithMany(user => user.ReceivedTrusts).HasForeignKey(userTrust => userTrust.TargetUserId).OnDelete(DeleteBehavior.Restrict);
+            userTrustBuilder.HasOneWithMany(userTrust => userTrust.SourceUser, user => user.GivenTrusts, userTrust => userTrust.SourceUserId, DeleteBehavior.Restrict);
+            userTrustBuilder.HasOneWithMany(userTrust => userTrust.TargetUser, user => user.ReceivedTrusts, userTrust => userTrust.TargetUserId, DeleteBehavior.Restrict);
 
             userTrustBuilder.HasIndex(ut => new { ut.TargetUserId, ut.SourceUserId });
         }

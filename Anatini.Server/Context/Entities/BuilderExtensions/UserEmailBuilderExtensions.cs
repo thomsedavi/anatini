@@ -11,11 +11,14 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userEmailBuilder.HasKey(userEmail => userEmail.Id);
 
-            userEmailBuilder.Property(userEmail => userEmail.Email).HasMaxLength(256);
-            userEmailBuilder.Property(userEmail => userEmail.ConfirmationCode).HasMaxLength(8);
-            userEmailBuilder.Property(userEmail => userEmail.NormalizedEmail).HasMaxLength(256);
-            userEmailBuilder.Property(userEmail => userEmail.UpdatedAtUtc).HasColumnType("timestamp with time zone");
-            userEmailBuilder.Property(userEmail => userEmail.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            userEmailBuilder.Property(userEmail => userEmail.Id).HasColumnOrder(0);
+            userEmailBuilder.Property(userEmail => userEmail.UserId).HasColumnOrder(1);
+            userEmailBuilder.Property(userEmail => userEmail.Email).HasMaxLength(256).HasColumnOrder(2);
+            userEmailBuilder.Property(userEmail => userEmail.NormalizedEmail).HasMaxLength(256).HasColumnOrder(3);
+            userEmailBuilder.Property(userEmail => userEmail.ConfirmationCode).HasMaxLength(8).HasColumnOrder(4);
+            userEmailBuilder.Property(userEmail => userEmail.EmailConfirmed).HasMaxLength(8).HasColumnOrder(5);
+            userEmailBuilder.Property(userEmail => userEmail.UpdatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(6);
+            userEmailBuilder.Property(userEmail => userEmail.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(7);
 
             userEmailBuilder.HasOne(userEmail => userEmail.User).WithMany(user => user.Emails).HasForeignKey(userEmail => userEmail.UserId).OnDelete(DeleteBehavior.Cascade);
 

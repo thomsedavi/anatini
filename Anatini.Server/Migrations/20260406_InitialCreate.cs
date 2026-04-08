@@ -17,16 +17,16 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    visibility = table.Column<int>(type: "integer", maxLength: 16, nullable: false),
                     about = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
                     icon_image_id = table.Column<Guid>(type: "uuid", nullable: true),
                     banner_image_id = table.Column<Guid>(type: "uuid", nullable: true),
                     default_card_image_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    visibility = table.Column<int>(type: "integer", maxLength: 16, nullable: false)
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,9 +85,9 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,11 +106,11 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
+                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,17 +128,17 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    date_nz = table.Column<DateOnly>(type: "date", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    date_nz = table.Column<DateOnly>(type: "date", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", maxLength: 16, nullable: false),
                     draft_version = table.Column<string>(type: "jsonb", nullable: false),
-                    published_version = table.Column<string>(type: "jsonb", nullable: true)
+                    published_version = table.Column<string>(type: "jsonb", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -248,9 +248,9 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                    normalized_handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

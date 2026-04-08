@@ -7,12 +7,20 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<Note> noteBuilder)
         {
-            //noteBuilder.ToContainer("Notes");
-            //noteBuilder.HasKey(note => new { note.ChannelId, note.Id });
-            //noteBuilder.HasPartitionKey(note => new { note.ChannelId, note.Id });
-            //noteBuilder.Property(note => note.ItemId).ToJsonProperty("id");
-            //noteBuilder.Property(note => note.ETag).ToJsonProperty("_etag");
-            //noteBuilder.Property(note => note.Timestamp).ToJsonProperty("_ts");
+            noteBuilder.ToTable("notes");
+
+            noteBuilder.HasKey(note => note.Id);
+
+            noteBuilder.Property(note => note.Id).HasColumnOrder(0);
+            noteBuilder.Property(note => note.ChannelId).HasColumnOrder(1);
+            noteBuilder.Property(note => note.Status).HasColumnOrder(2);
+            noteBuilder.Property(note => note.Visibility).HasColumnOrder(3);
+            noteBuilder.Property(note => note.Article).HasMaxLength(512).HasColumnOrder(4);
+            noteBuilder.Property(note => note.ConcurrencyStamp).IsConcurrencyToken().HasColumnOrder(9);
+            noteBuilder.Property(note => note.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(10);
+            noteBuilder.Property(note => note.UpdatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(11);
+
+            noteBuilder.HasOneWithMany(note => note.Channel, channel => channel.Notes, note => note.ChannelId, DeleteBehavior.Cascade);
         }
     }
 }
