@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Anatini.Server.Context.Entities.BuilderExtensions
@@ -12,17 +11,17 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             logBuilder.HasKey(log => log.Id);
 
-            logBuilder.Property(log => log.Id).HasColumnOrder(0);
-            logBuilder.Property(log => log.UserId).HasColumnOrder(1);
-            logBuilder.Property(log => log.ChannelId).HasColumnOrder(2);
-            logBuilder.Property(log => log.EventType).HasMaxLength(16).HasColumnOrder(3);
-            logBuilder.Property(log => log.IPAddress).HasMaxLength(16).HasColumnOrder(4);
-            logBuilder.Property(log => log.UserAgent).HasMaxLength(16).HasColumnOrder(5);
-            logBuilder.Property(log => log.MetaData).HasConversion(log => JsonSerializer.Serialize(log), log => JsonSerializer.Deserialize<MetaData>(log)).HasColumnType("jsonb").HasColumnOrder(6);
-            logBuilder.Property(log => log.DateTimeUtc).HasColumnType("timestamp with time zone").HasColumnOrder(7);
+            logBuilder.Property(log => log.Id).Has(order: 0);
+            logBuilder.Property(log => log.UserId).Has(order: 1);
+            logBuilder.Property(log => log.ChannelId).Has(order: 2);
+            logBuilder.Property(log => log.EventType).Has(order: 3);
+            logBuilder.Property(log => log.IPAddress)!.Has(maxLength: 16, order: 4);
+            logBuilder.Property(log => log.UserAgent)!.Has(maxLength: 16, order: 5);
+            logBuilder.Property(log => log.MetaData).HasColumnOrder(6).HasConversion();
+            logBuilder.Property(log => log.DateTimeUtc).Has(order: 7);
 
-            logBuilder.HasOne(log => log.User).WithMany(user => user.Logs).HasForeignKey(log => log.UserId).OnDelete(DeleteBehavior.Restrict);
-            logBuilder.HasOne(log => log.Channel).WithMany(channel => channel.Logs).HasForeignKey(log => log.ChannelId).OnDelete(DeleteBehavior.Restrict);
+            logBuilder.HasOneWithMany(log => log.User, user => user.Logs, log => log.UserId, DeleteBehavior.Restrict, required: false);
+            logBuilder.HasOneWithMany(log => log.Channel, user => user.Logs, log => log.ChannelId, DeleteBehavior.Restrict, required: false);
 
             logBuilder.HasIndex(userHandle => userHandle.EventType);
             logBuilder.HasIndex(userHandle => userHandle.DateTimeUtc);

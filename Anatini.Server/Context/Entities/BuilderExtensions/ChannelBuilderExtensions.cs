@@ -11,17 +11,17 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             channelBuilder.HasKey(channel => channel.Id);
 
-            channelBuilder.Property(channel => channel.Id).HasColumnOrder(0);
-            channelBuilder.Property(channel => channel.Handle).HasMaxLength(256).HasColumnOrder(1);
-            channelBuilder.Property(channel => channel.NormalizedHandle).HasMaxLength(256).HasColumnOrder(2);
-            channelBuilder.Property(channel => channel.Name).HasMaxLength(256).HasColumnOrder(3);
-            channelBuilder.Property(channel => channel.Visibility).HasMaxLength(16).HasColumnOrder(4);
-            channelBuilder.Property(channel => channel.About).HasMaxLength(512).HasColumnOrder(5);
-            channelBuilder.Property(channel => channel.IconImageId).HasColumnOrder(6);
-            channelBuilder.Property(channel => channel.BannerImageId).HasColumnOrder(7);
-            channelBuilder.Property(channel => channel.DefaultCardImageId).HasColumnOrder(8);
-            channelBuilder.Property(channel => channel.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(9);
-            channelBuilder.Property(channel => channel.UpdatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(10);
+            channelBuilder.Property(channel => channel.Id).Has(order: 0);
+            channelBuilder.Property(channel => channel.Handle)!.Has(maxLength: 256, order: 1);
+            channelBuilder.Property(channel => channel.NormalizedHandle)!.Has(maxLength: 256, order: 2);
+            channelBuilder.Property(channel => channel.Name)!.Has(maxLength: 256, order: 3);
+            channelBuilder.Property(channel => channel.Visibility).Has(order: 4);
+            channelBuilder.Property(channel => channel.About).Has(maxLength: 512, order: 5);
+            channelBuilder.Property(channel => channel.IconImageId).Has(order: 6);
+            channelBuilder.Property(channel => channel.BannerImageId).Has(order: 7);
+            channelBuilder.Property(channel => channel.DefaultCardImageId).Has(order: 8);
+            channelBuilder.Property(channel => channel.CreatedAtUtc).Has(order: 9);
+            channelBuilder.Property(channel => channel.UpdatedAtUtc).Has(order: 10);
 
             channelBuilder.HasIndex(channel => channel.NormalizedHandle).IsUnique();
         }

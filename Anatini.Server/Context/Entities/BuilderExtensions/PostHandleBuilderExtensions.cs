@@ -11,12 +11,15 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             postHandleBuilder.HasKey(postHandle => postHandle.Id);
 
-            postHandleBuilder.Property(postHandle => postHandle.Handle).HasMaxLength(256);
-            postHandleBuilder.Property(postHandle => postHandle.NormalizedHandle).HasMaxLength(256);
-            postHandleBuilder.Property(postHandle => postHandle.CreatedAtUtc).HasColumnType("timestamp with time zone");
+            postHandleBuilder.Property(postHandle => postHandle.Id).Has(order: 0);
+            postHandleBuilder.Property(postHandle => postHandle.PostId).Has(order: 1);
+            postHandleBuilder.Property(postHandle => postHandle.ChannelId).Has(order: 2);
+            postHandleBuilder.Property(postHandle => postHandle.Handle)!.Has(maxLength: 256, order: 4);
+            postHandleBuilder.Property(postHandle => postHandle.NormalizedHandle)!.Has(maxLength: 256, order: 5);
+            postHandleBuilder.Property(postHandle => postHandle.CreatedAtUtc).Has(order: 6);
 
-            postHandleBuilder.HasOne(postHandle => postHandle.Channel).WithMany(channel => channel.PostHandles).HasForeignKey(postHandle => postHandle.ChannelId).OnDelete(DeleteBehavior.Cascade);
-            postHandleBuilder.HasOne(postHandle => postHandle.Post).WithMany(post => post.Handles).HasForeignKey(postHandle => postHandle.PostId).OnDelete(DeleteBehavior.Cascade);
+            postHandleBuilder.HasOneWithMany(postHandle => postHandle.Channel, channel => channel.PostHandles, postHandle => postHandle.ChannelId, DeleteBehavior.Restrict);
+            postHandleBuilder.HasOneWithMany(postHandle => postHandle.Post, post => post.Handles, postHandle => postHandle.PostId, DeleteBehavior.Restrict);
 
             postHandleBuilder.HasIndex(postHandle => new { postHandle.ChannelId, postHandle.NormalizedHandle }).IsUnique();
         }

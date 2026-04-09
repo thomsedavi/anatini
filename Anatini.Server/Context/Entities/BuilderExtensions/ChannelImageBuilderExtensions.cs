@@ -11,15 +11,15 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             channelImageBuilder.HasKey(channelImage => channelImage.Id);
 
-            channelImageBuilder.Property(channelImage => channelImage.Id).HasColumnOrder(0);
-            channelImageBuilder.Property(channelImage => channelImage.ChannelId).HasColumnOrder(1);
-            channelImageBuilder.Property(channelImage => channelImage.BlobName).HasMaxLength(64).HasColumnOrder(2);
-            channelImageBuilder.Property(channelImage => channelImage.BlobContainerName).HasMaxLength(16).HasColumnOrder(3);
-            channelImageBuilder.Property(channelImage => channelImage.AltText).HasMaxLength(256).HasColumnOrder(4);
-            channelImageBuilder.Property(channelImage => channelImage.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(5);
-            channelImageBuilder.Property(channelImage => channelImage.UpdatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(6);
+            channelImageBuilder.Property(channelImage => channelImage.Id).Has(order: 0);
+            channelImageBuilder.Property(channelImage => channelImage.ChannelId).Has(order: 1);
+            channelImageBuilder.Property(channelImage => channelImage.BlobName)!.Has(maxLength: 64, order: 2);
+            channelImageBuilder.Property(channelImage => channelImage.BlobContainerName)!.Has(maxLength: 16, order: 3);
+            channelImageBuilder.Property(channelImage => channelImage.AltText).Has(maxLength: 512, order: 4);
+            channelImageBuilder.Property(channelImage => channelImage.CreatedAtUtc).Has(order: 5);
+            channelImageBuilder.Property(channelImage => channelImage.UpdatedAtUtc).Has(order: 6);
 
-            channelImageBuilder.HasOne(channelImage => channelImage.Channel).WithMany(user => user.Images).HasForeignKey(channelImage => channelImage.ChannelId).OnDelete(DeleteBehavior.Cascade);
+            channelImageBuilder.HasOneWithMany(channelImage => channelImage.Channel, channel => channel.Images, channelImage => channelImage.ChannelId, DeleteBehavior.Cascade);
         }
     }
 }

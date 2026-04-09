@@ -11,13 +11,15 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             postImageBuilder.HasKey(postImage => postImage.Id);
 
-            postImageBuilder.Property(postImage => postImage.AltText).HasMaxLength(256);
-            postImageBuilder.Property(postImage => postImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
-            postImageBuilder.Property(postImage => postImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
-            postImageBuilder.Property(postImage => postImage.BlobName).HasMaxLength(64);
-            postImageBuilder.Property(postImage => postImage.BlobContainerName).HasMaxLength(16);
+            postImageBuilder.Property(postImage => postImage.Id).Has(order: 0);
+            postImageBuilder.Property(postImage => postImage.PostId).Has(order: 1);
+            postImageBuilder.Property(postImage => postImage.BlobName)!.Has(maxLength: 64, order: 2);
+            postImageBuilder.Property(postImage => postImage.BlobContainerName)!.Has(maxLength: 16, order: 3);
+            postImageBuilder.Property(postImage => postImage.AltText).Has(maxLength: 512, order: 4);
+            postImageBuilder.Property(postImage => postImage.CreatedAtUtc).Has(order: 5);
+            postImageBuilder.Property(postImage => postImage.UpdatedAtUtc).Has(order: 6);
 
-            postImageBuilder.HasOne(postImage => postImage.Post).WithMany(post => post.Images).HasForeignKey(postImage => postImage.PostId).OnDelete(DeleteBehavior.Cascade);
+            postImageBuilder.HasOneWithMany(postImage => postImage.Post, post => post.Images, postImage => postImage.PostId, DeleteBehavior.Cascade);
         }
     }
 }
