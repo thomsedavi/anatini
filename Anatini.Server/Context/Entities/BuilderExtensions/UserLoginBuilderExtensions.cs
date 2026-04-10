@@ -9,7 +9,16 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userLoginBuilder.ToTable("user_logins");
 
-            userLoginBuilder.HasOne(userLogin => userLogin.User).WithMany(user => user.Logins).HasForeignKey(userLogin => userLogin.UserId).IsRequired();
+            userLoginBuilder.HasKey(userLogin => new { userLogin.LoginProvider, userLogin.ProviderKey });
+
+            userLoginBuilder.Property(userLogin => userLogin.LoginProvider)!.Has(order: 0);
+            userLoginBuilder.Property(userLogin => userLogin.ProviderKey)!.Has(order: 1);
+            userLoginBuilder.Property(userLogin => userLogin.ProviderDisplayName).Has(order: 2);
+            userLoginBuilder.Property(userLogin => userLogin.UserId).Has(order: 3);
+
+            userLoginBuilder.HasOneWithMany(userLogin => userLogin.User, user => user.Logins, userLogin => userLogin.UserId, DeleteBehavior.Cascade);
+
+            userLoginBuilder.HasIndex(userLogin => userLogin.UserId);
         }
     }
 }

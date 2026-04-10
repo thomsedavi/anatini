@@ -440,19 +440,23 @@ namespace Anatini.Server.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("login_provider")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("ProviderKey")
                         .HasColumnType("text")
-                        .HasColumnName("provider_key");
+                        .HasColumnName("provider_key")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnName("provider_display_name")
+                        .HasColumnOrder(2);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(3);
 
                     b.HasKey("LoginProvider", "ProviderKey")
                         .HasName("pk_user_logins");
