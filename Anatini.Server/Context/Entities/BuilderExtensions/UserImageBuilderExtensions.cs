@@ -11,13 +11,15 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userImageBuilder.HasKey(userImage => userImage.Id);
 
-            userImageBuilder.Property(userImage => userImage.AltText).HasMaxLength(256);
-            userImageBuilder.Property(userImage => userImage.CreatedAtUtc).HasColumnType("timestamp with time zone");
-            userImageBuilder.Property(userImage => userImage.UpdatedAtUtc).HasColumnType("timestamp with time zone");
-            userImageBuilder.Property(userImage => userImage.BlobName).HasMaxLength(64);
-            userImageBuilder.Property(userImage => userImage.BlobContainerName).HasMaxLength(16);
+            userImageBuilder.Property(userImage => userImage.Id).Has(order: 0);
+            userImageBuilder.Property(userImage => userImage.UserId).Has(order: 1);
+            userImageBuilder.Property(userImage => userImage.BlobName)!.Has(maxLength: 64, order: 2);
+            userImageBuilder.Property(userImage => userImage.BlobContainerName)!.Has(maxLength: 16, order: 3);
+            userImageBuilder.Property(userImage => userImage.AltText).Has(maxLength: 512, order: 4);
+            userImageBuilder.Property(userImage => userImage.CreatedAtUtc).Has(order: 5);
+            userImageBuilder.Property(userImage => userImage.UpdatedAtUtc).Has(order: 6);
 
-            userImageBuilder.HasOne(userImage => userImage.User).WithMany(user => user.Images).HasForeignKey(userImage => userImage.UserId).OnDelete(DeleteBehavior.Cascade);
+            userImageBuilder.HasOneWithMany(userImage => userImage.User, user => user.Images, userImage => userImage.UserId, DeleteBehavior.Cascade);
         }
     }
 }

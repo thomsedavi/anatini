@@ -2,7 +2,7 @@
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { formatParagraph, parseSource, tidy, type Source } from './common/utils';
+  import { formatArticle, parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import SubmitButton from './common/SubmitButton.vue';
   import InputTextArea from './common/InputTextArea.vue';
@@ -28,7 +28,7 @@
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       401: () => {
-        router.replace({ path: '/login', query: { redirect: `/channels/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
       },
       403: () => {
         channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };

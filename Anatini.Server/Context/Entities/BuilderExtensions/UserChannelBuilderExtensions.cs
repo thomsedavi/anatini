@@ -9,14 +9,14 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userChannelBuilder.ToTable("user_channels");
 
-            userChannelBuilder.HasKey(uc => new { uc.UserId, uc.ChannelId });
+            userChannelBuilder.HasKey(userChannel => new { userChannel.UserId, userChannel.ChannelId });
 
-            userChannelBuilder.Property(user => user.UserId).HasColumnOrder(0);
-            userChannelBuilder.Property(user => user.ChannelId).HasColumnOrder(1);
-            userChannelBuilder.Property(user => user.CreatedAtUtc).HasColumnType("timestamp with time zone").HasColumnOrder(2);
+            userChannelBuilder.Property(userChannel => userChannel.UserId).Has(order: 0);
+            userChannelBuilder.Property(userChannel => userChannel.ChannelId).Has(order: 1);
+            userChannelBuilder.Property(userChannel => userChannel.CreatedAtUtc).Has(order: 2);
 
-            userChannelBuilder.HasOne(uc => uc.User).WithMany(u => u.UserChannels).HasForeignKey(uc => uc.UserId);
-            userChannelBuilder.HasOne(uc => uc.Channel).WithMany(c => c.UserChannels).HasForeignKey(uc => uc.ChannelId);
+            userChannelBuilder.HasOneWithMany(userChannel => userChannel.User, user => user.UserChannels, userChannel => userChannel.UserId, DeleteBehavior.Restrict);
+            userChannelBuilder.HasOneWithMany(userChannel => userChannel.Channel, channel => channel.UserChannels, userChannel => userChannel.ChannelId, DeleteBehavior.Restrict);
         }
     }
 }

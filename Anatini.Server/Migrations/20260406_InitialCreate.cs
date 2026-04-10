@@ -337,7 +337,7 @@ namespace Anatini.Server.Migrations
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

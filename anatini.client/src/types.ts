@@ -37,6 +37,7 @@ export type Channel = {
   name: string;
   handle: string;
   about: string | null;
+  visiblity: 'Private' | 'Protected' | 'Public';
 };
 
 export type Tab = {

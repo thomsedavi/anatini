@@ -7,11 +7,18 @@
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRouter } from 'vue-router';
 
+  const visibilityOptions = ref([
+    { text: 'Public', value: 'Public' },
+    { text: 'Protected', value: 'Protected' },
+    { text: 'Private', value: 'Private' }
+  ]);
+
   const router = useRouter();
 
   const inputErrors = ref<InputError[]>([]);
   const inputChannelName = ref<string>('');
   const inputChannelHandle = ref<string>('');
+  const inputVisibility = ref<string>('Public');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -64,6 +71,7 @@
 
     body.append('name', tidiedName);
     body.append('handle', tidiedHandle);
+    body.append('visibility', inputVisibility.value);
 
     const init = { method: "POST", body: body };
 
@@ -107,6 +115,14 @@
           :maxlength="64"
           help="lower case with hyphens (e.g. 'my-anatini-channel')"
           :error="getError('handle')" />
+
+        <label for="input-visibility">Privacy Level</label>
+        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
+          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
+            {{ option.text }}
+          </option>
+        </select>
+        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
       </fieldset>
 
       <SubmitButton
