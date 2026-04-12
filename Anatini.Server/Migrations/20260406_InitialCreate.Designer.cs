@@ -100,104 +100,134 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("About")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
-                        .HasColumnName("about");
+                        .HasColumnType("text")
+                        .HasColumnName("about")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnName("access_failed_count")
+                        .HasColumnOrder(15);
 
                     b.Property<Guid?>("BannerImageId")
                         .HasColumnType("uuid")
-                        .HasColumnName("banner_image_id");
+                        .HasColumnName("banner_image_id")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(16);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(22);
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("email");
+                        .HasColumnName("email")
+                        .HasColumnOrder(2);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnName("email_confirmed")
+                        .HasColumnOrder(17);
 
                     b.Property<string>("Handle")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("handle");
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
 
                     b.Property<Guid?>("IconImageId")
                         .HasColumnType("uuid")
-                        .HasColumnName("icon_image_id");
+                        .HasColumnName("icon_image_id")
+                        .HasColumnOrder(8);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnName("lockout_enabled")
+                        .HasColumnOrder(14);
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockout_end");
+                        .HasColumnName("lockout_end")
+                        .HasColumnOrder(13);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_email");
+                        .HasColumnName("normalized_email")
+                        .HasColumnOrder(20);
 
                     b.Property<string>("NormalizedHandle")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle");
+                        .HasColumnName("normalized_handle")
+                        .HasColumnOrder(19);
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnName("normalized_user_name")
+                        .HasColumnOrder(21);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
-                        .HasColumnName("password_hash");
+                        .HasColumnName("password_hash")
+                        .HasColumnOrder(10);
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number")
+                        .HasColumnOrder(3);
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("phone_number_confirmed")
+                        .HasColumnOrder(18);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
-                        .HasColumnName("security_stamp");
+                        .HasColumnName("security_stamp")
+                        .HasColumnOrder(11);
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnName("two_factor_enabled")
+                        .HasColumnOrder(12);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc");
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(23);
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("user_name");
+                        .HasColumnName("user_name")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Visibility")
-                        .HasMaxLength(16)
                         .HasColumnType("integer")
-                        .HasColumnName("visibility");
+                        .HasColumnName("visibility")
+                        .HasColumnOrder(6);
 
                     b.HasKey("Id")
                         .HasName("pk_users");
@@ -297,7 +327,7 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("character varying(8)")
                         .HasColumnName("confirmation_code")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -314,14 +344,14 @@ namespace Anatini.Server.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_email")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -562,12 +592,12 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("about")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<Guid?>("BannerImageId")
                         .HasColumnType("uuid")
                         .HasColumnName("banner_image_id")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -577,7 +607,7 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid?>("DefaultCardImageId")
                         .HasColumnType("uuid")
                         .HasColumnName("default_card_image_id")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(7);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -589,21 +619,21 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid?>("IconImageId")
                         .HasColumnType("uuid")
                         .HasColumnName("icon_image_id")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
                     b.Property<string>("NormalizedHandle")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_handle")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -613,7 +643,7 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.HasKey("Id")
                         .HasName("pk_channels");

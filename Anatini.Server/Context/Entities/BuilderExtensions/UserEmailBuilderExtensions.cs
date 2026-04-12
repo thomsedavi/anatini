@@ -14,9 +14,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userEmailBuilder.Property(userEmail => userEmail.Id).Has(order: 0);
             userEmailBuilder.Property(userEmail => userEmail.UserId).Has(order: 1);
             userEmailBuilder.Property(userEmail => userEmail.Email)!.Has(maxLength: 256, order: 2);
-            userEmailBuilder.Property(userEmail => userEmail.NormalizedEmail)!.Has(maxLength: 256, order: 3);
-            userEmailBuilder.Property(userEmail => userEmail.ConfirmationCode).Has(maxLength: 8, order: 4);
-            userEmailBuilder.Property(userEmail => userEmail.EmailConfirmed).Has(order: 5);
+            userEmailBuilder.Property(userEmail => userEmail.ConfirmationCode).Has(maxLength: 8, order: 3);
+            userEmailBuilder.Property(userEmail => userEmail.EmailConfirmed).Has(order: 4);
+            userEmailBuilder.Property(userEmail => userEmail.NormalizedEmail)!.Has(maxLength: 256, order: 5);
             userEmailBuilder.Property(userEmail => userEmail.CreatedAtUtc).Has(order: 6);
             userEmailBuilder.Property(userEmail => userEmail.UpdatedAtUtc).Has(order: 7);
 
