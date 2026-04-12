@@ -66,21 +66,25 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claim_type")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claim_value")
+                        .HasColumnOrder(3);
 
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
-                        .HasColumnName("role_id");
+                        .HasColumnName("role_id")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id")
                         .HasName("pk_role_claims");
@@ -252,21 +256,25 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claim_type")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claim_value")
+                        .HasColumnOrder(3);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id")
                         .HasName("pk_user_claims");
@@ -471,11 +479,13 @@ namespace Anatini.Server.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(0);
 
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
-                        .HasColumnName("role_id");
+                        .HasColumnName("role_id")
+                        .HasColumnOrder(1);
 
                     b.HasKey("UserId", "RoleId")
                         .HasName("pk_user_roles");
@@ -490,19 +500,23 @@ namespace Anatini.Server.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("login_provider")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Name")
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("Value")
                         .HasColumnType("text")
-                        .HasColumnName("value");
+                        .HasColumnName("value")
+                        .HasColumnOrder(3);
 
                     b.HasKey("UserId", "LoginProvider", "Name")
                         .HasName("pk_user_tokens");
@@ -603,6 +617,18 @@ namespace Anatini.Server.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_channels");
+
+                    b.HasIndex("BannerImageId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_channels_banner_image_id");
+
+                    b.HasIndex("DefaultCardImageId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_channels_default_card_image_id");
+
+                    b.HasIndex("IconImageId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_channels_icon_image_id");
 
                     b.HasIndex("NormalizedHandle")
                         .IsUnique()
@@ -783,8 +809,7 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Article")
                         .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasColumnType("text")
                         .HasColumnName("article")
                         .HasColumnOrder(4);
 
@@ -1237,6 +1262,33 @@ namespace Anatini.Server.Migrations
                     b.Navigation("TargetUser");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Channel", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "BannerImage")
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "BannerImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_channels_user_images_banner_image_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "DefaultCardImage")
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "DefaultCardImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_channels_user_images_default_card_image_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "IconImage")
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "IconImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_channels_user_images_icon_image_id");
+
+                    b.Navigation("BannerImage");
+
+                    b.Navigation("DefaultCardImage");
+
+                    b.Navigation("IconImage");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ChannelHandle", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
@@ -1309,7 +1361,7 @@ namespace Anatini.Server.Migrations
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
                         .WithMany("Posts")
                         .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_posts_channels_channel_id");
 

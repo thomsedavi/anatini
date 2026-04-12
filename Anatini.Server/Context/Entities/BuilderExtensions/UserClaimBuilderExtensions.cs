@@ -9,7 +9,14 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userClaimBuilder.ToTable("user_claims");
 
-            userClaimBuilder.HasOne(userClaim => userClaim.User).WithMany(user => user.Claims).HasForeignKey(userClaim => userClaim.UserId).IsRequired();
+            userClaimBuilder.HasKey(userLogin => userLogin.Id);
+
+            userClaimBuilder.Property(userClaim => userClaim.Id).Has(order: 0);
+            userClaimBuilder.Property(userClaim => userClaim.UserId).Has(order: 1);
+            userClaimBuilder.Property(userClaim => userClaim.ClaimType).Has(order: 2);
+            userClaimBuilder.Property(userClaim => userClaim.ClaimValue).Has(order: 3);
+
+            userClaimBuilder.HasOneWithMany(userClaim => userClaim.User, user => user.Claims, userClaim => userClaim.UserId, DeleteBehavior.Cascade);
         }
     }
 }

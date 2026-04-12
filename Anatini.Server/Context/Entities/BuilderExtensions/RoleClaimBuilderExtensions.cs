@@ -9,7 +9,14 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             roleClaimBuilder.ToTable("role_claims");
 
-            roleClaimBuilder.HasOne(roleClaim => roleClaim.Role).WithMany(role => role.RoleClaims).HasForeignKey(roleClaim => roleClaim.RoleId).IsRequired();
+            roleClaimBuilder.HasKey(roleClaim => roleClaim.Id);
+
+            roleClaimBuilder.Property(roleClaim => roleClaim.Id).Has(order: 0);
+            roleClaimBuilder.Property(roleClaim => roleClaim.RoleId).Has(order: 1);
+            roleClaimBuilder.Property(roleClaim => roleClaim.ClaimType).Has(order: 2);
+            roleClaimBuilder.Property(roleClaim => roleClaim.ClaimValue).Has(order: 3);
+
+            roleClaimBuilder.HasOneWithMany(roleClaim => roleClaim.Role, role => role.RoleClaims, roleClaim => roleClaim.RoleId, DeleteBehavior.Cascade);
         }
     }
 }

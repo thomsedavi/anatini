@@ -23,6 +23,10 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             channelBuilder.Property(channel => channel.CreatedAtUtc).Has(order: 9);
             channelBuilder.Property(channel => channel.UpdatedAtUtc).Has(order: 10);
 
+            channelBuilder.HasOne(channel => channel.IconImage).WithOne().HasForeignKey<Channel>(channel => channel.IconImageId).OnDelete(DeleteBehavior.Restrict);
+            channelBuilder.HasOne(channel => channel.BannerImage).WithOne().HasForeignKey<Channel>(channel => channel.BannerImageId).OnDelete(DeleteBehavior.Restrict);
+            channelBuilder.HasOne(channel => channel.DefaultCardImage).WithOne().HasForeignKey<Channel>(channel => channel.DefaultCardImageId).OnDelete(DeleteBehavior.Restrict);
+
             channelBuilder.HasIndex(channel => channel.NormalizedHandle).IsUnique();
         }
     }

@@ -9,6 +9,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             roleBuilder.ToTable("roles");
 
+            roleBuilder.HasKey(role => role.Id);
+
             roleBuilder.Property(role => role.Id).Has(order: 0);
             roleBuilder.Property(role => role.Name).Has(maxLength: 256, order: 1);
             roleBuilder.Property(role => role.NormalizedName).Has(maxLength: 256, order: 2);

@@ -9,8 +9,13 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userRoleBuilder.ToTable("user_roles");
 
-            userRoleBuilder.HasOne(userRole => userRole.User).WithMany(user => user.Roles).HasForeignKey(userRole => userRole.UserId).IsRequired();
-            userRoleBuilder.HasOne(userRole => userRole.Role).WithMany(user => user.UserRoles).HasForeignKey(userRole => userRole.RoleId).IsRequired();
+            userRoleBuilder.HasKey(userRole => new { userRole.UserId, userRole.RoleId });
+
+            userRoleBuilder.Property(userRole => userRole.UserId).Has(order: 0);
+            userRoleBuilder.Property(userRole => userRole.RoleId).Has(order: 1);
+
+            userRoleBuilder.HasOneWithMany(userRole => userRole.User, user => user.Roles, userRole => userRole.UserId, DeleteBehavior.Cascade);
+            userRoleBuilder.HasOneWithMany(userRole => userRole.Role, user => user.UserRoles, userRole => userRole.RoleId, DeleteBehavior.Cascade);
         }
     }
 }

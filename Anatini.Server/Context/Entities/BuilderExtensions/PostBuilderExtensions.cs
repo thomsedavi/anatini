@@ -25,6 +25,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             postBuilder.Property(post => post.CreatedAtUtc).Has(order: 10);
             postBuilder.Property(post => post.UpdatedAtUtc).Has(order: 11);
 
+            postBuilder.HasOneWithMany(post => post.Channel, channel => channel.Posts, post => post.ChannelId, DeleteBehavior.Restrict);
+
             postBuilder.HasIndex(post => new { post.ChannelId, post.NormalizedHandle }).IsUnique();
             postBuilder.HasIndex(post => new { post.ChannelId, post.DateNZ });
             postBuilder.HasIndex(post => post.DateNZ ).HasFilter($"{postBuilder.GetColumnName(nameof(Post.Status))} = {(int)PostStatus.Published}").HasDatabaseName("ix_published_posts_date_nz");

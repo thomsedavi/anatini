@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             noteBuilder.Property(note => note.ChannelId).Has(order: 1);
             noteBuilder.Property(note => note.Status).Has(order: 2);
             noteBuilder.Property(note => note.Visibility).Has(order: 3);
-            noteBuilder.Property(note => note.Article)!.Has(maxLength: 512, order: 4);
+            noteBuilder.Property(note => note.Article)!.Has(order: 4);
             noteBuilder.Property(note => note.ConcurrencyStamp)!.Has(order: 5).IsConcurrencyToken();
             noteBuilder.Property(note => note.CreatedAtUtc).Has(order: 6);
             noteBuilder.Property(note => note.UpdatedAtUtc).Has(order: 7);

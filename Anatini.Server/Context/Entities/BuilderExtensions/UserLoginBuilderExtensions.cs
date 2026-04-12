@@ -17,8 +17,6 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userLoginBuilder.Property(userLogin => userLogin.UserId).Has(order: 3);
 
             userLoginBuilder.HasOneWithMany(userLogin => userLogin.User, user => user.Logins, userLogin => userLogin.UserId, DeleteBehavior.Cascade);
-
-            userLoginBuilder.HasIndex(userLogin => userLogin.UserId);
         }
     }
 }
