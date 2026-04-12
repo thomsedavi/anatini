@@ -96,5 +96,5 @@ export type Note = {
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;
-  isTrusted: boolean;
+  isTrusted: boolean | null;
 }

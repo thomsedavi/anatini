@@ -168,7 +168,9 @@ export function formatParagraph(elementContent: string): string {
     }
   });
 
-  paragraphs.push(paragraph);
+  if (paragraph.length > 0) {
+    paragraphs.push(paragraph);
+  }
 
   paragraphs.forEach(paragraphLines => {
     result += '<p>';

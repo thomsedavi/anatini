@@ -14,7 +14,7 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/authentication")]
-    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : AnatiniControllerBase(context)
+    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : AnatiniControllerBase(context, userManager)
     {
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
@@ -24,7 +24,7 @@ namespace Anatini.Server.Authentication
         {
             try
             {
-                context.AddUserEmail(emailForm.Email, userManager.NormalizeEmail(emailForm.Email));
+                context.AddUserEmail(emailForm.Email, UserManager.NormalizeEmail(emailForm.Email));
                 await context.SaveChangesAsync();
             }
             catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
@@ -43,9 +43,9 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async (context) =>
         {
-            var userEmail = await context.UserEmails.FirstOrDefaultAsync(u => u.NormalizedEmail.Equals(userManager.NormalizeEmail(signUpForm.Email)));
+            var userEmail = await context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(UserManager.NormalizeEmail(signUpForm.Email)));
 
             if (userEmail == null || userEmail.EmailConfirmed)
             {
@@ -54,11 +54,12 @@ namespace Anatini.Server.Authentication
 
             if (userEmail.ConfirmationCode != signUpForm.ConfirmationCode)
             {
-                await context.RemoveAsync(userEmail);
+                context.UserEmails.Remove(userEmail);
+                await context.SaveChangesAsync();
                 return NotFound();
             }
 
-            var (identityResult, user) = await userManager.AddUserAsync(signUpForm.Handle, signUpForm.Name, userManager.NormalizeName(signUpForm.Handle), signUpForm.Password, signUpForm.Visibility, userEmail);
+            var (identityResult, user) = await UserManager.AddUserAsync(signUpForm.Handle, signUpForm.Name, UserManager.NormalizeName(signUpForm.Handle), signUpForm.Password, signUpForm.Visibility, userEmail);
 
             if (!identityResult.Succeeded)
             {
@@ -87,9 +88,9 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async (context) =>
         {
-            var user = await context.GetUserAsync(userManager.NormalizeEmail(signInForm.Email));
+            var user = await context.GetUserAsync(UserManager.NormalizeEmail(signInForm.Email));
 
             if (user == null)
             {
@@ -119,9 +120,16 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIsAuthenticated()
         {
-            var isTrusted = User.HasClaim(c => c.Type == "http://anatini.com/claims/istrusted" && c.Value == "true");
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                var isTrusted = User.HasClaim(c => c.Type == "http://anatini.com/claims/istrusted" && c.Value == "true");
 
-            return Ok(new IsAuthenticatedResponse{ IsAuthenticated = User.Identity?.IsAuthenticated ?? false, IsTrusted = isTrusted });
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = User.Identity?.IsAuthenticated ?? false, IsTrusted = isTrusted });
+            }
+            else
+            {
+                return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+            }
         }
     }
 }
