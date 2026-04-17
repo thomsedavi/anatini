@@ -29,7 +29,7 @@
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
       },
       401: () => {
-        router.replace({ path: '/login', query: { redirect: `/channels/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
       },
       403: () => {
         channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };

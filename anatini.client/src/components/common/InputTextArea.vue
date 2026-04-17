@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { tidy } from './utils';
+  import { formatArticle, formatParagraph, tidy } from './utils';
 
   const model = defineModel<string>();
 
@@ -8,8 +8,9 @@
     name: string,
     id: string,
     error?: string,
-    maxlength?: number,
+    maxLength?: number,
     help?: string,
+    isArticle?: boolean,
   }>();
 </script>
 
@@ -19,16 +20,22 @@
     :id="`input-${id}`"
     v-model="model"
     :name="name"
-    :maxlength="maxlength ?? undefined"
+    :maxlength="maxLength ?? undefined"
     :aria-invalid="error ? true : undefined"
     :aria-errormessage="error ? `error-${id}` : undefined"
-    :aria-describedby="`${help ? `help-${id}` : undefined} ${maxlength ? `counter-${id}` : undefined}`"></textarea>
+    :aria-describedby="`${help ? `help-${id}` : undefined} ${maxLength ? `counter-${id}` : undefined}`"
+    :aria-controls="isArticle ? `preview-${id}` : undefined"></textarea>
   <small v-if="help" :id="`help-${id}`">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
-  <output v-if="maxlength"
+  <output v-if="maxLength"
     :id="`counter-${id}`"
-    :aria-live="256 - tidy(model ?? '').length < 20 ? 'assertive' : 'polite'"
+    :aria-live="maxLength - tidy(model ?? '').length < 20 ? 'assertive' : 'polite'"
     aria-atomic="true">
-    Characters remaining: {{ 256 - tidy(model ?? '').length }}
+    Characters remaining: {{ maxLength - (isArticle ? formatArticle(model ?? '') : tidy(model ?? '')).length }}
   </output>
+  <section v-if="isArticle" aria-label="Preview">
+    <output :id="`preview-${id}`">
+      <article v-html="tidy(model ?? '') !== '' ? formatParagraph(model ?? '') : '<p><em>Preview goes here</em></p>'"></article>
+    </output>
+  </section>
 </template>

@@ -55,11 +55,11 @@
       return;
     }
 
-    const tidiedArticle = tidy(inputArticle.value);
-
-    if (tidiedArticle === '') {
+    if (tidy(inputArticle.value) === '') {
       inputErrors.value.push({id: 'article', message: 'Content is required'});
     }
+
+    const formattedArticle = formatArticle(inputArticle.value);
 
     if (inputErrors.value.length > 0) {
       nextTick(() => {
@@ -86,9 +86,7 @@
 
     const body = new FormData();
 
-    const formattedArticle = formatParagraph(tidiedArticle);
-
-    body.append('article', `<article>${formattedArticle}</article>`);
+    body.append('article', formattedArticle);
 
     const init = { method: "POST", body: body };
 
@@ -133,9 +131,10 @@
               label="Content"
               name="article"
               id="article"
-              :maxlength="256"
+              :maxLength="512"
               :error="getError('article')"
-              help="This is your note" />
+              :isArticle="true"
+              help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
         </fieldset>
 
         <SubmitButton

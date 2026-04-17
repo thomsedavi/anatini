@@ -94,17 +94,13 @@
 
       bodyIcon.append('file', fileUserIcon.value);
       bodyIcon.append('type', 'Icon');
+      bodyIcon.append('handle', 'icon');
 
       const statusActionsIcon: StatusActions = {
-        201: (response?: Response) => {
-          response?.json()
-            .then((value: { id: string }) => {
-              body.append('iconImageId', value.id);
+        201: () => {
+          patch(body, tidiedName, formattedAbout);
 
-              patch(body, tidiedName, formattedAbout);
-
-              fileUserIcon.value = null; 
-            });
+          fileUserIcon.value = null; 
         },
         500: () => {
           emit('update-status', 'error');
@@ -140,7 +136,7 @@
   };
 
   function noChangeDisplay(): boolean {
-    return props.name === tidy(inputUserName.value) && (props.about ?? '') === formatArticle(inputUserAbout.value) && fileUserIcon.value === null;
+    return props.name === tidy(inputUserName.value) && (props.about ?? '') === (tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value)) && fileUserIcon.value === null;
   }
 
   function getError(id: string): string | undefined {
@@ -173,7 +169,7 @@
           label="About"
           name="about"
           id="about-user"
-          :maxlength="256"
+          :maxLength="256"
           :error="getError('about-user')"
           help="Briefly describe yourself for your public profile" />
 
