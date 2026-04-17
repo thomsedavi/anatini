@@ -7,16 +7,10 @@ namespace Anatini.Server.Context.Entities
     {
         public required string Name { get; set; }
         public required string Handle { get; set; }
-        public required string NormalizedHandle { get; set; }
         public string? About { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
         public required Visibility Visibility { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
-
-        public virtual ApplicationUserImage? IconImage { get; set; }
-        public virtual ApplicationUserImage? BannerImage { get; set; }
 
         public virtual ICollection<ApplicationUserEmail> Emails { get; set; } = [];
         public virtual ICollection<ApplicationUserImage> Images { get; set; } = [];
@@ -50,7 +44,6 @@ namespace Anatini.Server.Context.Entities
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Handle { get; set; }
-        public required string NormalizedHandle { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser User { get; set; } = null!;
@@ -80,6 +73,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
+        public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
         public string? AltText { get; set; }

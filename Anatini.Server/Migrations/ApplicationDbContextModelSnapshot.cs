@@ -108,23 +108,18 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
                         .HasColumnName("access_failed_count")
-                        .HasColumnOrder(15);
-
-                    b.Property<Guid?>("BannerImageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("banner_image_id")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(13);
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(16);
+                        .HasColumnOrder(14);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(22);
+                        .HasColumnOrder(19);
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -135,7 +130,7 @@ namespace Anatini.Server.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed")
-                        .HasColumnOrder(17);
+                        .HasColumnOrder(15);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -144,20 +139,15 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
-                    b.Property<Guid?>("IconImageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("icon_image_id")
-                        .HasColumnOrder(8);
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("lockout_enabled")
-                        .HasColumnOrder(14);
+                        .HasColumnOrder(12);
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lockout_end")
-                        .HasColumnOrder(13);
+                        .HasColumnOrder(11);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -170,25 +160,18 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_email")
-                        .HasColumnOrder(20);
-
-                    b.Property<string>("NormalizedHandle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
-                        .HasColumnOrder(19);
+                        .HasColumnOrder(17);
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_user_name")
-                        .HasColumnOrder(21);
+                        .HasColumnOrder(18);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
                         .HasColumnName("password_hash")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(8);
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text")
@@ -198,22 +181,22 @@ namespace Anatini.Server.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed")
-                        .HasColumnOrder(18);
+                        .HasColumnOrder(16);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
                         .HasColumnName("security_stamp")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(9);
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled")
-                        .HasColumnOrder(12);
+                        .HasColumnOrder(10);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(23);
+                        .HasColumnOrder(20);
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -229,21 +212,13 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
-                    b.HasIndex("BannerImageId")
+                    b.HasIndex("Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_banner_image_id");
-
-                    b.HasIndex("IconImageId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_icon_image_id");
+                        .HasDatabaseName("ix_users_handle");
 
                     b.HasIndex("NormalizedEmail")
                         .IsUnique()
                         .HasDatabaseName("ix_users_normalized_email");
-
-                    b.HasIndex("NormalizedHandle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_normalized_handle");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
@@ -385,7 +360,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -393,13 +368,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("handle")
                         .HasColumnOrder(2);
-
-                    b.Property<string>("NormalizedHandle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
-                        .HasColumnOrder(3);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -409,9 +377,9 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_handles");
 
-                    b.HasIndex("NormalizedHandle")
+                    b.HasIndex("Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_user_handles_normalized_handle");
+                        .HasDatabaseName("ix_user_handles_handle");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_user_handles_user_id");
@@ -431,31 +399,38 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -465,8 +440,9 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_images");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_images_user_id");
+                    b.HasIndex("UserId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_images_user_id_handle");
 
                     b.ToTable("user_images", (string)null);
                 });
@@ -591,20 +567,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("about")
                         .HasColumnOrder(4);
 
-                    b.Property<Guid?>("BannerImageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("banner_image_id")
-                        .HasColumnOrder(6);
-
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(9);
-
-                    b.Property<Guid?>("DefaultCardImageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("default_card_image_id")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -613,11 +579,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
-                    b.Property<Guid?>("IconImageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("icon_image_id")
-                        .HasColumnOrder(5);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -625,17 +586,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("name")
                         .HasColumnOrder(2);
 
-                    b.Property<string>("NormalizedHandle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
-                        .HasColumnOrder(8);
-
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(6);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
@@ -645,21 +599,9 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_channels");
 
-                    b.HasIndex("BannerImageId")
+                    b.HasIndex("Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_channels_banner_image_id");
-
-                    b.HasIndex("DefaultCardImageId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_channels_default_card_image_id");
-
-                    b.HasIndex("IconImageId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_channels_icon_image_id");
-
-                    b.HasIndex("NormalizedHandle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_channels_normalized_handle");
+                        .HasDatabaseName("ix_channels_handle");
 
                     b.ToTable("channels", (string)null);
                 });
@@ -680,7 +622,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -689,22 +631,15 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(2);
 
-                    b.Property<string>("NormalizedHandle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
-                        .HasColumnOrder(3);
-
                     b.HasKey("Id")
                         .HasName("pk_channel_handles");
 
                     b.HasIndex("ChannelId")
                         .HasDatabaseName("ix_channel_handles_channel_id");
 
-                    b.HasIndex("NormalizedHandle")
+                    b.HasIndex("Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_channel_handles_normalized_handle");
+                        .HasDatabaseName("ix_channel_handles_handle");
 
                     b.ToTable("channel_handles", (string)null);
                 });
@@ -721,21 +656,21 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<Guid>("ChannelId")
                         .HasColumnType("uuid")
@@ -745,18 +680,26 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id")
                         .HasName("pk_channel_images");
 
-                    b.HasIndex("ChannelId")
-                        .HasDatabaseName("ix_channel_images_channel_id");
+                    b.HasIndex("ChannelId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_channel_images_channel_id_handle");
 
                     b.ToTable("channel_images", (string)null);
                 });
@@ -847,7 +790,6 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
                         .HasColumnOrder(5);
@@ -896,26 +838,33 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(2);
 
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid")
@@ -925,13 +874,14 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id")
                         .HasName("pk_note_images");
 
-                    b.HasIndex("NoteId")
-                        .HasDatabaseName("ix_note_images_note_id");
+                    b.HasIndex("NoteId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_note_images_note_id_handle");
 
                     b.ToTable("note_images", (string)null);
                 });
@@ -953,23 +903,17 @@ namespace Anatini.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(8);
 
                     b.Property<DateOnly>("DateNZ")
                         .HasColumnType("date")
                         .HasColumnName("date_nz")
                         .HasColumnOrder(4);
-
-                    b.Property<string>("DraftVersion")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("draft_version")
-                        .HasColumnOrder(7);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -978,17 +922,12 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(2);
 
-                    b.Property<string>("NormalizedHandle")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
+                        .HasColumnName("name")
                         .HasColumnOrder(3);
-
-                    b.Property<string>("PublishedVersion")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("published_version")
-                        .HasColumnOrder(8);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -998,7 +937,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(9);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
@@ -1015,9 +954,9 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("ChannelId", "DateNZ")
                         .HasDatabaseName("ix_posts_channel_id_date_nz");
 
-                    b.HasIndex("ChannelId", "NormalizedHandle")
+                    b.HasIndex("ChannelId", "Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_posts_channel_id_normalized_handle");
+                        .HasDatabaseName("ix_posts_channel_id_handle");
 
                     b.ToTable("posts", (string)null);
                 });
@@ -1038,7 +977,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -1046,13 +985,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
-
-                    b.Property<string>("NormalizedHandle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_handle")
-                        .HasColumnOrder(5);
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
@@ -1065,9 +997,9 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("PostId")
                         .HasDatabaseName("ix_post_handles_post_id");
 
-                    b.HasIndex("ChannelId", "NormalizedHandle")
+                    b.HasIndex("ChannelId", "Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_post_handles_channel_id_normalized_handle");
+                        .HasDatabaseName("ix_post_handles_channel_id_handle");
 
                     b.ToTable("post_handles", (string)null);
                 });
@@ -1084,26 +1016,33 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(2);
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
@@ -1113,15 +1052,52 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id")
                         .HasName("pk_post_images");
 
-                    b.HasIndex("PostId")
-                        .HasDatabaseName("ix_post_images_post_id");
+                    b.HasIndex("PostId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_post_images_post_id_handle");
 
                     b.ToTable("post_images", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.PostVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(2);
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("post_id")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id")
+                        .HasName("pk_post_versions");
+
+                    b.HasIndex("PostId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_post_versions_post_id_handle");
+
+                    b.ToTable("post_versions", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRoleClaim", b =>
@@ -1134,25 +1110,6 @@ namespace Anatini.Server.Migrations
                         .HasConstraintName("fk_role_claims_asp_net_roles_role_id");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUser", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "BannerImage")
-                        .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.ApplicationUser", "BannerImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_users_user_images_banner_image_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "IconImage")
-                        .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.ApplicationUser", "IconImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_users_user_images_icon_image_id");
-
-                    b.Navigation("BannerImage");
-
-                    b.Navigation("IconImage");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserChannel", b =>
@@ -1216,7 +1173,7 @@ namespace Anatini.Server.Migrations
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
                         .WithMany("Images")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_user_images_users_user_id");
 
@@ -1289,33 +1246,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("TargetUser");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Channel", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "BannerImage")
-                        .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "BannerImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_channels_user_images_banner_image_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "DefaultCardImage")
-                        .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "DefaultCardImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_channels_user_images_default_card_image_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUserImage", "IconImage")
-                        .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.Channel", "IconImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_channels_user_images_icon_image_id");
-
-                    b.Navigation("BannerImage");
-
-                    b.Navigation("DefaultCardImage");
-
-                    b.Navigation("IconImage");
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.ChannelHandle", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
@@ -1333,7 +1263,7 @@ namespace Anatini.Server.Migrations
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
                         .WithMany("Images")
                         .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_channel_images_channels_channel_id");
 
@@ -1376,7 +1306,7 @@ namespace Anatini.Server.Migrations
                     b.HasOne("Anatini.Server.Context.Entities.Note", "Note")
                         .WithMany("Images")
                         .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_note_images_notes_note_id");
 
@@ -1421,9 +1351,21 @@ namespace Anatini.Server.Migrations
                     b.HasOne("Anatini.Server.Context.Entities.Post", "Post")
                         .WithMany("Images")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_post_images_posts_post_id");
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.PostVersion", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Post", "Post")
+                        .WithMany("Versions")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_post_versions_posts_post_id");
 
                     b.Navigation("Post");
                 });
@@ -1487,6 +1429,8 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Handles");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Versions");
                 });
 #pragma warning restore 612, 618
         }

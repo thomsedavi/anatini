@@ -9,7 +9,7 @@ namespace Anatini.Server.Context.Entities
         public required PostStatus Status { get; set; }
         public required Visibility Visibility { get; set; }
         public required string Article { get; set; }
-        public required string ConcurrencyStamp { get; set; }
+        public string? ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
@@ -22,6 +22,7 @@ namespace Anatini.Server.Context.Entities
     {
         public Guid Id { get; set; }
         public required Guid NoteId { get; set; }
+        public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
         public string? AltText { get; set; }

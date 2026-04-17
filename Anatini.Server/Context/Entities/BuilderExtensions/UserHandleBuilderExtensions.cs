@@ -14,12 +14,11 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userHandleBuilder.Property(userHandle => userHandle.Id).Has(order: 0);
             userHandleBuilder.Property(userHandle => userHandle.UserId).Has(order: 1);
             userHandleBuilder.Property(userHandle => userHandle.Handle)!.Has(maxLength:256, order: 2);
-            userHandleBuilder.Property(userHandle => userHandle.NormalizedHandle)!.Has(maxLength: 256, order: 3);
-            userHandleBuilder.Property(userHandle => userHandle.CreatedAtUtc).Has(order: 4);
+            userHandleBuilder.Property(userHandle => userHandle.CreatedAtUtc).Has(order: 3);
 
             userHandleBuilder.HasOneWithMany(userHandle => userHandle.User, user => user.Handles, userHandle => userHandle.UserId, DeleteBehavior.Cascade);
 
-            userHandleBuilder.HasIndex(userHandle => userHandle.NormalizedHandle).IsUnique();
+            userHandleBuilder.HasIndex(userHandle => userHandle.Handle).IsUnique();
         }
     }
 }

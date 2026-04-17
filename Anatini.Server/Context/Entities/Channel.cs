@@ -6,13 +6,9 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
-        public required string NormalizedHandle { get; set; }
         public required string Name { get; set; }
         public required Visibility Visibility { get; set; }
         public string? About { get; set; }
-        public Guid? IconImageId { get; set; }
-        public Guid? BannerImageId { get; set; }
-        public Guid? DefaultCardImageId { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
@@ -23,9 +19,6 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ChannelHandle> Handles { get; set; } = [];
         public virtual ICollection<PostHandle> PostHandles { get; set; } = [];
         public virtual ICollection<ChannelImage> Images { get; set; } = [];
-        public virtual ApplicationUserImage? IconImage { get; set; }
-        public virtual ApplicationUserImage? BannerImage { get; set; }
-        public virtual ApplicationUserImage? DefaultCardImage { get; set; }
     }
 
     public class ChannelHandle
@@ -33,7 +26,6 @@ namespace Anatini.Server.Context.Entities
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string Handle { get; set; }
-        public required string NormalizedHandle { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual Channel Channel { get; set; } = null!;
@@ -43,6 +35,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
+        public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
         public string? AltText { get; set; }
