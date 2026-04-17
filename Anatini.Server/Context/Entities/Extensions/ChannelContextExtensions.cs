@@ -4,32 +4,36 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ChannelContextExtensions
     {
-        public static Channel AddChannel(this ApplicationDbContext context, Guid userId, string handle, string normalizedHandle, string name, Visibility visibility)
+        public static Channel AddChannel(this ApplicationDbContext context, Guid userId, string handle, string name, Visibility visibility)
         {
-            var id = Guid.CreateVersion7();
+            var channelId = Guid.CreateVersion7();
+            var utcNow = DateTime.UtcNow;
 
             var channelHandle = new ChannelHandle
             {
-                ChannelId = id,
+                Id = Guid.CreateVersion7(),
+                ChannelId = channelId,
                 Handle = handle,
-                NormalizedHandle = normalizedHandle
+                CreatedAtUtc = utcNow
             };
 
             var userChannel = new ApplicationUserChannel
             {
                 UserId = userId,
-                ChannelId = id
+                ChannelId = channelId,
+                CreatedAtUtc = utcNow
             };
 
             var channel = new Channel
             {
-                Id = id,
+                Id = channelId,
                 Name = name,
                 Handle = handle,
-                NormalizedHandle = normalizedHandle,
                 Visibility = visibility,
                 Handles = [channelHandle],
-                UserChannels = [userChannel]
+                UserChannels = [userChannel],
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow
             };
 
             context.Add(channel);

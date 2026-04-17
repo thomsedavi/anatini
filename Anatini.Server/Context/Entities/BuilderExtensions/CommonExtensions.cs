@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -7,6 +8,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 {
     public static class CommonExtensions
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+
         public static PropertyBuilder<T?> Has<T>(this PropertyBuilder<T?> propertyBuilder, int? order = null)
         {
             if (order.HasValue)
@@ -19,7 +22,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
         public static PropertyBuilder<T?> HasConversion<T>(this PropertyBuilder<T?> propertyBuilder)
         {
-            propertyBuilder.HasConversion(metaData => JsonSerializer.Serialize(metaData), metaData => JsonSerializer.Deserialize<T>(metaData)).HasColumnType("jsonb");
+            propertyBuilder.HasConversion(metaData => JsonSerializer.Serialize(metaData, JsonSerializerOptions), metaData => JsonSerializer.Deserialize<T>(metaData)).HasColumnType("jsonb");
 
             return propertyBuilder;
         }

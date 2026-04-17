@@ -1,10 +1,13 @@
 ﻿using System.Net.Mime;
+using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Notes.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Notes
 {
@@ -57,11 +60,10 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var eventData = new EventData(HttpContext);
+            var note = context.AddNoteAsync(validationResult.SanitizedHtml, Visibility.Public, channel.Id, PostStatus.Published, DateTime.UtcNow, createNote.Handle != null ? UserManager.NormalizeName(createNote.Handle) : null);
+            await context.SaveChangesAsync();
 
-            var note = await context.AddNoteAsync(createNote.Id, validationResult.SanitizedHtml, createNote.Protected, channel.Id, eventData);
-
-            return CreatedAtAction(nameof(GetNote), new { channelId = channel.DefaultHandle, noteId = note.Id }, note.ToNoteDto());
+            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto());
         }, requiresAccess: true);
 
         [HttpGet("{noteId}")]

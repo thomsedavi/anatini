@@ -1,19 +1,19 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Common;
+using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
-using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Users.Extensions;
-using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Anatini.Server.Channels
 {
     [ApiController]
     [Route("api/channels")]
-    public class ChannelsController(IBlobService blobService) : AnatiniControllerBase
+    public class ChannelsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager)
     {
         [HttpGet("{channelId}")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -105,7 +105,7 @@ namespace Anatini.Server.Channels
                 return issue ?? BadRequest();
             }
 
-            var imageId = RandomHex.NextX16();
+            var imageId = Guid.CreateVersion7();
 
             var blobContainerName = "anatini-dev";
             var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
@@ -134,7 +134,7 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingContextAsync(async (context) =>
         {
-            var channel = context.AddChannel(RequiredUserId, createChannel.Handle, userManager.NormalizeName(createChannel.Handle), createChannel.Name, createChannel.Visibility);
+            var channel = context.AddChannel(RequiredUserId, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Handle }, channel.ToChannelDto());

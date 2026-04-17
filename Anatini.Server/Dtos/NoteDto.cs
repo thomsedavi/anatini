@@ -2,8 +2,8 @@
 {
     public class NoteDto
     {
-        public required string Id { get; set; }
-        public required string ChannelId { get; set; }
+        public required Guid Id { get; set; }
+        public required Guid ChannelId { get; set; }
         public required string Article { get; set; }
         public required DateTime DateTimeUTC { get; set; }
     }

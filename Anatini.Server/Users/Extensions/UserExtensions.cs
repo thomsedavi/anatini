@@ -1,28 +1,26 @@
 ﻿using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Images.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static async Task<UserEditDto> ToUserEditDto(this ApplicationUser user, ApplicationDbContext context, IBlobService? blobService = null)
+        public static async Task<UserEditDto> ToUserEditDto(this ApplicationUser user, IBlobService? blobService = null)
         {
             ImageDto? iconImage = null;
-        
-            if (user.IconImageId != null && blobService != null)
-            {
-                var userImage = await context.UserImages.AsNoTracking().FirstOrDefaultAsync(userImage => userImage.Id == user.IconImageId);
 
-                if (userImage != null)
+            if (blobService != null)
+            {
+                var userIconImage = user.Images.FirstOrDefault(image => image.Handle == "icon");
+
+                if (userIconImage != null)
                 {
                     iconImage = new ImageDto
                     {
-                        Uri = await blobService.GenerateUserImageLink(userImage.BlobContainerName, userImage.BlobName),
-                        AltText = userImage.AltText,
+                        Uri = await blobService.GenerateUserImageLink(userIconImage.BlobContainerName, userIconImage.BlobName),
+                        AltText = userIconImage.AltText,
                     };
                 }
             }

@@ -12,8 +12,6 @@ namespace Anatini.Server.Posts
         public required string Handle { get; set; }
 
         public bool? Protected { get; set; }
-
-        public string Id { get; set; } = RandomHex.NextX16();
     }
 
     public class UpdatePost

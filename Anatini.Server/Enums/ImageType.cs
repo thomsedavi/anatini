@@ -2,8 +2,8 @@
 {
     public enum ImageType
     {
-        Banner,
-        Card,
-        Icon
+        Icon = 0,
+        Banner = 1,
+        Card = 2
     }
 }

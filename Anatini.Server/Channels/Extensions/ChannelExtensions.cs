@@ -10,7 +10,9 @@ namespace Anatini.Server.Channels.Extensions
             return new ChannelDto
             {
                 Id = channel.Id,
-                Name = channel.Name
+                Name = channel.Name,
+                About = channel.About,
+                Handle = channel.Handle
             };
         }
 
@@ -22,10 +24,7 @@ namespace Anatini.Server.Channels.Extensions
                 Name = channel.Name,
                 About = channel.About,
                 Handle = channel.Handle,
-                Visibility = channel.Visibility.ToString(),
-                BannerImageId = channel.BannerImageId,
-                DefaultCardImageId = channel.DefaultCardImageId,
-                IconImageId = channel.IconImageId
+                Visibility = channel.Visibility.ToString()
             };
         }
     }

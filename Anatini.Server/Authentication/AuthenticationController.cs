@@ -59,7 +59,7 @@ namespace Anatini.Server.Authentication
                 return NotFound();
             }
 
-            var (identityResult, user) = await UserManager.AddUserAsync(signUpForm.Handle, signUpForm.Name, UserManager.NormalizeName(signUpForm.Handle), signUpForm.Password, signUpForm.Visibility, userEmail);
+            var (identityResult, user) = await UserManager.AddUserAsync(NormalizeHandle(signUpForm.Handle), signUpForm.Name, signUpForm.Password, signUpForm.Visibility, userEmail);
 
             if (!identityResult.Succeeded)
             {
@@ -79,8 +79,12 @@ namespace Anatini.Server.Authentication
         {
             await signInManager.SignOutAsync();
 
+            // TODO
+            //return RedirectToAction("", "");
             return NoContent();
         }
+
+        // TODO when changing password call UserManager.UpdateSecurityStampAsync(user)
 
         [HttpPost("sign-in")]
         [Consumes(MediaTypeNames.Multipart.FormData)]

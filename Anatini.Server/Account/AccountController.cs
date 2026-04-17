@@ -1,28 +1,30 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Common;
 using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users;
 using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Anatini.Server.Account
 {
     [ApiController]
     [Route("api/account")]
-    public class AccountController(ApplicationDbContext context, IBlobService blobService) : AnatiniControllerBase(context)
+    public class AccountController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager)
     {
         [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserEdit() => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
+        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(RequiredUserId, async (user) =>
         {
-            return await Task.FromResult(Ok(await user.ToUserEditDto(context, blobService)));
+            return await Task.FromResult(Ok(await user.ToUserEditDto(blobService)));
         });
 
         [Authorize]
@@ -59,11 +61,6 @@ namespace Anatini.Server.Account
                 {
                     user.About = null;
                 }
-            }
-
-            if (updateUser.IconImageId != null)
-            {
-                user.IconImageId = updateUser.IconImageId;
             }
 
             if (updateUser.Visibility.HasValue)
@@ -103,7 +100,7 @@ namespace Anatini.Server.Account
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddUserImage(imageId, user.Id, blobContainerName, blobName, createImage.AltText);
+            context.AddUserImage(imageId, user.Id, NormalizeHandle(createImage.Handle), blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId }, new { Id = imageId, UserId = user.Id });

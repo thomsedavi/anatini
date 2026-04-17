@@ -781,7 +781,7 @@ namespace Anatini.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<Guid>("ChannelId")
                         .HasColumnType("uuid")
@@ -792,12 +792,19 @@ namespace Anatini.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -807,12 +814,12 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.HasKey("Id")
                         .HasName("pk_notes");
@@ -822,6 +829,10 @@ namespace Anatini.Server.Migrations
 
                     b.HasIndex("ChannelId", "CreatedAtUtc")
                         .HasDatabaseName("ix_notes_channel_id_created_at_utc");
+
+                    b.HasIndex("ChannelId", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_notes_channel_id_handle");
 
                     b.ToTable("notes", (string)null);
                 });

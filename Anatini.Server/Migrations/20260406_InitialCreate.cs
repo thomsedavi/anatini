@@ -125,6 +125,7 @@ namespace Anatini.Server.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
+                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     article = table.Column<string>(type: "text", nullable: false),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true),
@@ -570,6 +571,12 @@ namespace Anatini.Server.Migrations
                 name: "ix_notes_channel_id_created_at_utc",
                 table: "notes",
                 columns: new[] { "channel_id", "created_at_utc" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_notes_channel_id_handle",
+                table: "notes",
+                columns: new[] { "channel_id", "handle" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_notes_created_at_utc",
