@@ -1,21 +1,26 @@
-﻿using Anatini.Server.Utils;
-
-namespace Anatini.Server.Context.Entities.Extensions
+﻿namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class ChannelImageContextExtensions
     {
-        public static async Task<int> AddChannelImageAsync(this AnatiniContext context, string id, string channelId, string blobContainerName, string blobName)
+        public static ChannelImage AddChannelImage(this ApplicationDbContext context, Guid id, Guid channelId, string handle, string blobContainerName, string blobName, string? altText = null)
         {
+            var utcNow = DateTime.UtcNow;
+
             var channelImage = new ChannelImage
             {
                 Id = id,
-                ItemId = ItemId.Get(channelId, id),
                 ChannelId = channelId,
+                Handle = handle,
                 BlobContainerName = blobContainerName,
-                BlobName = blobName
+                BlobName = blobName,
+                AltText = altText,
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow
             };
 
-            return await context.AddAsync(channelImage);
+            context.Add(channelImage);
+
+            return channelImage;
         }
     }
 }

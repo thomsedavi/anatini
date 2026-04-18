@@ -112,7 +112,8 @@ namespace Anatini.Server.Channels
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            await context.AddChannelImageAsync(imageId, channel.Id, blobContainerName, blobName);
+            context.AddChannelImage(imageId, channel.Id, NormalizeHandle(createImage.Handle), blobContainerName, blobName, createImage.AltText);
+            await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
         }, requiresAccess: true);
