@@ -12,7 +12,7 @@ namespace Anatini.Server.Notes.Extensions
                 Id = note.Id,
                 ChannelId = note.ChannelId,
                 Article = note.Article,
-                DateTimeNZ = note.DateTimeNZ
+                PublishedAtUtc = note.PublishedAtUtc
             };
         }
     }

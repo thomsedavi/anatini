@@ -10,7 +10,7 @@ namespace Anatini.Server.Context.Entities
         public required EventType EventType { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
-        public required DateTime DateTimeUtc { get; set; }
+        public required DateTime CreatedAtUtc { get; set; }
         public MetaData? MetaData { get; set; }
 
         public virtual ApplicationUser? User { get; set; }

@@ -7,7 +7,7 @@ namespace Anatini.Server.Context.Entities
         public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string Handle { get; set; }
-        public required DateTime DateTimeNZ { get; set; }
+        public required DateTime PublishedAtUtc { get; set; }
         public required PostStatus Status { get; set; }
         public required Visibility Visibility { get; set; }
         public required string Article { get; set; }

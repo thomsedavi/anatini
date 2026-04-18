@@ -14,7 +14,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Id = id,
                 ChannelId = channelId,
                 Handle = handle ?? id.ToString(),
-                DateTimeNZ = utcNow.Truncate(),
+                PublishedAtUtc = utcNow.Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,

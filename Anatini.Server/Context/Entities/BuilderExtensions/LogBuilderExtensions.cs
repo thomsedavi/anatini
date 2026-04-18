@@ -18,13 +18,13 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             logBuilder.Property(log => log.IPAddress)!.Has(maxLength: 16, order: 4);
             logBuilder.Property(log => log.UserAgent)!.Has(maxLength: 16, order: 5);
             logBuilder.Property(log => log.MetaData).Has(order: 6).HasConversion();
-            logBuilder.Property(log => log.DateTimeUtc).Has(order: 7);
+            logBuilder.Property(log => log.CreatedAtUtc).Has(order: 7);
 
             logBuilder.HasOneWithMany(log => log.User, user => user.Logs, log => log.UserId, DeleteBehavior.Restrict, required: false);
             logBuilder.HasOneWithMany(log => log.Channel, user => user.Logs, log => log.ChannelId, DeleteBehavior.Restrict, required: false);
 
             logBuilder.HasIndex(userHandle => userHandle.EventType);
-            logBuilder.HasIndex(userHandle => userHandle.DateTimeUtc);
+            logBuilder.HasIndex(userHandle => userHandle.CreatedAtUtc);
         }
     }
 }

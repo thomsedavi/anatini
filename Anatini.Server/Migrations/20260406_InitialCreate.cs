@@ -126,7 +126,7 @@ namespace Anatini.Server.Migrations
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    date_time_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     article = table.Column<string>(type: "text", nullable: false),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true),
@@ -152,7 +152,7 @@ namespace Anatini.Server.Migrations
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    date_nz = table.Column<DateOnly>(type: "date", nullable: false),
+                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true),
@@ -202,7 +202,7 @@ namespace Anatini.Server.Migrations
                     ip_address = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     user_agent = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     meta_data = table.Column<string>(type: "jsonb", nullable: true),
-                    date_time_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -548,9 +548,9 @@ namespace Anatini.Server.Migrations
                 column: "channel_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_logs_date_time_utc",
+                name: "ix_logs_created_at_utc",
                 table: "logs",
-                column: "date_time_utc");
+                column: "created_at_utc");
 
             migrationBuilder.CreateIndex(
                 name: "ix_logs_event_type",
@@ -569,20 +569,20 @@ namespace Anatini.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_notes_channel_id_date_time_nz",
-                table: "notes",
-                columns: new[] { "channel_id", "date_time_nz" });
-
-            migrationBuilder.CreateIndex(
                 name: "ix_notes_channel_id_handle",
                 table: "notes",
                 columns: new[] { "channel_id", "handle" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_notes_date_time_nz",
+                name: "ix_notes_channel_id_published_at_utc",
                 table: "notes",
-                column: "date_time_nz");
+                columns: new[] { "channel_id", "published_at_utc" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_notes_published_at_utc",
+                table: "notes",
+                column: "published_at_utc");
 
             migrationBuilder.CreateIndex(
                 name: "ix_post_handles_channel_id_handle",
@@ -608,20 +608,20 @@ namespace Anatini.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_posts_channel_id_date_nz",
-                table: "posts",
-                columns: new[] { "channel_id", "date_nz" });
-
-            migrationBuilder.CreateIndex(
                 name: "ix_posts_channel_id_handle",
                 table: "posts",
                 columns: new[] { "channel_id", "handle" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_posts_channel_id_published_at_utc",
+                table: "posts",
+                columns: new[] { "channel_id", "published_at_utc" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_published_posts_date_nz",
                 table: "posts",
-                column: "date_nz",
+                column: "published_at_utc",
                 filter: "status = 1");
 
             migrationBuilder.CreateIndex(

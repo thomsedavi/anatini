@@ -28,7 +28,7 @@ namespace Anatini.Server.Posts
 
             var postId = Guid.CreateVersion7();
 
-            context.AddPost(postId, createPost.Name, createPost.Handle, channel.Id, eventData);
+            context.AddPost(postId, createPost.Name, createPost.Handle, channel.Id);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetPost), new { channelId = channel.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });

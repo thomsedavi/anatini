@@ -717,9 +717,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("channel_id")
                         .HasColumnOrder(2);
 
-                    b.Property<DateTime>("DateTimeUtc")
+                    b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_time_utc")
+                        .HasColumnName("created_at_utc")
                         .HasColumnOrder(7);
 
                     b.Property<int>("EventType")
@@ -757,8 +757,8 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("ChannelId")
                         .HasDatabaseName("ix_logs_channel_id");
 
-                    b.HasIndex("DateTimeUtc")
-                        .HasDatabaseName("ix_logs_date_time_utc");
+                    b.HasIndex("CreatedAtUtc")
+                        .HasDatabaseName("ix_logs_created_at_utc");
 
                     b.HasIndex("EventType")
                         .HasDatabaseName("ix_logs_event_type");
@@ -799,17 +799,17 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("created_at_utc")
                         .HasColumnOrder(8);
 
-                    b.Property<DateTime>("DateTimeNZ")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_time_nz")
-                        .HasColumnOrder(4);
-
                     b.Property<string>("Handle")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("handle")
                         .HasColumnOrder(3);
+
+                    b.Property<DateTime>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -829,15 +829,15 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_notes");
 
-                    b.HasIndex("DateTimeNZ")
-                        .HasDatabaseName("ix_notes_date_time_nz");
-
-                    b.HasIndex("ChannelId", "DateTimeNZ")
-                        .HasDatabaseName("ix_notes_channel_id_date_time_nz");
+                    b.HasIndex("PublishedAtUtc")
+                        .HasDatabaseName("ix_notes_published_at_utc");
 
                     b.HasIndex("ChannelId", "Handle")
                         .IsUnique()
                         .HasDatabaseName("ix_notes_channel_id_handle");
+
+                    b.HasIndex("ChannelId", "PublishedAtUtc")
+                        .HasDatabaseName("ix_notes_channel_id_published_at_utc");
 
                     b.ToTable("notes", (string)null);
                 });
@@ -926,11 +926,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("created_at_utc")
                         .HasColumnOrder(8);
 
-                    b.Property<DateOnly>("DateNZ")
-                        .HasColumnType("date")
-                        .HasColumnName("date_nz")
-                        .HasColumnOrder(4);
-
                     b.Property<string>("Handle")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -944,6 +939,11 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("name")
                         .HasColumnOrder(3);
+
+                    b.Property<DateTime>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -963,16 +963,16 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_posts");
 
-                    b.HasIndex("DateNZ")
+                    b.HasIndex("PublishedAtUtc")
                         .HasDatabaseName("ix_published_posts_date_nz")
                         .HasFilter("status = 1");
-
-                    b.HasIndex("ChannelId", "DateNZ")
-                        .HasDatabaseName("ix_posts_channel_id_date_nz");
 
                     b.HasIndex("ChannelId", "Handle")
                         .IsUnique()
                         .HasDatabaseName("ix_posts_channel_id_handle");
+
+                    b.HasIndex("ChannelId", "PublishedAtUtc")
+                        .HasDatabaseName("ix_posts_channel_id_published_at_utc");
 
                     b.ToTable("posts", (string)null);
                 });

@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class PostContextExtensions
     {
-        public static Post AddPost(this ApplicationDbContext context, Guid id, string name, string handle, Guid channelId, EventData eventData)
+        public static Post AddPost(this ApplicationDbContext context, Guid id, string name, string handle, Guid channelId)
         {
             var utcNow = DateTime.UtcNow;
 
@@ -24,7 +24,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = id,
                 Status = PostStatus.Draft,
-                DateNZ = eventData.DateOnlyNZNow,
+                PublishedAtUtc = utcNow.Truncate(),
                 Handle = handle,
                 Name = name,
                 ChannelId = channelId,
