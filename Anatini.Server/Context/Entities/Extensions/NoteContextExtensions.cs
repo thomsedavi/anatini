@@ -1,4 +1,5 @@
 ﻿using Anatini.Server.Enums;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Context.Entities.Extensions
 {
@@ -13,6 +14,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Id = id,
                 ChannelId = channelId,
                 Handle = handle ?? id.ToString(),
+                DateTimeNZ = utcNow.Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,

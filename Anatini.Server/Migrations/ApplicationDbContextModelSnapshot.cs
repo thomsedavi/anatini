@@ -781,7 +781,7 @@ namespace Anatini.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<Guid>("ChannelId")
                         .HasColumnType("uuid")
@@ -792,12 +792,17 @@ namespace Anatini.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime>("DateTimeNZ")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_time_nz")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -814,21 +819,21 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.HasKey("Id")
                         .HasName("pk_notes");
 
-                    b.HasIndex("CreatedAtUtc")
-                        .HasDatabaseName("ix_notes_created_at_utc");
+                    b.HasIndex("DateTimeNZ")
+                        .HasDatabaseName("ix_notes_date_time_nz");
 
-                    b.HasIndex("ChannelId", "CreatedAtUtc")
-                        .HasDatabaseName("ix_notes_channel_id_created_at_utc");
+                    b.HasIndex("ChannelId", "DateTimeNZ")
+                        .HasDatabaseName("ix_notes_channel_id_date_time_nz");
 
                     b.HasIndex("ChannelId", "Handle")
                         .IsUnique()

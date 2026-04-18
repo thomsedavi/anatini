@@ -5,31 +5,34 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class UserManagerExtensions
     {
-        public static async Task<(IdentityResult, ApplicationUser)> AddUserAsync(this UserManager<ApplicationUser> userManager, string handle, string name, string normalizedHandle, string password, Visibility visibility, ApplicationUserEmail userEmail)
+        public static async Task<(IdentityResult, ApplicationUser)> AddUserAsync(this UserManager<ApplicationUser> userManager, string handle, string name, string password, Visibility visibility, ApplicationUserEmail userEmail)
         {
-            var id = Guid.CreateVersion7();
+            var userId = Guid.CreateVersion7();
+            var utcNow = DateTime.UtcNow;
 
             userEmail.ConfirmationCode = null;
             userEmail.EmailConfirmed = true;
 
             var userHandle = new ApplicationUserHandle
             {
-                UserId = id,
+                Id = Guid.CreateVersion7(),
+                UserId = userId,
                 Handle = handle,
-                NormalizedHandle = normalizedHandle
+                CreatedAtUtc = utcNow
             };
 
             var user = new ApplicationUser
             {
-                Id = id,
+                Id = userId,
+                Handle = handle,
                 Email = userEmail.Email,
                 UserName = userEmail.Email,
-                Handle = handle,
-                NormalizedHandle = normalizedHandle,
                 Name = name,
                 Visibility = visibility,
                 Handles = [userHandle],
-                Emails = [userEmail]
+                Emails = [userEmail],
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow
             };
 
             user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
