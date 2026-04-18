@@ -1,17 +1,18 @@
 ﻿using System.Net.Mime;
+using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
-using Anatini.Server.Enums;
 using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Anatini.Server.Posts
 {
     [ApiController]
     [Route("api/channels/{channelId}/posts")]
-    public class ChannelPostsController : AnatiniControllerBase
+    public class ChannelPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
     {
         [Authorize]
         [HttpPost]
@@ -25,10 +26,12 @@ namespace Anatini.Server.Posts
         {
             var eventData = new EventData(HttpContext);
 
-            var postAlias = await context.AddPostAliasAsync(createPost.Id, channel.Id, createPost.Handle, createPost.Name, createPost.Protected);
-            var post = await context.AddPostAsync(createPost.Id, createPost.Name, createPost.Handle, createPost.Protected, channel.Id, eventData);
+            var postId = Guid.CreateVersion7();
 
-            return CreatedAtAction(nameof(GetPost), new { channelId = channel.DefaultHandle, postId = createPost.Handle }, new { createPost.Id, DefaultHandle = createPost.Handle, createPost.Name });
+            context.AddPost(postId, createPost.Name, createPost.Handle, channel.Id, eventData);
+            await context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetPost), new { channelId = channel.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
         }, requiresAccess: true);
 
         [Authorize]
@@ -43,62 +46,6 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingPostContextAsync(channelId, postId, async (post, channel, context) =>
         {
-            if (updatePost.DateNZ.HasValue)
-            {
-                post.DraftVersion.DateNZ = updatePost.DateNZ.Value;
-            }
-
-            if (!string.IsNullOrEmpty(updatePost.Name))
-            {
-                post.DraftVersion.Name = updatePost.Name;
-            }
-
-            if (!string.IsNullOrEmpty(updatePost.Article))
-            {
-                post.DraftVersion.Article = updatePost.Article;
-            }
-
-            if (updatePost.Status == "Published")
-            {
-                if (post.PublishedVersion == null)
-                {
-                    await context.AddAttributePost(AttributePostType.Date, post.DraftVersion.DateNZ.GetDate(), channel, post);
-                    await context.AddAttributePost(AttributePostType.Week, post.DraftVersion.DateNZ.GetWeek(), channel, post);
-                }
-                else if (post.PublishedVersion != null && (post.PublishedVersion.DateNZ != post.DraftVersion.DateNZ || post.PublishedVersion.Name != post.DraftVersion.Name || post.PublishedVersion.CardImageId != post.DraftVersion.CardImageId))
-                {
-                    await context.RemoveAttributePost(AttributePostType.Date, post.PublishedVersion.DateNZ.GetDate(), channel, post);
-                    await context.RemoveAttributePost(AttributePostType.Week, post.PublishedVersion.DateNZ.GetWeek(), channel, post);
-                    await context.AddAttributePost(AttributePostType.Date, post.DraftVersion.DateNZ.GetDate(), channel, post);
-                    await context.AddAttributePost(AttributePostType.Week, post.DraftVersion.DateNZ.GetWeek(), channel, post);
-                }
-
-                var publishedVersion = new PostOwnedVersion
-                {
-                    Name = post.DraftVersion.Name,
-                    PostId = post.Id,
-                    PostChannelId = post.ChannelId,
-                    DateNZ = post.DraftVersion.DateNZ,
-                    Article = post.DraftVersion.Article
-                };
-
-                post.Status = updatePost.Status;
-                post.PublishedVersion = publishedVersion;
-            }
-            else if (updatePost.Status == "Draft")
-            {
-                if (post.PublishedVersion != null)
-                {
-                    await context.RemoveAttributePost(AttributePostType.Date, post.PublishedVersion.DateNZ.GetDate(), channel, post);
-                    await context.RemoveAttributePost(AttributePostType.Week, post.PublishedVersion.DateNZ.GetWeek(), channel, post);
-                }
-
-                post.Status = updatePost.Status;
-                post.PublishedVersion = null;
-            }
-
-            await context.UpdateAsync(post);
-
             return NoContent();
         }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
 
@@ -109,14 +56,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingPost(channelId, postId, post =>
         {
-            var versionDto = post.ToPostDto();
-
-            if (versionDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(versionDto);
+            return Ok();
         });
 
         [HttpGet("{postId}/edit")]
@@ -128,7 +68,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingPost(channelId, postId, post =>
         {
-            return Ok(post.ToPostEditDto());
+            return Ok();
         }, requiresAccess: true);
 
         [HttpGet("{postId}/preview")]
@@ -140,7 +80,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingPost(channelId, postId, post =>
         {
-            return Ok(post.ToPostDto(usePreview: true));
+            return Ok();
         }, requiresAccess: true);
     }
 }

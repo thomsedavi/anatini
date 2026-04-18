@@ -48,40 +48,6 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchChannel(string channelId, [FromForm] UpdateChannel updateChannel) => await UsingChannelContextAsync(channelId, async (channel, context) =>
         {
-            if (updateChannel.Name != null)
-            {
-                channel.Name = updateChannel.Name;
-
-                foreach (var alias in channel.Aliases)
-                {
-                    //var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
-                    //
-                    //if (channelAlias != null)
-                    //{
-                    //    channelAlias.ChannelName = updateChannel.Name;
-                    //    await context.UpdateAsync(channelAlias);
-                    //}
-                }
-            }
-
-            if (updateChannel.DefaultCardImageId != null)
-            {
-                channel.DefaultCardImageId = updateChannel.DefaultCardImageId;
-
-                foreach (var alias in channel.Aliases)
-                {
-                    //var channelAlias = await context.Context.ChannelAliases.FindAsync(alias.Handle);
-                    //
-                    //if (channelAlias != null)
-                    //{
-                    //    channelAlias.DefaultCardImageId = updateChannel.DefaultCardImageId;
-                    //    await context.UpdateAsync(channelAlias);
-                    //}
-                }
-            }
-
-            await context.UpdateAsync(channel);
-
             return NoContent();
         });
 

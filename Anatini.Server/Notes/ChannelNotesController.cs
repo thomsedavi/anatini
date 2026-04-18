@@ -13,34 +13,8 @@ namespace Anatini.Server.Notes
 {
     [ApiController]
     [Route("api/channels/{channelId}/notes")]
-    public class ChannelNotesController : AnatiniControllerBase
+    public class ChannelNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
     {
-        [HttpGet]
-        public async Task<IActionResult> GetNotes(string channelId, [FromQuery] GetNotesQuery query) => await UsingContextAsync(async context =>
-        {
-            //if (!RandomHex.IsX16(channelId))
-            //{
-            //    var channelAlias = await context.Context.ChannelAliases.FindAsync(channelId);
-            //
-            //    if (channelAlias == null)
-            //    {
-            //        return NotFound();
-            //    }
-            //
-            //    channelId = channelAlias.ChannelId.ToString();
-            //}
-            //
-            //var notesPage = await context.Context.Notes.WithPartitionKey(channelId).OrderByDescending(a => a.DateTimeUTC).ToPageAsync(10, query.ContinuationToken);
-            //
-            //return Ok(new { Notes = notesPage.Values.Select(note => note.ToNoteDto()), notesPage.ContinuationToken });
-            return Ok();
-        });
-
-        public class GetNotesQuery
-        {
-            public string? ContinuationToken { get; set; }
-        }
-
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]

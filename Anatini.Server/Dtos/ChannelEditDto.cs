@@ -7,9 +7,6 @@
         public string? About { get; set; }
         public required string Handle { get; set; }
         public required string Visibility { get; set; }
-        public Guid? BannerImageId { get; set; }
-        public Guid? DefaultCardImageId { get; set; }
-        public Guid? IconImageId { get; set; }
     }
 
     public class ChannelEditAliasDto

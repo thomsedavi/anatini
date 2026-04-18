@@ -2,10 +2,5 @@
 {
     public enum EventType
     {
-        EmailCreated,
-        EmailConflict,
-        VerificationBad,
-        UserCreated,
-        LoginOk
     }
 }

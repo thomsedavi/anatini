@@ -1,106 +1,95 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.BuilderExtensions;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Anatini.Server.Context
 {
-    public class AnatiniContext(ContextBase context)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>(options)
     {
-        public ContextBase Context => context;
+        public DbSet<ApplicationUserEmail> UserEmails { get; set; }
+        public DbSet<ApplicationUserHandle> UserHandles { get; set; }
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<ApplicationUserImage> UserImages { get; set; }
+        public DbSet<ApplicationUserTrust> UserTrusts { get; set; }
 
-        public async Task<int> UpdateAsync(Entity entity)
-        {
-            context.Update(entity);
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<ChannelHandle> ChannelHandles { get; set; }
+        public DbSet<ChannelImage> ChannelImages { get; set; }
 
-            return await context.SaveChangesAsync();
-        }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostVersion> PostVersions { get; set; }
+        public DbSet<PostHandle> PostHandles { get; set; }
+        public DbSet<PostImage> PostImages { get; set; }
 
-        public async Task<int> AddAsync(Entity entity)
-        {
-            context.Add(entity);
-
-            return await context.SaveChangesAsync();
-        }
-
-        internal async Task<int> RemoveAsync(Entity entity)
-        {
-            context.Remove(entity);
-
-            return await context.SaveChangesAsync();
-        }
-
-        internal async Task<TEntity?> FindAsync<TEntity>(params object?[]? keyValues) where TEntity : Entity
-        {
-            return await context.FindAsync<TEntity>(keyValues);
-        }
-    }
-
-    public class ContextBase : DbContext
-    {
-        //public DbSet<User> Users { get; set; }
-        //public DbSet<UserEmail> UserEmails { get; set; }
-        //public DbSet<UserEvent> UserEvents { get; set; }
-        //public DbSet<UserToUserRelationship> UserToUserRelationships { get; set; }
-        //public DbSet<Channel> Channels { get; set; }
-        //public DbSet<Post> Posts { get; set; }
-        //public DbSet<Note> Notes { get; set; }
-        //public DbSet<Event> Events { get; set; }
-        //public DbSet<AttributePost> AttributePosts { get; set; }
-        //public DbSet<AttributeNote> AttributeNotes { get; set; }
-        //public DbSet<UserAlias> UserAliases { get; set; }
-        //public DbSet<UserImage> UserImages { get; set; }
-        //public DbSet<ChannelAlias> ChannelAliases { get; set; }
-        //public DbSet<ChannelImage> ChannelImages { get; set; }
-        //public DbSet<PostAlias> PostAliases { get; set; }
-        //public DbSet<PostImage> PostImages { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var keyVaultName = Environment.GetEnvironmentVariable("KEY_VAULT_NAME");
-
-            // https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-net
-
-            var accountEndpoint = "TODO";
-            var accountKey = "TODO";
-            var databaseName = "TODO";
-
-            //optionsBuilder.UseCosmos(accountEndpoint, accountKey, databaseName).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddDebug())).EnableSensitiveDataLogging();
-        }
+        public DbSet<Note> Notes { get; set; }
+        public DbSet<NoteImage> NoteImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().Configure();
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ApplicationUser>().Configure();
+            modelBuilder.Entity<ApplicationUserEmail>().Configure();
+            modelBuilder.Entity<ApplicationUserHandle>().Configure();
+            modelBuilder.Entity<ApplicationUserImage>().Configure();
+            modelBuilder.Entity<ApplicationUserClaim>().Configure();
+            modelBuilder.Entity<ApplicationUserLogin>().Configure();
+            modelBuilder.Entity<ApplicationUserToken>().Configure();
+            modelBuilder.Entity<ApplicationUserRole>().Configure();
+            modelBuilder.Entity<ApplicationUserTrust>().Configure();
+            modelBuilder.Entity<ApplicationUserChannel>().Configure();
+
+            modelBuilder.Entity<ApplicationRoleClaim>().Configure();
+            modelBuilder.Entity<ApplicationRole>().Configure();
+
             modelBuilder.Entity<Channel>().Configure();
-            modelBuilder.Entity<Post>().Configure();
-            modelBuilder.Entity<Note>().Configure();
-            modelBuilder.Entity<AttributePost>().Configure();
-            modelBuilder.Entity<AttributeNote>().Configure();
-            modelBuilder.Entity<UserEmail>().Configure();
-            modelBuilder.Entity<UserEvent>().Configure();
-            modelBuilder.Entity<UserToUserRelationship>().Configure();
-            modelBuilder.Entity<UserAlias>().Configure();
-            modelBuilder.Entity<UserImage>().Configure();
-            modelBuilder.Entity<ChannelAlias>().Configure();
+            modelBuilder.Entity<ChannelHandle>().Configure();
             modelBuilder.Entity<ChannelImage>().Configure();
-            modelBuilder.Entity<PostAlias>().Configure();
+
+            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<PostVersion>().Configure();
             modelBuilder.Entity<PostImage>().Configure();
+            modelBuilder.Entity<PostHandle>().Configure();
+
+            modelBuilder.Entity<Note>().Configure();
+            modelBuilder.Entity<NoteImage>().Configure();
+
+            modelBuilder.Entity<Log>().Configure();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var utcNow = DateTime.UtcNow;
+
+            //var entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+            var entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified);
+
+            foreach (var entry in entries)
+            {
+                // TODO do I want to do anything similar with the new Postgres database?
+                //entry.Property("").CurrentValue = Guid.NewGuid();
+                //entry.Property("ETag").CurrentValue = Guid.NewGuid();
+                //entry.Property("UpdatedOn").CurrentValue = utcNow;
+
+                //
+                //if (entry.State == EntityState.Added)
+                //{
+                //    entry.Property("CreatedOn").CurrentValue = now;
+                //}
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 
-    public abstract class BaseEntity  : Entity
+    public static class EntityTypeBuilderExtensions
     {
-        public required string Id { get; set; }
-    }
-
-    public abstract class AliasEntity : Entity
-    {
-        public required string Handle { get; set; }
-    }
-
-    public abstract class Entity
-    {
-        public required string ItemId { get; set; }
-        public string? ETag { get; set; }
-        public int? Timestamp { get; set; }
+        public static string GetColumnName(this EntityTypeBuilder entityTypeBuilder, string name)
+        {
+            return entityTypeBuilder.Metadata.FindProperty(name)!.GetColumnName();
+        }
     }
 }

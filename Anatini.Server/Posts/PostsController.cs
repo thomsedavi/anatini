@@ -1,34 +1,14 @@
-﻿using Anatini.Server.Posts.Extensions;
-using Anatini.Server.Enums;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Context.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Posts
 {
     [ApiController]
     [Route("api/posts")]
-    public class PostsController : AnatiniControllerBase
+    public class PostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
     {
-        [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] GetPostQuery query) => await UsingContextAsync(async (context) =>
-        {
-            if (query.Week != null)
-            {
-                var value = $"{AttributePostType.Week}:{query.Week}";
 
-                //var attributePostsPage = await context.Context.AttributePosts.WithPartitionKey(value).OrderBy(a => a.ItemId).ToPageAsync(10, query.ContinuationToken);
-
-                //return Ok(new { AttributePosts = attributePostsPage.Values.Select(attributePost => attributePost.ToAttributePostDto()), attributePostsPage.ContinuationToken });
-                return Ok();
-            }
-
-            return BadRequest();
-        });
-    }
-
-    public class GetPostQuery
-    {
-        public string? Week { get; set; }
-        public string? ContinuationToken { get; set; }
     }
 }

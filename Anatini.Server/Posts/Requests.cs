@@ -10,8 +10,6 @@ namespace Anatini.Server.Posts
 
         [Handle, MaxLength(64), DataType(DataType.Text)]
         public required string Handle { get; set; }
-
-        public bool? Protected { get; set; }
     }
 
     public class UpdatePost
