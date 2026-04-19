@@ -34,7 +34,7 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = context.AddNoteAsync(validationResult.SanitizedHtml, Visibility.Public, channel.Id, PostStatus.Published, DateTime.UtcNow, createNote.Handle != null ? UserManager.NormalizeName(createNote.Handle) : null);
+            var note = context.AddNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, channel.Id, PostStatus.Published, DateTime.UtcNow, createNote.Handle != null ? UserManager.NormalizeName(createNote.Handle) : null);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto());

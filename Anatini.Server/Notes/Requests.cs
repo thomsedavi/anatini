@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Notes
@@ -11,6 +12,7 @@ namespace Anatini.Server.Notes
         [DataType(DataType.Text)]
         public required string Article { get; set; }
 
-        public bool? Protected { get; set; }
+        [EnumDataType(typeof(Visibility))]
+        public required Visibility Visibility { get; set; }
     }
 }

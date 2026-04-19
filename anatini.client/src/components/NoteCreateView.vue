@@ -7,12 +7,19 @@
   import SubmitButton from './common/SubmitButton.vue';
   import InputTextArea from './common/InputTextArea.vue';
 
+  const visibilityOptions = ref([
+    { text: 'Public', value: 'Public' },
+    { text: 'Protected', value: 'Protected' },
+    { text: 'Private', value: 'Private' }
+  ]);
+
   const route = useRoute();
   const router = useRouter();
 
   const channel = ref<ChannelEdit | ErrorMessage | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputArticle = ref<string>('');
+  const inputVisibility = ref<string>('Public');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -87,6 +94,7 @@
     const body = new FormData();
 
     body.append('article', formattedArticle);
+    body.append('visibility', inputVisibility.value);
 
     const init = { method: "POST", body: body };
 
@@ -135,6 +143,15 @@
               :error="getError('article')"
               :isArticle="true"
               help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+
+          <label for="input-visibility">Privacy Level</label>
+          <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
+          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
+              {{ option.text }}
+            </option>
+          </select>
+          <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+
         </fieldset>
 
         <SubmitButton
