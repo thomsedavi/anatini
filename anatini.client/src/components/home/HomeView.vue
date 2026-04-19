@@ -10,10 +10,10 @@
   const router = useRouter();
 
   const tabIndex = ref<number>(-1);
-  const attributePosts = ref<{ name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
+    { id: 'notes', text: 'Notes', name: 'HomeNotes' },
     { id: 'calendar', text: 'Calendar', name: 'HomeCalendar' }
   ];
 
@@ -24,15 +24,11 @@
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
-        response?.json()
-          .then((value: { attributePosts: { name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] }) => {
-            attributePosts.value = value.attributePosts
-          })
-          .catch(() => { console.log('error') });
+        console.log(response);
       }
     }
 
-    apiFetch('posts?week=2026-W09', statusActions);
+    apiFetch('notes', statusActions);
   });
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
@@ -83,7 +79,7 @@
     <RouterView v-slot="{ Component }">
       <component
         :is="Component"
-        :attribute-posts="attributePosts"
+        :attribute-posts="[]"
       />
     </RouterView>
   </main>
