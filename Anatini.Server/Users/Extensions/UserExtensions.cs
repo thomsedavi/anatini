@@ -7,6 +7,34 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
+        public static async Task<UserDto> ToUserDto(this ApplicationUser user, IBlobService? blobService = null)
+        {
+            ImageDto? iconImage = null;
+
+            if (blobService != null)
+            {
+                var userIconImage = user.Images.FirstOrDefault(image => image.Handle == "icon");
+
+                if (userIconImage != null)
+                {
+                    iconImage = new ImageDto
+                    {
+                        Uri = await blobService.GenerateUserImageLink(userIconImage.BlobContainerName, userIconImage.BlobName),
+                        AltText = userIconImage.AltText,
+                    };
+                }
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                About = user.About,
+                Handle = user.Handle,
+                IconImage = iconImage
+            };
+        }
+
         public static async Task<UserEditDto> ToUserEditDto(this ApplicationUser user, IBlobService? blobService = null)
         {
             ImageDto? iconImage = null;

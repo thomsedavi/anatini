@@ -171,6 +171,7 @@
           id="about-user"
           :maxLength="256"
           :error="getError('about-user')"
+          :isArticle="true"
           help="Briefly describe yourself for your public profile" />
 
         <label for="icon-user">Icon</label>

@@ -12,6 +12,7 @@ export type User = {
   id: string;
   name: string;
   iconImage: Image | null;
+  handle: string;
   about: string | null;
 };
 

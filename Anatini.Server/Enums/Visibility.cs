@@ -1,9 +1,10 @@
 ﻿namespace Anatini.Server.Enums
 {
+    [Flags]
     public enum Visibility
     {
-        Private,
-        Protected,
-        Public
+        Private = 1,
+        Protected = 2,
+        Public = 4
     }
 }

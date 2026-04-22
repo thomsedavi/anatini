@@ -8,7 +8,7 @@ namespace Anatini.Server.Account
         [MaxLength(256), DataType(DataType.Text)]
         public string? Name { get; set; }
 
-        [MaxLength(512), DataType(DataType.Text)]
+        [DataType(DataType.Text)]
         public string? About { get; set; }
 
         public Guid? IconImageId { get; set; }

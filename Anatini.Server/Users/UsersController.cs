@@ -1,14 +1,18 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
+using Anatini.Server.Users.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Users
 {
     [ApiController]
     [Route("api/users")]
-    public class UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
+    public class UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager)
     {
         [Authorize]
         [HttpPost("aliases")]
@@ -25,9 +29,45 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAlias(string handle) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> GetUser(string handle) => await UsingContextAsync(async context =>
         {
-            return Ok();
+            ApplicationUser? user;
+
+            var users = context.Users.AsNoTracking().Include(user => user.Images.Where(image => image.Handle == "icon")).AsQueryable();
+
+            if (Guid.TryParse(handle, out Guid userId))
+            {
+                user = await users.FirstOrDefaultAsync(user => user.Id == userId);
+            }
+            else
+            {
+                var normalizedHandle = NormalizeHandle(handle);
+
+                user = await users.FirstOrDefaultAsync(user => user.Handle == normalizedHandle || user.Handles.Any(userHandle => userHandle.Handle == normalizedHandle));
+            }
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.Visibility == Visibility.Public)
+            {
+                return Ok(await user.ToUserDto(blobService));
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (user.Visibility == Visibility.Protected)
+            {
+                return Ok(await user.ToUserDto(blobService));
+            }
+
+            // TODO handle private visibility
+            return NotFound();
         });
 
         [Authorize]
