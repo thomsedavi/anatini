@@ -24,7 +24,7 @@ namespace Anatini.Server.Authentication
         {
             try
             {
-                context.AddUserEmail(emailForm.Email, UserManager.NormalizeEmail(emailForm.Email));
+                context.AddUserEmail(emailForm.Email, NormalizeEmail(emailForm.Email));
                 await context.SaveChangesAsync();
             }
             catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
@@ -45,7 +45,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async (context) =>
         {
-            var userEmail = await context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(UserManager.NormalizeEmail(signUpForm.Email)));
+            var userEmail = await context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(NormalizeEmail(signUpForm.Email)));
 
             if (userEmail == null || userEmail.EmailConfirmed)
             {
@@ -94,7 +94,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async (context) =>
         {
-            var user = await context.GetUserAsync(UserManager.NormalizeEmail(signInForm.Email));
+            var user = await context.GetUserAsync(NormalizeEmail(signInForm.Email));
 
             if (user == null)
             {

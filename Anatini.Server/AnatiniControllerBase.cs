@@ -4,356 +4,290 @@ using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
-using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using User = Anatini.Server.Context.Entities.User;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Anatini.Server
 {
-    public class AnatiniControllerBase : ControllerBase
+    public class AnatiniControllerBase(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : ControllerBase
     {
-        public string? UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
-        public string RequiredUserId => UserId ?? throw new Exception();
+        public bool IsAuthenticated => User.Identity?.IsAuthenticated ?? false;
+
+        private bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        public string NormalizeHandle(string handle) => handle.ToLower();
+        public string NormalizeName(string name) => userManager.NormalizeName(name);
+        public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
+        public UserManager<ApplicationUser> UserManager => userManager;
 
         [NonAction]
-        public async Task<IActionResult> UsingContextAsync(Func<AnatiniContext, Task<IActionResult>> contextFunction)
+        public async Task<IActionResult> UsingContextAsync(Func<ApplicationDbContext, Task<IActionResult>> contextFunction)
         {
-            using var innerContext = new ContextBase();
-
-            var result = await contextFunction(new AnatiniContext(innerContext));
-
-            return result;
+            try
+            {
+                return await contextFunction(context);
+            }
+            catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                return Conflict();
+            }
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContext(string channelId, Func<Channel, AnatiniContext, IActionResult> channelContextFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
+        public async Task<IActionResult> UsingAccountContextAsync(Func<ApplicationUser, ApplicationDbContext, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            using var innerContext = new ContextBase();
-
-            var result = channelContextFunction(channel, new AnatiniContext(innerContext));
-
-            return await Task.FromResult(result);
-
-        }, requiresAccess);
+            return await userContextFunction(user, context);
+        }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string channelId, Func<Channel, AnatiniContext, Task<IActionResult>> channelContextFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
+        public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
         {
-            using var innerContext = new ContextBase();
+            var users = context.Users.AsQueryable();
 
-            return await channelContextFunction(channel, new AnatiniContext(innerContext));
-        }, requiresAccess);
+            if (settings?.AsNoTracking ?? true)
+            {
+                users = users.AsNoTracking();
+            }
 
-        [NonAction]
-        public async Task<IActionResult> UsingPostContextAsync(string channelId, string postId, Func<Post, Channel, AnatiniContext, Task<IActionResult>> postContextFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingPostAsync(channelId, postId, async (post, channel) =>
-        {
-            using var innerContext = new ContextBase();
+            if (TryGetUserId(out Guid userId))
+            {
+                var user = await users.FirstOrDefaultAsync(user => user.Id == userId);
 
-            return await postContextFunction(post, channel, new AnatiniContext(innerContext));
-        }, eTag, refreshETag, requiresAccess);
+                if (user == null)
+                {
+                    return Problem();
+                }
 
-        [NonAction]
-        public async Task<IActionResult> UsingPost(string channelId, string postId, Func<Post, IActionResult> postFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingPostAsync(channelId, postId, async (post, channel) =>
-        {
-            var result = postFunction(post);
+                return await accountFunction(user);
+            }
 
-            return await Task.FromResult(result);
-        }, eTag, refreshETag, requiresAccess);
-
-        [NonAction]
-        public async Task<IActionResult> UsingNote(string channelId, string noteId, Func<Note, IActionResult> noteFunction, string? eTag = null, bool refreshETag = false, bool requiresAccess = false) => await UsingNoteAsync(channelId, noteId, async (note, channel) =>
-        {
-            var result = noteFunction(note);
-
-            return await Task.FromResult(result);
-        }, eTag, refreshETag, requiresAccess);
-
-        [NonAction]
-        public async Task<IActionResult> UsingChannel(string channelId, Func<Channel, IActionResult> channelFunction, bool requiresAccess = false) => await UsingChannelAsync(channelId, async channel =>
-        {
-            var result = channelFunction(channel);
-
-            return await Task.FromResult(result);
-        }, requiresAccess);
-
-        [NonAction]
-        public async Task<IActionResult> UsingPostAsync(string channelId, string postId, Func<Post, Channel, Task<IActionResult>> postFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
-        {
-            //using var innerContext = new ContextBase();
-            //
-            //if (!RandomHex.IsX16(channelId))
-            //{
-            //    var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
-            //
-            //    if (channelAlias == null)
-            //    {
-            //        return NotFound();
-            //    }
-            //
-            //    channelId = channelAlias.ChannelId.ToString();
-            //}
-            //
-            //var channel = await innerContext.Channels.FindAsync(channelId);
-            //
-            //if (channel == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (requiresAccess)
-            //{
-            //    if (UserId == null || !channel.Users.Any(user => user.Id == UserId))
-            //    {
-            //        return Forbid();
-            //    }
-            //}
-            //
-            //if (!RandomHex.IsX16(postId))
-            //{
-            //    var postAlias = await innerContext.PostAliases.FindAsync(channelId, postId);
-            //
-            //    if (postAlias == null)
-            //    {
-            //        return NotFound();
-            //    }
-            //
-            //    postId = postAlias.PostId.ToString();
-            //}
-            //
-            //var post = await innerContext.Posts.FindAsync(channelId, postId);
-            //
-            //if (post == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (eTag != null && eTag != post.ETag)
-            //{
-            //    return ValidationProblem(statusCode: StatusCodes.Status412PreconditionFailed);
-            //}
-            //
-            //var result = await postFunctionAsync(post, channel);
-            //
-            //if (refreshETag)
-            //{
-            //    using var newInnerContext = new ContextBase();
-            //
-            //    var newPost = await newInnerContext.Posts.FindAsync(channelId, postId);
-            //
-            //    Response.Headers.ETag = newPost?.ETag ?? Response.Headers.ETag;
-            //}
-            //else
-            //{
-            //    Response.Headers.ETag = post.ETag;
-            //}
-            //
-            //return result;
-
-            return null;
+            return Unauthorized();
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingNoteAsync(string channelId, string noteId, Func<Note, Channel, Task<IActionResult>> noteFunctionAsync, string? eTag = null, bool refreshETag = false, bool requiresAccess = false)
+        public async Task<IActionResult> UsingUserAsync(string userHandle, Func<ApplicationUser, Task<IActionResult>> userFunction, ContextSettings? settings = null)
         {
-            //if (!RandomHex.IsX16(noteId))
-            //{
-            //    return BadRequest();
-            //}
-            //
-            //using var innerContext = new ContextBase();
-            //
-            //if (!RandomHex.IsX16(channelId))
-            //{
-            //    var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
-            //
-            //    if (channelAlias == null)
-            //    {
-            //        return NotFound();
-            //    }
-            //
-            //    channelId = channelAlias.ChannelId.ToString();
-            //}
-            //
-            //var channel = await innerContext.Channels.FindAsync(channelId);
-            //
-            //if (channel == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (requiresAccess)
-            //{
-            //    if (UserId == null || !channel.Users.Any(user => user.Id == UserId))
-            //    {
-            //        return Forbid();
-            //    }
-            //}
-            //
-            //var note = await innerContext.Notes.FindAsync(channelId, noteId);
-            //
-            //if (note == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (eTag != null && eTag != note.ETag)
-            //{
-            //    return ValidationProblem(statusCode: StatusCodes.Status412PreconditionFailed);
-            //}
-            //
-            //var result = await noteFunctionAsync(note, channel);
-            //
-            //if (refreshETag)
-            //{
-            //    using var newInnerContext = new ContextBase();
-            //
-            //    var newNote = await newInnerContext.Notes.FindAsync(channelId, noteId);
-            //
-            //    Response.Headers.ETag = newNote?.ETag ?? Response.Headers.ETag;
-            //}
-            //else
-            //{
-            //    Response.Headers.ETag = note.ETag;
-            //}
-            //
-            //return result;
+            ApplicationUser? user;
 
-            return null;
+            var users = context.Users.AsQueryable();
+
+            if (settings != null)
+            {
+                if (settings.AsNoTracking)
+                {
+                    users = users.AsNoTracking();
+                }
+
+                if (settings.IncludeImages)
+                {
+                    users = users.Include((user) => user.Images);
+                }
+            }
+
+            if (Guid.TryParse(userHandle, out Guid userId))
+            {
+                user = await users.FirstOrDefaultAsync(user => user.Id == userId);
+            }
+            else
+            {
+                var normalizedUserHandle = NormalizeHandle(userHandle);
+
+                user = await users.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
+            }
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.Visibility == Visibility.Public)
+            {
+                return await userFunction(user);
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (user.Visibility == Visibility.Protected)
+            {
+                return await userFunction(user);
+            }
+
+            // TODO handle Private
+            return NotFound();
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAliasAsync(string channelHandle, Func<ChannelAlias, Task<IActionResult>> channelAliasFunctionAsync)
+        public async Task<IActionResult> UsingChannelContextAsync(string channelHandle, Func<Channel, ApplicationDbContext, Task<IActionResult>> channelContextFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
         {
-            //using var innerContext = new ContextBase();
-            //
-            //var channelAlias = await innerContext.ChannelAliases.FindAsync(channelHandle);
-            //
-            //if (channelAlias == null)
-            //{
-            //    return NotFound();
-            //}
-            //
-            //return await channelAliasFunctionAsync(channelAlias);
+            return await channelContextFunction(channel, context);
+        }, settings);
 
-            return null;
+        [NonAction]
+        public async Task<IActionResult> UsingChannelAsync(string channelHandle, Func<Channel, Task<IActionResult>> channelFunction, ContextSettings? settings = null)
+        {
+            Channel? channel;
+
+            var channels = context.Channels.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                channels = channels.AsNoTracking();
+            }
+
+            if (Guid.TryParse(channelHandle, out Guid channelId))
+            {
+                channel = await channels.FirstOrDefaultAsync(channel => channel.Id == channelId);
+            }
+            else
+            {
+                var normalizedChannelHandle = NormalizeHandle(channelHandle);
+
+                channel = await channels.FirstOrDefaultAsync(channel => channel.Handle == normalizedChannelHandle || channel.Handles.Any(handle => handle.Handle == normalizedChannelHandle));
+            }
+
+            if (channel == null)
+            {
+                return NotFound();
+            }
+
+            if (settings?.AccessRequired ?? false)
+            {
+                if (TryGetUserId(out Guid userId) && await context.UserChannels.AnyAsync(userChannel => userChannel.UserId == userId && userChannel.ChannelId == channel.Id))
+                {
+                    return await channelFunction(channel);
+                }
+
+                return Unauthorized();
+            }
+
+            if (channel.Visibility == Visibility.Public)
+            {
+                return await channelFunction(channel);
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (channel.Visibility == Visibility.Protected)
+            {
+                return await channelFunction(channel);
+            }
+
+            // TODO handle Private
+            return NotFound();
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingUserAliasAsync(string userHandle, Func<UserAlias, Task<IActionResult>> userAliasFunctionAsync)
+        public async Task<IActionResult> UsingPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingPostAsync(channelHandle, postHandle, async (post) =>
         {
-            //using var innerContext = new ContextBase();
-            //
-            //var userAlias = await innerContext.UserAliases.FindAsync(userHandle);
-            //
-            //if (userAlias == null)
-            //{
-            //    return NotFound();
-            //}
-            //
-            //return await userAliasFunctionAsync(userAlias);
+            return await postContextFunction(post, context);
+        }, settings);
 
-            return null;
+        [NonAction]
+        public async Task<IActionResult> UsingPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null)
+        {
+            return await UsingChannelAsync(channelHandle, async (channel) =>
+            {
+                Post? post;
+
+                var posts = context.Posts.AsQueryable();
+
+                if (settings?.AsNoTracking ?? true)
+                {
+                    posts = posts.AsNoTracking();
+                }
+
+                if (Guid.TryParse(postHandle, out Guid noteId))
+                {
+                    post = await posts.FirstOrDefaultAsync(note => note.Id == noteId);
+                }
+                else
+                {
+                    var normalizedNoteHandle = NormalizeHandle(postHandle);
+
+                    post = await posts.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
+                }
+
+                if (post == null)
+                {
+                    return NotFound();
+                }
+
+                if (post.Visibility == Visibility.Public)
+                {
+                    return await postFunction(post);
+                }
+
+                if (!IsAuthenticated)
+                {
+                    return NotFound();
+                }
+
+                if (post.Visibility == Visibility.Protected)
+                {
+                    return await postFunction(post);
+                }
+
+                // TODO handle Private
+                return NotFound();
+            }, settings);
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAsync(string channelId, Func<Channel, Task<IActionResult>> channelFunctionAsync, bool requiresAccess = false)
+        public async Task<IActionResult> UsingNoteAsync(string channelHandle, string noteHandle, Func<Note, IActionResult> noteFunction, ContextSettings? settings = null)
         {
+            return await UsingChannelAsync(channelHandle, async (channel) =>
+            {
+                Note? note;
 
-            //using var innerContext = new ContextBase();
-            //
-            //if (!RandomHex.IsX16(channelId))
-            //{
-            //    var channelAlias = await innerContext.ChannelAliases.FindAsync(channelId);
-            //
-            //    if (channelAlias == null)
-            //    {
-            //        return NotFound();
-            //    }
-            //
-            //    channelId = channelAlias.ChannelId.ToString();
-            //}
-            //
-            //var channel = await innerContext.Channels.FindAsync(channelId);
-            //
-            //if (channel == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (requiresAccess)
-            //{
-            //    if (UserId == null || !channel.Users.Any(user => user.Id == UserId))
-            //    {
-            //        return Forbid();
-            //    }
-            //}
-            //
-            //return await channelFunctionAsync(channel);
+                var notes = context.Notes.AsQueryable();
 
-            return null;
-        }
+                if (settings?.AsNoTracking ?? true)
+                {
+                    notes = notes.AsNoTracking();
+                }
 
-        [NonAction]
-        public async Task<IActionResult> UsingUserContext(string userId, Func<User, AnatiniContext, IActionResult> userContextFunction, params UserPermission[] permissions) => await UsingUserAsync(userId, async user =>
-        {
-            using var innerContext = new ContextBase();
+                if (Guid.TryParse(noteHandle, out Guid noteId))
+                {
+                    note = await notes.FirstOrDefaultAsync(note => note.Id == noteId);
+                }
+                else
+                {
+                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-            var result = userContextFunction(user, new AnatiniContext(innerContext));
+                    note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
+                }
 
-            return await Task.FromResult(result);
-        }, permissions);
+                if (note == null)
+                {
+                    return NotFound();
+                }
 
-        [NonAction]
-        public async Task<IActionResult> UsingUserContextAsync(string userId, Func<User, AnatiniContext, Task<IActionResult>> userContextFunction, params UserPermission[] permissions) => await UsingUserAsync(userId, async user =>
-        {
-            using var innerContext = new ContextBase();
+                if (note.Visibility == Visibility.Public)
+                {
+                    return noteFunction(note);
+                }
 
-            return await userContextFunction(user, new AnatiniContext(innerContext));
-        }, permissions);
+                if (!IsAuthenticated)
+                {
+                    return NotFound();
+                }
 
-        [NonAction]
-        public async Task<bool> UserHasAnyPermission(string? userId, params UserPermission[] permissions)
-        {
-            //if (userId == null)
-            //{
-            //    return false;
-            //}
-            //
-            //using var innerContext = new ContextBase();
-            //
-            //var user = await innerContext.Users.FindAsync(userId);
-            //
-            //if (user == null)
-            //{
-            //    return false;
-            //}
-            //
-            //return user.HasAnyPermission(permissions);
+                if (note.Visibility == Visibility.Protected)
+                {
+                    return noteFunction(note);
+                }
 
-            return true;
-        }
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserAsync(string userId, Func<User, Task<IActionResult>> userFunction, params UserPermission[] permissions)
-        {
-            //using var innerContext = new ContextBase();
-            //
-            //var user = await innerContext.Users.FindAsync(userId);
-            //
-            //if (user == null)
-            //{
-            //    return Problem();
-            //}
-            //
-            //if (permissions.Length > 0 && !user.HasAnyPermission(permissions))
-            //{
-            //    return Forbid();
-            //}
-            //
-            //return await userFunction(user);
-
-            return null;
+                // TODO handle Private
+                return NotFound();
+            }, settings);
         }
 
         [NonAction]
@@ -404,5 +338,12 @@ namespace Anatini.Server
             result = null;
             return false;
         }
+    }
+
+    public class ContextSettings
+    {
+        public bool AccessRequired { get; set; } = false;
+        public bool AsNoTracking { get; set; } = true;
+        public bool IncludeImages { get; set; } = false;
     }
 }

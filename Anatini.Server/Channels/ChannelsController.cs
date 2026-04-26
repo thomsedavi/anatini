@@ -20,7 +20,7 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannel(string channelId) => await UsingChannel(channelId, channel =>
+        public async Task<IActionResult> GetChannel(string channelId) => await UsingChannelAsync(channelId, async (channel) =>
         {
             return Ok(channel.ToChannelDto());
         });
@@ -33,10 +33,10 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannel(channelId, channel =>
+        public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannelAsync(channelId, async (channel) =>
         {
             return Ok(channel.ToChannelEditDto());
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
         [HttpPatch("{channelId}")]
@@ -82,11 +82,11 @@ namespace Anatini.Server.Channels
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
         [HttpGet("{channelId}/images/{imageId}")]
-        public async Task<IActionResult> GetImage(string channelId, string imageId) => await UsingChannelAliasAsync(channelId, async channelAlias =>
+        public async Task<IActionResult> GetImage(string channelId, string imageId) => await UsingChannelAsync(channelId, async (channel) =>
         {
             return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
         });
@@ -99,9 +99,9 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingAccountContextAsync(async (account, context) =>
         {
-            var channel = context.AddChannel(RequiredUserId, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
+            var channel = context.AddChannel(account.Id, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Handle }, channel.ToChannelDto());

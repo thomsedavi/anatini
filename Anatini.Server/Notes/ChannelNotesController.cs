@@ -34,18 +34,18 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = context.AddNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, channel.Id, PostStatus.Published, DateTime.UtcNow, createNote.Handle != null ? UserManager.NormalizeName(createNote.Handle) : null);
+            var note = context.AddNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, channel.Id, PostStatus.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeName(createNote.Handle) : null);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto());
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{noteId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingNote(channelId, noteId, note =>
+        public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingNoteAsync(channelId, noteId, (note) =>
         {
             return Ok(note.ToNoteDto());
         });

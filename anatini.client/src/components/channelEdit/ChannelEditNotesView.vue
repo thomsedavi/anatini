@@ -26,7 +26,7 @@
 
       <ul role="list" v-if="notes !== null">
         <li v-for="note in notes" :key="'note' + note.id">
-          <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.dateTimeUTC)}'>${formatLong(note.dateTimeUTC)}</time></footer>`">
+          <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></footer>`">
           </article>
         </li>
       </ul>

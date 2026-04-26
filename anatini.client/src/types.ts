@@ -92,7 +92,7 @@ export type Note = {
   id: string;
   channelId: string;
   article: string;
-  dateTimeUTC: string;
+  publishedAtUtc: string;
 }
 
 export type IsAuthenticated = {

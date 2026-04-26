@@ -2,7 +2,6 @@
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
-using Anatini.Server.Posts.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,7 +31,7 @@ namespace Anatini.Server.Posts
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetPost), new { channelId = channel.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
         [HttpPatch("{postId}")]
@@ -44,17 +43,17 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingPostContextAsync(channelId, postId, async (post, channel, context) =>
+        public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingPostContextAsync(channelId, postId, async (post, context) =>
         {
             return NoContent();
-        }, Request.ETagHeader(), refreshETag: true, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{postId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingPost(channelId, postId, post =>
+        public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
         });
@@ -66,10 +65,10 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingPost(channelId, postId, post =>
+        public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{postId}/preview")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -78,9 +77,9 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingPost(channelId, postId, post =>
+        public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
-        }, requiresAccess: true);
+        }, new ContextSettings { AccessRequired = true });
     }
 }

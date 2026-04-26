@@ -22,7 +22,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUserEdit() => await UsingUserAsync(RequiredUserId, async (user) =>
+        public async Task<IActionResult> GetUserEdit() => await UsingAccountAsync(async (user) =>
         {
             return await Task.FromResult(Ok(await user.ToUserEditDto(blobService)));
         });
@@ -33,7 +33,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes(MediaTypeNames.Multipart.FormData)]
-        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
+        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingAccountContextAsync(async (user, context) =>
         {
             if (updateUser.Name != null)
             {
@@ -71,7 +71,7 @@ namespace Anatini.Server.Account
             await context.SaveChangesAsync();
 
             return NoContent();
-        }, track: true);
+        }, new ContextSettings { AsNoTracking = false });
 
         [Authorize]
         [HttpPost("images")]
@@ -86,7 +86,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingUserContextAsync(RequiredUserId, async (user, context) =>
+        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingAccountContextAsync(async (user, context) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
