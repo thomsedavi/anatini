@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Anatini.Server.Context;
+using Anatini.Server.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +26,7 @@ namespace Anatini.Server.Authorization
                 return;
             };
 
-            var hasReceivedTrust = await dbContext.UserTrusts.AnyAsync(userTrust => userTrust.TargetUserId == targetUserId);
+            var hasReceivedTrust = await dbContext.UserUserEdges.AnyAsync(userTrust => userTrust.TargetUserId == targetUserId && userTrust.Label == UserUserEdgeLabel.Trusts);
 
             if (hasReceivedTrust)
             {

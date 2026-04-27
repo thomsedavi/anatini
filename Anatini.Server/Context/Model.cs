@@ -13,7 +13,8 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserHandle> UserHandles { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<ApplicationUserImage> UserImages { get; set; }
-        public DbSet<ApplicationUserTrust> UserTrusts { get; set; }
+        public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
+        public DbSet<ApplicationUserChannel> UserChannels { get; set; }
 
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChannelHandle> ChannelHandles { get; set; }
@@ -39,7 +40,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserLogin>().Configure();
             modelBuilder.Entity<ApplicationUserToken>().Configure();
             modelBuilder.Entity<ApplicationUserRole>().Configure();
-            modelBuilder.Entity<ApplicationUserTrust>().Configure();
+            modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserChannel>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();

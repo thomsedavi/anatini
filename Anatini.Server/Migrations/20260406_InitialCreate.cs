@@ -400,24 +400,25 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_trusts",
+                name: "user_user_edges",
                 columns: table => new
                 {
                     source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     target_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_trusts", x => new { x.source_user_id, x.target_user_id });
+                    table.PrimaryKey("pk_user_user_edges", x => new { x.source_user_id, x.target_user_id });
                     table.ForeignKey(
-                        name: "fk_user_trusts_users_source_user_id",
+                        name: "fk_user_user_edges_users_source_user_id",
                         column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_trusts_users_target_user_id",
+                        name: "fk_user_user_edges_users_target_user_id",
                         column: x => x.target_user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -685,9 +686,15 @@ namespace Anatini.Server.Migrations
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_trusts_target_user_id_source_user_id",
-                table: "user_trusts",
-                columns: new[] { "target_user_id", "source_user_id" });
+                name: "ix_user_user_edges_source_user_id_target_user_id_label",
+                table: "user_user_edges",
+                columns: new[] { "source_user_id", "target_user_id", "label" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_user_edges_target_user_id_source_user_id_label",
+                table: "user_user_edges",
+                columns: new[] { "target_user_id", "source_user_id", "label" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_users_handle",
@@ -760,7 +767,7 @@ namespace Anatini.Server.Migrations
                 name: "user_tokens");
 
             migrationBuilder.DropTable(
-                name: "user_trusts");
+                name: "user_user_edges");
 
             migrationBuilder.DropTable(
                 name: "notes");

@@ -20,8 +20,8 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; } = [];
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; } = [];
         public virtual ICollection<ApplicationUserClaim> Claims { get; set; } = [];
-        public virtual ICollection<ApplicationUserTrust> GivenTrusts { get; set; } = [];
-        public virtual ICollection<ApplicationUserTrust> ReceivedTrusts { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserEdge> GivenEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserEdge> ReceivedEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserChannel> UserChannels { get; set; } = [];
     }
 
@@ -59,10 +59,11 @@ namespace Anatini.Server.Context.Entities
         public virtual Channel Channel { get; set; } = null!;
     }
 
-    public class ApplicationUserTrust
+    public class ApplicationUserUserEdge
     {
         public required Guid SourceUserId { get; set; }
         public required Guid TargetUserId { get; set; }
+        public required UserUserEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;

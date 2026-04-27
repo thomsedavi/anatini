@@ -527,7 +527,7 @@ namespace Anatini.Server.Migrations
                     b.ToTable("user_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserTrust", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserUserEdge", b =>
                 {
                     b.Property<Guid>("SourceUserId")
                         .HasColumnType("uuid")
@@ -542,15 +542,24 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Label")
+                        .HasColumnType("integer")
+                        .HasColumnName("label")
                         .HasColumnOrder(2);
 
                     b.HasKey("SourceUserId", "TargetUserId")
-                        .HasName("pk_user_trusts");
+                        .HasName("pk_user_user_edges");
 
-                    b.HasIndex("TargetUserId", "SourceUserId")
-                        .HasDatabaseName("ix_user_trusts_target_user_id_source_user_id");
+                    b.HasIndex("SourceUserId", "TargetUserId", "Label")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_user_edges_source_user_id_target_user_id_label");
 
-                    b.ToTable("user_trusts", (string)null);
+                    b.HasIndex("TargetUserId", "SourceUserId", "Label")
+                        .HasDatabaseName("ix_user_user_edges_target_user_id_source_user_id_label");
+
+                    b.ToTable("user_user_edges", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Channel", b =>
@@ -1241,21 +1250,21 @@ namespace Anatini.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserTrust", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserUserEdge", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
-                        .WithMany("GivenTrusts")
+                        .WithMany("GivenEdges")
                         .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_trusts_users_source_user_id");
+                        .HasConstraintName("fk_user_user_edges_users_source_user_id");
 
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "TargetUser")
-                        .WithMany("ReceivedTrusts")
+                        .WithMany("ReceivedEdges")
                         .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_trusts_users_target_user_id");
+                        .HasConstraintName("fk_user_user_edges_users_target_user_id");
 
                     b.Navigation("SourceUser");
 
@@ -1399,7 +1408,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Emails");
 
-                    b.Navigation("GivenTrusts");
+                    b.Navigation("GivenEdges");
 
                     b.Navigation("Handles");
 
@@ -1409,7 +1418,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Logs");
 
-                    b.Navigation("ReceivedTrusts");
+                    b.Navigation("ReceivedEdges");
 
                     b.Navigation("Roles");
 
