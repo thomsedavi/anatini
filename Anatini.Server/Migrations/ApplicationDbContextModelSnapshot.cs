@@ -227,7 +227,7 @@ namespace Anatini.Server.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserChannel", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserChannelEdge", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -242,15 +242,24 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Label")
+                        .HasColumnType("integer")
+                        .HasColumnName("label")
                         .HasColumnOrder(2);
 
                     b.HasKey("UserId", "ChannelId")
-                        .HasName("pk_user_channels");
+                        .HasName("pk_user_channel_edges");
 
-                    b.HasIndex("ChannelId")
-                        .HasDatabaseName("ix_user_channels_channel_id");
+                    b.HasIndex("ChannelId", "UserId", "Label")
+                        .HasDatabaseName("ix_user_channel_edges_channel_id_user_id_label");
 
-                    b.ToTable("user_channels", (string)null);
+                    b.HasIndex("UserId", "ChannelId", "Label")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_channel_edges_user_id_channel_id_label");
+
+                    b.ToTable("user_channel_edges", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserClaim", b =>
@@ -1137,21 +1146,21 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserChannel", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserChannelEdge", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
-                        .WithMany("UserChannels")
+                        .WithMany("UserEdges")
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_channels_channels_channel_id");
+                        .HasConstraintName("fk_user_channel_edges_channels_channel_id");
 
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
-                        .WithMany("UserChannels")
+                        .WithMany("ChannelEdges")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_channels_users_user_id");
+                        .HasConstraintName("fk_user_channel_edges_users_user_id");
 
                     b.Navigation("Channel");
 
@@ -1253,14 +1262,14 @@ namespace Anatini.Server.Migrations
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserUserEdge", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
-                        .WithMany("GivenEdges")
+                        .WithMany("GivenUserEdges")
                         .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_user_user_edges_users_source_user_id");
 
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "TargetUser")
-                        .WithMany("ReceivedEdges")
+                        .WithMany("ReceivedUserEdges")
                         .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
@@ -1404,11 +1413,13 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("ChannelEdges");
+
                     b.Navigation("Claims");
 
                     b.Navigation("Emails");
 
-                    b.Navigation("GivenEdges");
+                    b.Navigation("GivenUserEdges");
 
                     b.Navigation("Handles");
 
@@ -1418,13 +1429,11 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Logs");
 
-                    b.Navigation("ReceivedEdges");
+                    b.Navigation("ReceivedUserEdges");
 
                     b.Navigation("Roles");
 
                     b.Navigation("Tokens");
-
-                    b.Navigation("UserChannels");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Channel", b =>
@@ -1441,7 +1450,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Posts");
 
-                    b.Navigation("UserChannels");
+                    b.Navigation("UserEdges");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>

@@ -58,7 +58,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = user.Id,
                 Name = user.Name,
                 About = user.About,
-                Channels = user.UserChannels.Select(userChannel => userChannel.Channel.ToChannelEditDto()),
+                Channels = user.ChannelEdges.Select(userChannelEdge => userChannelEdge.Channel.ToChannelEditDto()),
                 Handle = user.Handle,
                 UserName = user.UserName,
                 Visibility = user.Visibility.ToString(),

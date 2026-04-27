@@ -20,9 +20,9 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; } = [];
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; } = [];
         public virtual ICollection<ApplicationUserClaim> Claims { get; set; } = [];
-        public virtual ICollection<ApplicationUserUserEdge> GivenEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserUserEdge> ReceivedEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserChannel> UserChannels { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserChannelEdge> ChannelEdges { get; set; } = [];
     }
 
     public class ApplicationUserEmail
@@ -49,10 +49,11 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser User { get; set; } = null!;
     }
 
-    public class ApplicationUserChannel
+    public class ApplicationUserChannelEdge
     {
         public required Guid UserId { get; set; }
         public required Guid ChannelId { get; set; }
+        public required UserChannelEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser User { get; set; } = null!;

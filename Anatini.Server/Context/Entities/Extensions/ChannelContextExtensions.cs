@@ -17,10 +17,11 @@ namespace Anatini.Server.Context.Entities.Extensions
                 CreatedAtUtc = utcNow
             };
 
-            var userChannel = new ApplicationUserChannel
+            var userChannelEdge = new ApplicationUserChannelEdge
             {
                 UserId = userId,
                 ChannelId = channelId,
+                Label = UserChannelEdgeLabel.Owner,
                 CreatedAtUtc = utcNow
             };
 
@@ -31,7 +32,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Handle = handle,
                 Visibility = visibility,
                 Handles = [channelHandle],
-                UserChannels = [userChannel],
+                UserEdges = [userChannelEdge],
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
             };

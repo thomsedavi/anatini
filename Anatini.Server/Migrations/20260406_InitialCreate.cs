@@ -222,24 +222,25 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_channels",
+                name: "user_channel_edges",
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_channels", x => new { x.user_id, x.channel_id });
+                    table.PrimaryKey("pk_user_channel_edges", x => new { x.user_id, x.channel_id });
                     table.ForeignKey(
-                        name: "fk_user_channels_channels_channel_id",
+                        name: "fk_user_channel_edges_channels_channel_id",
                         column: x => x.channel_id,
                         principalTable: "channels",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_channels_users_user_id",
+                        name: "fk_user_channel_edges_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -637,9 +638,15 @@ namespace Anatini.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_channels_channel_id",
-                table: "user_channels",
-                column: "channel_id");
+                name: "ix_user_channel_edges_channel_id_user_id_label",
+                table: "user_channel_edges",
+                columns: new[] { "channel_id", "user_id", "label" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_channel_edges_user_id_channel_id_label",
+                table: "user_channel_edges",
+                columns: new[] { "user_id", "channel_id", "label" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_claims_user_id",
@@ -743,7 +750,7 @@ namespace Anatini.Server.Migrations
                 name: "role_claims");
 
             migrationBuilder.DropTable(
-                name: "user_channels");
+                name: "user_channel_edges");
 
             migrationBuilder.DropTable(
                 name: "user_claims");

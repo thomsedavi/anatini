@@ -12,7 +12,7 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual ICollection<ApplicationUserChannel> UserChannels { get; set; } = [];
+        public virtual ICollection<ApplicationUserChannelEdge> UserEdges { get; set; } = [];
         public virtual ICollection<Post> Posts { get; set; } = [];
         public virtual ICollection<Note> Notes { get; set; } = [];
         public virtual ICollection<Log> Logs { get; set; } = [];

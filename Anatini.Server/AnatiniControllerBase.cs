@@ -51,6 +51,8 @@ namespace Anatini.Server
                 users = users.AsNoTracking();
             }
 
+            users = users.Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.Channel);
+
             if (TryGetUserId(out Guid userId))
             {
                 var user = await users.FirstOrDefaultAsync(user => user.Id == userId);
@@ -157,7 +159,7 @@ namespace Anatini.Server
 
             if (settings?.AccessRequired ?? false)
             {
-                if (TryGetUserId(out Guid userId) && await context.UserChannels.AnyAsync(userChannel => userChannel.UserId == userId && userChannel.ChannelId == channel.Id))
+                if (TryGetUserId(out Guid userId) && await context.UserChannelEdges.AnyAsync(userChannel => userChannel.UserId == userId && userChannel.ChannelId == channel.Id && userChannel.Label == UserChannelEdgeLabel.Owner))
                 {
                     return await channelFunction(channel);
                 }
