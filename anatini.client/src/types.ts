@@ -95,6 +95,11 @@ export type Note = {
   publishedAtUtc: string;
 }
 
+export type NoteEdit = {
+  id: string;
+  article: string;
+};
+
 export type IsAuthenticated = {
   isAuthenticated: boolean;
   isTrusted: boolean | null;

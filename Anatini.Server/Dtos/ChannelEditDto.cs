@@ -8,9 +8,4 @@
         public required string Handle { get; set; }
         public required string Visibility { get; set; }
     }
-
-    public class ChannelEditAliasDto
-    {
-        public required string Handle { get; set; }
-    }
 }

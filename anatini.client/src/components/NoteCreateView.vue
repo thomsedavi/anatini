@@ -2,6 +2,7 @@
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import InputText from './common/InputText.vue';
   import { formatArticle, parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import SubmitButton from './common/SubmitButton.vue';
@@ -20,6 +21,7 @@
   const inputErrors = ref<InputError[]>([]);
   const inputArticle = ref<string>('');
   const inputVisibility = ref<string>('Public');
+  const inputNoteHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -96,6 +98,10 @@
     body.append('article', formattedArticle);
     body.append('visibility', inputVisibility.value);
 
+    if (tidy(inputNoteHandle.value) !== '') {
+      body.append('handle', tidy(inputNoteHandle.value));
+    }
+
     const init = { method: "POST", body: body };
 
     apiFetchAuthenticated(`channels/${channel.value.id}/notes`, statusActions, init);
@@ -152,6 +158,14 @@
           </select>
           <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
 
+          <InputText
+            v-model="inputNoteHandle"
+            label="Handle"
+            name="handle"
+            id="handle"
+            :maxlength="64"
+            help="lower case with hyphens (e.g. 'my-anatini-channel'), optional"
+            :error="getError('handle')" />
         </fieldset>
 
         <SubmitButton

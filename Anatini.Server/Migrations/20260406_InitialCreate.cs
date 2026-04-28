@@ -232,7 +232,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_channel_edges", x => new { x.user_id, x.channel_id });
+                    table.PrimaryKey("pk_user_channel_edges", x => new { x.user_id, x.channel_id, x.label });
                     table.ForeignKey(
                         name: "fk_user_channel_edges_channels_channel_id",
                         column: x => x.channel_id,
@@ -411,7 +411,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_user_edges", x => new { x.source_user_id, x.target_user_id });
+                    table.PrimaryKey("pk_user_user_edges", x => new { x.source_user_id, x.target_user_id, x.label });
                     table.ForeignKey(
                         name: "fk_user_user_edges_users_source_user_id",
                         column: x => x.source_user_id,
@@ -643,12 +643,6 @@ namespace Anatini.Server.Migrations
                 columns: new[] { "channel_id", "user_id", "label" });
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_channel_edges_user_id_channel_id_label",
-                table: "user_channel_edges",
-                columns: new[] { "user_id", "channel_id", "label" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_claims_user_id",
                 table: "user_claims",
                 column: "user_id");
@@ -691,12 +685,6 @@ namespace Anatini.Server.Migrations
                 name: "ix_user_roles_role_id",
                 table: "user_roles",
                 column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_user_edges_source_user_id_target_user_id_label",
-                table: "user_user_edges",
-                columns: new[] { "source_user_id", "target_user_id", "label" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_user_edges_target_user_id_source_user_id_label",

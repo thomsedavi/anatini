@@ -242,25 +242,21 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("channel_id")
                         .HasColumnOrder(1);
 
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(3);
-
                     b.Property<int>("Label")
                         .HasColumnType("integer")
                         .HasColumnName("label")
                         .HasColumnOrder(2);
 
-                    b.HasKey("UserId", "ChannelId")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("UserId", "ChannelId", "Label")
                         .HasName("pk_user_channel_edges");
 
                     b.HasIndex("ChannelId", "UserId", "Label")
                         .HasDatabaseName("ix_user_channel_edges_channel_id_user_id_label");
-
-                    b.HasIndex("UserId", "ChannelId", "Label")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_channel_edges_user_id_channel_id_label");
 
                     b.ToTable("user_channel_edges", (string)null);
                 });
@@ -551,22 +547,18 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("target_user_id")
                         .HasColumnOrder(1);
 
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(3);
-
                     b.Property<int>("Label")
                         .HasColumnType("integer")
                         .HasColumnName("label")
                         .HasColumnOrder(2);
 
-                    b.HasKey("SourceUserId", "TargetUserId")
-                        .HasName("pk_user_user_edges");
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
 
-                    b.HasIndex("SourceUserId", "TargetUserId", "Label")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_user_edges_source_user_id_target_user_id_label");
+                    b.HasKey("SourceUserId", "TargetUserId", "Label")
+                        .HasName("pk_user_user_edges");
 
                     b.HasIndex("TargetUserId", "SourceUserId", "Label")
                         .HasDatabaseName("ix_user_user_edges_target_user_id_source_user_id_label");

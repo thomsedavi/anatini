@@ -15,5 +15,14 @@ namespace Anatini.Server.Notes.Extensions
                 PublishedAtUtc = note.PublishedAtUtc
             };
         }
+
+        public static NoteEditDto ToNoteEditDto(this Note note)
+        {
+            return new NoteEditDto
+            {
+                Id = note.Id,
+                Article = note.Article
+            };
+        }
     }
 }
