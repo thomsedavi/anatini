@@ -2,11 +2,11 @@
   import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import InputText from './common/InputText.vue';
-  import { formatArticle, parseSource, tidy, type Source } from './common/utils';
-  import { apiFetchAuthenticated } from './common/apiFetch';
-  import SubmitButton from './common/SubmitButton.vue';
-  import InputTextArea from './common/InputTextArea.vue';
+  import InputText from '../common/InputText.vue';
+  import { formatArticle, parseSource, tidy, type Source } from '../common/utils';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import SubmitButton from '../common/SubmitButton.vue';
+  import InputTextArea from '../common/InputTextArea.vue';
 
   const visibilityOptions = ref([
     { text: 'Public', value: 'Public' },

@@ -7,7 +7,7 @@ import HomeNotesView from './components/home/HomeNotesView.vue';
 import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
-import NoteCreateView from './components/NoteCreateView.vue';
+import NoteCreateView from './components/notes/NoteCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
 import NoteEditView from './components/notes/NoteEditView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';

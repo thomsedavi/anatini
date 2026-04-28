@@ -15,4 +15,10 @@ namespace Anatini.Server.Notes
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
     }
+
+    public class UpdateNote
+    {
+        [DataType(DataType.Text)]
+        public required string Article { get; set; }
+    }
 }

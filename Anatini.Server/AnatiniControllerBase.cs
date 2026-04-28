@@ -130,6 +130,13 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingNoteAsync(channelHandle, noteHandle, async (note) =>
+        {
+            return await noteContextFunction(note, context);
+        }, settings);
+
+
+        [NonAction]
         public async Task<IActionResult> UsingChannelAsync(string channelHandle, Func<Channel, Task<IActionResult>> channelFunction, ContextSettings? settings = null)
         {
             Channel? channel;
@@ -243,7 +250,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingNoteAsync(string channelHandle, string noteHandle, Func<Note, IActionResult> noteFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
         {
             return await UsingChannelAsync(channelHandle, async (channel) =>
             {
@@ -274,7 +281,7 @@ namespace Anatini.Server
 
                 if (note.Visibility == Visibility.Public)
                 {
-                    return noteFunction(note);
+                    return await noteFunction(note);
                 }
 
                 if (!IsAuthenticated)
@@ -284,7 +291,7 @@ namespace Anatini.Server
 
                 if (note.Visibility == Visibility.Protected)
                 {
-                    return noteFunction(note);
+                    return await noteFunction(note);
                 }
 
                 // TODO handle Private
