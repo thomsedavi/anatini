@@ -43,7 +43,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingPostContextAsync(channelId, postId, async (post, context) =>
+        public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingChannelPostContextAsync(channelId, postId, async (post, context) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });
@@ -53,7 +53,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
         });
@@ -65,7 +65,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
@@ -77,7 +77,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });

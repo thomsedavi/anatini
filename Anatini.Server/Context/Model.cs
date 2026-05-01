@@ -16,15 +16,16 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
         public DbSet<ApplicationUserChannelEdge> UserChannelEdges { get; set; }
         public DbSet<ApplicationUserNote> UserNotes { get; set; }
+        public DbSet<ApplicationUserPost> UserPosts { get; set; }
 
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChannelHandle> ChannelHandles { get; set; }
         public DbSet<ChannelImage> ChannelImages { get; set; }
         public DbSet<ChannelNote> ChannelNotes { get; set; }
+        public DbSet<ChannelPost> ChannelPosts { get; set; }
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostVersion> PostVersions { get; set; }
-        public DbSet<PostHandle> PostHandles { get; set; }
         public DbSet<PostImage> PostImages { get; set; }
 
         public DbSet<Note> Notes { get; set; }
@@ -45,6 +46,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserChannelEdge>().Configure();
             modelBuilder.Entity<ApplicationUserNote>().Configure();
+            modelBuilder.Entity<ApplicationUserPost>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -53,11 +55,11 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ChannelHandle>().Configure();
             modelBuilder.Entity<ChannelImage>().Configure();
             modelBuilder.Entity<ChannelNote>().Configure();
+            modelBuilder.Entity<ChannelPost>().Configure();
 
             modelBuilder.Entity<Post>().Configure();
             modelBuilder.Entity<PostVersion>().Configure();
             modelBuilder.Entity<PostImage>().Configure();
-            modelBuilder.Entity<PostHandle>().Configure();
 
             modelBuilder.Entity<Note>().Configure();
             modelBuilder.Entity<NoteImage>().Configure();

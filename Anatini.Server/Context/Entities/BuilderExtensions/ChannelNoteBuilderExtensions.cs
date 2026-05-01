@@ -7,7 +7,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<ChannelNote> channelNoteBuilder)
         {
-            channelNoteBuilder.ToTable("user_channels");
+            channelNoteBuilder.ToTable("channel_notes");
 
             channelNoteBuilder.HasKey(channelNote => new { channelNote.ChannelId, channelNote.Handle });
 

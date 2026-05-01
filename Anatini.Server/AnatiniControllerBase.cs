@@ -130,7 +130,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingChannelNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
         {
             return await noteContextFunction(note, context);
         }, settings);
@@ -194,40 +194,35 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingPostAsync(channelHandle, postHandle, async (post) =>
+        public async Task<IActionResult> UsingChannelPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingChannelPostAsync(channelHandle, postHandle, async (post) =>
         {
             return await postContextFunction(post, context);
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null)
         {
             return await UsingChannelAsync(channelHandle, async (channel) =>
             {
-                Post? post;
+                ChannelPost? channelPost;
 
-                var posts = context.Posts.AsQueryable();
+                var channelPosts = context.ChannelPosts.AsQueryable();
 
                 if (settings?.AsNoTracking ?? true)
                 {
-                    posts = posts.AsNoTracking();
+                    channelPosts = channelPosts.AsNoTracking();
                 }
 
-                if (Guid.TryParse(postHandle, out Guid noteId))
-                {
-                    post = await posts.FirstOrDefaultAsync(note => note.Id == noteId);
-                }
-                else
-                {
-                    var normalizedNoteHandle = NormalizeHandle(postHandle);
+                var normalizedNoteHandle = NormalizeHandle(postHandle);
 
-                    post = await posts.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
-                }
+                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedNoteHandle);
 
-                if (post == null)
+                if (channelPost == null)
                 {
                     return NotFound();
                 }
+
+                var post = channelPost.Post;
 
                 if (post.Visibility == Visibility.Public)
                 {

@@ -5,8 +5,6 @@ namespace Anatini.Server.Context.Entities
     public class Post
     {
         public required Guid Id { get; set; }
-        public required Guid ChannelId { get; set; }
-        public required string Handle { get; set; }
         public required string Name { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required PostStatus Status { get; set; }
@@ -15,11 +13,10 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual ICollection<PostHandle> Handles { get; set; } = [];
         public virtual ICollection<PostImage> Images { get; set; } = [];
         public virtual ICollection<PostVersion> Versions { get; set; } = [];
-
-        public virtual Channel Channel { get; set; } = null!;
+        public virtual ICollection<ChannelPost> ChannelPosts { get; set; } = [];
+        public virtual ICollection<ApplicationUserPost> UserPosts { get; set; } = [];
     }
 
     public class PostVersion
@@ -29,18 +26,6 @@ namespace Anatini.Server.Context.Entities
         public required string Handle { get; set; }
         public required string Article { get; set; }
 
-        public virtual Post Post { get; set; } = null!;
-    }
-
-    public class PostHandle
-    {
-        public required Guid Id { get; set; }
-        public required string Handle { get; set; }
-        public required DateTime CreatedAtUtc { get; set; }
-        public required Guid ChannelId { get; set; }
-        public virtual Channel Channel { get; set; } = null!;
-
-        public required Guid PostId { get; set; }
         public virtual Post Post { get; set; } = null!;
     }
 

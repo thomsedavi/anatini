@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class PostContextExtensions
     {
-        public static Post AddPost(this ApplicationDbContext context, Guid id, string name, string handle, Guid channelId)
+        public static Post AddPost(this ApplicationDbContext context, Guid postId, string name, string handle, Guid channelId)
         {
             var utcNow = DateTime.UtcNow;
 
@@ -15,23 +15,30 @@ namespace Anatini.Server.Context.Entities.Extensions
             var draftVersion = new PostVersion
             {
                 Id = Guid.CreateVersion7(),
-                PostId = id,
+                PostId = postId,
                 Handle = "draft",
                 Article = article.ToString(SaveOptions.DisableFormatting)
             };
 
+            var channelPost = new ChannelPost
+            {
+                ChannelId = channelId,
+                Handle = handle,
+                PostId = postId,
+                CreatedAtUtc = utcNow
+            };
+
             var post = new Post
             {
-                Id = id,
+                Id = postId,
                 Status = PostStatus.Draft,
                 PublishedAtUtc = utcNow.Truncate(),
-                Handle = handle,
                 Name = name,
-                ChannelId = channelId,
                 Visibility = Visibility.Public,
                 Versions = [draftVersion],
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow
+                UpdatedAtUtc = utcNow,
+                ChannelPosts = [channelPost]
             };
 
             context.Add(post);

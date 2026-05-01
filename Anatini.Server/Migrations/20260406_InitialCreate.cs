@@ -48,6 +48,24 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "posts",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_posts", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
                 {
@@ -137,27 +155,27 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "posts",
+                name: "channel_notes",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    note_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_posts", x => x.id);
+                    table.PrimaryKey("pk_channel_notes", x => new { x.channel_id, x.handle });
                     table.ForeignKey(
-                        name: "fk_posts_channels_channel_id",
+                        name: "fk_channel_notes_channels_channel_id",
                         column: x => x.channel_id,
                         principalTable: "channels",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_channel_notes_notes_note_id",
+                        column: x => x.note_id,
+                        principalTable: "notes",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -187,29 +205,73 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_channels",
+                name: "channel_posts",
                 columns: table => new
                 {
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    note_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_channels", x => new { x.channel_id, x.handle });
+                    table.PrimaryKey("pk_channel_posts", x => new { x.channel_id, x.handle });
                     table.ForeignKey(
-                        name: "fk_user_channels_channels_channel_id",
+                        name: "fk_channel_posts_channels_channel_id",
                         column: x => x.channel_id,
                         principalTable: "channels",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_channels_notes_note_id",
-                        column: x => x.note_id,
-                        principalTable: "notes",
+                        name: "fk_channel_posts_posts_post_id",
+                        column: x => x.post_id,
+                        principalTable: "posts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "post_images",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_post_images", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_post_images_posts_post_id",
+                        column: x => x.post_id,
+                        principalTable: "posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "post_versions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    article = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_post_versions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_post_versions_posts_post_id",
+                        column: x => x.post_id,
+                        principalTable: "posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -425,6 +487,32 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_posts",
+                columns: table => new
+                {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_posts", x => new { x.user_id, x.handle });
+                    table.ForeignKey(
+                        name: "fk_user_posts_posts_post_id",
+                        column: x => x.post_id,
+                        principalTable: "posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_posts_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_roles",
                 columns: table => new
                 {
@@ -494,77 +582,6 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "post_handles",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    channel_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_post_handles", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_post_handles_channels_channel_id",
-                        column: x => x.channel_id,
-                        principalTable: "channels",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_post_handles_posts_post_id",
-                        column: x => x.post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "post_images",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_post_images", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_post_images_posts_post_id",
-                        column: x => x.post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "post_versions",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_post_versions", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_post_versions_posts_post_id",
-                        column: x => x.post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "ix_channel_handles_channel_id",
                 table: "channel_handles",
@@ -581,6 +598,16 @@ namespace Anatini.Server.Migrations
                 table: "channel_images",
                 columns: new[] { "channel_id", "handle" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_channel_notes_note_id",
+                table: "channel_notes",
+                column: "note_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_channel_posts_post_id",
+                table: "channel_posts",
+                column: "post_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_channels_handle",
@@ -620,17 +647,6 @@ namespace Anatini.Server.Migrations
                 column: "published_at_utc");
 
             migrationBuilder.CreateIndex(
-                name: "ix_post_handles_channel_id_handle",
-                table: "post_handles",
-                columns: new[] { "channel_id", "handle" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_post_handles_post_id",
-                table: "post_handles",
-                column: "post_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_post_images_post_id_handle",
                 table: "post_images",
                 columns: new[] { "post_id", "handle" },
@@ -641,17 +657,6 @@ namespace Anatini.Server.Migrations
                 table: "post_versions",
                 columns: new[] { "post_id", "handle" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_posts_channel_id_handle",
-                table: "posts",
-                columns: new[] { "channel_id", "handle" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_posts_channel_id_published_at_utc",
-                table: "posts",
-                columns: new[] { "channel_id", "published_at_utc" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_published_posts_date_nz",
@@ -674,11 +679,6 @@ namespace Anatini.Server.Migrations
                 name: "ix_user_channel_edges_channel_id_user_id_label",
                 table: "user_channel_edges",
                 columns: new[] { "channel_id", "user_id", "label" });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_channels_note_id",
-                table: "user_channels",
-                column: "note_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_claims_user_id",
@@ -725,6 +725,11 @@ namespace Anatini.Server.Migrations
                 column: "note_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_posts_post_id",
+                table: "user_posts",
+                column: "post_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_roles_role_id",
                 table: "user_roles",
                 column: "role_id");
@@ -763,13 +768,16 @@ namespace Anatini.Server.Migrations
                 name: "channel_images");
 
             migrationBuilder.DropTable(
+                name: "channel_notes");
+
+            migrationBuilder.DropTable(
+                name: "channel_posts");
+
+            migrationBuilder.DropTable(
                 name: "logs");
 
             migrationBuilder.DropTable(
                 name: "note_images");
-
-            migrationBuilder.DropTable(
-                name: "post_handles");
 
             migrationBuilder.DropTable(
                 name: "post_images");
@@ -782,9 +790,6 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_channel_edges");
-
-            migrationBuilder.DropTable(
-                name: "user_channels");
 
             migrationBuilder.DropTable(
                 name: "user_claims");
@@ -805,6 +810,9 @@ namespace Anatini.Server.Migrations
                 name: "user_notes");
 
             migrationBuilder.DropTable(
+                name: "user_posts");
+
+            migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
@@ -814,19 +822,19 @@ namespace Anatini.Server.Migrations
                 name: "user_user_edges");
 
             migrationBuilder.DropTable(
-                name: "posts");
+                name: "channels");
 
             migrationBuilder.DropTable(
                 name: "notes");
+
+            migrationBuilder.DropTable(
+                name: "posts");
 
             migrationBuilder.DropTable(
                 name: "roles");
 
             migrationBuilder.DropTable(
                 name: "users");
-
-            migrationBuilder.DropTable(
-                name: "channels");
         }
     }
 }

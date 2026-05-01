@@ -50,7 +50,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string channelId, string noteId, [FromForm] UpdateNote updateNote) => await UsingNoteContextAsync(channelId, noteId, async (note, context) =>
+        public async Task<IActionResult> PatchNote(string channelId, string noteId, [FromForm] UpdateNote updateNote) => await UsingChannelNoteContextAsync(channelId, noteId, async (note, context) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateNote.Article);
 
