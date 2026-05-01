@@ -10,7 +10,6 @@ namespace Anatini.Server.Notes.Extensions
             return new NoteDto
             {
                 Id = note.Id,
-                ChannelId = note.ChannelId,
                 Article = note.Article,
                 PublishedAtUtc = note.PublishedAtUtc
             };

@@ -15,10 +15,12 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserImage> UserImages { get; set; }
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
         public DbSet<ApplicationUserChannelEdge> UserChannelEdges { get; set; }
+        public DbSet<ApplicationUserNote> UserNotes { get; set; }
 
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChannelHandle> ChannelHandles { get; set; }
         public DbSet<ChannelImage> ChannelImages { get; set; }
+        public DbSet<ChannelNote> ChannelNotes { get; set; }
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostVersion> PostVersions { get; set; }
@@ -42,6 +44,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserRole>().Configure();
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserChannelEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserNote>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -49,6 +52,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Channel>().Configure();
             modelBuilder.Entity<ChannelHandle>().Configure();
             modelBuilder.Entity<ChannelImage>().Configure();
+            modelBuilder.Entity<ChannelNote>().Configure();
 
             modelBuilder.Entity<Post>().Configure();
             modelBuilder.Entity<PostVersion>().Configure();

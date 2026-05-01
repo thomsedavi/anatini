@@ -5,8 +5,6 @@ namespace Anatini.Server.Context.Entities
     public class Note
     {
         public required Guid Id { get; set; }
-        public required Guid ChannelId { get; set; }
-        public required string Handle { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required PostStatus Status { get; set; }
         public required Visibility Visibility { get; set; }
@@ -15,8 +13,9 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Channel Channel { get; set; } = null!;
         public virtual ICollection<NoteImage> Images { get; set; } = [];
+        public virtual ICollection<ChannelNote> ChannelNotes { get; set; } = [];
+        public virtual ICollection<ApplicationUserNote> UserNotes { get; set; } = [];
 
     }
 

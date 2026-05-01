@@ -130,7 +130,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingNoteAsync(channelHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
         {
             return await noteContextFunction(note, context);
         }, settings);
@@ -250,34 +250,29 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingChannelNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
         {
             return await UsingChannelAsync(channelHandle, async (channel) =>
             {
-                Note? note;
+                ChannelNote? channelNote;
 
-                var notes = context.Notes.AsQueryable();
+                var channelNotes = context.ChannelNotes.AsQueryable();
 
                 if (settings?.AsNoTracking ?? true)
                 {
-                    notes = notes.AsNoTracking();
+                    channelNotes = channelNotes.AsNoTracking();
                 }
 
-                if (Guid.TryParse(noteHandle, out Guid noteId))
-                {
-                    note = await notes.FirstOrDefaultAsync(note => note.Id == noteId);
-                }
-                else
-                {
-                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
+                var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                    note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
-                }
+                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
 
-                if (note == null)
+                if (channelNote == null)
                 {
                     return NotFound();
                 }
+
+                var note = channelNote.Note;
 
                 if (note.Visibility == Visibility.Public)
                 {

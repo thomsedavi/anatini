@@ -23,6 +23,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserChannelEdge> ChannelEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserNote> UserNotes { get; set; } = [];
     }
 
     public class ApplicationUserEmail
@@ -115,5 +116,16 @@ namespace Anatini.Server.Context.Entities
     public class ApplicationUserToken : IdentityUserToken<Guid>
     {
         public virtual ApplicationUser User { get; set; } = null!;
+    }
+
+    public class ApplicationUserNote
+    {
+        public required Guid UserId { get; set; }
+        public required string Handle { get; set; }
+        public required Guid NoteId { get; set; }
+        public required DateTime CreatedAtUtc { get; set; }
+
+        public virtual ApplicationUser User { get; set; } = null!;
+        public virtual Note Note { get; set; } = null!;
     }
 }

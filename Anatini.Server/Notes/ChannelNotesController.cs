@@ -76,7 +76,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingNoteAsync(channelId, noteId, async (note) =>
+        public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
         {
             return Ok(note.ToNoteDto());
         });
@@ -89,7 +89,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string channelId, string noteId) => await UsingNoteAsync(channelId, noteId, async (note) =>
+        public async Task<IActionResult> GetNoteEdit(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
         {
             return Ok(note.ToNoteEditDto());
         }, new ContextSettings { AccessRequired = true });
