@@ -134,7 +134,6 @@ namespace Anatini.Server.Migrations
                 name: "channel_images",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -145,7 +144,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_channel_images", x => x.id);
+                    table.PrimaryKey("pk_channel_images", x => new { x.channel_id, x.handle });
                     table.ForeignKey(
                         name: "fk_channel_images_channels_channel_id",
                         column: x => x.channel_id,
@@ -184,7 +183,6 @@ namespace Anatini.Server.Migrations
                 name: "note_images",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     note_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -195,7 +193,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_note_images", x => x.id);
+                    table.PrimaryKey("pk_note_images", x => new { x.note_id, x.handle });
                     table.ForeignKey(
                         name: "fk_note_images_notes_note_id",
                         column: x => x.note_id,
@@ -234,7 +232,6 @@ namespace Anatini.Server.Migrations
                 name: "post_images",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     post_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -245,7 +242,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_post_images", x => x.id);
+                    table.PrimaryKey("pk_post_images", x => new { x.post_id, x.handle });
                     table.ForeignKey(
                         name: "fk_post_images_posts_post_id",
                         column: x => x.post_id,
@@ -420,7 +417,6 @@ namespace Anatini.Server.Migrations
                 name: "user_images",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -431,7 +427,7 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_images", x => x.id);
+                    table.PrimaryKey("pk_user_images", x => new { x.user_id, x.handle });
                     table.ForeignKey(
                         name: "fk_user_images_users_user_id",
                         column: x => x.user_id,
@@ -594,15 +590,19 @@ namespace Anatini.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_channel_images_channel_id_handle",
-                table: "channel_images",
-                columns: new[] { "channel_id", "handle" },
-                unique: true);
+                name: "ix_channel_notes_channel_id_note_id",
+                table: "channel_notes",
+                columns: new[] { "channel_id", "note_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_channel_notes_note_id",
                 table: "channel_notes",
                 column: "note_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_channel_posts_channel_id_post_id",
+                table: "channel_posts",
+                columns: new[] { "channel_id", "post_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_channel_posts_post_id",
@@ -636,21 +636,9 @@ namespace Anatini.Server.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_note_images_note_id_handle",
-                table: "note_images",
-                columns: new[] { "note_id", "handle" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_notes_published_at_utc",
                 table: "notes",
                 column: "published_at_utc");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_post_images_post_id_handle",
-                table: "post_images",
-                columns: new[] { "post_id", "handle" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_post_versions_post_id_handle",
@@ -709,12 +697,6 @@ namespace Anatini.Server.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_images_user_id_handle",
-                table: "user_images",
-                columns: new[] { "user_id", "handle" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_logins_user_id",
                 table: "user_logins",
                 column: "user_id");
@@ -725,9 +707,19 @@ namespace Anatini.Server.Migrations
                 column: "note_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_notes_user_id_note_id",
+                table: "user_notes",
+                columns: new[] { "user_id", "note_id" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_posts_post_id",
                 table: "user_posts",
                 column: "post_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_posts_user_id_post_id",
+                table: "user_posts",
+                columns: new[] { "user_id", "post_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_roles_role_id",

@@ -18,6 +18,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userNoteBuilder.HasOneWithMany(userNote => userNote.User, user => user.UserNotes, userNote => userNote.UserId, DeleteBehavior.Restrict);
             userNoteBuilder.HasOneWithMany(userNote => userNote.Note, note => note.UserNotes, userNote => userNote.NoteId, DeleteBehavior.Restrict);
+
+            userNoteBuilder.HasIndex(userNote => new { userNote.UserId, userNote.NoteId });
         }
     }
 }

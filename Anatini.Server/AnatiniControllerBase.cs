@@ -213,9 +213,16 @@ namespace Anatini.Server
                     channelPosts = channelPosts.AsNoTracking();
                 }
 
-                var normalizedNoteHandle = NormalizeHandle(postHandle);
+                if (Guid.TryParse(postHandle, out Guid postId))
+                {
+                    channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.PostId == postId);
+                }
+                else
+                {
+                    var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedNoteHandle);
+                    channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedPostHandle);
+                }
 
                 if (channelPost == null)
                 {
@@ -258,9 +265,16 @@ namespace Anatini.Server
                     channelNotes = channelNotes.AsNoTracking();
                 }
 
-                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+                if (Guid.TryParse(noteHandle, out Guid noteId))
+                {
+                    channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.NoteId == noteId);
+                }
+                else
+                {
+                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
+                    channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
+                }
 
                 if (channelNote == null)
                 {

@@ -31,7 +31,6 @@ namespace Anatini.Server.Context.Entities
 
     public class PostImage
     {
-        public Guid Id { get; set; }
         public required Guid PostId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }

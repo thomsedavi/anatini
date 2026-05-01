@@ -71,17 +71,17 @@ namespace Anatini.Server.Channels
                 return issue ?? BadRequest();
             }
 
-            var imageId = Guid.CreateVersion7();
+            var normalizedHandle = NormalizeHandle(createImage.Handle);
 
             var blobContainerName = "anatini-dev";
-            var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
+            var blobName = $"{channel.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddChannelImage(imageId, channel.Id, NormalizeHandle(createImage.Handle), blobContainerName, blobName, createImage.AltText);
+            context.AddChannelImage(channel.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId }, new { Id = imageId, ChannelId = channel.Id });
+            return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId = normalizedHandle }, new { ChannelId = channel.Id, ImageId = normalizedHandle });
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]

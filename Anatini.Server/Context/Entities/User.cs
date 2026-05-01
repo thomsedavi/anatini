@@ -75,7 +75,6 @@ namespace Anatini.Server.Context.Entities
 
     public class ApplicationUserImage
     {
-        public required Guid Id { get; set; }
         public required Guid UserId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }

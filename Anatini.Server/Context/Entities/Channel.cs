@@ -32,7 +32,6 @@ namespace Anatini.Server.Context.Entities
 
     public class ChannelImage
     {
-        public required Guid Id { get; set; }
         public required Guid ChannelId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }

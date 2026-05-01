@@ -397,60 +397,49 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserImage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
+                        .HasColumnName("user_id")
                         .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id")
+                    b.HasKey("UserId", "Handle")
                         .HasName("pk_user_images");
-
-                    b.HasIndex("UserId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_images_user_id_handle");
 
                     b.ToTable("user_images", (string)null);
                 });
@@ -515,6 +504,9 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("NoteId")
                         .HasDatabaseName("ix_user_notes_note_id");
 
+                    b.HasIndex("UserId", "NoteId")
+                        .HasDatabaseName("ix_user_notes_user_id_note_id");
+
                     b.ToTable("user_notes", (string)null);
                 });
 
@@ -546,6 +538,9 @@ namespace Anatini.Server.Migrations
 
                     b.HasIndex("PostId")
                         .HasDatabaseName("ix_user_posts_post_id");
+
+                    b.HasIndex("UserId", "PostId")
+                        .HasDatabaseName("ix_user_posts_user_id_post_id");
 
                     b.ToTable("user_posts", (string)null);
                 });
@@ -723,60 +718,49 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ChannelImage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ChannelId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
+                        .HasColumnName("channel_id")
                         .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(3);
-
-                    b.Property<Guid>("ChannelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("channel_id")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
-                    b.HasKey("Id")
+                    b.HasKey("ChannelId", "Handle")
                         .HasName("pk_channel_images");
-
-                    b.HasIndex("ChannelId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_channel_images_channel_id_handle");
 
                     b.ToTable("channel_images", (string)null);
                 });
@@ -810,6 +794,9 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("NoteId")
                         .HasDatabaseName("ix_channel_notes_note_id");
 
+                    b.HasIndex("ChannelId", "NoteId")
+                        .HasDatabaseName("ix_channel_notes_channel_id_note_id");
+
                     b.ToTable("channel_notes", (string)null);
                 });
 
@@ -841,6 +828,9 @@ namespace Anatini.Server.Migrations
 
                     b.HasIndex("PostId")
                         .HasDatabaseName("ix_channel_posts_post_id");
+
+                    b.HasIndex("ChannelId", "PostId")
+                        .HasDatabaseName("ix_channel_posts_channel_id_post_id");
 
                     b.ToTable("channel_posts", (string)null);
                 });
@@ -966,60 +956,49 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.NoteImage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("NoteId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
+                        .HasColumnName("note_id")
                         .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(2);
-
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("note_id")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
-                    b.HasKey("Id")
+                    b.HasKey("NoteId", "Handle")
                         .HasName("pk_note_images");
-
-                    b.HasIndex("NoteId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_note_images_note_id_handle");
 
                     b.ToTable("note_images", (string)null);
                 });
@@ -1082,60 +1061,49 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.PostImage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
+                        .HasColumnName("post_id")
                         .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("alt_text")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("blob_container_name")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
                         .HasColumnName("blob_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(2);
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("post_id")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
-                    b.HasKey("Id")
+                    b.HasKey("PostId", "Handle")
                         .HasName("pk_post_images");
-
-                    b.HasIndex("PostId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_post_images_post_id_handle");
 
                     b.ToTable("post_images", (string)null);
                 });

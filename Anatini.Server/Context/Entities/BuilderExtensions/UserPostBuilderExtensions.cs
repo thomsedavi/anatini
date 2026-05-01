@@ -18,6 +18,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             userPostBuilder.HasOneWithMany(userPost => userPost.User, user => user.UserPosts, userPost => userPost.UserId, DeleteBehavior.Restrict);
             userPostBuilder.HasOneWithMany(userPost => userPost.Post, post => post.UserPosts, userPost => userPost.PostId, DeleteBehavior.Restrict);
+
+            userPostBuilder.HasIndex(userPost => new { userPost.UserId, userPost.PostId });
         }
     }
 }

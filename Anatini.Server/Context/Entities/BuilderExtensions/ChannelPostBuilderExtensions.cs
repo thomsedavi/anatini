@@ -18,6 +18,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             channelPostBuilder.HasOneWithMany(channelPost => channelPost.Channel, channel => channel.ChannelPosts, channelPost => channelPost.ChannelId, DeleteBehavior.Restrict);
             channelPostBuilder.HasOneWithMany(channelPost => channelPost.Post, post => post.ChannelPosts, channelPost => channelPost.PostId, DeleteBehavior.Restrict);
+
+            channelPostBuilder.HasIndex(channelPost => new { channelPost.ChannelId, channelPost.PostId });
         }
     }
 }

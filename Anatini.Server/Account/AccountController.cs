@@ -93,17 +93,17 @@ namespace Anatini.Server.Account
                 return issue ?? BadRequest();
             }
 
-            var imageId = Guid.CreateVersion7();
+            var normalizedHandle = NormalizeHandle(createImage.Handle);
 
             var blobContainerName = "anatini-dev";
-            var blobName = $"{imageId}{Path.GetExtension(createImage.File.FileName)}";
+            var blobName = $"{user.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
 
             await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddUserImage(imageId, user.Id, NormalizeHandle(createImage.Handle), blobContainerName, blobName, createImage.AltText);
+            context.AddUserImage(user.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId }, new { Id = imageId, UserId = user.Id });
+            return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId = normalizedHandle }, new { UserId = user.Id, ImageId = normalizedHandle });
         });
 
         // TODO when filtering logs by date, ensure date time format like new DateTime(2026, 2, 19, 0, 0, 0, DateTimeKind.Utc);
