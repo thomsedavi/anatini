@@ -51,7 +51,9 @@ namespace Anatini.Server
                 users = users.AsNoTracking();
             }
 
-            users = users.Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.Channel);
+            users = users
+                .Include(user => user.Images)
+                .Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.Channel);
 
             if (TryGetUserId(out Guid userId))
             {

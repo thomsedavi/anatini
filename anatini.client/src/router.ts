@@ -7,7 +7,7 @@ import HomeNotesView from './components/home/HomeNotesView.vue';
 import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
-import NoteCreateView from './components/notes/NoteCreateView.vue';
+import ChannelNoteCreateView from './components/notes/ChannelNoteCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
 import NoteEditView from './components/notes/NoteEditView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';
@@ -18,6 +18,8 @@ import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
 import AccountView from './components/account/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
+import AccountNotesView from './components/account/AccountNotesView.vue';
+import AccountNoteCreateView from './components/account/AccountNoteCreateView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountChannelsView from './components/account/AccountChannelsView.vue';
 import SignUpFlowView from './components/SignUpFlowView.vue';
@@ -88,6 +90,16 @@ const routes = [
         component: AccountChannelsView,
         name: 'AccountChannels'
       },
+      {
+        path: 'notes/create',
+        component: AccountNoteCreateView,
+        name: 'AccountNoteCreate'
+      },
+      {
+        path: 'notes',
+        component: AccountNotesView,
+        name: 'AccountNotes'
+      },
     ],
   },
   {
@@ -97,8 +109,8 @@ const routes = [
   },
   {
     path: '/channels/:channelId/notes/create',
-    component: NoteCreateView,
-    name: 'NoteCreate',
+    component: ChannelNoteCreateView,
+    name: 'ChannelNoteCreate',
   },
   {
     path: '/channels/:channelId/posts/:postId/edit',

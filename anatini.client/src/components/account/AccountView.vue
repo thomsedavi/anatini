@@ -21,14 +21,15 @@
 
   const tabs: Tab[] = [
     { id: 'public', text: 'Display', name: 'AccountPublic' },
-    { id: 'private', text: 'Privacy & Security', name: 'AccountPrivate' },
+    { id: 'notes', text: 'Notes', name: 'AccountNotes', childNames: ['AccountNoteCreate'] },
     { id: 'channels', text: 'Channels', name: 'AccountChannels' },
+    { id: 'private', text: 'Privacy & Security', name: 'AccountPrivate' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
   
   onMounted(() => {
-    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
