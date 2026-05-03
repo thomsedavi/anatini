@@ -202,144 +202,135 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
         {
-            return await UsingChannelAsync(channelHandle, async (channel) =>
+            ChannelPost? channelPost;
+
+            var channelPosts = context.ChannelPosts.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
             {
-                ChannelPost? channelPost;
+                channelPosts = channelPosts.AsNoTracking();
+            }
 
-                var channelPosts = context.ChannelPosts.AsQueryable();
+            if (Guid.TryParse(postHandle, out Guid postId))
+            {
+                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.PostId == postId);
+            }
+            else
+            {
+                var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                if (settings?.AsNoTracking ?? true)
-                {
-                    channelPosts = channelPosts.AsNoTracking();
-                }
+                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedPostHandle);
+            }
 
-                if (Guid.TryParse(postHandle, out Guid postId))
-                {
-                    channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.PostId == postId);
-                }
-                else
-                {
-                    var normalizedPostHandle = NormalizeHandle(postHandle);
-
-                    channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedPostHandle);
-                }
-
-                if (channelPost == null)
-                {
-                    return NotFound();
-                }
-
-                var post = channelPost.Post;
-
-                if (post.Visibility == Visibility.Public)
-                {
-                    return await postFunction(post);
-                }
-
-                if (!IsAuthenticated)
-                {
-                    return NotFound();
-                }
-
-                if (post.Visibility == Visibility.Protected)
-                {
-                    return await postFunction(post);
-                }
-
-                // TODO handle Private
+            if (channelPost == null)
+            {
                 return NotFound();
-            }, settings);
-        }
+            }
+
+            var post = channelPost.Post;
+
+            if (post.Visibility == Visibility.Public)
+            {
+                return await postFunction(post);
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (post.Visibility == Visibility.Protected)
+            {
+                return await postFunction(post);
+            }
+
+            // TODO handle Private
+            return NotFound();
+        }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingChannelNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
         {
-            return await UsingChannelAsync(channelHandle, async (channel) =>
+            ChannelNote? channelNote;
+
+            var channelNotes = context.ChannelNotes.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
             {
-                ChannelNote? channelNote;
+                channelNotes = channelNotes.AsNoTracking();
+            }
 
-                var channelNotes = context.ChannelNotes.AsQueryable();
+            if (Guid.TryParse(noteHandle, out Guid noteId))
+            {
+                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.NoteId == noteId);
+            }
+            else
+            {
+                var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                if (settings?.AsNoTracking ?? true)
-                {
-                    channelNotes = channelNotes.AsNoTracking();
-                }
+                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
+            }
 
-                if (Guid.TryParse(noteHandle, out Guid noteId))
-                {
-                    channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.NoteId == noteId);
-                }
-                else
-                {
-                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
-
-                    channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
-                }
-
-                if (channelNote == null)
-                {
-                    return NotFound();
-                }
-
-                var note = channelNote.Note;
-
-                if (note.Visibility == Visibility.Public)
-                {
-                    return await noteFunction(note);
-                }
-
-                if (!IsAuthenticated)
-                {
-                    return NotFound();
-                }
-
-                if (note.Visibility == Visibility.Protected)
-                {
-                    return await noteFunction(note);
-                }
-
-                // TODO handle Private
+            if (channelNote == null)
+            {
                 return NotFound();
-            }, settings);
-        }
+            }
 
-        [NonAction]
-        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
-        {
-            return await UsingAccountAsync(async (user) =>
+            var note = channelNote.Note;
+
+            if (note.Visibility == Visibility.Public)
             {
-                ApplicationUserNote? userNote;
-
-                var userNotes = context.UserNotes.AsQueryable();
-
-                if (settings?.AsNoTracking ?? true)
-                {
-                    userNotes = userNotes.AsNoTracking();
-                }
-
-                if (Guid.TryParse(noteHandle, out Guid noteId))
-                {
-                    userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.NoteId == noteId);
-                }
-                else
-                {
-                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
-
-                    userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.Handle == normalizedNoteHandle);
-                }
-
-                if (userNote == null)
-                {
-                    return NotFound();
-                }
-
-                var note = userNote.Note;
-
                 return await noteFunction(note);
-            }, settings);
-        }
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (note.Visibility == Visibility.Protected)
+            {
+                return await noteFunction(note);
+            }
+
+            // TODO handle Private
+            return NotFound();
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        {
+            ApplicationUserNote? userNote;
+
+            var userNotes = context.UserNotes.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                userNotes = userNotes.AsNoTracking();
+            }
+
+            if (Guid.TryParse(noteHandle, out Guid noteId))
+            {
+                userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.NoteId == noteId);
+            }
+            else
+            {
+                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+
+                userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.Handle == normalizedNoteHandle);
+            }
+
+            if (userNote == null)
+            {
+                return NotFound();
+            }
+
+            var note = userNote.Note;
+
+            return await noteFunction(note);
+        }, settings);
 
         [NonAction]
         public bool ImageValidationError(CreateImage createImage, out ActionResult? result)
