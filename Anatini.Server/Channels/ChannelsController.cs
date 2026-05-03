@@ -99,9 +99,9 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingAccountContextAsync(async (account, context) =>
+        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingAccountContextAsync(async (user, context) =>
         {
-            var channel = context.AddChannel(account.Id, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
+            var channel = context.AddChannel(user.Id, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
             await context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Handle }, channel.ToChannelDto());

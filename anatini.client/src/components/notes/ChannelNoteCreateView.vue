@@ -68,8 +68,6 @@
       inputErrors.value.push({id: 'article', message: 'Content is required'});
     }
 
-    const formattedArticle = formatArticle(inputArticle.value);
-
     if (inputErrors.value.length > 0) {
       nextTick(() => {
         errorSectionRef.value?.focus();
@@ -95,7 +93,7 @@
 
     const body = new FormData();
 
-    body.append('article', formattedArticle);
+    body.append('article', formatArticle(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
     if (tidy(inputNoteHandle.value) !== '') {

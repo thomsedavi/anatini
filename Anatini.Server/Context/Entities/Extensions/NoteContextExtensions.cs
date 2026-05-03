@@ -5,7 +5,37 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class NoteContextExtensions
     {
-        public static Note AddNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid channelId, PostStatus status, DateTime utcNow, string? handle = null)
+        public static Note AddUserNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid userId, PostStatus status, DateTime utcNow, string? handle = null)
+        {
+            var noteId = Guid.CreateVersion7();
+
+            var userNote = new ApplicationUserNote
+            {
+                UserId = userId,
+                Handle = handle ?? noteId.ToString(),
+                NoteId = noteId,
+                CreatedAtUtc = utcNow
+            };
+
+            var note = new Note
+            {
+                Id = noteId,
+                PublishedAtUtc = utcNow.Truncate(),
+                Article = article,
+                Visibility = visibility,
+                Status = status,
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow,
+                UserNotes = [userNote]
+            };
+
+            context.Add(note);
+
+            return note;
+        }
+
+        public static Note AddChannelNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid channelId, PostStatus status, DateTime utcNow, string? handle = null)
         {
             var noteId = Guid.CreateVersion7();
 

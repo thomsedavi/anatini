@@ -306,6 +306,42 @@ namespace Anatini.Server
         }
 
         [NonAction]
+        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null)
+        {
+            return await UsingAccountAsync(async (user) =>
+            {
+                ApplicationUserNote? userNote;
+
+                var userNotes = context.UserNotes.AsQueryable();
+
+                if (settings?.AsNoTracking ?? true)
+                {
+                    userNotes = userNotes.AsNoTracking();
+                }
+
+                if (Guid.TryParse(noteHandle, out Guid noteId))
+                {
+                    userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.NoteId == noteId);
+                }
+                else
+                {
+                    var normalizedNoteHandle = NormalizeHandle(noteHandle);
+
+                    userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.Handle == normalizedNoteHandle);
+                }
+
+                if (userNote == null)
+                {
+                    return NotFound();
+                }
+
+                var note = userNote.Note;
+
+                return await noteFunction(note);
+            }, settings);
+        }
+
+        [NonAction]
         public bool ImageValidationError(CreateImage createImage, out ActionResult? result)
         {
             if (createImage.File == null || createImage.File.Length == 0)
