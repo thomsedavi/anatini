@@ -3,6 +3,9 @@
   import { formatLong, formatUTC } from '../common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const props = defineProps<{
     notes: Note[] | null,
@@ -27,6 +30,16 @@
       apiFetchAuthenticated(`account/notes`, statusActions);
     }
   });
+
+  function handleClick(payload: MouseEvent) {
+    const element = payload.target as HTMLElement;
+
+    if (element.tagName === 'A') {
+      const anchorElement = element as HTMLAnchorElement;
+
+      router.push(anchorElement.href);
+    }
+  }
 </script>
 
 <template>
@@ -38,7 +51,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></footer>`">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="handleClick">
         </article>
       </li>
     </ul>

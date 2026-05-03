@@ -93,6 +93,7 @@ export type Post = {
 
 export type Note = {
   id: string;
+  handle: string | null;
   article: string;
   publishedAtUtc: string;
 }

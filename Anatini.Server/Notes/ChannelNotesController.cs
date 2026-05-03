@@ -38,7 +38,7 @@ namespace Anatini.Server.Notes
 
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto());
+            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -78,7 +78,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
         {
-            return Ok(note.ToNoteDto());
+            return Ok(note.ToNoteDto(noteId));
         });
 
         [Authorize]

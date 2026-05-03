@@ -5,11 +5,12 @@ namespace Anatini.Server.Notes.Extensions
 {
     public static class NoteExtensions
     {
-        public static NoteDto ToNoteDto(this Note note)
+        public static NoteDto ToNoteDto(this Note note, string? handle = null)
         {
             return new NoteDto
             {
                 Id = note.Id,
+                Handle = handle,
                 Article = note.Article,
                 PublishedAtUtc = note.PublishedAtUtc
             };
