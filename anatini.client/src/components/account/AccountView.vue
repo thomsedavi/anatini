@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, Status, StatusActions, Tab, UserEdit } from '@/types';
+  import type { ErrorMessage, InputError, Note, Status, StatusActions, Tab, UserEdit } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
@@ -18,6 +18,7 @@
   const tabIndex = ref<number>(-1);
   const pageStatus = ref<string>('Loading account information...'); // TODO add other statuses
   const headingMainRef = ref<HTMLElement | null>(null);
+  const notes = ref<Note[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'public', text: 'Display', name: 'AccountPublic' },
@@ -101,6 +102,10 @@
     }
   }
 
+  function handleUpdateNotes(newNotes: Note[]): void {
+    notes.value = newNotes;
+  }
+
   function handleUpdateAbout(newAbout: string): void {
     if (user.value !== null && 'about' in user.value) {
      user.value.about = newAbout;
@@ -175,10 +180,12 @@
           :visibility="user.visibility"
           :status="status"
           :inputErrors="inputErrors"
+          :notes="notes"
           @update-name="handleUpdateName"
           @update-about="handleUpdateAbout"
           @update-protected="handleUpdateProtected"
           @update-status="handleUpdateStatus"
+          @update-notes="handleUpdateNotes"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>

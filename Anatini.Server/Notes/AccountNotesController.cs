@@ -8,6 +8,7 @@ using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Notes
 {
@@ -42,6 +43,33 @@ namespace Anatini.Server.Notes
             return CreatedAtAction(nameof(GetNote), new { noteId = note.Id }, note.ToNoteDto());
         }, new ContextSettings { AccessRequired = true });
 
+        [Authorize]
+        [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAt, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user, context) =>
+        {
+            var userNotes = context.UserNotes.AsQueryable();
+
+            userNotes = userNotes.AsNoTracking().Include(userNote => userNote.Note);
+
+            if (lastPublishedAt.HasValue && lastNoteId.HasValue)
+            {
+                userNotes = userNotes.Where(userNote => userNote.Note.PublishedAtUtc < lastPublishedAt.Value || (userNote.Note.PublishedAtUtc == lastPublishedAt.Value && userNote.Note.Id < lastNoteId.Value));
+            }
+
+            var userNoteList = await userNotes.OrderByDescending(userNote => userNote.Note.PublishedAtUtc).ThenByDescending(userNote => userNote.Note.Id).Take(pageSize).ToListAsync();
+
+            if (userNoteList == null)
+            {
+                return Problem();
+            }
+
+            return Ok(userNoteList.Select(userNote => userNote.Note.ToNoteDto()));
+        });
+
+        [Authorize]
         [HttpGet("{noteId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
