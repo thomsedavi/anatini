@@ -5,7 +5,11 @@
   import InputTextArea from '../common/InputTextArea.vue';
   import { formatArticle, tidy } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
-import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
+
+  defineProps<{
+    status: Status,
+  }>();
 
   const emit = defineEmits<{
     'update-status': [newStatus: Status],
@@ -22,7 +26,6 @@ import { apiFetchAuthenticated } from '../common/apiFetch';
   const inputArticle = ref<string>('');
   const inputVisibility = ref<string>('Public');
   const inputNoteHandle = ref<string>('');
-  const status = ref<Status>('idle');
 
   function getError(id: string): string | undefined {
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
@@ -41,12 +44,12 @@ import { apiFetchAuthenticated } from '../common/apiFetch';
 
         const statusActions: StatusActions = {
       201: () => {
-        status.value = 'success';
+        emit('update-status', 'success');
 
         console.log('Handle thing');
       },
       400: () => {
-        status.value = 'error';
+        emit('update-status', 'error');
       }
     }
 
@@ -70,6 +73,7 @@ import { apiFetchAuthenticated } from '../common/apiFetch';
     <header>
       <h2>Create Note</h2>
     </header>
+
     <form @submit.prevent="postNote" :action="`/api/account/notes`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Create Note</legend>

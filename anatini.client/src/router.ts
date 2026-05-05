@@ -20,6 +20,7 @@ import AccountView from './components/account/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
 import AccountNotesView from './components/account/AccountNotesView.vue';
 import AccountNoteCreateView from './components/account/AccountNoteCreateView.vue';
+import AccountNoteEditView from './components/account/AccountNoteEditView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountChannelsView from './components/account/AccountChannelsView.vue';
 import SignUpFlowView from './components/SignUpFlowView.vue';
@@ -94,6 +95,11 @@ const routes = [
         path: 'notes/create',
         component: AccountNoteCreateView,
         name: 'AccountNoteCreate'
+      },
+      {
+        path: 'notes/:noteId/edit',
+        component: AccountNoteEditView,
+        name: 'AccountNoteEdit'
       },
       {
         path: 'notes',
