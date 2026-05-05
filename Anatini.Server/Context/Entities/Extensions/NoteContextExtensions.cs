@@ -9,25 +9,18 @@ namespace Anatini.Server.Context.Entities.Extensions
         {
             var noteId = Guid.CreateVersion7();
 
-            var userNote = new ApplicationUserNote
-            {
-                UserId = userId,
-                Handle = handle ?? noteId.ToString(),
-                NoteId = noteId,
-                CreatedAtUtc = utcNow
-            };
-
             var note = new Note
             {
                 Id = noteId,
+                UserId = userId,
+                Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = utcNow.Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow,
-                UserNotes = [userNote]
+                UpdatedAtUtc = utcNow
             };
 
             context.Add(note);
@@ -39,25 +32,18 @@ namespace Anatini.Server.Context.Entities.Extensions
         {
             var noteId = Guid.CreateVersion7();
 
-            var channelNote = new ChannelNote
-            {
-                ChannelId = channelId,
-                Handle = handle ?? noteId.ToString(),
-                NoteId = noteId,
-                CreatedAtUtc = utcNow
-            };
-
             var note = new Note
             {
                 Id = noteId,
+                ChannelId = channelId,
+                Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = utcNow.Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow,
-                ChannelNotes = [channelNote]
+                UpdatedAtUtc = utcNow
             };
 
             context.Add(note);

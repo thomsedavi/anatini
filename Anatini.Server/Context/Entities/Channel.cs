@@ -16,8 +16,8 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<Log> Logs { get; set; } = [];
         public virtual ICollection<ChannelHandle> Handles { get; set; } = [];
         public virtual ICollection<ChannelImage> Images { get; set; } = [];
-        public virtual ICollection<ChannelNote> ChannelNotes { get; set; } = [];
-        public virtual ICollection<ChannelPost> ChannelPosts { get; set; } = [];
+        public virtual ICollection<Note> Notes { get; set; } = [];
+        public virtual ICollection<Post> Posts { get; set; } = [];
     }
 
     public class ChannelHandle
@@ -41,27 +41,5 @@ namespace Anatini.Server.Context.Entities
         public required DateTime UpdatedAtUtc { get; set; }
 
         public virtual Channel Channel { get; set; } = null!;
-    }
-
-    public class ChannelNote
-    {
-        public required Guid ChannelId { get; set; }
-        public required string Handle { get; set; }
-        public required Guid NoteId { get; set; }
-        public required DateTime CreatedAtUtc { get; set; }
-
-        public virtual Channel Channel { get; set; } = null!;
-        public virtual Note Note { get; set; } = null!;
-    }
-
-    public class ChannelPost
-    {
-        public required Guid ChannelId { get; set; }
-        public required string Handle { get; set; }
-        public required Guid PostId { get; set; }
-        public required DateTime CreatedAtUtc { get; set; }
-
-        public virtual Channel Channel { get; set; } = null!;
-        public virtual Post Post { get; set; } = null!;
     }
 }

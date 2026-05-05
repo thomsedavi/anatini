@@ -50,23 +50,23 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes(DateTime? lastPublishedAt, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user, context) =>
         {
-            var userNotes = context.UserNotes.AsQueryable();
+            var notes = context.Notes.AsQueryable();
 
-            userNotes = userNotes.AsNoTracking().Include(userNote => userNote.Note);
+            notes = notes.AsNoTracking();
 
             if (lastPublishedAt.HasValue && lastNoteId.HasValue)
             {
-                userNotes = userNotes.Where(userNote => userNote.Note.PublishedAtUtc < lastPublishedAt.Value || (userNote.Note.PublishedAtUtc == lastPublishedAt.Value && userNote.Note.Id < lastNoteId.Value));
+                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAt.Value || (note.PublishedAtUtc == lastPublishedAt.Value && note.Id < lastNoteId.Value));
             }
 
-            var userNoteList = await userNotes.OrderByDescending(userNote => userNote.Note.PublishedAtUtc).ThenByDescending(userNote => userNote.Note.Id).Take(pageSize).ToListAsync();
+            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
 
-            if (userNoteList == null)
+            if (noteList == null)
             {
                 return Problem();
             }
 
-            return Ok(userNoteList.Select(userNote => userNote.Note.ToNoteDto(userNote.Handle)));
+            return Ok(noteList.Select(note => note.ToNoteDto(note.Handle)));
         });
 
         [Authorize]

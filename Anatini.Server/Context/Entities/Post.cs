@@ -5,6 +5,9 @@ namespace Anatini.Server.Context.Entities
     public class Post
     {
         public required Guid Id { get; set; }
+        public Guid? UserId { get; set; }
+        public Guid? ChannelId { get; set; }
+        public required string Handle { get; set; }
         public required string Name { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required PostStatus Status { get; set; }
@@ -13,10 +16,10 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
+        public ApplicationUser? User { get; set; }
+        public Channel? Channel { get; set; }
         public virtual ICollection<PostImage> Images { get; set; } = [];
         public virtual ICollection<PostVersion> Versions { get; set; } = [];
-        public virtual ICollection<ChannelPost> ChannelPosts { get; set; } = [];
-        public virtual ICollection<ApplicationUserPost> UserPosts { get; set; } = [];
     }
 
     public class PostVersion

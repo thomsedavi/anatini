@@ -20,25 +20,18 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Article = article.ToString(SaveOptions.DisableFormatting)
             };
 
-            var channelPost = new ChannelPost
-            {
-                ChannelId = channelId,
-                Handle = handle,
-                PostId = postId,
-                CreatedAtUtc = utcNow
-            };
-
             var post = new Post
             {
                 Id = postId,
+                ChannelId = channelId,
+                Handle = handle,
                 Status = PostStatus.Draft,
                 PublishedAtUtc = utcNow.Truncate(),
                 Name = name,
                 Visibility = Visibility.Public,
                 Versions = [draftVersion],
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow,
-                ChannelPosts = [channelPost]
+                UpdatedAtUtc = utcNow
             };
 
             context.Add(post);
