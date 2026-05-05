@@ -204,32 +204,30 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
         {
-            ChannelPost? channelPost;
+            Post? post;
 
-            var channelPosts = context.ChannelPosts.AsQueryable();
+            var posts = context.Posts.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                channelPosts = channelPosts.AsNoTracking();
+                posts = posts.AsNoTracking();
             }
 
             if (Guid.TryParse(postHandle, out Guid postId))
             {
-                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.PostId == postId);
+                post = await posts.FirstOrDefaultAsync(post => post.ChannelId == channel.Id && post.Id == postId);
             }
             else
             {
                 var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                channelPost = await channelPosts.Include(channelPost => channelPost.Post).FirstOrDefaultAsync(channelPost => channelPost.ChannelId == channel.Id && channelPost.Handle == normalizedPostHandle);
+                post = await posts.FirstOrDefaultAsync(post => post.ChannelId == channel.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (channelPost == null)
+            if (post == null)
             {
                 return NotFound();
             }
-
-            var post = channelPost.Post;
 
             if (post.Visibility == Visibility.Public)
             {
@@ -253,32 +251,30 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingChannelNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
         {
-            ChannelNote? channelNote;
+            Note? note;
 
-            var channelNotes = context.ChannelNotes.AsQueryable();
+            var notes = context.Notes.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                channelNotes = channelNotes.AsNoTracking();
+                notes = notes.AsNoTracking();
             }
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.NoteId == noteId);
+                note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                channelNote = await channelNotes.Include(channelNote => channelNote.Note).FirstOrDefaultAsync(channelNote => channelNote.ChannelId == channel.Id && channelNote.Handle == normalizedNoteHandle);
+                note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
             }
 
-            if (channelNote == null)
+            if (note == null)
             {
                 return NotFound();
             }
-
-            var note = channelNote.Note;
 
             if (note.Visibility == Visibility.Public)
             {
@@ -302,32 +298,30 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            ApplicationUserNote? userNote;
+            Note? note;
 
-            var userNotes = context.UserNotes.AsQueryable();
+            var notes = context.Notes.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                userNotes = userNotes.AsNoTracking();
+                notes = notes.AsNoTracking();
             }
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.NoteId == noteId);
+                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                userNote = await userNotes.Include(userNote => userNote.Note).FirstOrDefaultAsync(userNote => userNote.UserId == user.Id && userNote.Handle == normalizedNoteHandle);
+                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
             }
 
-            if (userNote == null)
+            if (note == null)
             {
                 return NotFound();
             }
-
-            var note = userNote.Note;
 
             return await noteFunction(note);
         }, settings);
