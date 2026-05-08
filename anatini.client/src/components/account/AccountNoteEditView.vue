@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, NoteEdit, Status, StatusActions } from '@/types';
+  import type { ErrorMessage, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
   import InputTextArea from '../common/InputTextArea.vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
+  import VisibilitySelect from '../common/VisibilitySelect.vue';
 
   const route = useRoute();
 
@@ -21,6 +22,7 @@
 
   const note = ref<NoteEdit | ErrorMessage | null>(null);
   const inputArticle = ref<string>('');
+  const inputVisibility = ref<Visibility>('Public');
 
   watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
@@ -31,6 +33,7 @@
           .then((value: NoteEdit) => {
             note.value = value;
             inputArticle.value = parseFromArticleString(value.article);
+            inputVisibility.value = value.visibility;
           })
           .catch(() => { note.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }});
       },
@@ -50,6 +53,10 @@
   }
 
   async function patchNote() {
+    if (note.value === null || 'error' in note.value) {
+      return;
+    }
+
     emit('update-errors', []);
 
     if (tidy(inputArticle.value) === '') {
@@ -69,6 +76,10 @@
     }
 
     body.append('article', formatArticle(inputArticle.value));
+
+    if (inputVisibility.value !== note.value.visibility) {
+      body.append('visibility', inputVisibility.value);
+    }
 
     const init = { method: "PATCH", body: body };
 
@@ -108,6 +119,8 @@
             :error="getError('article')"
             :isArticle="true"
             help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+
+          <VisibilitySelect v-model="inputVisibility" />
         </fieldset>
 
         <SubmitButton

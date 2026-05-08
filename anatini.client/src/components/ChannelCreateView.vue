@@ -1,24 +1,19 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/types';
   import { nextTick, ref } from 'vue';
   import InputText from './common/InputText.vue';
   import SubmitButton from './common/SubmitButton.vue';
   import { tidy } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRouter } from 'vue-router';
-
-  const visibilityOptions = ref([
-    { text: 'Public', value: 'Public' },
-    { text: 'Protected', value: 'Protected' },
-    { text: 'Private', value: 'Private' }
-  ]);
+  import VisibilitySelect from './common/VisibilitySelect.vue';
 
   const router = useRouter();
 
   const inputErrors = ref<InputError[]>([]);
   const inputChannelName = ref<string>('');
   const inputChannelHandle = ref<string>('');
-  const inputVisibility = ref<string>('Public');
+  const inputVisibility = ref<Visibility>('Public');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -116,13 +111,7 @@
           help="lower case with hyphens (e.g. 'my-anatini-channel')"
           :error="getError('handle')" />
 
-        <label for="input-visibility">Privacy Level</label>
-        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
-          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
-            {{ option.text }}
-          </option>
-        </select>
-        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+        <VisibilitySelect v-model="inputVisibility" />
       </fieldset>
 
       <SubmitButton

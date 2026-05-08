@@ -15,7 +15,6 @@
     'update-notes': [newNotes: Note[]],
   }>();
 
-
   onMounted(() => {
     if (props.notes === null) {
       const statusActions: StatusActions = {

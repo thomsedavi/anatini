@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import { nextTick, ref } from 'vue';
-  import type { InputError, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/types';
   import { tidy } from './common/utils';
   import InputText from './common/InputText.vue';
   import SubmitButton from './common/SubmitButton.vue';
   import { apiFetch } from './common/apiFetch';
   import { store } from '@/store';
   import { useRouter } from 'vue-router';
+  import VisibilitySelect from './common/VisibilitySelect.vue';
 
   const router = useRouter();
 
@@ -24,17 +25,11 @@
   const inputName = ref<string>('');
   const inputConfirmationCode = ref<string>('');
   const inputHandle = ref<string>('');
-  const inputVisibility = ref<string>('Public');
+  const inputVisibility = ref<Visibility>('Public');
   const inputPassword = ref<string>('');
   const inputIsPersistent = ref<boolean>(false);
   const errorSectionRef = ref<HTMLElement | null>(null);
   const status = ref<Status>('idle');
-
-  const visibilityOptions = ref([
-    { text: 'Public', value: 'Public' },
-    { text: 'Protected', value: 'Protected' },
-    { text: 'Private', value: 'Private' }
-  ]);
 
   function getError(id: string): string | undefined {
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
@@ -201,13 +196,7 @@
           :error="getError('confirmationCode')"
           :required="true" />
 
-        <label for="input-visibility">Privacy Level</label>
-        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
-          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
-            {{ option.text }}
-          </option>
-        </select>
-        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+        <VisibilitySelect v-model="inputVisibility" />
 
         <input type="checkbox" id="input-is-persistent" name="is-persistent" v-model="inputIsPersistent" aria-describedby="help-is-persistent" />
         <label for="input-is-persistent">Remember Me</label>

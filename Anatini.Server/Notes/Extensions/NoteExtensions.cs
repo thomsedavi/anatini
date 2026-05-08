@@ -23,6 +23,7 @@ namespace Anatini.Server.Notes.Extensions
                 Id = note.Id,
                 Handle = handle,
                 Article = note.Article,
+                Visibility = note.Visibility.ToString(),
                 PublishedAtUtc = note.PublishedAtUtc
             };
         }

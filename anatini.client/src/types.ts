@@ -4,6 +4,7 @@ export type ErrorMessage = { error: true, heading: string, body: string };
 export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
+export type Visibility = 'Public' | 'Protected' | 'Private';
 
 export type Image = {
   uri: string;
@@ -24,7 +25,7 @@ export type UserEdit = {
   about: string | null;
   handle: string;
   channels: Channel[] | null;
-  visibility: 'Private' | 'Protected' | 'Public';
+  visibility: Visibility;
   iconImage: Image | null;
 };
 
@@ -40,7 +41,7 @@ export type Channel = {
   name: string;
   handle: string;
   about: string | null;
-  visiblity: 'Private' | 'Protected' | 'Public';
+  visiblity: Visibility;
 };
 
 export type Tab = {
@@ -102,6 +103,7 @@ export type NoteEdit = {
   id: string;
   handle: string | null;
   article: string;
+  visibility: Visibility;
   publishedAtUtc: string;
 };
 

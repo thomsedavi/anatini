@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/types';
   import { ref } from 'vue';
   import InputText from '../common/InputText.vue';
   import InputTextArea from '../common/InputTextArea.vue';
   import { formatArticle, tidy } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
+  import VisibilitySelect from '../common/VisibilitySelect.vue';
 
   const props = defineProps<{
     status: Status,
@@ -17,14 +18,8 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const visibilityOptions = ref([
-    { text: 'Public', value: 'Public' },
-    { text: 'Protected', value: 'Protected' },
-    { text: 'Private', value: 'Private' }
-  ]);
-
   const inputArticle = ref<string>('');
-  const inputVisibility = ref<string>('Public');
+  const inputVisibility = ref<Visibility>('Public');
   const inputNoteHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
@@ -88,13 +83,7 @@
           :isArticle="true"
           help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
-        <label for="input-visibility">Privacy Level</label>
-        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
-        <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
-            {{ option.text }}
-          </option>
-        </select>
-        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+        <VisibilitySelect v-model="inputVisibility" />
 
         <InputText
           v-model="inputNoteHandle"

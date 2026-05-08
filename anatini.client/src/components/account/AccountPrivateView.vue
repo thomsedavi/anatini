@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/types';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import SubmitButton from '../common/SubmitButton.vue';
   import { ref } from 'vue';
+  import VisibilitySelect from '../common/VisibilitySelect.vue';
 
   const props = defineProps<{
-    visibility: 'Private' | 'Protected' | 'Public';
+    visibility: Visibility;
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -16,13 +17,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const visibilityOptions = ref([
-    { text: 'Public', value: 'Public' },
-    { text: 'Protected', value: 'Protected' },
-    { text: 'Private', value: 'Private' }
-  ]);
-
-  const inputVisibility = ref<string>(props.visibility);
+  const inputVisibility = ref<Visibility>(props.visibility);
 
   function noChangePrivacy(): boolean {
     return props.visibility === inputVisibility.value;
@@ -74,13 +69,7 @@
       <fieldset>
         <legend class="visuallyhidden">Privacy</legend>
 
-        <label for="input-visibility">Privacy Level</label>
-        <select name="visibility" id="input-visibility" v-model="inputVisibility" aria-describedby="help-visibility">
-          <option v-for="option in visibilityOptions" :value="option.value" :key="'visibility' + option.value">
-            {{ option.text }}
-          </option>
-        </select>
-        <small id="help-visibility">Publicly visible, protected to only be visible to trusted users, or private to only be visible to privately trusted users, I need to reword this to explain it better</small>
+        <VisibilitySelect v-model="inputVisibility" />
       </fieldset>
 
       <SubmitButton
