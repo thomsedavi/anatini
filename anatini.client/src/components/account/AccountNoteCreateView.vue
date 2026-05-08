@@ -7,8 +7,9 @@
   import SubmitButton from '../common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
 
-  defineProps<{
+  const props = defineProps<{
     status: Status,
+    inputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -22,17 +23,16 @@
     { text: 'Private', value: 'Private' }
   ]);
 
-  const inputErrors = ref<InputError[]>([]);
   const inputArticle = ref<string>('');
   const inputVisibility = ref<string>('Public');
   const inputNoteHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
-    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+    return props.inputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function postNote() {
-    inputErrors.value = [];
+    emit('update-errors', []);
 
     if (tidy(inputArticle.value) === '') {
       emit('update-errors', [{ id: 'article', message: 'Content is required' }]);
@@ -42,7 +42,7 @@
 
     emit('update-status', 'pending');
 
-        const statusActions: StatusActions = {
+    const statusActions: StatusActions = {
       201: () => {
         emit('update-status', 'success');
 

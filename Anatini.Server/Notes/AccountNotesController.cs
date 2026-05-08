@@ -81,6 +81,33 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
+        [HttpPatch("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchNote(string noteId, [FromForm] UpdateNote updateNote) => await UsingAccountNoteContextAsync(noteId, async (note, context) =>
+        {
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateNote.Article);
+
+            if (validationResult.ErrorMessage != null)
+            {
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
+            }
+
+            note.Article = validationResult.SanitizedHtml;
+            note.UpdatedAtUtc = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+
+            return Ok(note.ToNoteEditDto());
+        }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
+
+        [Authorize]
         [HttpGet("{noteId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]

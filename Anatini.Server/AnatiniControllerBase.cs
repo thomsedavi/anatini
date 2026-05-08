@@ -42,6 +42,12 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
+        {
+            return await noteContextFunction(note, context);
+        }, settings);
+
+        [NonAction]
         public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
         {
             var users = context.Users.AsQueryable();

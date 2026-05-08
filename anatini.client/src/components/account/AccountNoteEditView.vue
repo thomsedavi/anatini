@@ -9,12 +9,17 @@
 
   const route = useRoute();
 
-  defineProps<{
+  const props = defineProps<{
     status: Status,
+    inputErrors: InputError[],
+  }>();
+
+  const emit = defineEmits<{
+    'update-status': [newStatus: Status],
+    'update-errors': [newInputErrors: InputError[]],
   }>();
 
   const note = ref<NoteEdit | ErrorMessage | null>(null);
-  const inputErrors = ref<InputError[]>([]);
   const inputArticle = ref<string>('');
 
   watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
@@ -41,11 +46,33 @@
   };
 
   function getError(id: string): string | undefined {
-    return inputErrors.value.find(inputError => inputError.id === id)?.message;
+    return props.inputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function patchNote() {
+    emit('update-errors', []);
 
+    if (tidy(inputArticle.value) === '') {
+      emit('update-errors', [{ id: 'article', message: 'Content is required' }]);
+
+      return;
+    }
+
+    emit('update-status', 'pending');
+
+    const body = new FormData();
+
+    const statusActions: StatusActions = {
+      200: () => {
+        emit('update-status', 'success');
+      }
+    }
+
+    body.append('article', formatArticle(inputArticle.value));
+
+    const init = { method: "PATCH", body: body };
+
+    apiFetchAuthenticated(`account/notes/${route.params.noteId}`, statusActions, init);
   }
 </script>
 
