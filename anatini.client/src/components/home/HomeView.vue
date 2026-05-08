@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { nextTick, onMounted, ref } from 'vue';
-  import { apiFetch } from '../common/apiFetch';
-  import type { StatusActions, Tab } from '@/types';
+  import type { Note, Tab } from '@/types';
   import TabButton from '../common/TabButton.vue';
   import { getTabIndex } from '../common/utils';
   import { useRoute, useRouter } from 'vue-router';
@@ -10,6 +9,7 @@
   const router = useRouter();
 
   const tabIndex = ref<number>(-1);
+  const notes = ref<Note[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
@@ -21,14 +21,6 @@
 
   onMounted(() => {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
-
-    const statusActions: StatusActions = {
-      200: (response?: Response) => {
-        console.log(response);
-      }
-    }
-
-    apiFetch('notes', statusActions);
   });
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
@@ -57,6 +49,10 @@
       tabRefs.value[index].focus();
     })
   }
+
+  function handleUpdateNotes(newNotes: Note[]): void {
+    notes.value = newNotes;
+  }
 </script>
 
 <template>
@@ -80,6 +76,8 @@
       <component
         :is="Component"
         :attribute-posts="[]"
+        :notes="notes"
+        @update-notes="handleUpdateNotes"
       />
     </RouterView>
   </main>

@@ -7,8 +7,8 @@
   import TabButton from '../common/TabButton.vue';
 
   const route = useRoute();
-
   const router = useRouter();
+
   const user = ref<UserEdit | ErrorMessage | null>(null);
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);

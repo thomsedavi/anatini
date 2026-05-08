@@ -31,17 +31,17 @@
     }
   });
 
-function handleClick(payload: MouseEvent) {
-  const anchor = (payload.target as HTMLElement).closest('a');
+  function handleClick(payload: MouseEvent) {
+    const anchor = (payload.target as HTMLElement).closest('a');
 
-  if (anchor !== null) {
-    const href = anchor.getAttribute('href');
+    if (anchor !== null) {
+      const href = anchor.getAttribute('href');
 
-    if (href !== null) {
-      router.push(href);
+      if (href !== null) {
+        router.push(href);
+      }
     }
   }
-}
 </script>
 
 <template>
