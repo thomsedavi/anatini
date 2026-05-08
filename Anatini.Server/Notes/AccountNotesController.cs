@@ -70,6 +70,17 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
+        [HttpGet("{noteId}/edit")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetNoteEdit(string noteId) => await UsingAccountNoteAsync(noteId, async (note) =>
+        {
+            return Ok(note.ToNoteEditDto(noteId));
+        });
+
+        [Authorize]
         [HttpGet("{noteId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -100,7 +100,9 @@ export type Note = {
 
 export type NoteEdit = {
   id: string;
+  handle: string | null;
   article: string;
+  publishedAtUtc: string;
 };
 
 export type IsAuthenticated = {

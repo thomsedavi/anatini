@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, NoteEdit, Status } from '@/types';
-  import { ref } from 'vue';
-  import { formatArticle, tidy } from '../common/utils';
+  import type { ErrorMessage, InputError, NoteEdit, Status, StatusActions } from '@/types';
+  import { ref, watch } from 'vue';
+  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
   import InputTextArea from '../common/InputTextArea.vue';
   import { useRoute } from 'vue-router';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
 
   const route = useRoute();
 
@@ -15,6 +16,29 @@
   const note = ref<NoteEdit | ErrorMessage | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputArticle = ref<string>('');
+
+  watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+
+  async function fetchNote(params: string[]) {
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: NoteEdit) => {
+            note.value = value;
+            inputArticle.value = parseFromArticleString(value.article);
+          })
+          .catch(() => { note.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }});
+      },
+      404: () => {
+        note.value = { error: true, heading: '404 Not Found', body: 'Note not found' };
+      },
+      500: () => {
+        note.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' };
+      }
+    };
+
+    apiFetchAuthenticated(`account/notes/${params[0]}/edit`, statusActions);
+  };
 
   function getError(id: string): string | undefined {
     return inputErrors.value.find(inputError => inputError.id === id)?.message;

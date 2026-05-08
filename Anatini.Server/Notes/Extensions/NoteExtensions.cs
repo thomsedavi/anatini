@@ -16,12 +16,14 @@ namespace Anatini.Server.Notes.Extensions
             };
         }
 
-        public static NoteEditDto ToNoteEditDto(this Note note)
+        public static NoteEditDto ToNoteEditDto(this Note note, string? handle = null)
         {
             return new NoteEditDto
             {
                 Id = note.Id,
-                Article = note.Article
+                Handle = handle,
+                Article = note.Article,
+                PublishedAtUtc = note.PublishedAtUtc
             };
         }
     }
