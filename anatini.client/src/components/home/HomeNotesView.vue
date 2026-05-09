@@ -3,6 +3,10 @@
   import { formatLong, formatUTC } from '../common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetch } from '../common/apiFetch';
+  import { useRouter } from 'vue-router';
+  import { handleClick } from '../common/utils';
+
+  const router = useRouter();
 
   const props = defineProps<{
     notes: Note[] | null,
@@ -26,6 +30,14 @@
       apiFetch('notes', statusActions);
     }
   });
+
+  function getHeader(note: Note): string {
+    if (note.userHeader !== null) {
+      return `<header><address><a href='/users/${note.userHeader.handle}'><span>${note.userHeader.name}</span></a></address></header>`;
+    }
+
+    return '';
+  }
 </script>
 
 <template>
@@ -36,7 +48,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></footer>`">
+        <article v-html="`${getHeader(note)}${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

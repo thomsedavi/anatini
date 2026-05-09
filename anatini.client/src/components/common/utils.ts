@@ -1,3 +1,5 @@
+import type { Router } from "vue-router";
+
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
   const xml = serializer.serializeToString(node);
@@ -268,4 +270,16 @@ export function tidy(text: string): string {
   }
 
   return tidiedLines.join('\n');
+}
+
+export function handleClick(mouseEvent: MouseEvent, router: Router): void {
+  const anchor = (mouseEvent.target as HTMLElement).closest('a');
+
+  if (anchor !== null) {
+    const href = anchor.getAttribute('href');
+
+    if (href !== null) {
+      router.push(href);
+    }
+  }
 }

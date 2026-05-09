@@ -4,6 +4,7 @@
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRouter } from 'vue-router';
+  import { handleClick } from '../common/utils';
 
   const router = useRouter();
 
@@ -29,18 +30,6 @@
       apiFetchAuthenticated(`account/notes`, statusActions);
     }
   });
-
-  function handleClick(payload: MouseEvent): void {
-    const anchor = (payload.target as HTMLElement).closest('a');
-
-    if (anchor !== null) {
-      const href = anchor.getAttribute('href');
-
-      if (href !== null) {
-        router.push(href);
-      }
-    }
-  }
 </script>
 
 <template>
@@ -52,7 +41,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="handleClick">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>
