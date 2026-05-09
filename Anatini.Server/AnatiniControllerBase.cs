@@ -4,6 +4,7 @@ using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Npgsql;
 
 namespace Anatini.Server
 {
-    public class AnatiniControllerBase(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : ControllerBase
+    public class AnatiniControllerBase(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : ControllerBase
     {
         public bool IsAuthenticated => User.Identity?.IsAuthenticated ?? false;
 
@@ -21,6 +22,7 @@ namespace Anatini.Server
         public string NormalizeName(string name) => userManager.NormalizeName(name);
         public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
         public UserManager<ApplicationUser> UserManager => userManager;
+        public IBlobService BlobService => blobService;
 
         [NonAction]
         public async Task<IActionResult> UsingContextAsync(Func<ApplicationDbContext, Task<IActionResult>> contextFunction)

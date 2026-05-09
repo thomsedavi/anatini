@@ -13,7 +13,7 @@ namespace Anatini.Server.Channels
 {
     [ApiController]
     [Route("api/channels")]
-    public class ChannelsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager)
+    public class ChannelsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet("{channelId}")]
         [Produces(MediaTypeNames.Application.Json)]
@@ -76,7 +76,7 @@ namespace Anatini.Server.Channels
             var blobContainerName = "anatini-dev";
             var blobName = $"{channel.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
 
-            await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
+            await BlobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
             context.AddChannelImage(channel.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();

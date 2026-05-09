@@ -15,7 +15,7 @@ namespace Anatini.Server.Account
 {
     [ApiController]
     [Route("api/account")]
-    public class AccountController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager)
+    public class AccountController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
         [HttpGet]
@@ -24,7 +24,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserEdit() => await UsingAccountAsync(async (user) =>
         {
-            return await Task.FromResult(Ok(await user.ToUserEditDto(blobService)));
+            return await Task.FromResult(Ok(await user.ToUserEditDtoAsync(BlobService)));
         });
 
         [Authorize]
@@ -98,7 +98,7 @@ namespace Anatini.Server.Account
             var blobContainerName = "anatini-dev";
             var blobName = $"{user.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
 
-            await blobService.UploadAsync(createImage.File, blobContainerName, blobName);
+            await BlobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
             context.AddUserImage(user.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();

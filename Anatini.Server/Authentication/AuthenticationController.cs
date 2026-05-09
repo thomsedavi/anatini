@@ -4,6 +4,7 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Context.Extensions;
+using Anatini.Server.Images.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/authentication")]
-    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : AnatiniControllerBase(context, userManager)
+    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Multipart.FormData)]

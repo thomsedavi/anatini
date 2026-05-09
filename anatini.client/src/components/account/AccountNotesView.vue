@@ -30,7 +30,7 @@
     }
   });
 
-  function handleClick(payload: MouseEvent) {
+  function handleClick(payload: MouseEvent): void {
     const anchor = (payload.target as HTMLElement).closest('a');
 
     if (anchor !== null) {

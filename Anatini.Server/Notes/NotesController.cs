@@ -1,6 +1,7 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Notes.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Anatini.Server.Notes
 {
     [ApiController]
     [Route("api/notes")]
-    public class NotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
+    public class NotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -19,7 +20,7 @@ namespace Anatini.Server.Notes
         {
             var notes = context.Notes.AsQueryable();
 
-            notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
+            notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow).Include(note => note.User);
 
             if (IsAuthenticated)
             {
@@ -42,7 +43,7 @@ namespace Anatini.Server.Notes
                 return Problem();
             }
 
-            return Ok(noteList.Select(note => note.ToNoteDto(note.Handle)));
+            return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
         });
     }
 }

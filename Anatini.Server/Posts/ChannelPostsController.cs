@@ -2,6 +2,7 @@
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,7 @@ namespace Anatini.Server.Posts
 {
     [ApiController]
     [Route("api/channels/{channelId}/posts")]
-    public class ChannelPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
+    public class ChannelPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
         [HttpPost]

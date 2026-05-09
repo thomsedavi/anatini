@@ -7,52 +7,30 @@ namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static async Task<UserDto> ToUserDto(this ApplicationUser user, IBlobService? blobService = null)
+        public static async Task<UserDto> ToUserDtoAsync(this ApplicationUser user, IBlobService? blobService = null)
         {
-            ImageDto? iconImage = null;
-
-            if (blobService != null)
-            {
-                var userIconImage = user.Images.FirstOrDefault(image => image.Handle == "icon");
-
-                if (userIconImage != null)
-                {
-                    iconImage = new ImageDto
-                    {
-                        Uri = await blobService.GenerateUserImageLink(userIconImage.BlobContainerName, userIconImage.BlobName),
-                        AltText = userIconImage.AltText,
-                    };
-                }
-            }
-
             return new UserDto
             {
                 Id = user.Id,
                 Name = user.Name,
                 About = user.About,
                 Handle = user.Handle,
-                IconImage = iconImage
+                IconImage = await user.GetIconImageAsync(blobService)
             };
         }
 
-        public static async Task<UserEditDto> ToUserEditDto(this ApplicationUser user, IBlobService? blobService = null)
+        public static async Task<UserHeaderDto> ToUserHeaderDtoAsync(this ApplicationUser user, IBlobService? blobService = null)
         {
-            ImageDto? iconImage = null;
-
-            if (blobService != null)
+            return new UserHeaderDto
             {
-                var userIconImage = user.Images.FirstOrDefault(image => image.Handle == "icon");
+                Name = user.Name,
+                Handle = user.Handle,
+                IconImage = await user.GetIconImageAsync(blobService)
+            };
+        }
 
-                if (userIconImage != null)
-                {
-                    iconImage = new ImageDto
-                    {
-                        Uri = await blobService.GenerateUserImageLink(userIconImage.BlobContainerName, userIconImage.BlobName),
-                        AltText = userIconImage.AltText,
-                    };
-                }
-            }
-
+        public static async Task<UserEditDto> ToUserEditDtoAsync(this ApplicationUser user, IBlobService? blobService = null)
+        {
             return new UserEditDto
             {
                 Id = user.Id,
@@ -62,8 +40,29 @@ namespace Anatini.Server.Users.Extensions
                 Handle = user.Handle,
                 UserName = user.UserName,
                 Visibility = user.Visibility.ToString(),
-                IconImage = iconImage
+                IconImage = await user.GetIconImageAsync(blobService)
             };
+        }
+
+        private static async Task<ImageDto?> GetIconImageAsync(this ApplicationUser user, IBlobService? blobService = null)
+        {
+            ImageDto? iconImage = null;
+
+            if (blobService != null)
+            {
+                var userIconImage = user.Images.FirstOrDefault(image => image.Handle == "icon");
+
+                if (userIconImage != null)
+                {
+                    iconImage = new ImageDto
+                    {
+                        Uri = await blobService.GenerateUserImageLink(userIconImage.BlobContainerName, userIconImage.BlobName),
+                        AltText = userIconImage.AltText,
+                    };
+                }
+            }
+
+            return iconImage;
         }
     }
 }

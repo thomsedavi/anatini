@@ -19,6 +19,12 @@ export type User = {
   about: string | null;
 };
 
+export type UserHeader = {
+  name: string;
+  iconImage: Image | null;
+  handle: string;
+};
+
 export type UserEdit = {
   id: string;
   name: string;
@@ -94,6 +100,7 @@ export type Post = {
 
 export type Note = {
   id: string;
+  userHeader: UserHeader | null;
   handle: string | null;
   article: string;
   publishedAtUtc: string;

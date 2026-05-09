@@ -3,6 +3,7 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
+using Anatini.Server.Images.Services;
 using Anatini.Server.Notes.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace Anatini.Server.Notes
 {
     [ApiController]
     [Route("api/channels/{channelId}/notes")]
-    public class ChannelNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : AnatiniControllerBase(context, userManager)
+    public class ChannelNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
         [HttpPost]
@@ -38,7 +39,7 @@ namespace Anatini.Server.Notes
 
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, note.ToNoteDto(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null));
+            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -78,7 +79,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
         {
-            return Ok(note.ToNoteDto(noteId));
+            return Ok(await note.ToNoteDtoAsync(noteId, BlobService));
         });
 
         [Authorize]

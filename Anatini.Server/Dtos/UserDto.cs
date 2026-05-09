@@ -8,4 +8,11 @@
         public required string Handle { get; set; }
         public string? About { get; set; }
     }
+
+    public class UserHeaderDto
+    {
+        public required string Name { get; set; }
+        public ImageDto? IconImage { get; set; }
+        public required string Handle { get; set; }
+    }
 }
