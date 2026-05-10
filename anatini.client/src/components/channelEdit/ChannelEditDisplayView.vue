@@ -21,12 +21,12 @@
   }>();
 
   const inputName = ref<string>(props.name ?? '');
-  const fileUserIcon = ref<File | null>(null);
+  const fileIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');
 
   function noChange(): boolean {
-    return props.name == tidy(inputName.value);
+    return props.name === tidy(inputName.value) && fileIcon.value === null;
   }
 
   function getError(id: string): string | undefined {
@@ -47,12 +47,44 @@
       return;
     }
 
-    fileUserIcon.value = file;
+    fileIcon.value = file;
     previewUrl.value = URL.createObjectURL(file);
     uploadStatus.value = 'File selected';
   };
 
-  async function patchChannel() {
+  async function patch(body: FormData, tidiedName: string) {
+    const statusActions: StatusActions = {
+      204: () => {
+        emit('update-status', 'success');
+        emit('update-name', tidiedName);
+      },
+      400: (response?: Response) => {
+        emit('update-status', 'error');
+
+        response?.json().then(value => {
+          if (value.errors) {
+            const inputErrors: InputError[] = [];
+            
+            if ('Name' in value.errors) {
+              inputErrors.push({id: 'name', message: value.errors['Name'][0]});
+            }
+
+            emit('update-errors', inputErrors);
+          }
+        });
+      },
+      500: () => {
+        emit('update-status', 'error');
+        emit('update-errors', [{ id: 'name', message: 'Unknown Error' }]);
+      }
+    };
+
+    const init = { method: "PATCH", body: body };
+
+    apiFetchAuthenticated(`channels/${props.channelId}`, statusActions, init);
+  }
+
+  async function patchChannelDisplay() {
     emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
@@ -65,37 +97,35 @@
 
     emit('update-status', 'pending');
 
-    const statusActions: StatusActions = {
-      204: () => {
-        emit('update-status', 'success');
-        emit('update-name', tidiedName);
-      },
-      400: (response?: Response) => {
-        emit('update-status', 'error');
-
-        response?.json().then((value) => {
-          if (value.errors) {
-            if ('Name' in value.errors) {
-              emit('update-errors', [{ id: 'name', message: value.errors['Name'][0] }]);
-            }
-          }
-        });
-      },
-      500: () => {
-        emit('update-status', 'error');
-        emit('update-errors', [{ id: 'name', message: 'Unknown Error' }]);
-      }
-    }
-
     const body = new FormData();
 
     if (props.name !== tidiedName) {
       body.append('name', tidiedName);
     }
 
-    const init = { method: "PATCH", body: body };
+    if (fileIcon.value !== null) {
+      const bodyIcon = new FormData();
 
-    apiFetchAuthenticated(`channels/${props.channelId}`, statusActions, init);
+      bodyIcon.append('file', fileIcon.value);
+      bodyIcon.append('type', 'Icon');
+      bodyIcon.append('handle', 'icon');
+
+      const statusActionsIcon: StatusActions = {
+        201: () => {
+          fileIcon.value = null; 
+        },
+        500: () => {
+          emit('update-status', 'error');
+          emit('update-errors', [{ id: 'icon', message: 'Unknown Error' }]);
+        }
+      }
+
+      const initIcon = { method: "POST", body: bodyIcon };
+
+      apiFetchAuthenticated(`channels/${props.channelId}/images`, statusActionsIcon, initIcon);
+    } else {
+      patch(body, tidiedName);
+    }
   }
 </script>
 
@@ -105,7 +135,7 @@
       <h2>Display</h2>
     </header>
 
-    <form @submit.prevent="patchChannel" :action="`/api/channels/${channelId}`" method="POST" novalidate>
+    <form @submit.prevent="patchChannelDisplay" :action="`/api/channels/${channelId}`" method="POST" novalidate>
       <fieldset>
       <InputText
           v-model="inputName"
@@ -117,7 +147,7 @@
           help="Channel display name"
           autocomplete="name" />
 
-        <label for="icon-user">Icon</label>
+        <label for="icon">Icon</label>
         <input
           type="file"
           accept="image/*"
@@ -128,9 +158,9 @@
         />
         <small id="help-icon">Files must be JPG or PNG, under 1MB, and have dimensions 400 wide by 400 high</small>
 
-        <output id="file-preview" for="icon-user">
+        <output id="file-preview" for="icon">
           <figure>
-            <img :alt="iconImage?.altText ?? 'User icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+            <img :alt="iconImage?.altText ?? 'Channel icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
             <figcaption>A preview will appear here</figcaption>
           </figure>
         </output>

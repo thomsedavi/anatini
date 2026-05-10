@@ -158,6 +158,8 @@ namespace Anatini.Server
                 channels = channels.AsNoTracking();
             }
 
+            channels = channels.Include(channel => channel.Images);
+
             if (Guid.TryParse(channelHandle, out Guid channelId))
             {
                 channel = await channels.FirstOrDefaultAsync(channel => channel.Id == channelId);
