@@ -7,5 +7,6 @@
         public required string Article { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
+        public ChannelHeaderDto? ChannelHeader { get; set; }
     }
 }

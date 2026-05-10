@@ -42,6 +42,16 @@
       header += `<span>${note.userHeader.name}</span></a></address></header>`;
 
       return header;
+    } else if (note.channelHeader !== null) {
+      let header = `<header><address><a href='/channels/${note.channelHeader.handle}' rel='author'>`;
+
+      if (note.channelHeader.iconImage !== null) {
+        header += `<img src='${note.channelHeader.iconImage.uri}' alt='${note.channelHeader.iconImage.altText ?? 'User icon'}' aria-hidden='true' />`;
+      }
+      
+      header += `<span>${note.channelHeader.name}</span></a></address></header>`;
+
+      return header;
     }
 
     return '';

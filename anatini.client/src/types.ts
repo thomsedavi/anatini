@@ -50,6 +50,12 @@ export type Channel = {
   visiblity: Visibility;
 };
 
+export type ChannelHeader = {
+  name: string;
+  handle: string;
+  iconImage: Image | null;
+};
+
 export type Tab = {
   id: string;
   text: string;
@@ -67,10 +73,10 @@ export type DraftPost = {
 export type ChannelEdit = {
   id: string;
   name: string;
-  defaultHandle: string;
-  aliases: {
-    handle: string;
-  }[];
+  about: string | null;
+  handle: string;
+  iconImage: Image | null;
+  visiblity: Visibility;
 };
 
 export type PostElement = {
@@ -101,6 +107,7 @@ export type Post = {
 export type Note = {
   id: string;
   userHeader: UserHeader | null;
+  channelHeader: ChannelHeader | null;
   handle: string | null;
   article: string;
   publishedAtUtc: string;

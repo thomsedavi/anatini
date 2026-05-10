@@ -183,9 +183,10 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :channelId="channel.defaultHandle"
+          :channelId="channel.id"
           :notes="notes"
           :name="channel.name"
+          :icon-image="channel.iconImage"
           :status="status"
           :inputErrors="inputErrors"
           :hasNotesContinuationToken="notesContinuationToken !== null"

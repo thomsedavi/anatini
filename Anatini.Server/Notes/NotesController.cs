@@ -20,7 +20,9 @@ namespace Anatini.Server.Notes
         {
             var notes = context.Notes.AsQueryable();
 
-            notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow).Include(note => note.User).ThenInclude(user => user!.Images);
+            notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
+            notes = notes.Include(note => note.User).ThenInclude(user => user!.Images);
+            notes = notes.Include(note => note.Channel).ThenInclude(channel => channel!.Images);
 
             if (IsAuthenticated)
             {

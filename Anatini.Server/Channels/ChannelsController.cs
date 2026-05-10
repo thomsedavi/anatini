@@ -35,7 +35,7 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannelAsync(channelId, async (channel) =>
         {
-            return Ok(channel.ToChannelEditDto());
+            return Ok(await channel.ToChannelEditDtoAsync(BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
