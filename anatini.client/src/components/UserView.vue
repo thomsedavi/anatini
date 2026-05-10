@@ -49,7 +49,7 @@
     <article :aria-busy="user === null" aria-labelledby="heading-main">
       <header>
         <figure>
-          <img v-if="user && 'iconImage' in user && user.iconImage" :alt="user.iconImage.altText ?? 'User Icon'" :src="user.iconImage.uri" width="400" height="400" />
+          <img v-if="user && 'iconImage' in user && user.iconImage" :alt="user.iconImage.altText ?? 'User icon'" :src="user.iconImage.uri" width="400" height="400" />
           <svg v-else
             view-box="0 0 400 400"
             width="400"

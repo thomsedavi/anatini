@@ -33,7 +33,15 @@
 
   function getHeader(note: Note): string {
     if (note.userHeader !== null) {
-      return `<header><address><a href='/users/${note.userHeader.handle}'><span>${note.userHeader.name}</span></a></address></header>`;
+      let header = `<header><address><a href='/users/${note.userHeader.handle}' rel='author'>`;
+
+      if (note.userHeader.iconImage !== null) {
+        header += `<img src='${note.userHeader.iconImage.uri}' alt='${note.userHeader.iconImage.altText ?? 'User icon'}' aria-hidden='true' />`;
+      }
+      
+      header += `<span>${note.userHeader.name}</span></a></address></header>`;
+
+      return header;
     }
 
     return '';
