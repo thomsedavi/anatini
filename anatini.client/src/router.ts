@@ -8,7 +8,6 @@ import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
-import NoteEditView from './components/notes/NoteEditView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';
 import PostEditArticleView from './components/postEdit/PostEditArticleView.vue';
 import PostEditDetailsView from './components/postEdit/PostEditDetailsView.vue';
@@ -146,11 +145,6 @@ const routes = [
     path: '/channels/:channelId/posts/:postId',
     component: PostView,
     name: 'Post',
-  },
-  {
-    path: '/channels/:channelId/notes/:noteId/edit',
-    component: NoteEditView,
-    name: 'NoteEdit',
   },
   {
     path: '/channels/:channelId/notes/:noteId',
