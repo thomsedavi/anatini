@@ -16,7 +16,7 @@
   <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
       <h2>Notes</h2>
-      <RouterLink :to="{ name: 'ChannelNoteCreate' }">+ Create Note</RouterLink>
+      <RouterLink :to="{ name: 'ChannelEditNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
     <section aria-labelledby="section-your-notes">

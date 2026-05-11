@@ -7,7 +7,6 @@ import HomeNotesView from './components/home/HomeNotesView.vue';
 import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
-import ChannelNoteCreateView from './components/notes/ChannelNoteCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
 import NoteEditView from './components/notes/NoteEditView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';
@@ -28,6 +27,7 @@ import UserView from './components/UserView.vue';
 import ChannelCreateView from './components/ChannelCreateView.vue';
 import ChannelEditView from './components/channelEdit/ChannelEditView.vue';
 import ChannelEditNotesView from './components/channelEdit/ChannelEditNotesView.vue';
+import ChannelEditNoteCreateView from './components/channelEdit/ChannelEditNoteCreateView.vue';
 import ChannelEditPostsView from './components/channelEdit/ChannelEditPostsView.vue';
 import ChannelEditDisplayView from './components/channelEdit/ChannelEditDisplayView.vue';
 import ChannelView from './components/ChannelView.vue';
@@ -114,11 +114,6 @@ const routes = [
     name: 'PostCreate',
   },
   {
-    path: '/channels/:channelId/notes/create',
-    component: ChannelNoteCreateView,
-    name: 'ChannelNoteCreate',
-  },
-  {
     path: '/channels/:channelId/posts/:postId/edit',
     component: PostEditView,
     name: 'PostEdit',
@@ -181,6 +176,12 @@ const routes = [
         component: ChannelEditPostsView,
         name: 'ChannelEditPosts'
       },
+      {
+        path: 'notes/create',
+        component: ChannelEditNoteCreateView,
+        name: 'ChannelEditNoteCreate'
+      },
+
       {
         path: 'notes',
         component: ChannelEditNotesView,

@@ -20,14 +20,14 @@
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'ChannelEditPosts' },
-    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes' },
+    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes', childNames: ['ChannelEditNoteCreate'] },
     { id: 'public', text: 'Display', name: 'ChannelEditDisplay' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
   onMounted(() => {
-    tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
   });
 
   watch([() => route.params.channelId], (source: Source) => fetchChannel(parseSource(source)), { immediate: true });
@@ -39,10 +39,14 @@
           .then((value: ChannelEdit) => {
             channel.value = value;
             inputName.value = value.name;
-
-            fetchNotes(value.id);
           })
           .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+      },
+      401: () => {
+        router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
+      },
+      403: () => {
+        channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };
       },
       404: () => {
         channel.value = { error: true, heading: '404 Not Found', body: 'Channel not found' };
@@ -54,20 +58,6 @@
 
     apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
   };
-
-  async function fetchNotes(channelId: string) {
-    const statusActions: StatusActions = {
-      200: (response?: Response) => {
-        response?.json()
-          .then((value: { notes: Note[], continuationToken: string | null }) => {
-            notes.value = value.notes;
-            notesContinuationToken.value = value.continuationToken;
-          });
-      }
-    }
-
-    apiFetchAuthenticated(`channels/${channelId}/notes`, statusActions);
-  }
 
   async function fetchMoreNotes() {
     if (channel.value !== null && 'id' in channel.value && notesContinuationToken.value !== null) {
