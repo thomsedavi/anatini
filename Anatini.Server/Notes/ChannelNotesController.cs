@@ -9,6 +9,7 @@ using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Notes
 {
@@ -16,6 +17,37 @@ namespace Anatini.Server.Notes
     [Route("api/channels/{channelId}/notes")]
     public class ChannelNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
+        [HttpGet]
+        public async Task<IActionResult> GetNotes(string channelId, DateTime? lastPublishedAt, Guid? lastNoteId, int pageSize = 20) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        {
+            var notes = context.Notes.AsQueryable();
+
+            notes = notes.AsNoTracking().Where(note => note.ChannelId == channel.Id && note.PublishedAtUtc < DateTime.UtcNow);
+
+            if (IsAuthenticated)
+            {
+                notes = notes.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+            }
+            else
+            {
+                notes = notes.Where(note => note.Visibility == Visibility.Public);
+            }
+
+            if (lastPublishedAt.HasValue && lastNoteId.HasValue)
+            {
+                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAt.Value || (note.PublishedAtUtc == lastPublishedAt.Value && note.Id < lastNoteId.Value));
+            }
+
+            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+
+            if (noteList == null)
+            {
+                return Problem();
+            }
+
+            return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
+        });
+
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
