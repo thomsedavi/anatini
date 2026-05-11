@@ -28,6 +28,7 @@ import ChannelCreateView from './components/ChannelCreateView.vue';
 import ChannelEditView from './components/channelEdit/ChannelEditView.vue';
 import ChannelEditNotesView from './components/channelEdit/ChannelEditNotesView.vue';
 import ChannelEditNoteCreateView from './components/channelEdit/ChannelEditNoteCreateView.vue';
+import ChannelEditNoteEditView from './components/channelEdit/ChannelEditNoteEditView.vue';
 import ChannelEditPostsView from './components/channelEdit/ChannelEditPostsView.vue';
 import ChannelEditDisplayView from './components/channelEdit/ChannelEditDisplayView.vue';
 import ChannelView from './components/ChannelView.vue';
@@ -181,7 +182,11 @@ const routes = [
         component: ChannelEditNoteCreateView,
         name: 'ChannelEditNoteCreate'
       },
-
+      {
+        path: 'notes/:noteId/edit',
+        component: ChannelEditNoteEditView,
+        name: 'ChannelEditNoteEdit'
+      },
       {
         path: 'notes',
         component: ChannelEditNotesView,

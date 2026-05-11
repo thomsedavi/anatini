@@ -42,7 +42,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/channel/${channelId}/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/channels/${channelId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

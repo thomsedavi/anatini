@@ -2,11 +2,11 @@
   import type { ErrorMessage, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import InputTextArea from '../common/InputTextArea.vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import VisibilitySelect from '../common/VisibilitySelect.vue';
+  import InputTextArea from '../common/InputTextArea.vue';
+  import SubmitButton from '../common/SubmitButton.vue';
 
   const route = useRoute();
 
@@ -24,7 +24,7 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
 
-  watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.channelId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
     const statusActions: StatusActions = {
@@ -45,7 +45,7 @@
       }
     };
 
-    apiFetchAuthenticated(`account/notes/${params[0]}/edit`, statusActions);
+    apiFetchAuthenticated(`channels/${params[0]}/notes/${params[1]}/edit`, statusActions);
   };
 
   function noChange(): boolean {
@@ -97,9 +97,10 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`account/notes/${route.params.noteId}`, statusActions, init);
+    apiFetchAuthenticated(`channels/${route.params.channelId}/notes/${route.params.noteId}`, statusActions, init);
   }
 </script>
+
 
 <template>
   <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
@@ -120,7 +121,7 @@
     </section>
 
     <template v-else>
-      <form @submit.prevent="patchNote" :action="`/api/account/notes/${route.params.noteId}`" method="POST" novalidate>
+      <form @submit.prevent="patchNote" :action="`/api/channels/${route.params.channelId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Edit Note</legend>
 

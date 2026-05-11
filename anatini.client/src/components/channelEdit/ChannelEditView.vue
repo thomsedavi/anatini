@@ -19,7 +19,7 @@
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'ChannelEditPosts' },
-    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes', childNames: ['ChannelEditNoteCreate'] },
+    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes', childNames: ['ChannelEditNoteCreate', 'ChannelEditNoteEdit'] },
     { id: 'public', text: 'Display', name: 'ChannelEditDisplay' },
   ];
 
