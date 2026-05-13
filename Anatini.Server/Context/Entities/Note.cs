@@ -19,6 +19,7 @@ namespace Anatini.Server.Context.Entities
         public ApplicationUser? User { get; set; }
         public Channel? Channel { get; set; }
         public virtual ICollection<NoteImage> Images { get; set; } = [];
+        public virtual ICollection<ApplicationUserNoteEdge> UserEdges { get; set; } = [];
     }
 
     public class NoteImage

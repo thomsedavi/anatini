@@ -23,6 +23,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserChannelEdge> ChannelEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserNoteEdge> NoteEdges { get; set; } = [];
         public virtual ICollection<Note> Notes { get; set; } = [];
         public virtual ICollection<Post> Posts { get; set; } = [];
     }
@@ -53,13 +54,13 @@ namespace Anatini.Server.Context.Entities
 
     public class ApplicationUserChannelEdge
     {
-        public required Guid UserId { get; set; }
-        public required Guid ChannelId { get; set; }
+        public required Guid SourceUserId { get; set; }
+        public required Guid TargetChannelId { get; set; }
         public required UserChannelEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
-        public virtual ApplicationUser User { get; set; } = null!;
-        public virtual Channel Channel { get; set; } = null!;
+        public virtual ApplicationUser SourceUser { get; set; } = null!;
+        public virtual Channel TargetChannel { get; set; } = null!;
     }
 
     public class ApplicationUserUserEdge
@@ -71,6 +72,17 @@ namespace Anatini.Server.Context.Entities
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
         public virtual ApplicationUser TargetUser { get; set; } = null!;
+    }
+    
+    public class ApplicationUserNoteEdge
+    {
+        public required Guid SourceUserId { get; set; }
+        public required Guid TargetNoteId { get; set; }
+        public required UserNoteEdgeLabel Label { get; set; }
+        public required DateTime CreatedAtUtc { get; set; }
+
+        public virtual ApplicationUser SourceUser { get; set; } = null!;
+        public virtual Note TargetNote { get; set; } = null!;
     }
 
     public class ApplicationUserImage

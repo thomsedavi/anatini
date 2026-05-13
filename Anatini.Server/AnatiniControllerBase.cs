@@ -61,7 +61,7 @@ namespace Anatini.Server
 
             users = users
                 .Include(user => user.Images)
-                .Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.Channel);
+                .Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.TargetChannel);
 
             if (TryGetUserId(out Guid userId))
             {
@@ -178,7 +178,7 @@ namespace Anatini.Server
 
             if (settings?.AccessRequired ?? false)
             {
-                if (TryGetUserId(out Guid userId) && await context.UserChannelEdges.AnyAsync(userChannel => userChannel.UserId == userId && userChannel.ChannelId == channel.Id && userChannel.Label == UserChannelEdgeLabel.Owner))
+                if (TryGetUserId(out Guid userId) && await context.UserChannelEdges.AnyAsync(userChannel => userChannel.SourceUserId == userId && userChannel.TargetChannelId == channel.Id && userChannel.Label == UserChannelEdgeLabel.Owner))
                 {
                     return await channelFunction(channel);
                 }

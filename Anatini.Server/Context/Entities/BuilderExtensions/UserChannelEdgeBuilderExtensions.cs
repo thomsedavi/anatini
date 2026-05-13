@@ -9,17 +9,17 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             userChannelEdgeBuilder.ToTable("user_channel_edges");
 
-            userChannelEdgeBuilder.HasKey(userChannelEdge => new { userChannelEdge.UserId, userChannelEdge.ChannelId, userChannelEdge.Label });
+            userChannelEdgeBuilder.HasKey(userChannelEdge => new { userChannelEdge.SourceUserId, userChannelEdge.TargetChannelId, userChannelEdge.Label });
 
-            userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.UserId).Has(order: 0);
-            userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.ChannelId).Has(order: 1);
+            userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.SourceUserId).Has(order: 0);
+            userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.TargetChannelId).Has(order: 1);
             userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.Label).Has(order: 2);
             userChannelEdgeBuilder.Property(userChannelEdge => userChannelEdge.CreatedAtUtc).Has(order: 3);
 
-            userChannelEdgeBuilder.HasOneWithMany(userChannelEdge => userChannelEdge.User, user => user.ChannelEdges, userChannelEdge => userChannelEdge.UserId, DeleteBehavior.Restrict);
-            userChannelEdgeBuilder.HasOneWithMany(userChannelEdge => userChannelEdge.Channel, channel => channel.UserEdges, userChannelEdge => userChannelEdge.ChannelId, DeleteBehavior.Restrict);
+            userChannelEdgeBuilder.HasOneWithMany(userChannelEdge => userChannelEdge.SourceUser, user => user.ChannelEdges, userChannelEdge => userChannelEdge.SourceUserId, DeleteBehavior.Restrict);
+            userChannelEdgeBuilder.HasOneWithMany(userChannelEdge => userChannelEdge.TargetChannel, channel => channel.UserEdges, userChannelEdge => userChannelEdge.TargetChannelId, DeleteBehavior.Restrict);
 
-            userChannelEdgeBuilder.HasIndex(userChannelEdge => new { userChannelEdge.ChannelId, userChannelEdge.UserId, userChannelEdge.Label });
+            userChannelEdgeBuilder.HasIndex(userChannelEdge => new { userChannelEdge.TargetChannelId, userChannelEdge.Label, userChannelEdge.SourceUserId });
         }
     }
 }

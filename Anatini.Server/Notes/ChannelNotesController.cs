@@ -49,6 +49,13 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
+        [HttpPost("{noteId}/bookmark")]
+        public async Task<IActionResult> PostNoteBookmark(string channelId, string noteId) => await UsingChannelNoteContextAsync(channelId, noteId, async (note, context) =>
+        {
+            return Ok();
+        });
+
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

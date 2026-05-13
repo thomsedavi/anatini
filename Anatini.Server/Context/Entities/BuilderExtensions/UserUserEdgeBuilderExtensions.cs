@@ -19,7 +19,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userUserEdgeBuilder.HasOneWithMany(userUserEdge => userUserEdge.SourceUser, user => user.GivenUserEdges, userUserEdge => userUserEdge.SourceUserId, DeleteBehavior.Restrict);
             userUserEdgeBuilder.HasOneWithMany(userUserEdge => userUserEdge.TargetUser, user => user.ReceivedUserEdges, userUserEdge => userUserEdge.TargetUserId, DeleteBehavior.Restrict);
 
-            userUserEdgeBuilder.HasIndex(userUserEdge => new { userUserEdge.TargetUserId, userUserEdge.SourceUserId, userUserEdge.Label });
+            userUserEdgeBuilder.HasIndex(userUserEdge => new { userUserEdge.TargetUserId, userUserEdge.Label, userUserEdge.SourceUserId });
         }
     }
 }

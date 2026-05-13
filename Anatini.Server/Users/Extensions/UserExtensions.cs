@@ -36,7 +36,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = user.Id,
                 Name = user.Name,
                 About = user.About,
-                Channels = await Task.WhenAll(user.ChannelEdges.Select(userChannelEdge => userChannelEdge.Channel.ToChannelEditDtoAsync(blobService))),
+                Channels = await Task.WhenAll(user.ChannelEdges.Select(userChannelEdge => userChannelEdge.TargetChannel.ToChannelEditDtoAsync(blobService))),
                 Handle = user.Handle,
                 UserName = user.UserName,
                 Visibility = user.Visibility.ToString(),

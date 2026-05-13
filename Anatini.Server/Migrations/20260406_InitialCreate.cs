@@ -240,23 +240,23 @@ namespace Anatini.Server.Migrations
                 name: "user_channel_edges",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    channel_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_channel_id = table.Column<Guid>(type: "uuid", nullable: false),
                     label = table.Column<int>(type: "integer", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_channel_edges", x => new { x.user_id, x.channel_id, x.label });
+                    table.PrimaryKey("pk_user_channel_edges", x => new { x.source_user_id, x.target_channel_id, x.label });
                     table.ForeignKey(
-                        name: "fk_user_channel_edges_channels_channel_id",
-                        column: x => x.channel_id,
+                        name: "fk_user_channel_edges_channels_target_channel_id",
+                        column: x => x.target_channel_id,
                         principalTable: "channels",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_channel_edges_users_user_id",
-                        column: x => x.user_id,
+                        name: "fk_user_channel_edges_users_source_user_id",
+                        column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
@@ -464,6 +464,32 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_note_edges",
+                columns: table => new
+                {
+                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_note_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_note_edges", x => new { x.source_user_id, x.target_note_id, x.label });
+                    table.ForeignKey(
+                        name: "fk_user_note_edges_notes_target_note_id",
+                        column: x => x.target_note_id,
+                        principalTable: "notes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_note_edges_users_source_user_id",
+                        column: x => x.source_user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "post_images",
                 columns: table => new
                 {
@@ -600,9 +626,9 @@ namespace Anatini.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_channel_edges_channel_id_user_id_label",
+                name: "ix_user_channel_edges_target_channel_id_label_source_user_id",
                 table: "user_channel_edges",
-                columns: new[] { "channel_id", "user_id", "label" });
+                columns: new[] { "target_channel_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_claims_user_id",
@@ -638,14 +664,19 @@ namespace Anatini.Server.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_note_edges_target_note_id_label_source_user_id",
+                table: "user_note_edges",
+                columns: new[] { "target_note_id", "label", "source_user_id" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_roles_role_id",
                 table: "user_roles",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_user_edges_target_user_id_source_user_id_label",
+                name: "ix_user_user_edges_target_user_id_label_source_user_id",
                 table: "user_user_edges",
-                columns: new[] { "target_user_id", "source_user_id", "label" });
+                columns: new[] { "target_user_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_users_handle",
@@ -709,6 +740,9 @@ namespace Anatini.Server.Migrations
                 name: "user_logins");
 
             migrationBuilder.DropTable(
+                name: "user_note_edges");
+
+            migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
@@ -718,10 +752,10 @@ namespace Anatini.Server.Migrations
                 name: "user_user_edges");
 
             migrationBuilder.DropTable(
-                name: "notes");
+                name: "posts");
 
             migrationBuilder.DropTable(
-                name: "posts");
+                name: "notes");
 
             migrationBuilder.DropTable(
                 name: "roles");

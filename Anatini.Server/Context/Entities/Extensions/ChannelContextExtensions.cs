@@ -19,8 +19,8 @@ namespace Anatini.Server.Context.Entities.Extensions
 
             var userChannelEdge = new ApplicationUserChannelEdge
             {
-                UserId = userId,
-                ChannelId = channelId,
+                SourceUserId = userId,
+                TargetChannelId = channelId,
                 Label = UserChannelEdgeLabel.Owner,
                 CreatedAtUtc = utcNow
             };
