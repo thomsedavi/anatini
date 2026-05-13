@@ -145,6 +145,11 @@ namespace Anatini.Server
             return await noteContextFunction(note, context);
         }, settings);
 
+        [NonAction]
+        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
+        {
+            return await noteContextFunction(note, context);
+        }, settings);
 
         [NonAction]
         public async Task<IActionResult> UsingChannelAsync(string channelHandle, Func<Channel, Task<IActionResult>> channelFunction, ContextSettings? settings = null)
@@ -279,6 +284,53 @@ namespace Anatini.Server
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
                 note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
+            }
+
+            if (note == null)
+            {
+                return NotFound();
+            }
+
+            if (note.Visibility == Visibility.Public)
+            {
+                return await noteFunction(note);
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (note.Visibility == Visibility.Protected)
+            {
+                return await noteFunction(note);
+            }
+
+            // TODO handle Private
+            return NotFound();
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            Note? note;
+
+            var notes = context.Notes.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                notes = notes.AsNoTracking();
+            }
+
+            if (Guid.TryParse(noteHandle, out Guid noteId))
+            {
+                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
+            }
+            else
+            {
+                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+
+                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
             }
 
             if (note == null)
