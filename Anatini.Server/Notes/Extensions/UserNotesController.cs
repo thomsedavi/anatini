@@ -18,13 +18,54 @@ namespace Anatini.Server.Notes.Extensions
         [HttpPost("{noteId}/bookmark")]
         public async Task<IActionResult> PostNoteBookmark(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
         {
+            return await AddUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasBookmarked);
+        });
+
+        [Authorize]
+        [Authorize]
+        [HttpDelete("{noteId}/bookmark")]
+        public async Task<IActionResult> DeleteNoteBookmark(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        {
+            return await DeleteUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasBookmarked);
+        });
+
+        [Authorize]
+        [HttpPost("{noteId}/star")]
+        public async Task<IActionResult> PostNoteStar(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        {
+            return await AddUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasStarred);
+        });
+
+        [Authorize]
+        [HttpDelete("{noteId}/star")]
+        public async Task<IActionResult> DeleteNoteStar(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        {
+            return await DeleteUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasStarred);
+        });
+
+        [Authorize]
+        [HttpPost("{noteId}/seen")]
+        public async Task<IActionResult> PostNoteSeen(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        {
+            return await AddUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasSeen);
+        });
+
+        [Authorize]
+        [HttpDelete("{noteId}/seen")]
+        public async Task<IActionResult> DeleteNoteSeen(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        {
+            return await DeleteUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasSeen);
+        });
+
+        private async Task<IActionResult> AddUserNoteEdge(ApplicationDbContext context, Guid noteId, UserNoteEdgeLabel label)
+        {
             if (TryGetUserId(out Guid sourceUserId))
             {
                 var userNoteEdge = new ApplicationUserNoteEdge
                 {
                     SourceUserId = sourceUserId,
-                    TargetNoteId = note.Id,
-                    Label = UserNoteEdgeLabel.HasBookmarked,
+                    TargetNoteId = noteId,
+                    Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
 
@@ -44,15 +85,13 @@ namespace Anatini.Server.Notes.Extensions
             {
                 return Problem();
             }
-        });
+        }
 
-        [Authorize]
-        [HttpDelete("{noteId}/bookmark")]
-        public async Task<IActionResult> DeleteNoteBookmark(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        private async Task<IActionResult> DeleteUserNoteEdge(ApplicationDbContext context, Guid noteId, UserNoteEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userNoteEdge = await context.UserNoteEdges.FirstOrDefaultAsync(userNoteEdge => userNoteEdge.TargetNoteId == note.Id && userNoteEdge.SourceUserId == sourceUserId && userNoteEdge.Label == UserNoteEdgeLabel.HasBookmarked);
+                var userNoteEdge = await context.UserNoteEdges.FirstOrDefaultAsync(userNoteEdge => userNoteEdge.TargetNoteId == noteId && userNoteEdge.SourceUserId == sourceUserId && userNoteEdge.Label == label);
 
                 if (userNoteEdge != null)
                 {
@@ -66,6 +105,6 @@ namespace Anatini.Server.Notes.Extensions
             {
                 return Problem();
             }
-        });
+        }
     }
 }
