@@ -1,9 +1,11 @@
 ﻿namespace Anatini.Server.Enums
 {
+    [Flags]
     public enum ImageType
     {
-        Icon = 0,
-        Banner = 1,
-        Card = 2
+        None = 0,
+        Icon = 1,
+        Banner = 2,
+        Card = 4
     }
 }

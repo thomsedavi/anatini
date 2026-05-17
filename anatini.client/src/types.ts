@@ -1,5 +1,6 @@
 import type { RouteRecordNameGeneric } from "vue-router";
 
+export type SearchParameter = { key: string, value: string };
 export type ErrorMessage = { error: true, heading: string, body: string };
 export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
@@ -111,6 +112,9 @@ export type Note = {
   handle: string | null;
   article: string;
   publishedAtUtc: string;
+  hasStarred: boolean | null;
+  hasBookmarked: boolean | null;
+  hasSeen: boolean | null;
 }
 
 export type NoteEdit = {

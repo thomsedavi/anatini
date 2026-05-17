@@ -1,13 +1,21 @@
 import { store } from "@/store";
-import type { StatusActions } from "@/types";
+import type { SearchParameter, StatusActions } from "@/types";
 
 export async function apiFetch(
   input: RequestInfo | URL,
   statusActions: StatusActions,
   init?: RequestInit,
+  searchParameters?: SearchParameter[],
   onfinally?: () => void,
 ): Promise<void> {
-  await fetch(`/api/${input}`, init).then((response: Response) => {
+  let parameters = '';
+
+  if (searchParameters !== undefined && searchParameters.length > 0) {
+    parameters += '?';
+    parameters += searchParameters.map(a => `${a.key}=${a.value}`).join('&');
+  }
+
+  await fetch(`/api/${input}${parameters}`, init).then((response: Response) => {
     if (statusActions[response.status]) {
       statusActions[response.status](response);
     }
@@ -19,6 +27,7 @@ export async function apiFetchAuthenticated(
   input: RequestInfo | URL,
   statusActions: StatusActions,
   init?: RequestInit,
+  searchParameters?: SearchParameter[],
   onfinally?: () => void,
 ): Promise<void> {
   if (store.isAuthenticated === null || !store.isAuthenticated) {
@@ -26,5 +35,5 @@ export async function apiFetchAuthenticated(
     return;
   }
 
-  return await apiFetch(input, statusActions, init, onfinally);
+  return await apiFetch(input, statusActions, init, searchParameters, onfinally);
 }

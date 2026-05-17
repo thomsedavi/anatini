@@ -1,7 +1,9 @@
 ﻿namespace Anatini.Server.Enums
 {
+    [Flags]
     public enum UserChannelEdgeLabel
     {
-        Owner = 0
+        None = 0,
+        Owner = 1
     }
 }

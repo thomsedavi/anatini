@@ -1,6 +1,7 @@
 ﻿using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
 
@@ -17,7 +18,10 @@ namespace Anatini.Server.Notes.Extensions
                 ChannelHeader = note.Channel != null ? await note.Channel.ToChannelHeaderDto(blobService) : null,
                 Handle = handle,
                 Article = note.Article,
-                PublishedAtUtc = note.PublishedAtUtc
+                PublishedAtUtc = note.PublishedAtUtc,
+                HasBookmarked = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasBookmarked),
+                HasSeen = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasSeen),
+                HasStarred = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasStarred)
             };
         }
 

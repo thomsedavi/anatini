@@ -29,7 +29,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             postBuilder.HasIndex(post => new { post.UserId, post.Handle }).IsUnique().HasFilter($"{postBuilder.GetColumnName(nameof(Note.UserId))} IS NOT NULL");
             postBuilder.HasIndex(post => new { post.ChannelId, post.Handle }).IsUnique().HasFilter($"{postBuilder.GetColumnName(nameof(Note.ChannelId))} IS NOT NULL");
-            postBuilder.HasIndex(post => post.PublishedAtUtc ).HasFilter($"{postBuilder.GetColumnName(nameof(Post.Status))} = {(int)PostStatus.Published}").HasDatabaseName("ix_published_posts_date_nz");
+            postBuilder.HasIndex(post => post.PublishedAtUtc ).HasFilter($"{postBuilder.GetColumnName(nameof(Post.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_posts_date_nz");
         }
     }
 }

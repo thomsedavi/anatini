@@ -17,7 +17,7 @@ namespace Anatini.Server
     {
         public bool IsAuthenticated => User.Identity?.IsAuthenticated ?? false;
 
-        private bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        public bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
         public string NormalizeHandle(string handle) => handle.ToLower();
         public string NormalizeName(string name) => userManager.NormalizeName(name);
         public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
@@ -31,22 +31,88 @@ namespace Anatini.Server
             {
                 return await contextFunction(context);
             }
-            catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+            catch (Exception ex)
             {
-                return Conflict();
+                return ExceptionResult(ex);
             }
         }
 
         [NonAction]
         public async Task<IActionResult> UsingAccountContextAsync(Func<ApplicationUser, ApplicationDbContext, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            return await userContextFunction(user, context);
+            try
+            {
+                return await userContextFunction(user, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }, settings);
 
         [NonAction]
         public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
-            return await noteContextFunction(note, context);
+            try
+            {
+                return await noteContextFunction(note, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannelContextAsync(string channelHandle, Func<Channel, ApplicationDbContext, Task<IActionResult>> channelContextFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
+        {
+            try
+            {
+                return await channelContextFunction(channel, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannelNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
+        {
+            try
+            {
+                return await noteContextFunction(note, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
+        {
+            try
+            {
+                return await noteContextFunction(note, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingChannelPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingChannelPostAsync(channelHandle, postHandle, async (post) =>
+        {
+            try
+            {
+                return await postContextFunction(post, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
         }, settings);
 
         [NonAction]
@@ -134,24 +200,6 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string channelHandle, Func<Channel, ApplicationDbContext, Task<IActionResult>> channelContextFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
-        {
-            return await channelContextFunction(channel, context);
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingChannelNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
-        {
-            return await noteContextFunction(note, context);
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
-        {
-            return await noteContextFunction(note, context);
-        }, settings);
-
-        [NonAction]
         public async Task<IActionResult> UsingChannelAsync(string channelHandle, Func<Channel, Task<IActionResult>> channelFunction, ContextSettings? settings = null)
         {
             Channel? channel;
@@ -209,12 +257,6 @@ namespace Anatini.Server
             // TODO handle Private
             return NotFound();
         }
-
-        [NonAction]
-        public async Task<IActionResult> UsingChannelPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingChannelPostAsync(channelHandle, postHandle, async (post) =>
-        {
-            return await postContextFunction(post, context);
-        }, settings);
 
         [NonAction]
         public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
@@ -435,6 +477,19 @@ namespace Anatini.Server
 
             result = null;
             return false;
+        }
+
+        [NonAction]
+        private IActionResult ExceptionResult(Exception ex)
+        {
+            if (ex is DbUpdateException dbUpdateException && dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                return Conflict();
+            }
+            else
+            {
+                return Problem();
+            }
         }
     }
 

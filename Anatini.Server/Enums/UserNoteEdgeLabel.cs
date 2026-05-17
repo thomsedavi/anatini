@@ -1,7 +1,11 @@
 ﻿namespace Anatini.Server.Enums
 {
+    [Flags]
     public enum UserNoteEdgeLabel
     {
-        Bookmarks = 0
+        None = 0,
+        HasSeen = 1,
+        HasStarred = 2,
+        HasBookmarked = 4
     }
 }

@@ -25,7 +25,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Id = postId,
                 ChannelId = channelId,
                 Handle = handle,
-                Status = PostStatus.Draft,
+                Status = Status.Draft,
                 PublishedAtUtc = utcNow.Truncate(),
                 Name = name,
                 Visibility = Visibility.Public,

@@ -16,7 +16,7 @@ namespace Anatini.Server.Notes
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAt, Guid? lastNoteId, int pageSize = 20) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async (context) =>
         {
             var notes = context.Notes.AsQueryable();
 
@@ -24,21 +24,32 @@ namespace Anatini.Server.Notes
             notes = notes.Include(note => note.User).ThenInclude(user => user!.Images);
             notes = notes.Include(note => note.Channel).ThenInclude(channel => channel!.Images);
 
-            if (IsAuthenticated)
+            if (TryGetUserId(out Guid userId))
             {
+                notes = notes.Include(note => note.UserEdges.Where(userNote => userNote.SourceUserId == userId));
+
                 notes = notes.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+
+                if (query.Bookmarked == "Only")
+                {
+                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                }
+                else if (query.Bookmarked == "Hide")
+                {
+                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                }
             }
             else
             {
                 notes = notes.Where(note => note.Visibility == Visibility.Public);
             }
 
-            if (lastPublishedAt.HasValue && lastNoteId.HasValue)
+            if (query.LastPublishedAt.HasValue && query.LastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAt.Value || (note.PublishedAtUtc == lastPublishedAt.Value && note.Id < lastNoteId.Value));
+                notes = notes.Where(note => note.PublishedAtUtc < query.LastPublishedAt.Value || (note.PublishedAtUtc == query.LastPublishedAt.Value && note.Id < query.LastNoteId.Value));
             }
 
-            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (noteList == null)
             {
@@ -47,5 +58,14 @@ namespace Anatini.Server.Notes
 
             return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
         });
+
+        public class NotesQuery
+        {
+            public DateTime? LastPublishedAt { get; set; }
+            public Guid? LastNoteId { get; set; }
+            public int? PageSize { get; set; }
+            public string? Bookmarked { get; set; }
+            public string? Liked { get; set; }
+        }
     }
 }

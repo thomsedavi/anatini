@@ -1,7 +1,9 @@
 ﻿namespace Anatini.Server.Enums
 {
+    [Flags]
     public enum UserUserEdgeLabel
     {
-        Trusts = 0
+        None = 0,
+        Trusts = 1
     }
 }
