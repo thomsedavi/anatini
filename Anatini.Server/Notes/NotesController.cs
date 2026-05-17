@@ -38,6 +38,24 @@ namespace Anatini.Server.Notes
                 {
                     notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
                 }
+
+                if (query.Starred == "Only")
+                {
+                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                }
+                else if (query.Starred == "Hide")
+                {
+                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                }
+
+                if (query.Seen == "Only")
+                {
+                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasSeen));
+                }
+                else if (query.Seen == "Hide")
+                {
+                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasSeen));
+                }
             }
             else
             {
@@ -65,7 +83,8 @@ namespace Anatini.Server.Notes
             public Guid? LastNoteId { get; set; }
             public int? PageSize { get; set; }
             public string? Bookmarked { get; set; }
-            public string? Liked { get; set; }
+            public string? Starred { get; set; }
+            public string? Seen { get; set; }
         }
     }
 }
