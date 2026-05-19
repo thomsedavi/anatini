@@ -34,7 +34,7 @@
           <td></td>
           <td>
             <time datetime="2026-03-01">1</time>
-            <ul class="event-list">
+            <ul role="list" class="event-list">
               <li>
                 <article>
                   <h3><a href="/events/123">Community Garden Meetup</a></h3>

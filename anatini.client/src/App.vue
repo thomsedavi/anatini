@@ -58,7 +58,7 @@
       <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
 
       <nav aria-label="Main">
-        <ul>
+        <ul role="list">
           <li><RouterLink to="/about">ABOUT</RouterLink></li>
           <template v-if="store.isAuthenticated === null || !store.isAuthenticated">
             <li><RouterLink to="/sign-up">SIGN UP</RouterLink></li>

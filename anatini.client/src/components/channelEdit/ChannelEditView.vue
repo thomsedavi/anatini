@@ -139,7 +139,7 @@
     <template v-else>
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
-        <ul>
+        <ul role="list">
           <li v-for="error in inputErrors" :key="'error' + error.id">
             <a :href="'#input-' + error.id">{{ error.message }}</a>
           </li>

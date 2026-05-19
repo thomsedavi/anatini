@@ -6,6 +6,7 @@
   import { useRouter } from 'vue-router';
   import { handleClick } from '../common/utils';
   import { store } from '@/store';
+  import RadioFieldset from '../common/RadioFieldset.vue';
 
   const router = useRouter();
 
@@ -17,9 +18,9 @@
     'update-notes': [newNotes: Note[]],
   }>();
 
-  const bookmarkFilter = ref<string>('All');
-  const starredFilter = ref<string>('All');
-  const seenFilter = ref<string>('All');
+  const bookmarkFilter = ref<string>('all');
+  const starredFilter = ref<string>('all');
+  const seenFilter = ref<string>('all');
 
   onMounted(() => {
     if (props.notes === null) {
@@ -74,27 +75,25 @@
 
     const searchParams: SearchParameter[] = [];
 
-    if (bookmarkFilter.value !== 'All') {
+    if (bookmarkFilter.value !== 'all') {
       searchParams.push({ key: 'bookmarked', value: bookmarkFilter.value });
     }
 
-    if (starredFilter.value !== 'All') {
+    if (starredFilter.value !== 'all') {
       searchParams.push({ key: 'starred', value: starredFilter.value });
     }
 
-    if (seenFilter.value !== 'All') {
+    if (seenFilter.value !== 'all') {
       searchParams.push({ key: 'seen', value: seenFilter.value });
     }
 
     apiFetch('notes', statusActions, undefined, searchParams);
   }
 
-  function buttonAction(label: string, note: Note): void {
-    const lowerLabel = label.toLowerCase();
+  function buttonAction(label: string, pressed: string | null, note: Note): void {
+    const action = label.toLowerCase();
 
-    if (lowerLabel.startsWith('un')) {
-      const action = label.substring(2);
-
+    if (pressed === 'true') {
       const statusActions: StatusActions = {
         204: () => {
           if (action === "bookmark") {
@@ -117,11 +116,11 @@
     } else {
       const statusActions: StatusActions = {
         201: () => {
-          if (lowerLabel === "bookmark") {
+          if (action === "bookmark") {
             note.hasBookmarked = true;
-          } else if (lowerLabel === "seen") {
+          } else if (action === "seen") {
             note.hasSeen = true;
-          } else if (lowerLabel === "star") {
+          } else if (action === "star") {
             note.hasStarred = true;
           }
         }
@@ -130,9 +129,9 @@
       const init: RequestInit = { method: "POST" };
 
       if (note.channelHeader !== null) {
-        apiFetchAuthenticated(`channels/${note.channelHeader.handle}/notes/${note.handle}/${lowerLabel}`, statusActions, init);
+        apiFetchAuthenticated(`channels/${note.channelHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       } else if (note.userHeader !== null) {
-        apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${lowerLabel}`, statusActions, init);
+        apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       }
     }
   }
@@ -143,13 +142,13 @@
       <footer>
         <menu>
           <li>
-            ${note.hasSeen ?? false ? `<button type='button' aria-label='Unseen'>Unseen</button>` : `<button type='button' aria-label='Seen'>Seen</button>`}
+            <button type='button' aria-label='Seen' aria-pressed='${note.hasSeen ? 'true' : 'false'}'>${note.hasSeen ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>'}</button>
           </li>
           <li>
-            ${note.hasStarred ?? false ? `<button type='button' aria-label='Unstar'>Unstar</button>` : `<button type='button' aria-label='Star'>Star</button>`}
+            <button type='button' aria-label='Star' aria-pressed='${note.hasStarred ? 'true' : 'false'}'>${note.hasStarred ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'}</button>
           </li>
           <li>
-            ${note.hasBookmarked ?? false ? `<button type='button' aria-label='Unbookmark'>Unbookmark</button>` : `<button type='button' aria-label='Bookmark'>Bookmark</button>`}
+            <button type='button' aria-label='Bookmark' aria-pressed='${note.hasBookmarked ? 'true' : 'false'}'>${note.hasBookmarked ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>'}</button>
           </li>
         </menu>
       </footer>
@@ -165,66 +164,48 @@
 
     <search v-if="store.isAuthenticated">
       <details>
-        <summary>Filter options</summary>
+        <summary>Filter Options</summary>
         
         <form @submit.prevent="getNotes" action="/api/notes" method="GET" novalidate>
-          <fieldset>
-            <legend>Starred Posts</legend>
+          <details>
+            <summary>Starred Notes</summary>
 
-            <ul role="list">
-              <li>
-                <input type="radio" id="starred-all" name="starred" value="All" v-model="starredFilter" />
-                <label for="starred-all">Do not filter by starred posts</label>
-              </li>
-              <li>
-                <input type="radio" id="starred-only" name="starred" value="Only" v-model="starredFilter" />
-                <label for="starred-only">Show only my starred posts</label>
-              </li>
-              <li>
-                <input type="radio" id="starred-hide" name="starred" value="Hide" v-model="starredFilter" />
-                <label for="starred-hide">Hide my starred posts</label>
-              </li>
-            </ul>
-          </fieldset>
+            <RadioFieldset
+              v-model="starredFilter"
+              :radios="[
+                { name: 'starred', value: 'all', id: 'starredAll', label: 'No filter' },
+                { name: 'starred', value: 'only', id: 'starredOnly', label: 'Show only starred' },
+                { name: 'starred', value: 'hide', id: 'starredHide', label: 'Hide starred' }
+              ]"
+              legend="Starred Notes Options" />
+          </details>
 
-          <fieldset>
-            <legend>Bookmarked Posts</legend>
+          <details>
+            <summary>Bookmarked Notes</summary>
 
-            <ul role="list">
-              <li>
-                <input type="radio" id="bookmarked-all" name="bookmark" value="All" v-model="bookmarkFilter" />
-                <label for="bookmarked-all">Do not filter by bookmarked posts</label>
-              </li>
-              <li>
-                <input type="radio" id="bookmarked-only" name="bookmark" value="Only" v-model="bookmarkFilter" />
-                <label for="bookmarked-only">Show only my bookmarked posts</label>
-              </li>
-              <li>
-                <input type="radio" id="bookmarked-hide" name="bookmark" value="Hide" v-model="bookmarkFilter" />
-                <label for="bookmarked-hide">Hide my bookmarked posts</label>
-              </li>
-            </ul>
-          </fieldset>
+            <RadioFieldset
+              v-model="bookmarkFilter"
+              :radios="[
+                { name: 'bookmarked', value: 'all', id: 'bookmarkedAll', label: 'No filter' },
+                { name: 'bookmarked', value: 'only', id: 'bookmarkedOnly', label: 'Show only bookmarked' },
+                { name: 'bookmarked', value: 'hide', id: 'bookmarkedHide', label: 'Hide bookmarked' }
+              ]"
+              legend="Bookmarked Notes Options" />
+          </details>
 
-          <fieldset>
-            <legend>Seen Posts</legend>
+          <details>
+            <summary>Seen Notes</summary>
 
-            <ul role="list">
-              <li>
-                <input type="radio" id="seen-all" name="seen" value="All" v-model="seenFilter" />
-                <label for="seen-all">Do not filter by seen posts</label>
-              </li>
-              <li>
-                <input type="radio" id="seen-only" name="seen" value="Only" v-model="seenFilter" />
-                <label for="seen-only">Show only my seen posts</label>
-              </li>
-              <li>
-                <input type="radio" id="seen-hide" name="seen" value="Hide" v-model="seenFilter" />
-                <label for="seen-hide">Hide my seen posts</label>
-              </li>
-            </ul>
-          </fieldset>
-
+            <RadioFieldset
+              v-model="seenFilter"
+              :radios="[
+                { name: 'seen', value: 'all', id: 'seenAll', label: 'No filter' },
+                { name: 'seen', value: 'only', id: 'seenOnly', label: 'Show only seen' },
+                { name: 'seen', value: 'hide', id: 'seenHide', label: 'Hide seen' }
+              ]"
+              legend="Seen Notes Options" />
+          </details>
+          
           <button type="submit">Apply Filters</button>
         </form>
       </details>
@@ -236,7 +217,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label) => buttonAction(label, note))">
+        <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note))">
         </article>
       </li>
     </ul>

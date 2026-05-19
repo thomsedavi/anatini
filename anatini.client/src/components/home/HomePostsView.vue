@@ -1,6 +1,6 @@
 <script setup lang="ts">
   defineProps<{
-    attributePosts: { name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] | null,
+    posts: { name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] | null,
   }>();
 
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -11,7 +11,7 @@
 <template>
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <ul role="list">
-      <li v-for="(attributePost, index) in attributePosts" :key="`index-${index}`">
+      <li v-for="(attributePost, index) in posts" :key="`index-${index}`">
         <article>
           <header>
             <h2>

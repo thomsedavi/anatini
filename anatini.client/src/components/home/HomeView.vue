@@ -61,7 +61,7 @@
       <h1>Post Feed</h1>
     </header>
 
-    <ul role="tablist" aria-label="Settings Options">
+    <ul role="tablist" aria-label="Content Views">
       <TabButton v-for="(tab, index) in tabs"
         :key="tab.id"
         :selected="tabIndex === index"
@@ -75,7 +75,7 @@
     <RouterView v-slot="{ Component }">
       <component
         :is="Component"
-        :attribute-posts="[]"
+        :posts="[]"
         :notes="notes"
         @update-notes="handleUpdateNotes"
       />

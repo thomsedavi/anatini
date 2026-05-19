@@ -30,29 +30,29 @@ namespace Anatini.Server.Notes
 
                 notes = notes.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
-                if (query.Bookmarked == "Only")
+                if (query.Bookmarked == "only")
                 {
                     notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
                 }
-                else if (query.Bookmarked == "Hide")
+                else if (query.Bookmarked == "hide")
                 {
                     notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
                 }
 
-                if (query.Starred == "Only")
+                if (query.Starred == "only")
                 {
                     notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
                 }
-                else if (query.Starred == "Hide")
+                else if (query.Starred == "hide")
                 {
                     notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
                 }
 
-                if (query.Seen == "Only")
+                if (query.Seen == "only")
                 {
                     notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasSeen));
                 }
-                else if (query.Seen == "Hide")
+                else if (query.Seen == "hide")
                 {
                     notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasSeen));
                 }

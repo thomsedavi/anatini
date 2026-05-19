@@ -272,7 +272,7 @@ export function tidy(text: string): string {
   return tidiedLines.join('\n');
 }
 
-export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string) => void): void {
+export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string, pressed: string | null) => void): void {
   const anchor = (mouseEvent.target as HTMLElement).closest('a');
 
   if (anchor !== null) {
@@ -287,9 +287,10 @@ export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction
 
   if (button !== null) {
     const ariaLabel = button.getAttribute('aria-label');
+    const ariaPressed = button.getAttribute('aria-pressed');
 
     if (ariaLabel !== null) {
-      buttonAction?.(ariaLabel);
+      buttonAction?.(ariaLabel, ariaPressed);
     }
   }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Anatini.Server.Notes.Extensions
+namespace Anatini.Server.Notes
 {
     [ApiController]
     [Route("api/users/{userId}/notes")]
