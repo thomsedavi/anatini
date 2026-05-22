@@ -44,17 +44,17 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
-        [HttpPost("{noteId}/seen")]
-        public async Task<IActionResult> PostNoteSeen(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        [HttpPost("{noteId}/dismiss")]
+        public async Task<IActionResult> PostNoteDismiss(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
         {
-            return await AddUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasSeen);
+            return await AddUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasDismissed);
         });
 
         [Authorize]
-        [HttpDelete("{noteId}/seen")]
-        public async Task<IActionResult> DeleteNoteSeen(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
+        [HttpDelete("{noteId}/dismiss")]
+        public async Task<IActionResult> DeleteNoteDismiss(string userId, string noteId) => await UsingUserNoteContextAsync(userId, noteId, async (note, context) =>
         {
-            return await DeleteUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasSeen);
+            return await DeleteUserNoteEdge(context, note.Id, UserNoteEdgeLabel.HasDismissed);
         });
 
         private async Task<IActionResult> AddUserNoteEdge(ApplicationDbContext context, Guid noteId, UserNoteEdgeLabel label)

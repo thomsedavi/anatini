@@ -4,7 +4,7 @@
     public enum UserNoteEdgeLabel
     {
         None = 0,
-        HasSeen = 1,
+        HasDismissed = 1,
         HasStarred = 2,
         HasBookmarked = 4
     }

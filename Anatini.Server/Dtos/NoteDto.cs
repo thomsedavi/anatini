@@ -10,6 +10,6 @@
         public ChannelHeaderDto? ChannelHeader { get; set; }
         public bool? HasBookmarked { get; set; }
         public bool? HasStarred { get; set; }
-        public bool? HasSeen { get; set; }
+        public bool? HasDismissed { get; set; }
     }
 }

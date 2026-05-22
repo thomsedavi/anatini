@@ -20,7 +20,7 @@ namespace Anatini.Server.Notes.Extensions
                 Article = note.Article,
                 PublishedAtUtc = note.PublishedAtUtc,
                 HasBookmarked = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasBookmarked),
-                HasSeen = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasSeen),
+                HasDismissed = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasDismissed),
                 HasStarred = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasStarred)
             };
         }

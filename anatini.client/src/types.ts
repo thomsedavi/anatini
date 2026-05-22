@@ -114,7 +114,7 @@ export type Note = {
   publishedAtUtc: string;
   hasStarred: boolean | null;
   hasBookmarked: boolean | null;
-  hasSeen: boolean | null;
+  hasDismissed: boolean | null;
 }
 
 export type NoteEdit = {
