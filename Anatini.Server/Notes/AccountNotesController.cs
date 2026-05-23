@@ -17,7 +17,6 @@ namespace Anatini.Server.Notes
     [Route("api/account/notes")]
     public class AccountNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [Authorize]
         [HttpPost]
         [Authorize(Policy = "IsTrusted")]
         [ProducesResponseType(StatusCodes.Status201Created)]

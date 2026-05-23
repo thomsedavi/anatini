@@ -7,6 +7,7 @@
         public ImageDto? IconImage { get; set; }
         public required string Handle { get; set; }
         public string? About { get; set; }
+        public bool? HasTrusted { get; set; }
     }
 
     public class UserHeaderDto

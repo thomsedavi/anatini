@@ -18,6 +18,7 @@ export type User = {
   iconImage: Image | null;
   handle: string;
   about: string | null;
+  hasTrusted: boolean | null;
 };
 
 export type UserHeader = {

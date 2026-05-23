@@ -4,6 +4,6 @@
     public enum UserUserEdgeLabel
     {
         None = 0,
-        Trusts = 1
+        HasTrusted = 1
     }
 }

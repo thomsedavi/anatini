@@ -90,6 +90,19 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingUserContextAsync(string userHandle, Func<ApplicationUser, ApplicationDbContext, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            try
+            {
+                return await userContextFunction(user, context);
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResult(ex);
+            }
+        }, settings);
+
+        [NonAction]
         public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
             try
