@@ -18,7 +18,7 @@ namespace Anatini.Server.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUser(string userId) => await UsingUserAsync(userId, async (user) =>
         {
-            return Ok(await user.ToUserDtoAsync(BlobService));
+            return Ok(await user.ToUserDtoAsync(IsAuthenticated, BlobService));
         }, new ContextSettings { IncludeImages = true });
 
         [Authorize]

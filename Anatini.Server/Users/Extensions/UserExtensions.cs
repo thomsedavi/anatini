@@ -1,15 +1,16 @@
 ﻿using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 
 namespace Anatini.Server.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static async Task<UserDto> ToUserDtoAsync(this ApplicationUser user, IBlobService? blobService = null)
+        public static async Task<UserDto> ToUserDtoAsync(this ApplicationUser user, bool isAuthenticated, IBlobService? blobService = null)
         {
-            return new UserDto
+            var userDto = new UserDto
             {
                 Id = user.Id,
                 Name = user.Name,
@@ -17,6 +18,13 @@ namespace Anatini.Server.Users.Extensions
                 Handle = user.Handle,
                 IconImage = await user.GetIconImageAsync(blobService)
             };
+
+            if (isAuthenticated)
+            {
+                userDto.HasTrusted = user.ReceivedUserEdges.Any(userEdge => userEdge.Label == UserUserEdgeLabel.HasTrusted);
+            }
+
+            return userDto;
         }
 
         public static async Task<UserHeaderDto> ToUserHeaderDtoAsync(this ApplicationUser user, IBlobService? blobService = null)

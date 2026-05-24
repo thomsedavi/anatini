@@ -177,6 +177,11 @@ namespace Anatini.Server
                 }
             }
 
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                users = users.Include(user => user.ReceivedUserEdges.Where(userUserEdge => userUserEdge.SourceUserId == sourceUserId));
+            }
+
             if (Guid.TryParse(userHandle, out Guid userId))
             {
                 user = await users.FirstOrDefaultAsync(user => user.Id == userId);

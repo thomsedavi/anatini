@@ -2,7 +2,7 @@
   import type { ErrorMessage, StatusActions, User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { apiFetch } from './common/apiFetch';import { formatParagraph } from './common/utils';
+  import { apiFetch, apiFetchAuthenticated } from './common/apiFetch';import { formatParagraph } from './common/utils';
 
   const route = useRoute();
 
@@ -42,6 +42,42 @@
       return user.value.name;
     }
   }
+
+  function toggleTrust(): void {
+    if (user.value === null || 'heading' in user.value || user.value.hasTrusted === null) {
+      return;
+    }
+
+    if (user.value.hasTrusted) {
+      const statusActions: StatusActions = {
+        204: () => {
+          if (user.value === null || 'heading' in user.value) {
+            return;
+          }
+
+          user.value.hasTrusted = false;
+        }
+      }
+
+      const init: RequestInit = { method: "DELETE" };
+
+      apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
+    } else {
+      const statusActions: StatusActions = {
+        201: () => {
+          if (user.value === null || 'heading' in user.value) {
+            return;
+          }
+
+          user.value.hasTrusted = true;
+        }
+      }
+
+      const init: RequestInit = { method: "POST" };
+
+      apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
+    }
+  }
 </script>
 
 <template>
@@ -74,8 +110,16 @@
         </p>
       </section>
 
-      <section v-else-if="user.about" aria-label="About user" v-html="formatParagraph(user.about)">
-      </section>
+      <template v-else>
+        <section v-if="user.about !== null" aria-label="About user" v-html="formatParagraph(user.about)">
+        </section>
+
+        <menu v-if="user.hasTrusted !== null">
+          <li>
+            <button type="button" :aria-pressed="user.hasTrusted" @click="toggleTrust">{{ user.hasTrusted ? "Remove Trust" : "Trust" }}</button>
+          </li>
+        </menu>
+      </template>
     </article>
   </main>
 </template>
