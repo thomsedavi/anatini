@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Post, ErrorMessage, StatusActions } from '@/types';
+  import type { Post, StatusActions, APIResponse } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { parseSource, type Source } from './common/utils';
   import { useRoute } from 'vue-router';
@@ -7,7 +7,7 @@
 
   const route = useRoute();
 
-  const post = ref<Post | ErrorMessage | null>(null);
+  const post = ref<APIResponse<Post>>({ fetching: true });
 
   watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
@@ -16,16 +16,16 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Post) => {
-            post.value = value;
+            post.value = { data: value };
 
             nextTick(() => {
               document.querySelector('h1')?.focus();
             });
           })
-          .catch(() => { post.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }});
+          .catch(() => { post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }}});
       },
       404: () => {
-        post.value = { error: true, heading: '404 Not Found', body: 'Post not found' };
+        post.value = { error: { heading: '404 Not Found', body: 'Post not found' }};
       }
     }
 
@@ -33,12 +33,12 @@
   }
 
   function getMainHtml(): string {
-    if (post.value === null) {
+    if (post.value.fetching === true) {
       return '<p>Loading...</p>';
-    } else if ('heading' in post.value) {
-      return `<h1>${ post.value.heading }</h1>`;
-    } else if ('version' in post.value) {
-      return post.value.version.article;
+    } else if (post.value.error !== undefined) {
+      return `<h1>${ post.value.error.heading }</h1>`;
+    } else if (post.value.data !== undefined) {
+      return post.value.data.version.article;
     } else {
       return '<h1>Unknown Error</h1>';
     }

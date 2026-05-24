@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, Note, Status, StatusActions, Tab, UserEdit } from '@/types';
+  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, UserEdit, Visibility } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const user = ref<UserEdit | ErrorMessage | null>(null);
+  const user = ref<APIResponse<UserEdit>>({ fetching: true });
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputName = ref<string>('');
@@ -36,8 +36,7 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: UserEdit) => {
-            user.value = value;
-            user.value.about = user.value.about?.replace(/\r\n/g, "\n") ?? null;
+            user.value = { data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null } };
             inputName.value = value.name;
             inputUserAbout.value = value.about ?? '';
             pageStatus.value = '';
@@ -46,13 +45,13 @@
               headingMainRef.value?.focus();
             });
           })
-          .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+          .catch(() => { user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: '/account' } });
       },
       500: () => {
-        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
+        user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -60,12 +59,14 @@
   });
 
   function getHeading(): string {
-    if (user.value === null) {
+    if (user.value.fetching === true) {
       return 'Fetching...';
-    } if ('error' in user.value) {
-      return user.value.heading;
-    } else {
+    } else if (user.value.error !== undefined) {
+      return user.value.error.heading;
+    } else if (user.value.data !== undefined) {
       return 'Account Settings';
+    } else {
+      return 'Unknown Error';
     }
   }
 
@@ -112,9 +113,9 @@
     }
   }
 
-  function handleUpdateProtected(newProtected: boolean | null): void {
-    if (user.value !== null && 'protected' in user.value) {
-     user.value.protected = newProtected;
+  function handleUpdateVisibility(newVisibility: Visibility): void {
+    if (user.value.data !== undefined) {
+     user.value.data.visibility = newVisibility;
     }
   }
 
@@ -143,13 +144,13 @@
       <progress max="100">Fetching account...</progress>
     </section>
 
-    <section v-else-if="'error' in user">
+    <section v-if="user.error !== undefined">
       <p>
-        {{ user.body }}
+        {{ user.error.body }}
       </p>
     </section>
 
-    <template v-else>
+    <template v-if="user.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
         <ul role="list">
@@ -173,17 +174,17 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :name="user.name"
-          :about="user.about"
-          :icon-image="user.iconImage"
-          :channels="user.channels"
-          :visibility="user.visibility"
+          :name="user.data.name"
+          :about="user.data.about"
+          :icon-image="user.data.iconImage"
+          :channels="user.data.channels"
+          :visibility="user.data.visibility"
           :status="status"
           :inputErrors="inputErrors"
           :notes="notes"
           @update-name="handleUpdateName"
           @update-about="handleUpdateAbout"
-          @update-protected="handleUpdateProtected"
+          @update-visibility="handleUpdateVisibility"
           @update-status="handleUpdateStatus"
           @update-notes="handleUpdateNotes"
           @update-errors="handleUpdateErrors"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ErrorMessage, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
+  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
   import { useRoute } from 'vue-router';
@@ -20,7 +20,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const note = ref<NoteEdit | ErrorMessage | null>(null);
+  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
 
@@ -31,17 +31,17 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: NoteEdit) => {
-            note.value = value;
+            note.value = { data: value};
             inputArticle.value = parseFromArticleString(value.article);
             inputVisibility.value = value.visibility;
           })
-          .catch(() => { note.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }});
+          .catch(() => { note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }}});
       },
       404: () => {
-        note.value = { error: true, heading: '404 Not Found', body: 'Note not found' };
+        note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};
       },
       500: () => {
-        note.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' };
+        note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
       }
     };
 
@@ -49,11 +49,11 @@
   };
 
   function noChange(): boolean {
-    if (note.value === null || 'error' in note.value) {
+    if (note.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== note.value.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== note.value.data.article) {
       return false;
-    } else if (inputVisibility.value !== note.value.visibility) {
+    } else if (inputVisibility.value !== note.value.data.visibility) {
       return false;
     }
 
@@ -65,7 +65,7 @@
   }
 
   async function patchNote() {
-    if (note.value === null || 'error' in note.value || noChange()) {
+    if (note.value.data === undefined || noChange()) {
       return;
     }
 
@@ -87,11 +87,11 @@
       }
     }
 
-    if (formatArticle(inputArticle.value) !== note.value.article) {
+    if (formatArticle(inputArticle.value) !== note.value.data.article) {
       body.append('article', formatArticle(inputArticle.value));
     }
 
-    if (inputVisibility.value !== note.value.visibility) {
+    if (inputVisibility.value !== note.value.data.visibility) {
       body.append('visibility', inputVisibility.value);
     }
 
@@ -114,13 +114,13 @@
       <progress max="100">Fetching note...</progress>
     </section>
 
-    <section v-else-if="'error' in note">
+    <section v-if="note.error !== undefined">
       <p>
-        {{ note.body }}
+        {{ note.error.body }}
       </p>
     </section>
 
-    <template v-else>
+    <template v-if="note.data !== undefined">
       <form @submit.prevent="patchNote" :action="`/api/channels/${route.params.channelId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Edit Note</legend>

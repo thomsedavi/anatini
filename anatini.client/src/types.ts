@@ -1,7 +1,8 @@
 import type { RouteRecordNameGeneric } from "vue-router";
 
+export type APIResponse<T> = { fetching?: boolean, data?: T, error?: ErrorMessage };
 export type SearchParameter = { key: string, value: string };
-export type ErrorMessage = { error: true, heading: string, body: string };
+export type ErrorMessage = { heading: string, body: string };
 export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -80,12 +81,6 @@ export type ChannelEdit = {
   iconImage: Image | null;
   visiblity: Visibility;
 };
-
-export type PostElement = {
-  index: number;
-  tag: string;
-  post: string | null;
-}
 
 export type PostVersion = {
   name: string;

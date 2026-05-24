@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, ErrorMessage, InputError, Status, StatusActions } from '@/types';
+  import type { APIResponse, ChannelEdit, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
@@ -10,7 +10,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const channel = ref<ChannelEdit | ErrorMessage | null>(null);
+  const channel = ref<APIResponse<ChannelEdit>>({ fetching: true });
   const inputErrors = ref<InputError[]>([]);
   const inputPostName = ref<string>('');
   const inputPostHandle = ref<string>('');
@@ -24,21 +24,21 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: ChannelEdit) => {
-            channel.value = value;
+            channel.value = { data: value };
           })
-          .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+          .catch(() => { channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
       },
       403: () => {
-        channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };
+        channel.value = { error: { heading: 'Unknown Error', body: 'No access to channel' }};
       },
       404: () => {
-        channel.value = { error: true, heading: '404 Not Found', body: 'Channel not found' };
+        channel.value = { error: { heading: '404 Not Found', body: 'Channel not found' }};
       },
       500: () => {
-        channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
+        channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -52,7 +52,7 @@
   async function postPost() {
     inputErrors.value = [];
 
-    if (channel.value === null || 'error' in channel.value) {
+    if (channel.value.data === undefined) {
       return;
     }
 
@@ -81,8 +81,8 @@
       201: () => {
         status.value = 'success';
 
-        if (channel.value !== null && 'id' in channel.value) {
-          router.push({ name: 'PostEdit', params: { channelId: channel.value.id, postId: tidiedHandle } });
+        if (channel.value.data !== undefined) {
+          router.push({ name: 'PostEdit', params: { channelId: channel.value.data.id, postId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -122,7 +122,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`channels/${channel.value.id}/posts`, statusActions, init);
+    apiFetchAuthenticated(`channels/${channel.value.data.id}/posts`, statusActions, init);
   }
 </script>
 
@@ -138,13 +138,13 @@
       <progress max="100">Fetching channel...</progress>
     </section>
 
-    <section v-else-if="'error' in channel">
+    <section v-if="channel.error !== undefined">
       <p>
-        {{ channel.body }}
+        {{ channel.error.body }}
       </p>
     </section>
 
-    <template v-else>
+    <template v-if="channel.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem creating your post</h2>
         <ul role="list">
@@ -154,7 +154,7 @@
         </ul>
       </section>
 
-      <form @submit.prevent="postPost" :action="`/api/channels/${channel.id}/posts`" method="POST" novalidate>
+      <form @submit.prevent="postPost" :action="`/api/channels/${channel.data.id}/posts`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Create Post</legend>
 

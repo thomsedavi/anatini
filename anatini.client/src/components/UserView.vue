@@ -1,32 +1,34 @@
 <script setup lang="ts">
-  import type { ErrorMessage, StatusActions, User } from '@/types';
+  import type { APIResponse, StatusActions, User } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { apiFetch, apiFetchAuthenticated } from './common/apiFetch';import { formatParagraph } from './common/utils';
+  import { apiFetch, apiFetchAuthenticated } from './common/apiFetch';
+  import { formatParagraph } from './common/utils';
 
   const route = useRoute();
 
-  const user = ref<User | ErrorMessage | null>(null);
+  const user = ref<APIResponse<User>>({ fetching: true });
 
   watch([() => route.params.userId], fetchUser, { immediate: true });
 
   async function fetchUser(array: (() => string | string[])[]) {
-    user.value = null;
+    user.value = { fetching: true };
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
           .then((value: User) => {
-            user.value = value;
-            user.value.about = user.value.about?.replace(/\r\n/g, "\n") ?? null;
+            user.value = {
+              data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null }
+            };
           })
-          .catch(() => { user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+          .catch(() => { user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       404: () => {
-        user.value = { error: true, heading: '404 Not Found', body: 'User not found' };
+        user.value = { error: { heading: '404 Not Found', body: 'User not found' }};
       },
       500: () => {
-        user.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' };
+        user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
       }
     };
 
@@ -34,42 +36,32 @@
   }
 
   function getHeading(): string {
-    if (user.value === null) {
+    if (user.value.fetching === true) {
       return 'Fetching...';
-    } else if ('heading' in user.value) {
-      return user.value.heading;
+    } else if (user.value.error !== undefined) {
+      return user.value.error.heading;
+    } else if (user.value.data !== undefined) {
+      return user.value.data.name;
     } else {
-      return user.value.name;
+      return 'Unknown Error';
     }
   }
 
   function toggleTrust(): void {
-    if (user.value === null || 'heading' in user.value || user.value.hasTrusted === null) {
-      return;
-    }
-
-    if (user.value.hasTrusted) {
+    if (user.value.data?.hasTrusted === true) {
       const statusActions: StatusActions = {
         204: () => {
-          if (user.value === null || 'heading' in user.value) {
-            return;
-          }
-
-          user.value.hasTrusted = false;
+          if (user.value.data !== undefined) user.value.data.hasTrusted = false;
         }
       }
 
       const init: RequestInit = { method: "DELETE" };
 
       apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
-    } else {
+    } else if (user.value.data?.hasTrusted === false) {
       const statusActions: StatusActions = {
         201: () => {
-          if (user.value === null || 'heading' in user.value) {
-            return;
-          }
-
-          user.value.hasTrusted = true;
+          if (user.value.data !== undefined) user.value.data.hasTrusted = true;
         }
       }
 
@@ -82,10 +74,10 @@
 
 <template>
   <main id="main" tabindex="-1">
-    <article :aria-busy="user === null" aria-labelledby="heading-main">
+    <article :aria-busy="user.fetching === true" aria-labelledby="heading-main">
       <header>
         <figure>
-          <img v-if="user && 'iconImage' in user && user.iconImage" :alt="user.iconImage.altText ?? 'User icon'" :src="user.iconImage.uri" width="400" height="400" />
+          <img v-if="user.data !== undefined && user.data.iconImage !== null" :alt="user.data.iconImage.altText ?? 'User icon'" :src="user.data.iconImage.uri" width="400" height="400" />
           <svg v-else
             view-box="0 0 400 400"
             width="400"
@@ -98,25 +90,25 @@
         <h1 id="heading-main">{{ getHeading() }}</h1>
       </header>
 
-      <section v-if="user === null">
+      <section v-if="user.fetching === true">
         <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the user information is fetched.</p>
                 
         <progress max="100">Fetching user...</progress>
       </section>
 
-      <section v-else-if="'error' in user">
+      <section v-if="user.error !== undefined">
         <p>
-          {{ user.body }}
+          {{ user.error.body }}
         </p>
       </section>
 
-      <template v-else>
-        <section v-if="user.about !== null" aria-label="About user" v-html="formatParagraph(user.about)">
+      <template v-if="user.data !== undefined">
+        <section v-if="user.data.about !== null" aria-label="About user" v-html="formatParagraph(user.data.about)">
         </section>
 
-        <menu v-if="user.hasTrusted !== null">
+        <menu v-if="user.data.hasTrusted !== null">
           <li>
-            <button type="button" :aria-pressed="user.hasTrusted" @click="toggleTrust">{{ user.hasTrusted ? "Remove Trust" : "Trust" }}</button>
+            <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
           </li>
         </menu>
       </template>

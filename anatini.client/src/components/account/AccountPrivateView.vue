@@ -12,7 +12,7 @@
   }>();
 
   const emit = defineEmits<{
-    'update-protected': [newProtected: string],
+    'update-visibility': [newVisibility: string],
     'update-status': [newStatus: Status],
     'update-errors': [newInputErrors: InputError[]],
   }>();
@@ -30,7 +30,7 @@
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
-        emit('update-protected', inputVisibility.value);
+        emit('update-visibility', inputVisibility.value);
       },
       400: (response?: Response) => {
         emit('update-status', 'error');

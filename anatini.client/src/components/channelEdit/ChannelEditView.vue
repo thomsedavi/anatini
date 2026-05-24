@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ChannelEdit, ErrorMessage, InputError, Note, Status, StatusActions, Tab } from '@/types';
+  import type { APIResponse, ChannelEdit, InputError, Note, Status, StatusActions, Tab } from '@/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const channel = ref<ChannelEdit | ErrorMessage | null>(null);
+  const channel = ref<APIResponse<ChannelEdit>>({ fetching: true });
   const notes = ref<Note[] | null>(null);
   const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
@@ -36,22 +36,22 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: ChannelEdit) => {
-            channel.value = value;
+            channel.value = { data: value };
             inputName.value = value.name;
           })
-          .catch(() => { channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }});
+          .catch(() => { channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
       },
       403: () => {
-        channel.value = { error: true, heading: 'Unknown Error', body: 'No access to channel' };
+        channel.value = { error: { heading: 'Unknown Error', body: 'No access to channel' }};
       },
       404: () => {
-        channel.value = { error: true, heading: '404 Not Found', body: 'Channel not found' };
+        channel.value = { error: { heading: '404 Not Found', body: 'Channel not found' }};
       },
       500: () => {
-        channel.value = { error: true, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' };
+        channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -59,12 +59,14 @@
   };
 
   function getHeading(): string {
-    if (channel.value === null) {
+    if (channel.value.fetching === true) {
       return 'Fetching...';
-    } if ('error' in channel.value) {
-      return channel.value.heading;
-    } else {
+    } else if (channel.value.error !== undefined) {
+      return channel.value.error.heading;
+    } else if (channel.value.data !== undefined) {
       return 'Channel Settings';
+    } else {
+      return 'Unknown Error';
     }
   }
 
@@ -96,8 +98,8 @@
   }
 
   function handleUpdateName(newName: string): void {
-    if (channel.value !== null && 'name' in channel.value) {
-     channel.value.name = newName;
+    if (channel.value.data !== undefined) {
+     channel.value.data.name = newName;
     }
   }
 
@@ -130,13 +132,13 @@
       <progress max="100">Fetching account...</progress>
     </section>
 
-    <section v-else-if="'error' in channel">
+    <section v-if="channel.error !== undefined">
       <p>
-        {{ channel.body }}
+        {{ channel.error.body }}
       </p>
     </section>
 
-    <template v-else>
+    <template v-if="channel.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
         <ul role="list">
@@ -160,10 +162,10 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :channelId="channel.id"
+          :channelId="channel.data.id"
           :notes="notes"
-          :name="channel.name"
-          :icon-image="channel.iconImage"
+          :name="channel.data.name"
+          :icon-image="channel.data.iconImage"
           :status="status"
           :inputErrors="inputErrors"
           @update-name="handleUpdateName"
