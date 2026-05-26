@@ -54,6 +54,8 @@ namespace Anatini.Server.Notes
 
             notes = notes.AsNoTracking();
 
+            notes = notes.Where(note => note.UserId == user.Id);
+
             if (lastPublishedAt.HasValue && lastNoteId.HasValue)
             {
                 notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAt.Value || (note.PublishedAtUtc == lastPublishedAt.Value && note.Id < lastNoteId.Value));

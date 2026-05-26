@@ -21,6 +21,7 @@
   const bookmarkFilter = ref<string>('all');
   const starredFilter = ref<string>('all');
   const dismissedFilter = ref<string>('all');
+  const followedFilter = ref<string>('all');
 
   onMounted(() => {
     if (props.notes === null) {
@@ -85,6 +86,10 @@
 
     if (dismissedFilter.value !== 'all') {
       searchParams.push({ key: 'dismissed', value: dismissedFilter.value });
+    }
+
+    if (followedFilter.value !== 'all') {
+      searchParams.push({ key: 'followed', value: followedFilter.value });
     }
 
     apiFetch('notes', statusActions, undefined, searchParams);
@@ -205,7 +210,20 @@
               ]"
               legend="Dismissed Notes Options" />
           </details>
-          
+
+          <details>
+            <summary>Followed Users</summary>
+
+            <RadioFieldset
+              v-model="followedFilter"
+              :radios="[
+                { name: 'followed', value: 'all', id: 'followedAll', label: 'No filter' },
+                { name: 'followed', value: 'only', id: 'followedOnly', label: 'Show only followed' },
+                { name: 'followed', value: 'hide', id: 'followedHide', label: 'Hide followed' }
+              ]"
+              legend="Followed Users Options" />
+          </details>
+
           <button type="submit">Apply Filters</button>
         </form>
       </details>

@@ -56,6 +56,15 @@ namespace Anatini.Server.Notes
                 {
                     notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
                 }
+
+                if (query.Followed == "only")
+                {
+                    notes = notes.Where(note => note.User != null && note.User.ReceivedUserEdges.Any(userEdge => userEdge.SourceUserId == userId && userEdge.Label == UserUserEdgeLabel.HasFollowed));
+                }
+                else if (query.Followed == "hide")
+                {
+                    notes = notes.Where(note => note.User != null && !note.User.ReceivedUserEdges.Any(test => test.SourceUserId == userId && test.Label == UserUserEdgeLabel.HasFollowed));
+                }
             }
             else
             {
@@ -85,6 +94,7 @@ namespace Anatini.Server.Notes
             public string? Bookmarked { get; set; }
             public string? Starred { get; set; }
             public string? Dismissed { get; set; }
+            public string? Followed { get; set; }
         }
     }
 }
