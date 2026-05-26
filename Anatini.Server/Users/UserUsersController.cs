@@ -28,6 +28,20 @@ namespace Anatini.Server.Users
             return await DeleteUserUserEdge(context, user.Id, UserUserEdgeLabel.HasTrusted);
         });
 
+        [Authorize(Policy = "IsTrusted")]
+        [HttpPost("follow")]
+        public async Task<IActionResult> PostUserFollow(string userId) => await UsingUserContextAsync(userId, async (user, context) =>
+        {
+            return await AddUserUserEdge(context, user.Id, UserUserEdgeLabel.HasFollowed);
+        });
+
+        [Authorize(Policy = "IsTrusted")]
+        [HttpDelete("follow")]
+        public async Task<IActionResult> DeleteUserFollow(string userId) => await UsingUserContextAsync(userId, async (user, context) =>
+        {
+            return await DeleteUserUserEdge(context, user.Id, UserUserEdgeLabel.HasFollowed);
+        });
+
         private async Task<IActionResult> AddUserUserEdge(ApplicationDbContext context, Guid userId, UserUserEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))

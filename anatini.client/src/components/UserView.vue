@@ -70,6 +70,30 @@
       apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
     }
   }
+
+  function toggleFollow(): void {
+    if (user.value.data?.hasFollowed === true) {
+      const statusActions: StatusActions = {
+        204: () => {
+          if (user.value.data !== undefined) user.value.data.hasFollowed = false;
+        }
+      }
+
+      const init: RequestInit = { method: "DELETE" };
+
+      apiFetchAuthenticated(`users/${route.params.userId}/follow`, statusActions, init);
+    } else if (user.value.data?.hasFollowed === false) {
+      const statusActions: StatusActions = {
+        201: () => {
+          if (user.value.data !== undefined) user.value.data.hasFollowed = true;
+        }
+      }
+
+      const init: RequestInit = { method: "POST" };
+
+      apiFetchAuthenticated(`users/${route.params.userId}/follow`, statusActions, init);
+    }
+  }
 </script>
 
 <template>
@@ -106,9 +130,12 @@
         <section v-if="user.data.about !== null" aria-label="About user" v-html="formatParagraph(user.data.about)">
         </section>
 
-        <menu v-if="user.data.hasTrusted !== null">
-          <li>
+        <menu v-if="user.data.hasTrusted !== null || user.data.hasFollowed !== null">
+          <li v-if="user.data.hasTrusted !== null">
             <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
+          </li>
+          <li v-if="user.data.hasFollowed !== null">
+            <button type="button" :aria-pressed="user.data.hasFollowed" @click="toggleFollow">{{ user.data.hasFollowed ? "Remove Follow" : "Follow" }}</button>
           </li>
         </menu>
       </template>

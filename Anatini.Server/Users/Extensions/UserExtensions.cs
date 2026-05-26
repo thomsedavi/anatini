@@ -22,6 +22,7 @@ namespace Anatini.Server.Users.Extensions
             if (isAuthenticated)
             {
                 userDto.HasTrusted = user.ReceivedUserEdges.Any(userEdge => userEdge.Label == UserUserEdgeLabel.HasTrusted);
+                userDto.HasFollowed = user.ReceivedUserEdges.Any(userEdge => userEdge.Label == UserUserEdgeLabel.HasFollowed);
             }
 
             return userDto;

@@ -20,6 +20,7 @@ export type User = {
   handle: string;
   about: string | null;
   hasTrusted: boolean | null;
+  hasFollowed: boolean | null;
 };
 
 export type UserHeader = {
