@@ -3,10 +3,12 @@
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
+  import InputText from '../common/InputText.vue';
   import InputTextArea from '../common/InputTextArea.vue';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import VisibilitySelect from '../common/VisibilitySelect.vue';
+  import { formatDateTimeNz } from '../common/dateUtils.ts';
 
   const route = useRoute();
 
@@ -23,6 +25,7 @@
   const note = ref<APIResponse<NoteEdit>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
+  const inputNotePublishedAtNz = ref<string>('');
 
   watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
@@ -34,6 +37,7 @@
             note.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
             inputVisibility.value = value.visibility;
+            inputNotePublishedAtNz.value = formatDateTimeNz(value.publishedAtUtc);
           })
           .catch(() => { note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }}});
       },
@@ -54,6 +58,8 @@
     } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== note.value.data.article) {
       return false;
     } else if (inputVisibility.value !== note.value.data.visibility) {
+      return false;
+    } else if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtUtc)) {
       return false;
     }
 
@@ -93,6 +99,10 @@
 
     if (inputVisibility.value !== note.value.data.visibility) {
       body.append('visibility', inputVisibility.value);
+    }
+
+    if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtUtc)) {
+      body.append('publishedAtNz', inputNotePublishedAtNz.value);
     }
 
     const init = { method: "PATCH", body: body };
@@ -135,6 +145,15 @@
             help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
           <VisibilitySelect v-model="inputVisibility" />
+
+          <InputText
+            v-model="inputNotePublishedAtNz"
+            type="datetime-local"
+            label="Date & Time (NZ)"
+            name="publishedAtNz"
+            id="publishedAtNz"
+            help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+            :error="getError('publishedAtNz')" />
         </fieldset>
 
         <SubmitButton

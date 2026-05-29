@@ -21,7 +21,7 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputNoteHandle = ref<string>('');
-  const inputNotePublishedAt = ref<string>('');
+  const inputNotePublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.inputErrors.find(inputError => inputError.id === id)?.message;
@@ -58,8 +58,8 @@
       body.append('handle', tidy(inputNoteHandle.value));
     }
 
-    if (inputNotePublishedAt.value !== '') {
-      body.append('publishedAt', inputNotePublishedAt.value);
+    if (inputNotePublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputNotePublishedAtNz.value);
     }
 
     const init = { method: "POST", body: body };
@@ -100,13 +100,13 @@
           :error="getError('handle')" />
 
         <InputText
-          v-model="inputNotePublishedAt"
+          v-model="inputNotePublishedAtNz"
           type="datetime-local"
-          label="Date & Time"
-          name="publishedAt"
-          id="publishedAt"
+          label="Date & Time (NZ)"
+          name="publishedAtNz"
+          id="publishedAtNz"
           help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
-          :error="getError('publishedAt')" />
+          :error="getError('publishedAtNz')" />
       </fieldset>
 
       <SubmitButton

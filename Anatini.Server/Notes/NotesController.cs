@@ -71,9 +71,9 @@ namespace Anatini.Server.Notes
                 notes = notes.Where(note => note.Visibility == Visibility.Public);
             }
 
-            if (query.LastPublishedAt.HasValue && query.LastNoteId.HasValue)
+            if (query.LastPublishedAtUtc.HasValue && query.LastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < query.LastPublishedAt.Value || (note.PublishedAtUtc == query.LastPublishedAt.Value && note.Id < query.LastNoteId.Value));
+                notes = notes.Where(note => note.PublishedAtUtc < query.LastPublishedAtUtc.Value || (note.PublishedAtUtc == query.LastPublishedAtUtc.Value && note.Id < query.LastNoteId.Value));
             }
 
             var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
@@ -88,7 +88,7 @@ namespace Anatini.Server.Notes
 
         public class NotesQuery
         {
-            public DateTime? LastPublishedAt { get; set; }
+            public DateTime? LastPublishedAtUtc { get; set; }
             public Guid? LastNoteId { get; set; }
             public int? PageSize { get; set; }
             public string? Bookmarked { get; set; }

@@ -14,8 +14,8 @@ namespace Anatini.Server.Notes
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
 
-        [Display(Name = "Published At")]
-        public DateTime? PublishedAt { get; set; }
+        [Display(Name = "Published At (NZ)")]
+        public DateTime? PublishedAtNz { get; set; }
     }
 
     public class UpdateNote

@@ -36,7 +36,7 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = context.AddUserNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, user.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, createNote.PublishedAt);
+            var note = context.AddUserNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, user.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, createNote.PublishedAtNz);
 
             await context.SaveChangesAsync();
 
@@ -48,7 +48,7 @@ namespace Anatini.Server.Notes
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAt, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user, context) =>
         {
             var notes = context.Notes.AsQueryable();
 
@@ -56,9 +56,9 @@ namespace Anatini.Server.Notes
 
             notes = notes.Where(note => note.UserId == user.Id);
 
-            if (lastPublishedAt.HasValue && lastNoteId.HasValue)
+            if (lastPublishedAtUtc.HasValue && lastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAt.Value || (note.PublishedAtUtc == lastPublishedAt.Value && note.Id < lastNoteId.Value));
+                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
             }
 
             var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
