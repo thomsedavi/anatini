@@ -9,16 +9,17 @@ namespace Anatini.Server.Notes
         [Handle(nullable: true), MaxLength(256), DataType(DataType.Text)]
         public string? Handle { get; set; }
 
-        [DataType(DataType.Text)]
         public required string Article { get; set; }
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
+
+        [Display(Name = "Published At")]
+        public DateTime? PublishedAt { get; set; }
     }
 
     public class UpdateNote
     {
-        [DataType(DataType.Text)]
         public required string Article { get; set; }
     }
 }

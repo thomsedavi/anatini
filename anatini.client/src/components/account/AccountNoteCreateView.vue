@@ -21,6 +21,7 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputNoteHandle = ref<string>('');
+  const inputNotePublishedAt = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.inputErrors.find(inputError => inputError.id === id)?.message;
@@ -55,6 +56,10 @@
 
     if (tidy(inputNoteHandle.value) !== '') {
       body.append('handle', tidy(inputNoteHandle.value));
+    }
+
+    if (inputNotePublishedAt.value !== '') {
+      body.append('publishedAt', inputNotePublishedAt.value);
     }
 
     const init = { method: "POST", body: body };
@@ -93,6 +98,15 @@
           :maxlength="64"
           help="lower case with hyphens (e.g. 'my-anatini-channel'), optional custom web address"
           :error="getError('handle')" />
+
+        <InputText
+          v-model="inputNotePublishedAt"
+          type="datetime-local"
+          label="Date & Time"
+          name="publishedAt"
+          id="publishedAt"
+          help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+          :error="getError('publishedAt')" />
       </fieldset>
 
       <SubmitButton
