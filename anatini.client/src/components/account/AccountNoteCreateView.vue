@@ -91,7 +91,7 @@
           name="handle"
           id="handle"
           :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-channel'), optional"
+          help="lower case with hyphens (e.g. 'my-anatini-channel'), optional custom web address"
           :error="getError('handle')" />
       </fieldset>
 

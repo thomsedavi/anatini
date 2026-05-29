@@ -143,7 +143,8 @@
 
   function noteHtml(note: Note): string {
     return `
-      ${getHeader(note)}${note.article.substring(9, note.article.length - 10)}
+      ${getHeader(note)}
+      ${note.article.substring(9, note.article.length - 10)}
       <footer>
         <menu>
           <li>

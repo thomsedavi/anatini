@@ -30,6 +30,24 @@
       apiFetchAuthenticated(`account/notes`, statusActions);
     }
   });
+
+  function getHeader(note: Note): string {
+      return `<header><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
+  }
+
+  function noteHtml(note: Note): string {
+    return `
+      ${getHeader(note)}
+      ${note.article.substring(9, note.article.length - 10)}
+      <footer>
+        <menu>
+          <li>
+            <a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a>
+          </li>
+        </menu>
+      </footer>
+    `;
+  }
 </script>
 
 <template>
@@ -41,7 +59,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>
