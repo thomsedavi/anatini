@@ -92,18 +92,28 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchNote(string channelId, string noteId, [FromForm] UpdateNote updateNote) => await UsingChannelNoteContextAsync(channelId, noteId, async (note, context) =>
         {
-            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateNote.Article);
-
-            if (validationResult.ErrorMessage != null)
+            if (updateNote.Article != null)
             {
-                return BadRequest(new { error = validationResult.ErrorMessage });
-            }
-            else if (validationResult.SanitizedHtml == null)
-            {
-                return BadRequest(new { error = "Unknown error" });
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateNote.Article);
+
+                if (validationResult.ErrorMessage != null)
+                {
+                    return BadRequest(new { error = validationResult.ErrorMessage });
+                }
+                else if (validationResult.SanitizedHtml == null)
+                {
+                    return BadRequest(new { error = "Unknown error" });
+                }
+
+                note.Article = validationResult.SanitizedHtml;
             }
 
-            note.Article = validationResult.SanitizedHtml;
+            if (updateNote.PublishedAtNz.HasValue)
+            {
+                var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
+                note.PublishedAtUtc = TimeZoneInfo.ConvertTimeToUtc(updateNote.PublishedAtNz.Value, timeZoneInfoNZ);
+            }
+
             note.UpdatedAtUtc = DateTime.UtcNow;
 
             await context.SaveChangesAsync();

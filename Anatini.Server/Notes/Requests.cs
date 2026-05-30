@@ -20,6 +20,9 @@ namespace Anatini.Server.Notes
 
     public class UpdateNote
     {
-        public required string Article { get; set; }
+        public string? Article { get; set; }
+
+        [Display(Name = "Published At (NZ)")]
+        public DateTime? PublishedAtNz { get; set; }
     }
 }
