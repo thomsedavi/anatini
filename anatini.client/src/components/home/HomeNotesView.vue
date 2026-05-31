@@ -22,6 +22,8 @@
   const starredFilter = ref<string>('all');
   const dismissedFilter = ref<string>('all');
   const followedFilter = ref<string>('all');
+  const baseSearchParams = ref<SearchParameter[]>([]);
+  const hasMore = ref<boolean>(true);
 
   onMounted(() => {
     if (props.notes === null) {
@@ -69,30 +71,60 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Note[]) => {
+            if (value.length < 10) {
+              hasMore.value = false;
+            }
+
             emit('update-notes', value);
           });
       }
     }
 
-    const searchParams: SearchParameter[] = [];
+    baseSearchParams.value = [];
 
     if (bookmarkFilter.value !== 'all') {
-      searchParams.push({ key: 'bookmarked', value: bookmarkFilter.value });
+      baseSearchParams.value.push({ key: 'bookmarked', value: bookmarkFilter.value });
     }
 
     if (starredFilter.value !== 'all') {
-      searchParams.push({ key: 'starred', value: starredFilter.value });
+      baseSearchParams.value.push({ key: 'starred', value: starredFilter.value });
     }
 
     if (dismissedFilter.value !== 'all') {
-      searchParams.push({ key: 'dismissed', value: dismissedFilter.value });
+      baseSearchParams.value.push({ key: 'dismissed', value: dismissedFilter.value });
     }
 
     if (followedFilter.value !== 'all') {
-      searchParams.push({ key: 'followed', value: followedFilter.value });
+      baseSearchParams.value.push({ key: 'followed', value: followedFilter.value });
     }
 
-    apiFetch('notes', statusActions, undefined, searchParams);
+    apiFetch('notes', statusActions, undefined, baseSearchParams.value);
+  }
+
+  function getMoreNotes() {
+    if (props.notes !== null) {
+      const statusActions: StatusActions = {
+        200: (response?: Response) => {
+          response?.json()
+            .then((value: Note[]) => {
+              if (value.length < 2) {
+                hasMore.value = false;
+              }
+
+              emit('update-notes', [...(props.notes ?? []), ...value]);
+            });
+        }
+      }
+
+      const lastNote = props.notes[props.notes.length - 1];
+
+      const moreSearchParams = [...baseSearchParams.value];
+
+      moreSearchParams.push({ key: 'lastPublishedAtUtc', value: lastNote.publishedAtUtc });
+      moreSearchParams.push({ key: 'lastNoteId', value: lastNote.id });
+
+      apiFetch('notes', statusActions, undefined, moreSearchParams);
+    }
   }
 
   function buttonAction(label: string, pressed: string | null, note: Note): void {
@@ -242,5 +274,9 @@
     </ul>
 
     <p v-else>We do not have any notes.</p>
+
+    <footer>
+      <button type="button" aria-controls="panel-notes" v-if="notes !== null && hasMore" @click="() => getMoreNotes()">More</button>
+    </footer>
   </section>
 </template>
