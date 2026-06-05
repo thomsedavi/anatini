@@ -1,9 +1,11 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Authentication.Responses;
+using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Context.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -125,16 +127,22 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIsAuthenticated()
         {
-            if (IsAuthenticated)
-            {
-                var isTrusted = User.HasClaim(c => c.Type == "http://anatini.com/claims/istrusted" && c.Value == "true");
+            var response = new IsAuthenticatedResponse();
 
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = true, IsTrusted = isTrusted });
-            }
-            else
+            if (TryGetUserId(out Guid userId))
             {
-                return Ok(new IsAuthenticatedResponse { IsAuthenticated = false });
+                response.IsAuthenticated = true;
+                response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
+
+                var channels = await context.Channels.Where(channel => channel.UserEdges.Any(userChannelEdge => userChannelEdge.SourceUserId == userId && userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ToListAsync();
+                
+                if (channels.Count != 0)
+                {
+                    response.Channels = await Task.WhenAll(channels.Select(channel => channel.ToChannelEditDtoAsync()));
+                }
             }
+
+            return Ok(response);
         }
     }
 }

@@ -79,8 +79,8 @@ export type ChannelEdit = {
   name: string;
   about: string | null;
   handle: string;
-  iconImage: Image | null;
   visiblity: Visibility;
+  iconImage: Image | null;
 };
 
 export type PostVersion = {
@@ -125,4 +125,5 @@ export type NoteEdit = {
 export type IsAuthenticated = {
   isAuthenticated: boolean;
   isTrusted: boolean | null;
+  channels: ChannelEdit[] | null;
 }

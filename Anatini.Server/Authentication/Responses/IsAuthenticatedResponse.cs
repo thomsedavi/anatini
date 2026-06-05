@@ -1,8 +1,11 @@
-﻿namespace Anatini.Server.Authentication.Responses
+﻿using Anatini.Server.Dtos;
+
+namespace Anatini.Server.Authentication.Responses
 {
     public class IsAuthenticatedResponse
     {
-        public required bool IsAuthenticated { get; set; }
+        public bool IsAuthenticated { get; set; } = false;
         public bool? IsTrusted { get; set; }
+        public IEnumerable<ChannelEditDto>? Channels { get; set; }
     }
 }

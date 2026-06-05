@@ -1,14 +1,26 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { store } from './store.ts';
   import type { IsAuthenticated } from '@/types';
 
   const router = useRouter();
 
+  const dropdownRef = ref<Node | null>(null);
   const isFetching = ref<boolean>(false);
+  const isShowing = ref<string[]>([]);
+
+  const handleClickOutside = (event: PointerEvent) => {
+    if (dropdownRef.value === null || isShowing.value.length === 0) {
+      return;
+    } else if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+      isShowing.value = [];
+    }
+  }
 
   onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+
     isFetching.value = true;
 
     fetch("/api/authentication/is-authenticated", {
@@ -19,6 +31,7 @@
           .then((value: IsAuthenticated) => {
             store.isAuthenticated = value.isAuthenticated;
             store.isTrusted = value.isTrusted;
+            store.channels = value.channels;
           })
           .catch(() => {
             store.isAuthenticated = false;
@@ -33,6 +46,10 @@
     });
   });
 
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+  })
+
   async function signOut() {
     fetch("/api/authentication/sign-out", {
       method: "POST",
@@ -45,8 +62,24 @@
     }).catch(() => {
       store.isAuthenticated = false;
     }).finally(() => {
+      isShowing.value = [];
       router.replace({ path: '/' });
     });
+  }
+
+  function toggleShow(show: string) {
+    if (show === 'main' && isShowing.value.includes('main')) {
+      isShowing.value = [];
+      return;
+    }
+
+    const index = isShowing.value.indexOf(show);
+  
+    if (index === -1) {
+      isShowing.value.push(show);
+    } else {
+      isShowing.value.splice(index, 1);
+    }
   }
 </script>
 
@@ -54,20 +87,71 @@
   <template v-if="store.isAuthenticated !== null">
     <a href="#main" id="skip">Skip to main content</a>
 
-    <header>
-      <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
-
-      <nav aria-label="Main">
+    <header id="main-header">
+      <nav id="main-nav" aria-label="Main">
         <ul role="list">
-          <li><RouterLink to="/about">ABOUT</RouterLink></li>
-          <template v-if="store.isAuthenticated === null || !store.isAuthenticated">
-            <li><RouterLink to="/sign-up">SIGN UP</RouterLink></li>
-            <li><RouterLink to="/sign-in">SIGN IN</RouterLink></li>
-          </template>
-          <template v-else>
-            <li><RouterLink to="/account">ACCOUNT</RouterLink></li>
-            <li><a href="/" @click.prevent="signOut">SIGN OUT</a></li>
-          </template>
+          <li id="main-nav-header">
+            <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
+            <button 
+              type="button" 
+              :aria-expanded="isShowing.includes('main')" 
+              aria-controls="main-dropdown"
+              @click.stop="toggleShow('main')"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            </button>
+          </li>
+          <li>
+            <ul id="main-dropdown" ref="dropdownRef" role="list" :hidden="!isShowing.includes('main')">
+              <li><RouterLink to="/about" @click="isShowing = []">About</RouterLink></li>
+
+              <li id="account-list" v-if="store.isAuthenticated === true">
+                <strong id="account">Account</strong>
+                <ul aria-labelledby="account" role="list">
+                  <li>
+                    <RouterLink to="/account" @click="isShowing = []">Settings</RouterLink>
+                  </li>
+                  <li>
+                    <RouterLink to="/account/notes/create" @click="isShowing = []">Create Note</RouterLink>
+                  </li>
+                </ul>
+              </li>
+
+              <li id="channels-list" v-if="store.channels !== null">
+                <button 
+                  type="button" 
+                  :aria-expanded="isShowing.includes('channels')" 
+                  aria-controls="channels-dropdown"
+                  @click="toggleShow('channels')"
+                >
+                  Channels
+                </button>
+              
+                <ul id="channels-dropdown" role="list" :hidden="!isShowing.includes('channels')">
+                  <li v-for="channel in store.channels" :key="'channel' + channel.id">
+                    <strong id="channel-tech-heading">{{ channel.name }}</strong>
+                    <ul aria-labelledby="channel-tech-heading" role="list">
+                      <li>
+                        <RouterLink :to="`/channels/${channel.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
+                      </li>
+                      <li>
+                        <RouterLink :to="`/channels/${channel.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <template v-if="store.isAuthenticated === null || store.isAuthenticated === false">
+                <li id="sign-up"><RouterLink to="/sign-up" @click="isShowing = []">Sign Up</RouterLink></li>
+                <li id="sign-in"><RouterLink to="/sign-in" @click="isShowing = []">Sign In</RouterLink></li>
+              </template>
+              <template v-else>
+                <li id="sign-out"><RouterLink to="/" @click.prevent="signOut">Sign Out</RouterLink></li>
+              </template>
+            </ul>
+          </li>
         </ul>
       </nav>
     </header>
