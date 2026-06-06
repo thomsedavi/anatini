@@ -89,70 +89,64 @@
 
     <header id="main-header">
       <nav id="main-nav" aria-label="Main">
-        <ul role="list">
-          <li id="main-nav-header">
-            <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
-            <button 
-              type="button" 
-              :aria-expanded="isShowing.includes('main')" 
-              aria-controls="main-dropdown"
-              @click.stop="toggleShow('main')"
-              aria-label="Open main menu"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path d="M3 6h18M3 12h18M3 18h18" />
-              </svg>
-            </button>
-          </li>
-          <li>
-            <ul id="main-dropdown" ref="dropdownRef" role="list" :hidden="!isShowing.includes('main')">
-              <li><RouterLink to="/about" @click="isShowing = []">About</RouterLink></li>
+        <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
+          <button 
+            type="button" 
+            :aria-expanded="isShowing.includes('main')" 
+            aria-controls="main-dropdown"
+            @click.stop="toggleShow('main')"
+            aria-label="Open main menu"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+          </svg>
+        </button>
+        <ul id="main-dropdown" ref="dropdownRef" role="list" :hidden="!isShowing.includes('main')">
+          <li><RouterLink to="/about" @click="isShowing = []">About</RouterLink></li>
 
-              <li id="account-list" v-if="store.isAuthenticated === true">
-                <strong id="account">Account</strong>
-                <ul aria-labelledby="account" role="list">
-                  <li>
-                    <RouterLink to="/account" @click="isShowing = []">Settings</RouterLink>
-                  </li>
-                  <li>
-                    <RouterLink to="/account/notes/create" @click="isShowing = []">Create Note</RouterLink>
-                  </li>
-                </ul>
+          <li id="account-list" v-if="store.isAuthenticated === true">
+            <strong id="account">Account</strong>
+            <ul aria-labelledby="account" role="list">
+              <li>
+                <RouterLink to="/account" @click="isShowing = []">Settings</RouterLink>
               </li>
-
-              <li id="channels-list" v-if="store.channels !== null">
-                <button 
-                  type="button" 
-                  :aria-expanded="isShowing.includes('channels')" 
-                  aria-controls="channels-dropdown"
-                  @click="toggleShow('channels')"
-                >
-                  Channels
-                </button>
-              
-                <ul id="channels-dropdown" role="list" :hidden="!isShowing.includes('channels')">
-                  <li v-for="channel in store.channels" :key="'channel' + channel.id">
-                    <strong id="channel-tech-heading">{{ channel.name }}</strong>
-                    <ul aria-labelledby="channel-tech-heading" role="list">
-                      <li>
-                        <RouterLink :to="`/channels/${channel.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
-                      </li>
-                      <li>
-                        <RouterLink :to="`/channels/${channel.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
+              <li>
+                <RouterLink to="/account/notes/create" @click="isShowing = []">Create Note</RouterLink>
               </li>
-              <template v-if="store.isAuthenticated === null || store.isAuthenticated === false">
-                <li id="sign-up"><RouterLink to="/sign-up" @click="isShowing = []">Sign Up</RouterLink></li>
-                <li id="sign-in"><RouterLink to="/sign-in" @click="isShowing = []">Sign In</RouterLink></li>
-              </template>
-              <template v-else>
-                <li id="sign-out"><RouterLink to="/" @click.prevent="signOut">Sign Out</RouterLink></li>
-              </template>
             </ul>
           </li>
+
+          <li id="channels-list" v-if="store.channels !== null">
+            <button 
+              type="button" 
+              :aria-expanded="isShowing.includes('channels')" 
+              aria-controls="channels-dropdown"
+              @click="toggleShow('channels')"
+            >
+              Channels
+            </button>
+          
+            <ul id="channels-dropdown" role="list" :hidden="!isShowing.includes('channels')">
+              <li v-for="channel in store.channels" :key="'channel' + channel.id">
+                <strong id="channel-tech-heading">{{ channel.name }}</strong>
+                <ul aria-labelledby="channel-tech-heading" role="list">
+                  <li>
+                    <RouterLink :to="`/channels/${channel.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
+                  </li>
+                  <li>
+                    <RouterLink :to="`/channels/${channel.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <template v-if="store.isAuthenticated === null || store.isAuthenticated === false">
+            <li id="sign-up"><RouterLink to="/sign-up" @click="isShowing = []">Sign Up</RouterLink></li>
+            <li id="sign-in"><RouterLink to="/sign-in" @click="isShowing = []">Sign In</RouterLink></li>
+          </template>
+          <template v-else>
+            <li id="sign-out"><RouterLink to="/" @click.prevent="signOut">Sign Out</RouterLink></li>
+          </template>
         </ul>
       </nav>
     </header>
