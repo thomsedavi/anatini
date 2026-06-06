@@ -126,6 +126,19 @@ form {
   border: 1px solid var(--border);
 }
 
+ul[role="tablist"] {
+  border-bottom: 2px solid var(--border);
+}
+
+button[role="tab"] {
+  color: var(--text-light);
+
+  &[aria-selected="true"] {
+    color: var(--text);
+    border-bottom-color: var(--text);
+  }
+}
+
 #main-header {
   background-color: var(--background-highlight);
   border-bottom: 1px solid var(--border);
@@ -158,11 +171,5 @@ form {
   #account-list,
   #channels-list {
     border-top: 1px solid var(--border);
-  }
-}
-
-@media (max-width: 576px) {
-  body {
-    color: red;
   }
 }
