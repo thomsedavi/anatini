@@ -1,0 +1,168 @@
+:root {
+  --beige1: rgb(255 255 255);
+  --beige2: rgb(255 250 245);
+  --beige3: rgb(240 225 210);
+  --beige4: rgb(180 165 150);
+  --beige5: rgb(150 135 120);
+  --red1: rgb(255, 235, 240);
+  --red2: rgb(210 0 60);
+  --red3: rgb(35, 0, 10);
+  --blue1: rgb(240, 250, 255);
+  --blue2: rgb(150 165 180);
+  --blue3: rgb(105 135 165);
+  --blue4: rgb(30 45 60);
+  --blue5: rgb(10 20 30);
+  --black: rgb(0 0 0);
+  --amber-light: rgb(240, 210, 120);
+  --amber-dark: rgb(180, 150, 30);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: var(--blue5);
+    --text-light: var(--blue3);
+    --text-lightest: var(--blue2);
+    --input: var(--beige1);
+    --input-background: var(--black);
+    --input-background-disabled: var(--blue1);
+    --background: var(--beige2);
+    --background-highlight: var(--beige1);
+    --background-highlight-hover: var(--blue1);
+    --hover: var(--blue4);
+    --shadow: var(--red2);
+    --button: var(--blue4);
+    --button-text: var(--beige1);
+    --button-hover: var(--blue3);
+    --button-disabled: var(--blue2);
+    --button-secondary-hover: var(--beige2);
+    --scrollbar: var(--blue5);
+    --scrollbar-background: var(--beige3);
+    --link: var(--blue5);
+    --link-hover: var(--blue3);
+    --card-background: var(--beige3);
+    --card-border: var(--beige4);
+    --accent: var(--red2);
+    --border: var(--blue3);
+    --border-secondary: var(--blue1);
+    --border-hover: var(--blue2);
+    --error-border: var(--red2);
+    --error-background: var(--red1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: var(--beige2);
+    --text-light: var(--beige4);
+    --text-lightest: var(--beige5);
+    --input: var(--beige1);
+    --input-background: var(--blue5);
+    --input-background-disabled: var(--beige3);
+    --background: var(--blue5);
+    --background-highlight: var(--black);
+    --background-highlight-hover: var(--beige3);
+    --hover: var(--beige3);
+    --shadow: var(--red2);
+    --button: var(--beige3);
+    --button-text: var(--blue5);
+    --button-hover: var(--beige4);
+    --button-disabled: var(--beige5);
+    --button-secondary-hover: var(--blue5);
+    --scrollbar: var(--beige2);
+    --scrollbar-background: var(--blue4);
+    --link: var(--beige2);
+    --link-hover: var(--beige4);
+    --card-background: var(--blue4);
+    --card-border: var(--blue3);
+    --accent: var(--red2);
+    --border: var(--beige4);
+    --border-secondary: var(--beige3);
+    --border-hover: var(--beige5);
+    --error-border: var(--red2);
+    --error-background: var(--red3);
+  }
+}
+
+body {
+  color: var(--text);
+  background-color: var(--background);
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+#skip {
+  background-color: var(--accent);
+  color: white;
+}
+
+form > button,
+menu > li > button,
+footer > button {
+  background-color: var(--button);
+  color: var(--button-text);
+  border: 2px solid var(--button);
+  border-radius: var(--border-radius);
+
+  &:hover {
+    background-color: var(--button-hover);
+    border-color: var(--button-hover);
+  }
+
+  &[aria-disabled="true"] {
+    background-color: var(--button-disabled);
+    border-color: var(--button-disabled);
+  }
+}
+
+form {
+  background-color: var(--background-highlight);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border);
+}
+
+#main-header {
+  background-color: var(--background-highlight);
+  border-bottom: 1px solid var(--border);
+
+  ul[id$="dropdown"] {
+    background-color: var(--background-highlight);
+    border: 1px solid var(--border);
+  }
+
+  #main-dropdown strong,
+  #channels-dropdown strong {
+    color: var(--text-light);
+  }
+
+  #main-dropdown {
+    a,
+    button {
+      color: var(--text);
+    }
+
+    a:hover,
+    button:hover {
+      background-color: var(--background-highlight-hover);
+      color: var(--text);
+    }
+  }
+
+  #sign-out,
+  #sign-up,
+  #account-list,
+  #channels-list {
+    border-top: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    color: red;
+  }
+}

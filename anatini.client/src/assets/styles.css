@@ -1,96 +1,8 @@
-:root {
-  --beige1: rgb(255 255 255);
-  --beige2: rgb(255 250 245);
-  --beige3: rgb(240 225 210);
-  --beige4: rgb(180 165 150);
-  --beige5: rgb(150 135 120);
-  --red1: rgb(255, 235, 240);
-  --red2: rgb(210 0 60);
-  --red3: rgb(35, 0, 10);
-  --blue1: rgb(240, 250, 255);
-  --blue2: rgb(150 165 180);
-  --blue3: rgb(105 135 165);
-  --blue4: rgb(30 45 60);
-  --blue5: rgb(10 20 30);
-  --black: rgb(0 0 0);
-  --amber-light: rgb(240, 210, 120);
-  --amber-dark: rgb(180, 150, 30);
-
-  --border-radius: 8px;
-  --border-radius-input: 4px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --text: var(--blue5);
-    --text-light: var(--blue3);
-    --text-lightest: var(--blue2);
-    --input: var(--beige1);
-    --input-background: var(--black);
-    --input-background-disabled: var(--blue1);
-    --background: var(--beige2);
-    --background-highlight: var(--beige1);
-    --background-highlight-hover: var(--blue1);
-    --hover: var(--blue4);
-    --shadow: var(--red2);
-    --button: var(--blue4);
-    --button-text: var(--beige1);
-    --button-hover: var(--blue3);
-    --button-disabled: var(--blue2);
-    --button-secondary-hover: var(--beige2);
-    --scrollbar: var(--blue5);
-    --scrollbar-background: var(--beige3);
-    --link: var(--blue5);
-    --link-hover: var(--blue3);
-    --card-background: var(--beige3);
-    --card-border: var(--beige4);
-    --accent: var(--red2);
-    --border: var(--blue3);
-    --border-secondary: var(--blue1);
-    --border-hover: var(--blue2);
-    --error-border: var(--red2);
-    --error-background: var(--red1);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: var(--beige2);
-    --text-light: var(--beige4);
-    --text-lightest: var(--beige5);
-    --input: var(--beige1);
-    --input-background: var(--blue5);
-    --input-background-disabled: var(--beige3);
-    --background: var(--blue5);
-    --background-highlight: var(--black);
-    --background-highlight-hover: var(--beige3);
-    --hover: var(--beige3);
-    --shadow: var(--red2);
-    --button: var(--beige3);
-    --button-text: var(--blue5);
-    --button-hover: var(--beige4);
-    --button-disabled: var(--beige5);
-    --button-secondary-hover: var(--blue5);
-    --scrollbar: var(--beige2);
-    --scrollbar-background: var(--blue4);
-    --link: var(--beige2);
-    --link-hover: var(--beige4);
-    --card-background: var(--blue4);
-    --card-border: var(--blue3);
-    --accent: var(--red2);
-    --border: var(--beige4);
-    --border-secondary: var(--beige3);
-    --border-hover: var(--beige5);
-    --error-border: var(--red2);
-    --error-background: var(--red3);
-  }
-}
+@import url('_colors.css');
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
   line-height: 1.5;
-  color: var(--text);
-  background-color: var(--background);
   margin: 0;
   letter-spacing: 0.05rem;
   display: flex;
@@ -113,19 +25,12 @@ main > article {
 
 a {
   text-decoration: none;
-  color: var(--link);
-}
-
-a:hover {
-  color: var(--link-hover);
 }
 
 #skip {
   position: absolute;
   top: -40px;
   left: 0;
-  background-color: var(--accent);
-  color: white;
   padding: 8px;
   z-index: 100;
   transition: top 0.2s;
@@ -149,31 +54,17 @@ h1 {
 form > button,
 menu > li > button,
 footer > button {
-  background-color: var(--button);
-  color: var(--button-text);
-  border: 2px solid var(--button);
   font-weight: 700;
   padding: 0.5rem;
   cursor: pointer;
-  border-radius: var(--border-radius);
-
-  &:hover {
-    background-color: var(--button-hover);
-    border-color: var(--button-hover);
-  }
 
   &[aria-disabled="true"] {
-    background-color: var(--button-disabled);
-    border-color: var(--button-disabled);
     pointer-events: none;
   }
 }
 
 form {
-  background-color: var(--background-highlight);
   padding: 1.5rem;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--border);
   width: 100%;
   max-width: 25rem;
 }
@@ -189,8 +80,6 @@ fieldset {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1.5rem;
-  background-color: var(--background-highlight);
-  border-bottom: 1px solid var(--border);
   z-index: 1;
 
   #main-nav {
@@ -266,8 +155,6 @@ fieldset {
 
   ul[id$="dropdown"] {
     position: absolute;
-    background-color: var(--background-highlight);
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
     min-width: 15rem;
     padding: 0.5rem;
@@ -286,7 +173,6 @@ fieldset {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-light);
     padding: 0.5rem 1.25rem 0.25rem;
   }
 
@@ -301,16 +187,9 @@ fieldset {
       text-align: left;
       padding: 0.5rem 0.75rem;
       border-radius: 0.375rem;
-      color: var(--text);
       letter-spacing: 0.05rem;
       font-weight: 500;
       font-size: 0.9rem;
-    }
-
-    a:hover,
-    button:hover {
-      background-color: var(--background-highlight-hover);
-      color: var(--text);
     }
 
     button[aria-controls="channels-dropdown"] {
@@ -332,7 +211,6 @@ fieldset {
   #sign-up,
   #account-list,
   #channels-list {
-    border-top: 1px solid var(--border);
     border-radius: 0;
     margin-top: 0.5rem;
     padding-top: 0.5rem;
