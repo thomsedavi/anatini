@@ -1,6 +1,11 @@
 @import url('_colors.css');
 @import url('_spacing.css');
 
+:root {
+  --border-radius: 8px;
+  --border-radius-input: 4px;
+}
+
 body {
   font-family: system-ui, -apple-system, sans-serif;
   display: flex;
@@ -117,6 +122,184 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    button[role="tab"] {
+      background: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    ul[role="tablist"] {
+      display: flex;
+      list-style: none;
+    }
+
+    section {
+      ul[role="list"] {
+        list-style: none;
+        padding: 0;
+
+        article {
+          background: var(--background-highlight);
+          padding: 1.5rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border);
+          margin-bottom: 1rem;
+          transition: transform 0.1s ease;
+
+          h3, h4, p {
+            margin: 0 0 0.5rem 0;
+          }
+
+          small {
+            color: var(--text-lightest);
+          }
+
+          header {
+            a {
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+            }
+
+            img {
+              width: 2rem;
+              height: 2rem;
+              object-fit: cover;
+            }
+          }
+
+          footer {
+            menu {
+              display: flex;
+              gap: 1rem;
+              list-style: none;
+              padding: 0;
+              flex-direction: row;
+            }
+          }
+
+          p {
+            color: var(--text-light);
+    
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          &:hover {
+            border-color: var(--border-hover);
+          }
+
+          &:has(a[href^="/channels/"]) img {
+            border-radius: 8px;
+          }
+
+          &:has(a[href^="/users/"]) img {
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+
+    form,
+    menu {
+      button {
+        width: 100%;
+        transition: all 0.2s;
+
+        &:not(:last-child) {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    form > button,
+    menu > li > button,
+    footer > button {
+      font-weight: 700;
+      cursor: pointer;
+
+      &[aria-disabled="true"] {
+        pointer-events: none;
+      }
+    }
+
+    form {
+      > fieldset {
+        border: none;
+
+        > legend {
+          font-size: 1.25rem;
+          font-weight: 500;
+          margin-bottom: 1rem;
+        }
+
+        label {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        input:not([type="checkbox"]),
+        textarea,
+        select {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid var(--border);
+          border-radius: var(--border-radius-input);
+
+          &:focus {
+            outline: 2px solid var(--border-hover);
+            border-color: transparent;
+          }
+        }
+
+        label:not(:first-of-type) {
+          margin-top: 1.25rem;
+        }
+
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+
+        select:focus {
+          outline-offset: -1px;
+        }
+
+        input[readonly] {
+          background-color: var(--input-background-disabled);
+        }
+
+        input[type="checkbox"] {
+          margin-right: 0.5rem;
+        }
+
+        input[type="checkbox"] + label {
+          display: inline-block;
+          margin-bottom: 0;
+        }
+
+        input[aria-invalid="true"] {
+          border-color: var(--red2);
+          background-color: var(--red1);
+        }
+
+        small, output {
+          display: block;
+          color: var(--text-light);
+          margin-top: 0.2rem;
+          font-size: smaller;
+        }
+
+        small[id^="error"] {
+          color: var(--error-border);
+          font-weight: 500;
+        }
+      }
+    }
   }
 
   #skip {
@@ -127,32 +310,6 @@ body {
 
   h1 {
     outline: none;
-  }
-
-  form > button,
-  menu > li > button,
-  footer > button {
-    font-weight: 700;
-    cursor: pointer;
-
-    &[aria-disabled="true"] {
-      pointer-events: none;
-    }
-  }
-
-  fieldset {
-    border: none;
-  }
-
-  ul[role="tablist"] {
-    display: flex;
-    list-style: none;
-  }
-
-  button[role="tab"] {
-    background: none;
-    cursor: pointer;
-    font-weight: 700;
   }
 
   .visuallyhidden {
