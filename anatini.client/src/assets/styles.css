@@ -124,7 +124,6 @@ body {
     align-items: center;
 
     button[role="tab"] {
-      background: none;
       cursor: pointer;
       font-weight: 700;
     }
@@ -134,25 +133,18 @@ body {
       list-style: none;
     }
 
-    section {
+    > section {
       ul[role="list"] {
         list-style: none;
         padding: 0;
 
         article {
-          background: var(--background-highlight);
           padding: 1.5rem;
-          border-radius: var(--border-radius);
-          border: 1px solid var(--border);
           margin-bottom: 1rem;
           transition: transform 0.1s ease;
 
           h3, h4, p {
             margin: 0 0 0.5rem 0;
-          }
-
-          small {
-            color: var(--text-lightest);
           }
 
           header {
@@ -180,15 +172,9 @@ body {
           }
 
           p {
-            color: var(--text-light);
-    
             &:last-child {
               margin-bottom: 0;
             }
-          }
-
-          &:hover {
-            border-color: var(--border-hover);
           }
 
           &:has(a[href^="/channels/"]) img {
@@ -225,10 +211,9 @@ body {
       }
     }
 
-    form {
+    > form,
+    > section > form {
       > fieldset {
-        border: none;
-
         > legend {
           font-size: 1.25rem;
           font-weight: 500;
@@ -247,13 +232,6 @@ body {
         select {
           width: 100%;
           padding: 0.75rem;
-          border: 1px solid var(--border);
-          border-radius: var(--border-radius-input);
-
-          &:focus {
-            outline: 2px solid var(--border-hover);
-            border-color: transparent;
-          }
         }
 
         label:not(:first-of-type) {
@@ -269,10 +247,6 @@ body {
           outline-offset: -1px;
         }
 
-        input[readonly] {
-          background-color: var(--input-background-disabled);
-        }
-
         input[type="checkbox"] {
           margin-right: 0.5rem;
         }
@@ -282,21 +256,51 @@ body {
           margin-bottom: 0;
         }
 
-        input[aria-invalid="true"] {
-          border-color: var(--red2);
-          background-color: var(--red1);
-        }
-
         small, output {
           display: block;
-          color: var(--text-light);
           margin-top: 0.2rem;
           font-size: smaller;
         }
 
         small[id^="error"] {
-          color: var(--error-border);
           font-weight: 500;
+        }
+
+        > output {
+          > figure {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            > img {
+              width: 5rem;
+              height: 5rem;
+              border-radius: 50%;
+            }
+
+            > figcaption {
+              font-size: 0.875rem;
+            }
+          }
+        }
+
+        > section {
+          > output {
+            > article {
+              padding: 1.5rem;
+              margin-bottom: 1rem;
+              transition: transform 0.1s ease;
+
+              > h3, > h4, > p {
+                margin: 0 0 0.5rem 0;
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
+              }
+            }
+          }
         }
       }
     }

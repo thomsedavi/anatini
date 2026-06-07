@@ -173,3 +173,78 @@ button[role="tab"] {
     border-top: 1px solid var(--border);
   }
 }
+
+body {
+  > main {
+    button[role="tab"] {
+      background: none;
+    }
+
+    section {
+      ul[role="list"] {
+        article {
+          background: var(--background-highlight);
+          border: 1px solid var(--border);
+
+          small {
+            color: var(--text-lightest);
+          }
+
+          p {
+            color: var(--text-light);
+          }
+
+          &:hover {
+            border-color: var(--border-hover);
+          }
+        }
+      }
+    }
+
+    > form,
+    > section > form {
+      > fieldset {
+        border: none;
+
+        input:not([type="checkbox"]),
+        textarea,
+        select {
+          border: 1px solid var(--border);
+          border-radius: var(--border-radius-input);
+
+          &:focus {
+            outline: 2px solid var(--border-hover);
+            border-color: transparent;
+          }
+        }
+
+        input[readonly] {
+          background-color: var(--input-background-disabled);
+        }
+
+        input[aria-invalid="true"] {
+          border-color: var(--red2);
+          background-color: var(--red1);
+        }
+
+        small, output {
+          color: var(--text-light);
+        }
+
+        small[id^="error"] {
+          color: var(--error-border);
+        }
+
+        > section {
+          > output {
+            > article {
+              background: var(--background);
+              border-radius: var(--border-radius);
+              border: 1px solid var(--border);
+            }
+          }
+        }
+      }
+    }
+  }
+}
