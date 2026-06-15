@@ -475,16 +475,16 @@ namespace Anatini.Server.Migrations
                     b.ToTable("user_logins", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserNoteEdge", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserPostEdge", b =>
                 {
                     b.Property<Guid>("SourceUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("source_user_id")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid>("TargetNoteId")
+                    b.Property<Guid>("TargetPostId")
                         .HasColumnType("uuid")
-                        .HasColumnName("target_note_id")
+                        .HasColumnName("target_post_id")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Label")
@@ -497,13 +497,13 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("created_at_utc")
                         .HasColumnOrder(3);
 
-                    b.HasKey("SourceUserId", "TargetNoteId", "Label")
-                        .HasName("pk_user_note_edges");
+                    b.HasKey("SourceUserId", "TargetPostId", "Label")
+                        .HasName("pk_user_post_edges");
 
-                    b.HasIndex("TargetNoteId", "Label", "SourceUserId")
-                        .HasDatabaseName("ix_user_note_edges_target_note_id_label_source_user_id");
+                    b.HasIndex("TargetPostId", "Label", "SourceUserId")
+                        .HasDatabaseName("ix_user_post_edges_target_post_id_label_source_user_id");
 
-                    b.ToTable("user_note_edges", (string)null);
+                    b.ToTable("user_post_edges", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserRole", b =>
@@ -791,139 +791,6 @@ namespace Anatini.Server.Migrations
                     b.ToTable("logs", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("article")
-                        .HasColumnOrder(7);
-
-                    b.Property<Guid?>("ChannelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("channel_id")
-                        .HasColumnOrder(2);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(8);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(9);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(3);
-
-                    b.Property<DateTime>("PublishedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at_utc")
-                        .HasColumnOrder(5);
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status")
-                        .HasColumnOrder(4);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(10);
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility")
-                        .HasColumnOrder(6);
-
-                    b.HasKey("Id")
-                        .HasName("pk_notes");
-
-                    b.HasIndex("PublishedAtUtc")
-                        .HasDatabaseName("ix_notes_published_at_utc");
-
-                    b.HasIndex("ChannelId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_notes_channel_id_handle")
-                        .HasFilter("channel_id IS NOT NULL");
-
-                    b.HasIndex("UserId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_notes_user_id_handle")
-                        .HasFilter("user_id IS NOT NULL");
-
-                    b.ToTable("notes", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_notes_user_id_xor_channel_id", "(user_id IS NULL AND channel_id IS NOT NULL) OR (channel_id IS NULL AND user_id IS NOT NULL)");
-                        });
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.NoteImage", b =>
-                {
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("note_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("Handle")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("AltText")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
-                        .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
-
-                    b.Property<string>("BlobContainerName")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
-
-                    b.Property<string>("BlobName")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.HasKey("NoteId", "Handle")
-                        .HasName("pk_note_images");
-
-                    b.ToTable("note_images", (string)null);
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -932,6 +799,11 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<string>("Article")
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(9);
+
                     b.Property<Guid?>("ChannelId")
                         .HasColumnType("uuid")
                         .HasColumnName("channel_id")
@@ -941,12 +813,17 @@ namespace Anatini.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(12);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(13);
+
+                    b.Property<int?>("CurrentVersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("current_version_number")
+                        .HasColumnOrder(11);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -956,25 +833,35 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(3);
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("name")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("PublishedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("published_at_utc")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(14);
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("url")
                         .HasColumnOrder(10);
 
                     b.Property<Guid?>("UserId")
@@ -994,14 +881,14 @@ namespace Anatini.Server.Migrations
                         .HasDatabaseName("ix_published_posts_date_nz")
                         .HasFilter("status = 1");
 
-                    b.HasIndex("ChannelId", "Handle")
+                    b.HasIndex("ChannelId", "Type", "Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_posts_channel_id_handle")
+                        .HasDatabaseName("ix_posts_channel_id_type_handle")
                         .HasFilter("channel_id IS NOT NULL");
 
-                    b.HasIndex("UserId", "Handle")
+                    b.HasIndex("UserId", "Type", "Handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_posts_user_id_handle")
+                        .HasDatabaseName("ix_posts_user_id_type_handle")
                         .HasFilter("user_id IS NOT NULL");
 
                     b.ToTable("posts", null, t =>
@@ -1061,36 +948,39 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.PostVersion", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
+                        .HasColumnName("post_id")
                         .HasColumnOrder(0);
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("version_number")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Article")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
-                        .HasColumnOrder(4);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("handle")
                         .HasColumnOrder(2);
 
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("post_id")
-                        .HasColumnOrder(1);
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(3);
 
-                    b.HasKey("Id")
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(5);
+
+                    b.HasKey("PostId", "VersionNumber")
                         .HasName("pk_post_versions");
-
-                    b.HasIndex("PostId", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_post_versions_post_id_handle");
 
                     b.ToTable("post_versions", (string)null);
                 });
@@ -1187,25 +1077,25 @@ namespace Anatini.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserNoteEdge", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserPostEdge", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
-                        .WithMany("NoteEdges")
+                        .WithMany("PostEdges")
                         .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_note_edges_users_source_user_id");
+                        .HasConstraintName("fk_user_post_edges_users_source_user_id");
 
-                    b.HasOne("Anatini.Server.Context.Entities.Note", "TargetNote")
+                    b.HasOne("Anatini.Server.Context.Entities.Post", "TargetPost")
                         .WithMany("UserEdges")
-                        .HasForeignKey("TargetNoteId")
+                        .HasForeignKey("TargetPostId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_note_edges_notes_target_note_id");
+                        .HasConstraintName("fk_user_post_edges_posts_target_post_id");
 
                     b.Navigation("SourceUser");
 
-                    b.Navigation("TargetNote");
+                    b.Navigation("TargetPost");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserRole", b =>
@@ -1305,37 +1195,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
-                        .WithMany("Notes")
-                        .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_notes_channels_channel_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
-                        .WithMany("Notes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_notes_users_user_id");
-
-                    b.Navigation("Channel");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.NoteImage", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Note", "Note")
-                        .WithMany("Images")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_note_images_notes_note_id");
-
-                    b.Navigation("Note");
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Channel", "Channel")
@@ -1404,9 +1263,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Logs");
 
-                    b.Navigation("NoteEdges");
-
-                    b.Navigation("Notes");
+                    b.Navigation("PostEdges");
 
                     b.Navigation("Posts");
 
@@ -1425,16 +1282,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Logs");
 
-                    b.Navigation("Notes");
-
                     b.Navigation("Posts");
-
-                    b.Navigation("UserEdges");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>
-                {
-                    b.Navigation("Images");
 
                     b.Navigation("UserEdges");
                 });
@@ -1442,6 +1290,8 @@ namespace Anatini.Server.Migrations
             modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("UserEdges");
 
                     b.Navigation("Versions");
                 });
