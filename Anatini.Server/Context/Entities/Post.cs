@@ -8,10 +8,14 @@ namespace Anatini.Server.Context.Entities
         public Guid? UserId { get; set; }
         public Guid? ChannelId { get; set; }
         public required string Handle { get; set; }
-        public required string Name { get; set; }
+        public required PostType Type { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
+        public string? Name { get; set; }
+        public string? Article { get; set; }
+        public string? Url { get; set; }
+        public int? CurrentVersionNumber { get; set; }
         public string? ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
@@ -19,15 +23,18 @@ namespace Anatini.Server.Context.Entities
         public ApplicationUser? User { get; set; }
         public Channel? Channel { get; set; }
         public virtual ICollection<PostImage> Images { get; set; } = [];
+        public virtual ICollection<ApplicationUserPostEdge> UserEdges { get; set; } = [];
         public virtual ICollection<PostVersion> Versions { get; set; } = [];
     }
 
     public class PostVersion
     {
-        public required Guid Id { get; set; }
-        public required Guid PostId {  get; set; }
-        public required string Handle { get; set; }
+        public required Guid PostId { get; set; }
+        public required int VersionNumber { get; set; }
         public required string Article { get; set; }
+        public string? ConcurrencyStamp { get; set; }
+        public required DateTime CreatedAtUtc { get; set; }
+        public required DateTime UpdatedAtUtc { get; set; }
 
         public virtual Post Post { get; set; } = null!;
     }

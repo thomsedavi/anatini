@@ -4,8 +4,8 @@
     public enum Status
     {
         None = 0,
-        Published = 2,
-        Draft = 3,
+        Published = 1,
+        Draft = 2,
         Archived = 4
     }
 }

@@ -15,7 +15,7 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserImage> UserImages { get; set; }
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
         public DbSet<ApplicationUserChannelEdge> UserChannelEdges { get; set; }
-        public DbSet<ApplicationUserNoteEdge> UserNoteEdges { get; set; }
+        public DbSet<ApplicationUserPostEdge> UserPostEdges { get; set; }
 
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChannelHandle> ChannelHandles { get; set; }
@@ -24,9 +24,6 @@ namespace Anatini.Server.Context
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostVersion> PostVersions { get; set; }
         public DbSet<PostImage> PostImages { get; set; }
-
-        public DbSet<Note> Notes { get; set; }
-        public DbSet<NoteImage> NoteImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,7 +39,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserRole>().Configure();
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserChannelEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserNoteEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserPostEdge>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -54,9 +51,6 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Post>().Configure();
             modelBuilder.Entity<PostVersion>().Configure();
             modelBuilder.Entity<PostImage>().Configure();
-
-            modelBuilder.Entity<Note>().Configure();
-            modelBuilder.Entity<NoteImage>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

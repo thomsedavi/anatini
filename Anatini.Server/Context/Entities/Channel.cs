@@ -16,7 +16,6 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<Log> Logs { get; set; } = [];
         public virtual ICollection<ChannelHandle> Handles { get; set; } = [];
         public virtual ICollection<ChannelImage> Images { get; set; } = [];
-        public virtual ICollection<Note> Notes { get; set; } = [];
         public virtual ICollection<Post> Posts { get; set; } = [];
     }
 

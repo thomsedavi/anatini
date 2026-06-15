@@ -23,8 +23,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserChannelEdge> ChannelEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserNoteEdge> NoteEdges { get; set; } = [];
-        public virtual ICollection<Note> Notes { get; set; } = [];
+        public virtual ICollection<ApplicationUserPostEdge> PostEdges { get; set; } = [];
         public virtual ICollection<Post> Posts { get; set; } = [];
     }
 
@@ -74,15 +73,15 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser TargetUser { get; set; } = null!;
     }
     
-    public class ApplicationUserNoteEdge
+    public class ApplicationUserPostEdge
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetNoteId { get; set; }
+        public required Guid TargetPostId { get; set; }
         public required UserNoteEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Note TargetNote { get; set; } = null!;
+        public virtual Post TargetPost { get; set; } = null!;
     }
 
     public class ApplicationUserImage
