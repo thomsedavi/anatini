@@ -2,13 +2,13 @@
 
 namespace Anatini.Server.Context.Entities
 {
-    public class Post
+    public class Content
     {
         public required Guid Id { get; set; }
         public Guid? UserId { get; set; }
-        public Guid? ChannelId { get; set; }
+        public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
-        public required PostType Type { get; set; }
+        public required ContentType Type { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
@@ -21,27 +21,27 @@ namespace Anatini.Server.Context.Entities
         public required DateTime UpdatedAtUtc { get; set; }
 
         public ApplicationUser? User { get; set; }
-        public Channel? Channel { get; set; }
-        public virtual ICollection<PostImage> Images { get; set; } = [];
-        public virtual ICollection<ApplicationUserPostEdge> UserEdges { get; set; } = [];
-        public virtual ICollection<PostVersion> Versions { get; set; } = [];
+        public Space? Space { get; set; }
+        public virtual ICollection<ContentImage> Images { get; set; } = [];
+        public virtual ICollection<ApplicationUserContentEdge> UserEdges { get; set; } = [];
+        public virtual ICollection<ContentVersion> Versions { get; set; } = [];
     }
 
-    public class PostVersion
+    public class ContentVersion
     {
-        public required Guid PostId { get; set; }
+        public required Guid ContentId { get; set; }
         public required int VersionNumber { get; set; }
         public required string Article { get; set; }
         public string? ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Post Post { get; set; } = null!;
+        public virtual Content Content { get; set; } = null!;
     }
 
-    public class PostImage
+    public class ContentImage
     {
-        public required Guid PostId { get; set; }
+        public required Guid ContentId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
@@ -49,6 +49,6 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Post Post { get; set; } = null!;
+        public virtual Content Content { get; set; } = null!;
     }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, ChannelEdit, InputError, Note, Status, StatusActions, Tab } from '@/types';
+  import type { APIResponse, SpaceEdit, InputError, Note, Status, StatusActions, Tab } from '@/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const channel = ref<APIResponse<ChannelEdit>>({ fetching: true });
+  const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
   const notes = ref<Note[] | null>(null);
   const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
@@ -18,9 +18,9 @@
   const errorSectionRef = ref<HTMLElement | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'ChannelEditPosts' },
-    { id: 'notes', text: 'Notes', name: 'ChannelEditNotes', childNames: ['ChannelEditNoteCreate', 'ChannelEditNoteEdit'] },
-    { id: 'public', text: 'Display', name: 'ChannelEditDisplay' },
+    { id: 'posts', text: 'Posts', name: 'SpaceEditPosts' },
+    { id: 'notes', text: 'Notes', name: 'SpaceEditNotes', childNames: ['SpaceEditNoteCreate', 'SpaceEditNoteEdit'] },
+    { id: 'public', text: 'Display', name: 'SpaceEditDisplay' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -29,42 +29,42 @@
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
   });
 
-  watch([() => route.params.channelId], (source: Source) => fetchChannel(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId], (source: Source) => fetchSpace(parseSource(source)), { immediate: true });
 
-  async function fetchChannel(params: string[]) {
+  async function fetchSpace(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: ChannelEdit) => {
-            channel.value = { data: value };
+          .then((value: SpaceEdit) => {
+            space.value = { data: value };
             inputName.value = value.name;
           })
-          .catch(() => { channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => { space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       401: () => {
-        router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });
       },
       403: () => {
-        channel.value = { error: { heading: 'Unknown Error', body: 'No access to channel' }};
+        space.value = { error: { heading: 'Unknown Error', body: 'No access to space' }};
       },
       404: () => {
-        channel.value = { error: { heading: '404 Not Found', body: 'Channel not found' }};
+        space.value = { error: { heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+        space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
-    apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
+    apiFetchAuthenticated(`spaces/${params[0]}/edit`, statusActions);
   };
 
   function getHeading(): string {
-    if (channel.value.fetching === true) {
+    if (space.value.fetching === true) {
       return 'Fetching...';
-    } else if (channel.value.error !== undefined) {
-      return channel.value.error.heading;
-    } else if (channel.value.data !== undefined) {
-      return 'Channel Settings';
+    } else if (space.value.error !== undefined) {
+      return space.value.error.heading;
+    } else if (space.value.data !== undefined) {
+      return 'Space Settings';
     } else {
       return 'Unknown Error';
     }
@@ -98,8 +98,8 @@
   }
 
   function handleUpdateName(newName: string): void {
-    if (channel.value.data !== undefined) {
-     channel.value.data.name = newName;
+    if (space.value.data !== undefined) {
+     space.value.data.name = newName;
     }
   }
 
@@ -123,22 +123,22 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" :aria-busy="channel === null">
+  <main id="main" tabindex="-1" :aria-busy="space === null">
     <header>
       <h1 id="heading-main">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="channel === null">
+    <section v-if="space === null">
       <progress max="100">Fetching account...</progress>
     </section>
 
-    <section v-if="channel.error !== undefined">
+    <section v-if="space.error !== undefined">
       <p>
-        {{ channel.error.body }}
+        {{ space.error.body }}
       </p>
     </section>
 
-    <template v-if="channel.data !== undefined">
+    <template v-if="space.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
         <ul role="list">
@@ -162,10 +162,10 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :channelId="channel.data.id"
+          :spaceId="space.data.id"
           :notes="notes"
-          :name="channel.data.name"
-          :icon-image="channel.data.iconImage"
+          :name="space.data.name"
+          :icon-image="space.data.iconImage"
           :status="status"
           :inputErrors="inputErrors"
           @update-name="handleUpdateName"

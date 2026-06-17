@@ -10,7 +10,7 @@
 
   const props = defineProps<{
     status: Status,
-    channelId: string,
+    spaceId: string,
     inputErrors: InputError[],
   }>();
 
@@ -60,7 +60,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`channels/${props.channelId}/notes`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${props.spaceId}/notes`, statusActions, init);
   }
 </script>
 
@@ -70,7 +70,7 @@
       <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/channels/${channelId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/spaces/${spaceId}/notes`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Create Note</legend>
 
@@ -92,7 +92,7 @@
           name="handle"
           id="handle"
           :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-channel'), optional"
+          help="lower case with hyphens (e.g. 'my-anatini-space'), optional"
           :error="getError('handle')" />
       </fieldset>
 

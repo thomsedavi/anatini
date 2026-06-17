@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Channel } from '@/types';
+  import type { Space } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   
@@ -7,20 +7,20 @@
 
   const loading = ref<boolean>(false);
   const error = ref<string | null>(null);
-  const channel = ref<Channel | null>(null);
+  const space = ref<Space | null>(null);
 
-  watch([() => route.params.channelId], fetchChannel, { immediate: true });
+  watch([() => route.params.spaceId], fetchSpace, { immediate: true });
 
-  async function fetchChannel(array: (() => string | string[])[]) {
-    error.value = channel.value = null
+  async function fetchSpace(array: (() => string | string[])[]) {
+    error.value = space.value = null
     loading.value = true
 
-    fetch(`/api/channels/${array[0]}`, { method: "GET" })
+    fetch(`/api/spaces/${array[0]}`, { method: "GET" })
       .then((value: Response) => {
         if (value.ok) {
           value.json()
-            .then((value: Channel) => {
-              channel.value = value;
+            .then((value: Space) => {
+              space.value = value;
             })
             .catch(() => {
               error.value = 'Unknown Error';
@@ -42,7 +42,7 @@
 
 <template>
   <main id="main" tabindex="-1">
-    <h2>ChannelView</h2>
-    <h3 v-if="channel">{{ channel.name }}</h3>
+    <h2>SpaceView</h2>
+    <h3 v-if="space">{{ space.name }}</h3>
   </main>
 </template>

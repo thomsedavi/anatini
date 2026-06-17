@@ -4,7 +4,7 @@
     {
         public required string Name { get; set; }
         public required string PostHandle { get; set; }
-        public required string PostChannelHandle { get; set; }
+        public required string PostSpaceHandle { get; set; }
         public required DateOnly DateNZ { get; set; }
     }
 }

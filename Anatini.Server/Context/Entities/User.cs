@@ -22,9 +22,9 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserClaim> Claims { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserChannelEdge> ChannelEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserPostEdge> PostEdges { get; set; } = [];
-        public virtual ICollection<Post> Posts { get; set; } = [];
+        public virtual ICollection<ApplicationUserSpaceEdge> SpaceEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserContentEdge> ContentEdges { get; set; } = [];
+        public virtual ICollection<Content> Contents { get; set; } = [];
     }
 
     public class ApplicationUserEmail
@@ -51,15 +51,15 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser User { get; set; } = null!;
     }
 
-    public class ApplicationUserChannelEdge
+    public class ApplicationUserSpaceEdge
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetChannelId { get; set; }
-        public required UserChannelEdgeLabel Label { get; set; }
+        public required Guid TargetSpaceId { get; set; }
+        public required UserSpaceEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Channel TargetChannel { get; set; } = null!;
+        public virtual Space TargetSpace { get; set; } = null!;
     }
 
     public class ApplicationUserUserEdge
@@ -73,15 +73,15 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser TargetUser { get; set; } = null!;
     }
     
-    public class ApplicationUserPostEdge
+    public class ApplicationUserContentEdge
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetPostId { get; set; }
+        public required Guid TargetContentId { get; set; }
         public required UserNoteEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Post TargetPost { get; set; } = null!;
+        public virtual Content TargetContent { get; set; } = null!;
     }
 
     public class ApplicationUserImage

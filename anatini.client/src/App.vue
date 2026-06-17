@@ -31,7 +31,7 @@
           .then((value: IsAuthenticated) => {
             store.isAuthenticated = value.isAuthenticated;
             store.isTrusted = value.isTrusted;
-            store.channels = value.channels;
+            store.spaces = value.spaces;
           })
           .catch(() => {
             store.isAuthenticated = false;
@@ -116,25 +116,25 @@
             </ul>
           </li>
 
-          <li id="channels-list" v-if="store.channels !== null">
+          <li id="spaces-list" v-if="store.spaces !== null">
             <button 
               type="button" 
-              :aria-expanded="isShowing.includes('channels')" 
-              aria-controls="channels-dropdown"
-              @click="toggleShow('channels')"
+              :aria-expanded="isShowing.includes('spaces')" 
+              aria-controls="spaces-dropdown"
+              @click="toggleShow('spaces')"
             >
-              Channels
+              Spaces
             </button>
           
-            <ul id="channels-dropdown" role="list" :hidden="!isShowing.includes('channels')">
-              <li v-for="channel in store.channels" :key="'channel' + channel.id">
-                <strong id="channel-tech-heading">{{ channel.name }}</strong>
-                <ul aria-labelledby="channel-tech-heading" role="list">
+            <ul id="spaces-dropdown" role="list" :hidden="!isShowing.includes('spaces')">
+              <li v-for="space in store.spaces" :key="'space' + space.id">
+                <strong id="space-tech-heading">{{ space.name }}</strong>
+                <ul aria-labelledby="space-tech-heading" role="list">
                   <li>
-                    <RouterLink :to="`/channels/${channel.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
+                    <RouterLink :to="`/spaces/${space.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
                   </li>
                   <li>
-                    <RouterLink :to="`/channels/${channel.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
+                    <RouterLink :to="`/spaces/${space.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
                   </li>
                 </ul>
               </li>

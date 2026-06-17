@@ -1,14 +1,14 @@
 ﻿namespace Anatini.Server.Context.Entities.Extensions
 {
-    public static class ChannelImageContextExtensions
+    public static class SpaceImageContextExtensions
     {
-        public static ChannelImage AddChannelImage(this ApplicationDbContext context, Guid channelId, string handle, string blobContainerName, string blobName, string? altText = null)
+        public static SpaceImage AddSpaceImage(this ApplicationDbContext context, Guid spaceId, string handle, string blobContainerName, string blobName, string? altText = null)
         {
             var utcNow = DateTime.UtcNow;
 
-            var channelImage = new ChannelImage
+            var spaceImage = new SpaceImage
             {
-                ChannelId = channelId,
+                SpaceId = spaceId,
                 Handle = handle,
                 BlobContainerName = blobContainerName,
                 BlobName = blobName,
@@ -17,9 +17,9 @@
                 UpdatedAtUtc = utcNow
             };
 
-            context.Add(channelImage);
+            context.Add(spaceImage);
 
-            return channelImage;
+            return spaceImage;
         }
     }
 }

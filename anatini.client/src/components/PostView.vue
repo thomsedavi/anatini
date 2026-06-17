@@ -9,7 +9,7 @@
 
   const post = ref<APIResponse<Post>>({ fetching: true });
 
-  watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const statusActions: StatusActions = {
@@ -29,7 +29,7 @@
       }
     }
 
-    apiFetch(`channels/${params[0]}/posts/${params[1]}`, statusActions);
+    apiFetch(`spaces/${params[0]}/posts/${params[1]}`, statusActions);
   }
 
   function getMainHtml(): string {

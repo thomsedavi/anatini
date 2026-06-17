@@ -1,14 +1,14 @@
 ﻿namespace Anatini.Server.Context.Entities.Extensions
 {
-    public static class PostImageContextExtensions
+    public static class ContentImageContextExtensions
     {
-        public static PostImage AddPostImage(this ApplicationDbContext context, Guid postId, string handle, string blobContainerName, string blobName, string? altText = null)
+        public static ContentImage AddContentImage(this ApplicationDbContext context, Guid contentId, string handle, string blobContainerName, string blobName, string? altText = null)
         {
             var utcNow = DateTime.UtcNow;
 
-            var postImage = new PostImage
+            var contentImage = new ContentImage
             {
-                PostId = postId,
+                ContentId = contentId,
                 Handle = handle,
                 BlobContainerName = blobContainerName,
                 BlobName = blobName,
@@ -17,9 +17,9 @@
                 UpdatedAtUtc = utcNow
             };
 
-            context.Add(postImage);
+            context.Add(contentImage);
 
-            return postImage;
+            return contentImage;
         }
     }
 }

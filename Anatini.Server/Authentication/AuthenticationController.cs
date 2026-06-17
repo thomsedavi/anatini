@@ -1,12 +1,12 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Authentication.Responses;
-using Anatini.Server.Channels.Extensions;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Context.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Spaces.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -134,11 +134,11 @@ namespace Anatini.Server.Authentication
                 response.IsAuthenticated = true;
                 response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
 
-                var channels = await context.Channels.Where(channel => channel.UserEdges.Any(userChannelEdge => userChannelEdge.SourceUserId == userId && userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ToListAsync();
+                var spaces = await context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
                 
-                if (channels.Count != 0)
+                if (spaces.Count != 0)
                 {
-                    response.Channels = await Task.WhenAll(channels.Select(channel => channel.ToChannelEditDtoAsync()));
+                    response.Spaces = await Task.WhenAll(spaces.Select(space => space.ToSpaceEditDtoAsync()));
                 }
             }
 

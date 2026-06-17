@@ -1,6 +1,6 @@
 <script setup lang="ts">
   defineProps<{
-    posts: { name: string, postChannelHandle: string, postHandle: string, dateNZ: string }[] | null,
+    posts: { name: string, postSpaceHandle: string, postHandle: string, dateNZ: string }[] | null,
   }>();
 
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -15,7 +15,7 @@
         <article>
           <header>
             <h2>
-              <RouterLink :to="{ name: 'Post', params: { channelId: attributePost.postChannelHandle, postId: attributePost.postHandle }}">{{ attributePost.name }}</RouterLink>
+              <RouterLink :to="{ name: 'Post', params: { spaceId: attributePost.postSpaceHandle, postId: attributePost.postHandle }}">{{ attributePost.name }}</RouterLink>
             </h2>
           </header>
 

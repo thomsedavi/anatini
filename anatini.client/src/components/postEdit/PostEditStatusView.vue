@@ -3,7 +3,7 @@
   import { apiFetchAuthenticated } from '../common/apiFetch';
 
   const props = defineProps<{
-    channelId: string,
+    spaceId: string,
     postId: string,
     post: PostEdit,
     pageStatus: string,
@@ -37,7 +37,7 @@
         }
     }
 
-    apiFetchAuthenticated(`channels/${props.channelId}/posts/${props.postId}`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
   }
 </script>
 

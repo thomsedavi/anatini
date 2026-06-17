@@ -51,7 +51,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
+        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
             try
             {
@@ -64,11 +64,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelContextAsync(string channelHandle, Func<Channel, ApplicationDbContext, Task<IActionResult>> channelContextFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
+        public async Task<IActionResult> UsingSpaceContextAsync(string spaceHandle, Func<Space, ApplicationDbContext, Task<IActionResult>> spaceContextFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             try
             {
-                return await channelContextFunction(channel, context);
+                return await spaceContextFunction(space, context);
             }
             catch (Exception ex)
             {
@@ -77,7 +77,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelNoteContextAsync(string channelHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingChannelNoteAsync(channelHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingSpaceNoteContextAsync(string spaceHandle, string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
         {
             try
             {
@@ -103,7 +103,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Note, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
             try
             {
@@ -116,7 +116,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelPostContextAsync(string channelHandle, string postHandle, Func<Post, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingChannelPostAsync(channelHandle, postHandle, async (post) =>
+        public async Task<IActionResult> UsingSpacePostContextAsync(string spaceHandle, string postHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             try
             {
@@ -140,7 +140,7 @@ namespace Anatini.Server
 
             users = users
                 .Include(user => user.Images)
-                .Include(user => user.ChannelEdges.Where(userChannelEdge => userChannelEdge.Label == UserChannelEdgeLabel.Owner)).ThenInclude(userChannelEdge => userChannelEdge.TargetChannel);
+                .Include(user => user.SpaceEdges.Where(userSpaceEdge => userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ThenInclude(userSpaceEdge => userSpaceEdge.TargetSpace);
 
             if (TryGetUserId(out Guid userId))
             {
@@ -218,48 +218,48 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelAsync(string channelHandle, Func<Channel, Task<IActionResult>> channelFunction, ContextSettings? settings = null)
+        public async Task<IActionResult> UsingSpaceAsync(string spaceHandle, Func<Space, Task<IActionResult>> spaceFunction, ContextSettings? settings = null)
         {
-            Channel? channel;
+            Space? space;
 
-            var channels = context.Channels.AsQueryable();
+            var spaces = context.Spaces.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                channels = channels.AsNoTracking();
+                spaces = spaces.AsNoTracking();
             }
 
-            channels = channels.Include(channel => channel.Images);
+            spaces = spaces.Include(space => space.Images);
 
-            if (Guid.TryParse(channelHandle, out Guid channelId))
+            if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {
-                channel = await channels.FirstOrDefaultAsync(channel => channel.Id == channelId);
+                space = await spaces.FirstOrDefaultAsync(space => space.Id == spaceId);
             }
             else
             {
-                var normalizedChannelHandle = NormalizeHandle(channelHandle);
+                var normalizedSpaceHandle = NormalizeHandle(spaceHandle);
 
-                channel = await channels.FirstOrDefaultAsync(channel => channel.Handle == normalizedChannelHandle || channel.Handles.Any(handle => handle.Handle == normalizedChannelHandle));
+                space = await spaces.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
             }
 
-            if (channel == null)
+            if (space == null)
             {
                 return NotFound();
             }
 
             if (settings?.AccessRequired ?? false)
             {
-                if (TryGetUserId(out Guid userId) && await context.UserChannelEdges.AnyAsync(userChannel => userChannel.SourceUserId == userId && userChannel.TargetChannelId == channel.Id && userChannel.Label == UserChannelEdgeLabel.Owner))
+                if (TryGetUserId(out Guid userId) && await context.UserSpaceEdges.AnyAsync(userSpace => userSpace.SourceUserId == userId && userSpace.TargetSpaceId == space.Id && userSpace.Label == UserSpaceEdgeLabel.Owner))
                 {
-                    return await channelFunction(channel);
+                    return await spaceFunction(space);
                 }
 
                 return Unauthorized();
             }
 
-            if (channel.Visibility == Visibility.Public)
+            if (space.Visibility == Visibility.Public)
             {
-                return await channelFunction(channel);
+                return await spaceFunction(space);
             }
 
             if (!IsAuthenticated)
@@ -267,9 +267,9 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (channel.Visibility == Visibility.Protected)
+            if (space.Visibility == Visibility.Protected)
             {
-                return await channelFunction(channel);
+                return await spaceFunction(space);
             }
 
             // TODO handle Private
@@ -277,11 +277,11 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelPostAsync(string channelHandle, string postHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
+        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, Func<Content, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Post? post;
+            Content? post;
 
-            var posts = context.Posts.AsQueryable();
+            var posts = context.Posts;
 
             if (settings?.AsNoTracking ?? true)
             {
@@ -290,13 +290,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(postHandle, out Guid postId))
             {
-                post = await posts.FirstOrDefaultAsync(post => post.ChannelId == channel.Id && post.Id == postId);
+                post = await posts.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
             }
             else
             {
                 var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                post = await posts.FirstOrDefaultAsync(post => post.ChannelId == channel.Id && post.Handle == normalizedPostHandle);
+                post = await posts.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
             }
 
             if (post == null)
@@ -324,11 +324,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingChannelNoteAsync(string channelHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingChannelAsync(channelHandle, async (channel) =>
+        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Note? note;
+            Content? note;
 
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {
@@ -337,13 +337,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Id == noteId);
+                note = await notes.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                note = await notes.FirstOrDefaultAsync(note => note.ChannelId == channel.Id && note.Handle == normalizedNoteHandle);
+                note = await notes.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Handle == normalizedNoteHandle);
             }
 
             if (note == null)
@@ -371,11 +371,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Note? note;
+            Content? note;
 
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {
@@ -418,11 +418,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Note, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            Note? note;
+            Content? note;
 
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {

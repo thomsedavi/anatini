@@ -7,7 +7,7 @@
   import SubmitButton from '../common/SubmitButton.vue';
 
   const props = defineProps<{
-    channelId: string,
+    spaceId: string,
     name: string,
     iconImage: Image | null,
     status: Status,
@@ -81,10 +81,10 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`channels/${props.channelId}`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${props.spaceId}`, statusActions, init);
   }
 
-  async function patchChannelDisplay() {
+  async function patchSpaceDisplay() {
     emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
@@ -122,7 +122,7 @@
 
       const initIcon = { method: "POST", body: bodyIcon };
 
-      apiFetchAuthenticated(`channels/${props.channelId}/images`, statusActionsIcon, initIcon);
+      apiFetchAuthenticated(`spaces/${props.spaceId}/images`, statusActionsIcon, initIcon);
     } else {
       patch(body, tidiedName);
     }
@@ -135,7 +135,7 @@
       <h2>Display</h2>
     </header>
 
-    <form @submit.prevent="patchChannelDisplay" :action="`/api/channels/${channelId}`" method="POST" novalidate>
+    <form @submit.prevent="patchSpaceDisplay" :action="`/api/spaces/${spaceId}`" method="POST" novalidate>
       <fieldset>
       <InputText
           v-model="inputName"
@@ -144,14 +144,14 @@
           id="name"
           :maxlength="64"
           :error="getError('name')"
-          help="Channel display name"
+          help="Space display name"
           autocomplete="name" />
 
         <label for="icon">Icon</label>
         <input
           type="file"
           accept="image/*"
-          id="icon-channel"
+          id="icon-space"
           @change="onChooseFile"
           aria-describedby="help-icon"
           aria-controls="file-preview"
@@ -160,7 +160,7 @@
 
         <output id="file-preview" for="icon">
           <figure>
-            <img :alt="iconImage?.altText ?? 'Channel icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+            <img :alt="iconImage?.altText ?? 'Space icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
             <figcaption>A preview will appear here</figcaption>
           </figure>
         </output>

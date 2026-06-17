@@ -1,6 +1,6 @@
 <script setup lang="ts">
   defineProps<{
-    channelId: string,
+    spaceId: string,
   }>();
 </script>
 
@@ -21,7 +21,7 @@
           <article :aria-labelledby="`post-handle`">
             <header>
               <h4 :id="`post-handle`">
-                <RouterLink :to="{ name: 'PostEdit', params: { channelId: channelId, postId: 'handle' }}">Name</RouterLink>
+                <RouterLink :to="{ name: 'PostEdit', params: { spaceId: spaceId, postId: 'handle' }}">Name</RouterLink>
               </h4>
             </header>
 

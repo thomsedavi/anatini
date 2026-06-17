@@ -55,13 +55,13 @@ body {
       padding: 0.5rem;
     }
 
-    #channels-dropdown {
+    #spaces-dropdown {
       top: 0;
       right: calc(100% + 0.5rem);
     }
 
     #main-dropdown strong,
-    #channels-dropdown strong {
+    #spaces-dropdown strong {
       font-size: 0.75rem;
       letter-spacing: 0.05em;
       padding: 0.5rem 1.25rem 0.25rem;
@@ -79,7 +79,7 @@ body {
     #sign-out,
     #sign-up,
     #account-list,
-    #channels-list {
+    #spaces-list {
       border-radius: 0;
       margin-top: 0.5rem;
       padding-top: 0.5rem;

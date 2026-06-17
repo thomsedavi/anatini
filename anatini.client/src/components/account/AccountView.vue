@@ -23,7 +23,7 @@
   const tabs: Tab[] = [
     { id: 'public', text: 'Display', name: 'AccountPublic' },
     { id: 'notes', text: 'Notes', name: 'AccountNotes', childNames: ['AccountNoteCreate', 'AccountNoteEdit'] },
-    { id: 'channels', text: 'Channels', name: 'AccountChannels' },
+    { id: 'spaces', text: 'Spaces', name: 'AccountSpaces' },
     { id: 'private', text: 'Privacy & Security', name: 'AccountPrivate' },
   ];
 
@@ -177,7 +177,7 @@
           :name="user.data.name"
           :about="user.data.about"
           :icon-image="user.data.iconImage"
-          :channels="user.data.channels"
+          :spaces="user.data.spaces"
           :visibility="user.data.visibility"
           :status="status"
           :inputErrors="inputErrors"

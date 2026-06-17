@@ -1,5 +1,5 @@
 ﻿using System.Net.Mime;
-using Anatini.Server.Channels.Extensions;
+using Anatini.Server.Spaces.Extensions;
 using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
@@ -9,50 +9,50 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Anatini.Server.Channels
+namespace Anatini.Server.Spaces
 {
     [ApiController]
-    [Route("api/channels")]
-    public class ChannelsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
+    [Route("api/spaces")]
+    public class SpacesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [HttpGet("{channelId}")]
+        [HttpGet("{spaceId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannel(string channelId) => await UsingChannelAsync(channelId, async (channel) =>
+        public async Task<IActionResult> GetSpace(string spaceId) => await UsingSpaceAsync(spaceId, async (space) =>
         {
-            return Ok(channel.ToChannelDto());
+            return Ok(space.ToSpaceDto());
         });
 
         [Authorize]
-        [HttpGet("{channelId}/edit")]
+        [HttpGet("{spaceId}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetChannelEdit(string channelId) => await UsingChannelAsync(channelId, async (channel) =>
+        public async Task<IActionResult> GetSpaceEdit(string spaceId) => await UsingSpaceAsync(spaceId, async (space) =>
         {
-            return Ok(await channel.ToChannelEditDtoAsync(BlobService));
+            return Ok(await space.ToSpaceEditDtoAsync(BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpPatch("{channelId}")]
+        [HttpPatch("{spaceId}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchChannel(string channelId, [FromForm] UpdateChannel updateChannel) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
         {
             return NoContent();
         });
 
         [Authorize]
-        [HttpPost("{channelId}/images")]
+        [HttpPost("{spaceId}/images")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -64,7 +64,7 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage(string channelId, [FromForm] CreateImage createImage) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
@@ -74,19 +74,19 @@ namespace Anatini.Server.Channels
             var normalizedHandle = NormalizeHandle(createImage.Handle);
 
             var blobContainerName = "anatini-dev";
-            var blobName = $"{channel.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
+            var blobName = $"{space.Id}/{normalizedHandle}{Path.GetExtension(createImage.File.FileName)}";
 
             await BlobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddChannelImage(channel.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
+            context.AddSpaceImage(space.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetImage), new { channelId = channel.Id, imageId = normalizedHandle }, new { ChannelId = channel.Id, ImageId = normalizedHandle });
+            return CreatedAtAction(nameof(GetImage), new { spaceId = space.Id, imageId = normalizedHandle }, new { SpaceId = space.Id, ImageId = normalizedHandle });
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpGet("{channelId}/images/{imageId}")]
-        public async Task<IActionResult> GetImage(string channelId, string imageId) => await UsingChannelAsync(channelId, async (channel) =>
+        [HttpGet("{spaceId}/images/{imageId}")]
+        public async Task<IActionResult> GetImage(string spaceId, string imageId) => await UsingSpaceAsync(spaceId, async (space) =>
         {
             return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
         });
@@ -99,12 +99,12 @@ namespace Anatini.Server.Channels
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostChannel([FromForm] CreateChannel createChannel) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountContextAsync(async (user, context) =>
         {
-            var channel = context.AddChannel(user.Id, NormalizeHandle(createChannel.Handle), createChannel.Name, createChannel.Visibility);
+            var space = context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetChannel), new { channelId = createChannel.Handle }, channel.ToChannelDto());
+            return CreatedAtAction(nameof(GetSpace), new { spaceId = createSpace.Handle }, space.ToSpaceDto());
         });
     }
 }

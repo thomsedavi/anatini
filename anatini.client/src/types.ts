@@ -34,7 +34,7 @@ export type UserEdit = {
   name: string;
   about: string | null;
   handle: string;
-  channels: Channel[] | null;
+  spaces: Space[] | null;
   visibility: Visibility;
   iconImage: Image | null;
 };
@@ -46,7 +46,7 @@ export type Events = {
   }[];
 };
 
-export type Channel = {
+export type Space = {
   id: string;
   name: string;
   handle: string;
@@ -54,7 +54,7 @@ export type Channel = {
   visiblity: Visibility;
 };
 
-export type ChannelHeader = {
+export type SpaceHeader = {
   name: string;
   handle: string;
   iconImage: Image | null;
@@ -74,7 +74,7 @@ export type DraftPost = {
   updatedDateTimeUTC: string;
 }
 
-export type ChannelEdit = {
+export type SpaceEdit = {
   id: string;
   name: string;
   about: string | null;
@@ -91,7 +91,7 @@ export type PostVersion = {
 
 export type PostEdit = {
   id: string;
-  channelId: string;
+  spaceId: string;
   defaultHandle: string;
   version: PostVersion;
   protected: boolean | null;
@@ -105,7 +105,7 @@ export type Post = {
 export type Note = {
   id: string;
   userHeader: UserHeader | null;
-  channelHeader: ChannelHeader | null;
+  spaceHeader: SpaceHeader | null;
   handle: string | null;
   article: string;
   publishedAtUtc: string;
@@ -125,5 +125,5 @@ export type NoteEdit = {
 export type IsAuthenticated = {
   isAuthenticated: boolean;
   isTrusted: boolean | null;
-  channels: ChannelEdit[] | null;
+  spaces: SpaceEdit[] | null;
 }

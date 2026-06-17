@@ -9,7 +9,7 @@
 
   const note = ref<APIResponse<Note>>({ fetching: true });
 
-  watch([() => route.params.channelId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
     const statusActions: StatusActions = {
@@ -29,7 +29,7 @@
       }
     }
 
-    apiFetch(`channels/${params[0]}/notes/${params[1]}`, statusActions);
+    apiFetch(`spaces/${params[0]}/notes/${params[1]}`, statusActions);
   }
 
   function getMainHtml(): string {

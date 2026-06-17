@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public Guid? UserId { get; set; }
-        public Guid? ChannelId { get; set; }
+        public Guid? SpaceId { get; set; }
         public required EventType EventType { get; set; }
         public required string IPAddress { get; set; }
         public required string UserAgent { get; set; }
@@ -14,7 +14,7 @@ namespace Anatini.Server.Context.Entities
         public MetaData? MetaData { get; set; }
 
         public virtual ApplicationUser? User { get; set; }
-        public virtual Channel? Channel { get; set; }
+        public virtual Space? Space { get; set; }
     }
 
     public class MetaData

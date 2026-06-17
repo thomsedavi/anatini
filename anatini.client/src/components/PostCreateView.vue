@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, ChannelEdit, InputError, Status, StatusActions } from '@/types';
+  import type { APIResponse, SpaceEdit, InputError, Status, StatusActions } from '@/types';
   import { nextTick, ref, watch } from 'vue';
   import { parseSource, tidy, type Source } from './common/utils';
   import { apiFetchAuthenticated } from './common/apiFetch';
@@ -10,39 +10,39 @@
   const route = useRoute();
   const router = useRouter();
 
-  const channel = ref<APIResponse<ChannelEdit>>({ fetching: true });
+  const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
   const inputErrors = ref<InputError[]>([]);
   const inputPostName = ref<string>('');
   const inputPostHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
-  watch([() => route.params.channelId], (source: Source) => fetchChannel(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId], (source: Source) => fetchSpace(parseSource(source)), { immediate: true });
 
-  async function fetchChannel(params: string[]) {
+  async function fetchSpace(params: string[]) {
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: ChannelEdit) => {
-            channel.value = { data: value };
+          .then((value: SpaceEdit) => {
+            space.value = { data: value };
           })
-          .catch(() => { channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => { space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
       },
       401: () => {
-        router.replace({ path: '/sign-in', query: { redirect: `/channels/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });
       },
       403: () => {
-        channel.value = { error: { heading: 'Unknown Error', body: 'No access to channel' }};
+        space.value = { error: { heading: 'Unknown Error', body: 'No access to space' }};
       },
       404: () => {
-        channel.value = { error: { heading: '404 Not Found', body: 'Channel not found' }};
+        space.value = { error: { heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        channel.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+        space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
-    apiFetchAuthenticated(`channels/${params[0]}/edit`, statusActions);
+    apiFetchAuthenticated(`spaces/${params[0]}/edit`, statusActions);
   };
 
   function getError(id: string): string | undefined {
@@ -52,7 +52,7 @@
   async function postPost() {
     inputErrors.value = [];
 
-    if (channel.value.data === undefined) {
+    if (space.value.data === undefined) {
       return;
     }
 
@@ -81,8 +81,8 @@
       201: () => {
         status.value = 'success';
 
-        if (channel.value.data !== undefined) {
-          router.push({ name: 'PostEdit', params: { channelId: channel.value.data.id, postId: tidiedHandle } });
+        if (space.value.data !== undefined) {
+          router.push({ name: 'PostEdit', params: { spaceId: space.value.data.id, postId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -122,7 +122,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`channels/${channel.value.data.id}/posts`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${space.value.data.id}/posts`, statusActions, init);
   }
 </script>
 
@@ -132,19 +132,19 @@
       <h1>Create Post</h1>
     </header>
 
-    <section v-if="channel === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the channel information is fetched.</p>
+    <section v-if="space === null">
+      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the space information is fetched.</p>
                 
-      <progress max="100">Fetching channel...</progress>
+      <progress max="100">Fetching space...</progress>
     </section>
 
-    <section v-if="channel.error !== undefined">
+    <section v-if="space.error !== undefined">
       <p>
-        {{ channel.error.body }}
+        {{ space.error.body }}
       </p>
     </section>
 
-    <template v-if="channel.data !== undefined">
+    <template v-if="space.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem creating your post</h2>
         <ul role="list">
@@ -154,7 +154,7 @@
         </ul>
       </section>
 
-      <form @submit.prevent="postPost" :action="`/api/channels/${channel.data.id}/posts`" method="POST" novalidate>
+      <form @submit.prevent="postPost" :action="`/api/spaces/${space.data.id}/posts`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Create Post</legend>
 

@@ -1,17 +1,12 @@
 ﻿namespace Anatini.Server.Dtos
 {
-    public class ChannelDto
+    public class SpaceEditDto
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public string? About { get; set; }
         public required string Handle { get; set; }
-    }
-
-    public class ChannelHeaderDto
-    {
-        public required string Name { get; set; }
+        public required string Visibility { get; set; }
         public ImageDto? IconImage { get; set; }
-        public required string Handle { get; set; }
     }
 }

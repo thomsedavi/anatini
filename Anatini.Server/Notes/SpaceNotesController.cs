@@ -14,15 +14,15 @@ using Microsoft.EntityFrameworkCore;
 namespace Anatini.Server.Notes
 {
     [ApiController]
-    [Route("api/channels/{channelId}/notes")]
-    public class ChannelNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
+    [Route("api/spaces/{spaceId}/notes")]
+    public class SpaceNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
-        public async Task<IActionResult> GetNotes(string channelId, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        public async Task<IActionResult> GetNotes(string spaceId, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
         {
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
-            notes = notes.AsNoTracking().Where(note => note.ChannelId == channel.Id && note.PublishedAtUtc < DateTime.UtcNow);
+            notes = notes.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtUtc < DateTime.UtcNow);
 
             if (IsAuthenticated)
             {
@@ -50,7 +50,7 @@ namespace Anatini.Server.Notes
 
         [Authorize]
         [HttpPost("{noteId}/bookmark")]
-        public async Task<IActionResult> PostNoteBookmark(string channelId, string noteId) => await UsingChannelNoteContextAsync(channelId, noteId, async (note, context) =>
+        public async Task<IActionResult> PostNoteBookmark(string spaceId, string noteId) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note, context) =>
         {
             return Ok();
         });
@@ -61,7 +61,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostNote(string channelId, [FromForm] CreateNote createNote) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        public async Task<IActionResult> PostNote(string spaceId, [FromForm] CreateNote createNote) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createNote.Article);
 
@@ -74,11 +74,11 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = context.AddChannelNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, channel.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null);
+            var note = context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, space.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null);
 
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetNote), new { channelId = channel.Id, noteId = note.Id }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
+            return CreatedAtAction(nameof(GetNote), new { spaceId = space.Id, noteId = note.Id }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -90,7 +90,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string channelId, string noteId, [FromForm] UpdateNote updateNote) => await UsingChannelNoteContextAsync(channelId, noteId, async (note, context) =>
+        public async Task<IActionResult> PatchNote(string spaceId, string noteId, [FromForm] UpdateNote updateNote) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note, context) =>
         {
             if (updateNote.Article != null)
             {
@@ -126,7 +126,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNote(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
+        public async Task<IActionResult> GetNote(string spaceId, string noteId) => await UsingSpaceNoteAsync(spaceId, noteId, async (note) =>
         {
             return Ok(await note.ToNoteDtoAsync(noteId, BlobService));
         });
@@ -139,7 +139,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string channelId, string noteId) => await UsingChannelNoteAsync(channelId, noteId, async (note) =>
+        public async Task<IActionResult> GetNoteEdit(string spaceId, string noteId) => await UsingSpaceNoteAsync(spaceId, noteId, async (note) =>
         {
             return Ok(note.ToNoteEditDto());
         }, new ContextSettings { AccessRequired = true });

@@ -8,7 +8,7 @@
 
   const post = ref<APIResponse<Post>>({ fetching: true });
 
-  watch([() => route.params.channelId, () => route.params.postId], fetchPost, { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], fetchPost, { immediate: true });
 
   async function fetchPost(array: (() => string | string[])[]) {
     post.value = { fetching: true };
@@ -29,7 +29,7 @@
       }
     };
 
-    await apiFetchAuthenticated(`channels/${array[0]}/posts/${array[1]}/preview`, statusActions);
+    await apiFetchAuthenticated(`spaces/${array[0]}/posts/${array[1]}/preview`, statusActions);
   }
 
   function getMainHtml(): string {

@@ -6,6 +6,6 @@ namespace Anatini.Server.Authentication.Responses
     {
         public bool IsAuthenticated { get; set; } = false;
         public bool? IsTrusted { get; set; }
-        public IEnumerable<ChannelEditDto>? Channels { get; set; }
+        public IEnumerable<SpaceEditDto>? Spaces { get; set; }
     }
 }

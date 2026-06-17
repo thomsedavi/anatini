@@ -50,7 +50,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes(DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user, context) =>
         {
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
             notes = notes.AsNoTracking();
 

@@ -29,7 +29,7 @@
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
   });
 
-  watch([() => route.params.channelId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const statusActions: StatusActions = {
@@ -55,7 +55,7 @@
       }
     }
 
-    apiFetchAuthenticated(`channels/${params[0]}/posts/${params[1]}/edit`, statusActions);
+    apiFetchAuthenticated(`spaces/${params[0]}/posts/${params[1]}/edit`, statusActions);
   }
 
   function getHeading(): string {
@@ -151,7 +151,7 @@
           :is="Component"  
           :article="article"
           :post="post"
-          :channelId="post.data.channelId"
+          :spaceId="post.data.spaceId"
           :postId="post.data.id"
           :pageStatus="pageStatus"
           :name="post.data.version.name"

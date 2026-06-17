@@ -3,16 +3,16 @@
   import { nextTick, ref } from 'vue';
   import InputText from './common/InputText.vue';
   import SubmitButton from './common/SubmitButton.vue';
-  import { tidy } from './common/utils';
-  import { apiFetchAuthenticated } from './common/apiFetch';
+  import { tidy } from './common/utils.ts';
+  import { apiFetchAuthenticated } from './common/apiFetch.ts';
   import { useRouter } from 'vue-router';
   import VisibilitySelect from './common/VisibilitySelect.vue';
 
   const router = useRouter();
 
   const inputErrors = ref<InputError[]>([]);
-  const inputChannelName = ref<string>('');
-  const inputChannelHandle = ref<string>('');
+  const inputSpaceName = ref<string>('');
+  const inputSpaceHandle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
@@ -21,18 +21,18 @@
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postChannel() {
+  async function postSpace() {
     inputErrors.value = [];
 
-    const tidiedName = tidy(inputChannelName.value);
-    const tidiedHandle = tidy(inputChannelHandle.value);
+    const tidiedName = tidy(inputSpaceName.value);
+    const tidiedHandle = tidy(inputSpaceHandle.value);
 
     if (tidiedName === '') {
-      inputErrors.value.push({id: 'name', message: 'Channel name is required'});
+      inputErrors.value.push({id: 'name', message: 'Space name is required'});
     }
 
     if (tidiedHandle === '') {
-      inputErrors.value.push({id: 'handle', message: 'Channel handle is required'});
+      inputErrors.value.push({id: 'handle', message: 'Space handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -49,7 +49,7 @@
       201: () => {
         status.value = 'success';
 
-        router.push({ name: 'ChannelEdit', params: { channelId: tidiedHandle } });
+        router.push({ name: 'SpaceEdit', params: { spaceId: tidiedHandle } });
       },
       409: () => {
         status.value = 'error';
@@ -70,18 +70,18 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated('channels', statusActions, init);
+    apiFetchAuthenticated('spaces', statusActions, init);
   }
 </script>
 
 <template>
   <main id="main" tabindex="-1">
     <header>
-      <h1>Create Channel</h1>
+      <h1>Create Space</h1>
     </header>
 
     <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-      <h2 id="heading-errors">There was a problem creating your channel</h2>
+      <h2 id="heading-errors">There was a problem creating your space</h2>
       <ul role="list">
         <li v-for="error in inputErrors" :key="'error' + error.id">
           <a :href="'#input-' + error.id">{{ error.message }}</a>
@@ -89,26 +89,26 @@
       </ul>
     </section>
 
-    <form @submit.prevent="postChannel" action="/api/channels" method="POST" novalidate>
+    <form @submit.prevent="postSpace" action="/api/spaces" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Create Channel</legend>
+        <legend class="visuallyhidden">Create Space</legend>
 
         <InputText
-          v-model="inputChannelName"
+          v-model="inputSpaceName"
           label="Name"
           name="name"
           id="name"
           :maxlength="64"
-          help="The display name of your channel"
+          help="The display name of your space"
           :error="getError('name')" />
 
         <InputText
-          v-model="inputChannelHandle"
+          v-model="inputSpaceHandle"
           label="Handle"
           name="handle"
           id="handle"
           :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-channel')"
+          help="lower case with hyphens (e.g. 'my-anatini-space')"
           :error="getError('handle')" />
 
         <VisibilitySelect v-model="inputVisibility" />
@@ -116,7 +116,7 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputChannelName) === '' || tidy(inputChannelHandle) === ''"
+        :disabled="tidy(inputSpaceName) === '' || tidy(inputSpaceHandle) === ''"
         text="Create"
         busy-text="Creating..." />
     </form>

@@ -51,14 +51,14 @@
       header += `<span>${note.userHeader.name}</span></a></h3><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
 
       return header;
-    } else if (note.channelHeader !== null) {
-      let header = `<header><h3><a href='/channels/${note.channelHeader.handle}' rel='author'>`;
+    } else if (note.spaceHeader !== null) {
+      let header = `<header><h3><a href='/spaces/${note.spaceHeader.handle}' rel='author'>`;
 
-      if (note.channelHeader.iconImage !== null) {
-        header += `<img src='${note.channelHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
+      if (note.spaceHeader.iconImage !== null) {
+        header += `<img src='${note.spaceHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
       }
       
-      header += `<span>${note.channelHeader.name}</span></a></h3><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
+      header += `<span>${note.spaceHeader.name}</span></a></h3><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
 
       return header;
     }
@@ -145,8 +145,8 @@
 
       const init: RequestInit = { method: "DELETE" };
 
-      if (note.channelHeader !== null) {
-        apiFetchAuthenticated(`channels/${note.channelHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+      if (note.spaceHeader !== null) {
+        apiFetchAuthenticated(`spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       } else if (note.userHeader !== null) {
         apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       }
@@ -165,8 +165,8 @@
 
       const init: RequestInit = { method: "POST" };
 
-      if (note.channelHeader !== null) {
-        apiFetchAuthenticated(`channels/${note.channelHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+      if (note.spaceHeader !== null) {
+        apiFetchAuthenticated(`spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       } else if (note.userHeader !== null) {
         apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
       }
@@ -177,7 +177,7 @@
     return `
       ${getHeader(note)}
       ${note.article.substring(9, note.article.length - 10)}
-      <footer>
+      ${store.isAuthenticated ? `<footer>
         <menu>
           <li>
             <button type='button' aria-label='Dismiss' aria-pressed='${note.hasDismissed ? 'true' : 'false'}'>${note.hasDismissed ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>' : '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>'}</button>
@@ -189,7 +189,7 @@
             <button type='button' aria-label='Bookmark' aria-pressed='${note.hasBookmarked ? 'true' : 'false'}'>${note.hasBookmarked ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>' : '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>'}</button>
           </li>
         </menu>
-      </footer>
+      </footer>` : ''}
     `;
   }
 </script>

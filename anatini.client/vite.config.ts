@@ -59,7 +59,7 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/api/channels': {
+            '^/api/spaces': {
                 target,
                 secure: false
             },

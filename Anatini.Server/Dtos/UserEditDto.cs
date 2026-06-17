@@ -7,7 +7,7 @@
         public string? About { get; set; }
         public required string Visibility { get; set; }
         public ImageDto? IconImage { get; set; }
-        public required IEnumerable<ChannelEditDto> Channels { get; set; }
+        public required IEnumerable<SpaceEditDto> Spaces { get; set; }
         public required string Handle { get; set; }
         public string? UserName { get; set; }
     }

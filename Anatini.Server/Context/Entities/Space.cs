@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Context.Entities
 {
-    public class Channel
+    public class Space
     {
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
@@ -12,26 +12,26 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual ICollection<ApplicationUserChannelEdge> UserEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserSpaceEdge> UserEdges { get; set; } = [];
         public virtual ICollection<Log> Logs { get; set; } = [];
-        public virtual ICollection<ChannelHandle> Handles { get; set; } = [];
-        public virtual ICollection<ChannelImage> Images { get; set; } = [];
-        public virtual ICollection<Post> Posts { get; set; } = [];
+        public virtual ICollection<SpaceHandle> Handles { get; set; } = [];
+        public virtual ICollection<SpaceImage> Images { get; set; } = [];
+        public virtual ICollection<Content> Contents { get; set; } = [];
     }
 
-    public class ChannelHandle
+    public class SpaceHandle
     {
         public required Guid Id { get; set; }
-        public required Guid ChannelId { get; set; }
+        public required Guid SpaceId { get; set; }
         public required string Handle { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
-        public virtual Channel Channel { get; set; } = null!;
+        public virtual Space Space { get; set; } = null!;
     }
 
-    public class ChannelImage
+    public class SpaceImage
     {
-        public required Guid ChannelId { get; set; }
+        public required Guid SpaceId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
@@ -39,6 +39,6 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Channel Channel { get; set; } = null!;
+        public virtual Space Space { get; set; } = null!;
     }
 }

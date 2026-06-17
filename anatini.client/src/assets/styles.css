@@ -78,12 +78,12 @@ body {
       position: absolute;
     }
 
-    #channels-dropdown {
+    #spaces-dropdown {
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     #main-dropdown strong,
-    #channels-dropdown strong {
+    #spaces-dropdown strong {
       display: block;
       font-weight: 700;
       text-transform: uppercase;
@@ -102,17 +102,17 @@ body {
         font-size: 0.9rem;
       }
 
-      button[aria-controls="channels-dropdown"] {
+      button[aria-controls="spaces-dropdown"] {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
 
-      button[aria-controls="channels-dropdown"]::after {
+      button[aria-controls="spaces-dropdown"]::after {
         transform: rotate(135deg);
       }
 
-      button[aria-controls="channels-dropdown"][aria-expanded="true"]::after {
+      button[aria-controls="spaces-dropdown"][aria-expanded="true"]::after {
         transform: rotate(45deg);
       }
     }
@@ -177,7 +177,7 @@ body {
             }
           }
 
-          &:has(a[href^="/channels/"]) img {
+          &:has(a[href^="/spaces/"]) img {
             border-radius: 8px;
           }
 
@@ -347,7 +347,7 @@ body {
       }
 
       #main-dropdown,
-      #channels-dropdown {
+      #spaces-dropdown {
         position: static;
         width: 100%;
         box-shadow: none;
@@ -361,7 +361,7 @@ body {
       #sign-out,
       #sign-up,
       #account-list,
-      #channels-list {
+      #spaces-list {
         border-top: none;
         margin-top: 0;
         padding-top: 0;
@@ -375,11 +375,11 @@ body {
         transform: rotate(-135deg);
       }
 
-      #main-dropdown button[aria-controls="channels-dropdown"]::after {
+      #main-dropdown button[aria-controls="spaces-dropdown"]::after {
         transform: rotate(45deg); 
       }
 
-      #main-dropdown button[aria-controls="channels-dropdown"][aria-expanded="true"]::after {
+      #main-dropdown button[aria-controls="spaces-dropdown"][aria-expanded="true"]::after {
         transform: rotate(-135deg);
       }
     }

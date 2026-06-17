@@ -7,7 +7,7 @@
   import SubmitButton from '../common/SubmitButton.vue';
 
   const props = defineProps<{
-    channelId: string,
+    spaceId: string,
     postId: string,
     pageStatus: string,
     name: string,
@@ -53,7 +53,7 @@
       }
     }
 
-    apiFetchAuthenticated(`channels/${props.channelId}/posts/${props.postId}`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
   }
 
   function detailChanged(): boolean {
@@ -73,7 +73,7 @@
       <h2>Details</h2>
     </header>
 
-    <form @submit.prevent="patchPostDetail" :action="`/api/channels/${channelId}/posts/${postId}`" method="POST" novalidate>
+    <form @submit.prevent="patchPostDetail" :action="`/api/spaces/${spaceId}/posts/${postId}`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Post Details</legend>
 

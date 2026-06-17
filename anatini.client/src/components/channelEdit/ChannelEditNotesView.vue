@@ -9,7 +9,7 @@
   const router = useRouter();
 
   const props = defineProps<{
-    channelId: string,
+    spaceId: string,
     notes: Note[] | null,
   }>();
 
@@ -28,7 +28,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${props.channelId}/notes`, statusActions);
+      apiFetchAuthenticated(`spaces/${props.spaceId}/notes`, statusActions);
     }
   });
 </script>
@@ -37,12 +37,12 @@
   <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
       <h2>Notes</h2>
-      <RouterLink :to="{ name: 'ChannelEditNoteCreate' }">+ Create Note</RouterLink>
+      <RouterLink :to="{ name: 'SpaceEditNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/channels/${channelId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/spaces/${spaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

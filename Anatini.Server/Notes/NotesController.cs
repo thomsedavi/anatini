@@ -18,11 +18,11 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async (context) =>
         {
-            var notes = context.Notes.AsQueryable();
+            var notes = context.Notes;
 
             notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
             notes = notes.Include(note => note.User).ThenInclude(user => user!.Images);
-            notes = notes.Include(note => note.Channel).ThenInclude(channel => channel!.Images);
+            notes = notes.Include(note => note.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid userId))
             {

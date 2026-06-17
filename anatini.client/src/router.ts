@@ -20,17 +20,17 @@ import AccountNotesView from './components/account/AccountNotesView.vue';
 import AccountNoteCreateView from './components/account/AccountNoteCreateView.vue';
 import AccountNoteEditView from './components/account/AccountNoteEditView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
-import AccountChannelsView from './components/account/AccountChannelsView.vue';
+import AccountSpacesView from './components/account/AccountSpacesView.vue';
 import SignUpFlowView from './components/SignUpFlowView.vue';
 import UserView from './components/UserView.vue';
-import ChannelCreateView from './components/ChannelCreateView.vue';
-import ChannelEditView from './components/channelEdit/ChannelEditView.vue';
-import ChannelEditNotesView from './components/channelEdit/ChannelEditNotesView.vue';
-import ChannelEditNoteCreateView from './components/channelEdit/ChannelEditNoteCreateView.vue';
-import ChannelEditNoteEditView from './components/channelEdit/ChannelEditNoteEditView.vue';
-import ChannelEditPostsView from './components/channelEdit/ChannelEditPostsView.vue';
-import ChannelEditDisplayView from './components/channelEdit/ChannelEditDisplayView.vue';
-import ChannelView from './components/ChannelView.vue';
+import SpaceCreateView from './components/SpaceCreateView.vue';
+import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
+import SpaceEditNotesView from './components/spaceEdit/SpaceEditNotesView.vue';
+import SpaceEditNoteCreateView from './components/spaceEdit/SpaceEditNoteCreateView.vue';
+import SpaceEditNoteEditView from './components/spaceEdit/SpaceEditNoteEditView.vue';
+import SpaceEditPostsView from './components/spaceEdit/SpaceEditPostsView.vue';
+import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
+import SpaceView from './components/SpaceView.vue';
 import UsersView from './components/UsersView.vue';
 import TagsView from './components/TagsView.vue';
 
@@ -87,9 +87,9 @@ const routes = [
         name: 'AccountPrivate'
       },
       {
-        path: 'channels',
-        component: AccountChannelsView,
-        name: 'AccountChannels'
+        path: 'spaces',
+        component: AccountSpacesView,
+        name: 'AccountSpaces'
       },
       {
         path: 'notes/create',
@@ -109,12 +109,12 @@ const routes = [
     ],
   },
   {
-    path: '/channels/:channelId/posts/create',
+    path: '/spaces/:spaceId/posts/create',
     component: PostCreateView,
     name: 'PostCreate',
   },
   {
-    path: '/channels/:channelId/posts/:postId/edit',
+    path: '/spaces/:spaceId/posts/:postId/edit',
     component: PostEditView,
     name: 'PostEdit',
     redirect: { name: 'PostEditArticle' },
@@ -137,17 +137,17 @@ const routes = [
     ],
   },
   {
-    path: '/channels/:channelId/posts/:postId/preview',
+    path: '/spaces/:spaceId/posts/:postId/preview',
     component: PostPreviewView,
     name: 'PostPreview',
   },
   {
-    path: '/channels/:channelId/posts/:postId',
+    path: '/spaces/:spaceId/posts/:postId',
     component: PostView,
     name: 'Post',
   },
   {
-    path: '/channels/:channelId/notes/:noteId',
+    path: '/spaces/:spaceId/notes/:noteId',
     component: NoteView,
     name: 'Note',
   },
@@ -156,47 +156,47 @@ const routes = [
     component: UserView,
   },
   {
-    path: '/channels/create',
-    component: ChannelCreateView,
-    name: 'ChannelCreate',
+    path: '/spaces/create',
+    component: SpaceCreateView,
+    name: 'SpaceCreate',
   },
   {
-    path: '/channels/:channelId/edit',
-    component: ChannelEditView,
-    name: 'ChannelEdit',
-    redirect: { name: 'ChannelEditPosts' },
+    path: '/spaces/:spaceId/edit',
+    component: SpaceEditView,
+    name: 'SpaceEdit',
+    redirect: { name: 'SpaceEditPosts' },
     children: [
       {
         path: 'posts',
-        component: ChannelEditPostsView,
-        name: 'ChannelEditPosts'
+        component: SpaceEditPostsView,
+        name: 'SpaceEditPosts'
       },
       {
         path: 'notes/create',
-        component: ChannelEditNoteCreateView,
-        name: 'ChannelEditNoteCreate'
+        component: SpaceEditNoteCreateView,
+        name: 'SpaceEditNoteCreate'
       },
       {
         path: 'notes/:noteId/edit',
-        component: ChannelEditNoteEditView,
-        name: 'ChannelEditNoteEdit'
+        component: SpaceEditNoteEditView,
+        name: 'SpaceEditNoteEdit'
       },
       {
         path: 'notes',
-        component: ChannelEditNotesView,
-        name: 'ChannelEditNotes'
+        component: SpaceEditNotesView,
+        name: 'SpaceEditNotes'
       },
       {
         path: 'display',
-        component: ChannelEditDisplayView,
-        name: 'ChannelEditDisplay'
+        component: SpaceEditDisplayView,
+        name: 'SpaceEditDisplay'
       },
     ],
   },
   {
-    path: '/channels/:channelId',
-    component: ChannelView,
-    name: 'Channel',
+    path: '/spaces/:spaceId',
+    component: SpaceView,
+    name: 'Space',
   },
    {
     path: '/tags/:tagId',

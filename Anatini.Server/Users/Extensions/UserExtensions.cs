@@ -1,8 +1,8 @@
-﻿using Anatini.Server.Channels.Extensions;
-using Anatini.Server.Context.Entities;
+﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Spaces.Extensions;
 
 namespace Anatini.Server.Users.Extensions
 {
@@ -45,7 +45,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = user.Id,
                 Name = user.Name,
                 About = user.About,
-                Channels = await Task.WhenAll(user.ChannelEdges.Select(userChannelEdge => userChannelEdge.TargetChannel.ToChannelEditDtoAsync(blobService))),
+                Spaces = await Task.WhenAll(user.SpaceEdges.Select(userSpaceEdge => userSpaceEdge.TargetSpace.ToSpaceEditDtoAsync(blobService))),
                 Handle = user.Handle,
                 UserName = user.UserName,
                 Visibility = user.Visibility.ToString(),

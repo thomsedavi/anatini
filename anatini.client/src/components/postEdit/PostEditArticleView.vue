@@ -7,7 +7,7 @@
 
   const props = defineProps<{
     article: Node | null,
-    channelId: string,
+    spaceId: string,
     postId: string,
     eTag: string | null,
   }>();
@@ -53,7 +53,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${props.channelId}/posts/${props.postId}`, statusActions, init);
+      apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
     }
   }
 
@@ -88,7 +88,7 @@
         }
       }
 
-      apiFetchAuthenticated(`channels/${props.channelId}/posts/${props.postId}`, statusActions, init);
+      apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
     }
   }
   

@@ -1,5 +1,6 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.BuilderExtensions;
+using Anatini.Server.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,16 +15,19 @@ namespace Anatini.Server.Context
         public DbSet<Log> Logs { get; set; }
         public DbSet<ApplicationUserImage> UserImages { get; set; }
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
-        public DbSet<ApplicationUserChannelEdge> UserChannelEdges { get; set; }
-        public DbSet<ApplicationUserPostEdge> UserPostEdges { get; set; }
+        public DbSet<ApplicationUserSpaceEdge> UserSpaceEdges { get; set; }
+        public DbSet<ApplicationUserContentEdge> UserContentEdges { get; set; }
 
-        public DbSet<Channel> Channels { get; set; }
-        public DbSet<ChannelHandle> ChannelHandles { get; set; }
-        public DbSet<ChannelImage> ChannelImages { get; set; }
+        public DbSet<Space> Spaces { get; set; }
+        public DbSet<SpaceHandle> SpaceHandles { get; set; }
+        public DbSet<SpaceImage> SpaceImages { get; set; }
 
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<PostVersion> PostVersions { get; set; }
-        public DbSet<PostImage> PostImages { get; set; }
+        public DbSet<Content> Contents { get; set; }
+        public DbSet<ContentVersion> ContentVersions { get; set; }
+        public DbSet<ContentImage> ContentImages { get; set; }
+
+        public IQueryable<Content> Posts => Contents.Where(content => content.Type == ContentType.Post);
+        public IQueryable<Content> Notes => Contents.Where(content => content.Type == ContentType.Note);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,19 +42,19 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserToken>().Configure();
             modelBuilder.Entity<ApplicationUserRole>().Configure();
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserChannelEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserPostEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserSpaceEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserContentEdge>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
 
-            modelBuilder.Entity<Channel>().Configure();
-            modelBuilder.Entity<ChannelHandle>().Configure();
-            modelBuilder.Entity<ChannelImage>().Configure();
+            modelBuilder.Entity<Space>().Configure();
+            modelBuilder.Entity<SpaceHandle>().Configure();
+            modelBuilder.Entity<SpaceImage>().Configure();
 
-            modelBuilder.Entity<Post>().Configure();
-            modelBuilder.Entity<PostVersion>().Configure();
-            modelBuilder.Entity<PostImage>().Configure();
+            modelBuilder.Entity<Content>().Configure();
+            modelBuilder.Entity<ContentVersion>().Configure();
+            modelBuilder.Entity<ContentImage>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

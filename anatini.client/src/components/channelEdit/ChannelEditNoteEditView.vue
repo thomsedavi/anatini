@@ -24,7 +24,7 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
 
-  watch([() => route.params.channelId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
     const statusActions: StatusActions = {
@@ -45,7 +45,7 @@
       }
     };
 
-    apiFetchAuthenticated(`channels/${params[0]}/notes/${params[1]}/edit`, statusActions);
+    apiFetchAuthenticated(`spaces/${params[0]}/notes/${params[1]}/edit`, statusActions);
   };
 
   function noChange(): boolean {
@@ -97,7 +97,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`channels/${route.params.channelId}/notes/${route.params.noteId}`, statusActions, init);
+    apiFetchAuthenticated(`spaces/${route.params.spaceId}/notes/${route.params.noteId}`, statusActions, init);
   }
 </script>
 
@@ -121,7 +121,7 @@
     </section>
 
     <template v-if="note.data !== undefined">
-      <form @submit.prevent="patchNote" :action="`/api/channels/${route.params.channelId}/notes/${route.params.noteId}`" method="POST" novalidate>
+      <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Edit Note</legend>
 

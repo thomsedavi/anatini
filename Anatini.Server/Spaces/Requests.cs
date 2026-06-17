@@ -2,9 +2,9 @@
 using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Channels
+namespace Anatini.Server.Spaces
 {
-    public class CreateChannel
+    public class CreateSpace
     {
         [MaxLength(256), DataType(DataType.Text)]
         public required string Name { get; set; }
@@ -16,7 +16,7 @@ namespace Anatini.Server.Channels
         public required Visibility Visibility { get; set; }
     }
 
-    public class UpdateChannel
+    public class UpdateSpace
     {
         [MaxLength(64), DataType(DataType.Text)]
         public string? Name { get; set; }

@@ -149,7 +149,7 @@ button[role="tab"] {
   }
 
   #main-dropdown strong,
-  #channels-dropdown strong {
+  #spaces-dropdown strong {
     color: var(--text-light);
   }
 
@@ -169,7 +169,7 @@ button[role="tab"] {
   #sign-out,
   #sign-up,
   #account-list,
-  #channels-list {
+  #spaces-list {
     border-top: 1px solid var(--border);
   }
 }

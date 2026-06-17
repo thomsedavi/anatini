@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Anatini.Server.Posts
 {
     [ApiController]
-    [Route("api/channels/{channelId}/posts")]
-    public class ChannelPostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
+    [Route("api/spaces/{spaceId}/posts")]
+    public class SpacePostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
         [HttpPost]
@@ -22,16 +22,16 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string channelId, [FromForm] CreatePost createPost) => await UsingChannelContextAsync(channelId, async (channel, context) =>
+        public async Task<IActionResult> PostPost(string spaceId, [FromForm] CreatePost createPost) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
         {
             var eventData = new EventData(HttpContext);
 
             var postId = Guid.CreateVersion7();
 
-            context.AddPost(postId, createPost.Name, createPost.Handle, channel.Id);
+            context.AddPost(postId, createPost.Name, createPost.Handle, space.Id);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPost), new { channelId = channel.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
+            return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -44,7 +44,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string channelId, string postId, [FromForm] UpdatePost updatePost) => await UsingChannelPostContextAsync(channelId, postId, async (post, context) =>
+        public async Task<IActionResult> PatchPost(string spaceId, string postId, [FromForm] UpdatePost updatePost) => await UsingSpacePostContextAsync(spaceId, postId, async (post, context) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });
@@ -54,7 +54,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPost(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
         {
             return Ok();
         });
@@ -66,7 +66,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostEdit(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPostEdit(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
@@ -78,7 +78,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostPreview(string channelId, string postId) => await UsingChannelPostAsync(channelId, postId, async (post) =>
+        public async Task<IActionResult> GetPostPreview(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
