@@ -25,6 +25,8 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserSpaceEdge> SpaceEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserContentEdge> ContentEdges { get; set; } = [];
         public virtual ICollection<Content> Contents { get; set; } = [];
+        public virtual ICollection<EventSeries> EventSeries { get; set; } = [];
+        public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
     }
 
     public class ApplicationUserEmail

@@ -26,6 +26,10 @@ namespace Anatini.Server.Context
         public DbSet<ContentVersion> ContentVersions { get; set; }
         public DbSet<ContentImage> ContentImages { get; set; }
 
+        public DbSet<EventSeries> EventSeries { get; set; }
+        public DbSet<EventException> EventExceptions { get; set; }
+        public DbSet<EventInstance> EventInstances { get; set; }
+
         public IQueryable<Content> Posts => Contents.Where(content => content.Type == ContentType.Post);
         public IQueryable<Content> Notes => Contents.Where(content => content.Type == ContentType.Note);
 
@@ -55,6 +59,10 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Content>().Configure();
             modelBuilder.Entity<ContentVersion>().Configure();
             modelBuilder.Entity<ContentImage>().Configure();
+
+            modelBuilder.Entity<EventSeries>().Configure();
+            modelBuilder.Entity<EventException>().Configure();
+            modelBuilder.Entity<EventInstance>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

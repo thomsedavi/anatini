@@ -780,6 +780,145 @@ namespace Anatini.Server.Migrations
                     b.ToTable("content_versions", (string)null);
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
+                {
+                    b.Property<Guid>("EventSeriesId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_series_id");
+
+                    b.Property<DateTime>("OriginalDateUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("original_date_utc");
+
+                    b.Property<string>("CustomName")
+                        .HasColumnType("text")
+                        .HasColumnName("custom_name");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_cancelled");
+
+                    b.Property<DateTime?>("RescheduledStartUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("rescheduled_start_utc");
+
+                    b.HasKey("EventSeriesId", "OriginalDateUtc")
+                        .HasName("pk_event_exceptions");
+
+                    b.ToTable("event_exceptions", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at_utc");
+
+                    b.Property<Guid>("EventSeriesId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("event_series_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid?>("SpaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("space_id");
+
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_event_instances");
+
+                    b.HasIndex("SpaceId")
+                        .HasDatabaseName("ix_event_instances_space_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_event_instances_user_id");
+
+                    b.ToTable("event_instances", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_event_instances_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval")
+                        .HasColumnName("duration");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("RecurrenceRule")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("recurrence_rule");
+
+                    b.Property<Guid?>("SpaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("space_id");
+
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateOnly?>("ValidUntil")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_until");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility");
+
+                    b.HasKey("Id")
+                        .HasName("pk_event_series");
+
+                    b.HasIndex("SpaceId")
+                        .HasDatabaseName("ix_event_series_space_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_event_series_user_id");
+
+                    b.ToTable("event_series", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_event_series_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                        });
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.Log", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1195,6 +1334,44 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Content");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
+                        .WithMany("EventInstances")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_event_instances_spaces_space_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
+                        .WithMany("EventInstances")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_event_instances_users_user_id");
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
+                        .WithMany("EventSeries")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_event_series_spaces_space_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
+                        .WithMany("EventSeries")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_event_series_users_user_id");
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.Log", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
@@ -1255,6 +1432,10 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Emails");
 
+                    b.Navigation("EventInstances");
+
+                    b.Navigation("EventSeries");
+
                     b.Navigation("GivenUserEdges");
 
                     b.Navigation("Handles");
@@ -1286,6 +1467,10 @@ namespace Anatini.Server.Migrations
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>
                 {
                     b.Navigation("Contents");
+
+                    b.Navigation("EventInstances");
+
+                    b.Navigation("EventSeries");
 
                     b.Navigation("Handles");
 
