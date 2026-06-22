@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
   import { ref, watch } from 'vue';
-  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
+  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils.ts';
   import { useRoute } from 'vue-router';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { apiFetchAuthenticated } from '../common/apiFetch.ts';
   import VisibilitySelect from '../common/VisibilitySelect.vue';
   import InputTextArea from '../common/InputTextArea.vue';
   import SubmitButton from '../common/SubmitButton.vue';

@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import type { APIResponse, SpaceEdit, InputError, Note, Status, StatusActions, Tab } from '@/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { apiFetchAuthenticated } from '../common/apiFetch.ts';
   import { useRoute, useRouter } from 'vue-router';
-  import { getTabIndex, parseSource, type Source } from '../common/utils';
+  import { getTabIndex, parseSource, type Source } from '../common/utils.ts';
   import TabButton from '../common/TabButton.vue';
 
   const route = useRoute();

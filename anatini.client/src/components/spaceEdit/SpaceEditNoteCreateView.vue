@@ -4,9 +4,9 @@
   import InputTextArea from '../common/InputTextArea.vue';
   import VisibilitySelect from '../common/VisibilitySelect.vue';
   import InputText from '../common/InputText.vue';
-  import { formatArticle, tidy } from '../common/utils';
+  import { formatArticle, tidy } from '../common/utils.ts';
   import SubmitButton from '../common/SubmitButton.vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import { apiFetchAuthenticated } from '../common/apiFetch.ts';
 
   const props = defineProps<{
     status: Status,
