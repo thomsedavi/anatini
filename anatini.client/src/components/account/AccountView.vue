@@ -23,6 +23,7 @@
   const tabs: Tab[] = [
     { id: 'public', text: 'Display', name: 'AccountPublic' },
     { id: 'notes', text: 'Notes', name: 'AccountNotes', childNames: ['AccountNoteCreate', 'AccountNoteEdit'] },
+    { id: 'calendar', text: 'Calendar', name: 'AccountCalendar', childNames: ['AccountEventCreate'] },
     { id: 'spaces', text: 'Spaces', name: 'AccountSpaces' },
     { id: 'private', text: 'Privacy & Security', name: 'AccountPrivate' },
   ];

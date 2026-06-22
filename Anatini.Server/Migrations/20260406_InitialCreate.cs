@@ -233,6 +233,7 @@ namespace Anatini.Server.Migrations
                     duration = table.Column<TimeSpan>(type: "interval", nullable: false),
                     recurrence_rule = table.Column<string>(type: "text", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
+                    valid_from = table.Column<DateOnly>(type: "date", nullable: false),
                     valid_until = table.Column<DateOnly>(type: "date", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)

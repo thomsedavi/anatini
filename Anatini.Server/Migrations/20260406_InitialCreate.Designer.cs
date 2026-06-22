@@ -896,6 +896,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("valid_from");
+
                     b.Property<DateOnly?>("ValidUntil")
                         .HasColumnType("date")
                         .HasColumnName("valid_until");

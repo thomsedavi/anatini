@@ -12,6 +12,7 @@ namespace Anatini.Server.Context.Entities
         public required TimeSpan Duration { get; set; }
         public required string RecurrenceRule { get; set; }
         public required Visibility Visibility { get; set; }
+        public DateOnly ValidFrom { get; set; }
         public DateOnly? ValidUntil { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }

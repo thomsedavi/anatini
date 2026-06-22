@@ -17,7 +17,9 @@ import PostView from './components/PostView.vue';
 import AccountView from './components/account/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
 import AccountNotesView from './components/account/AccountNotesView.vue';
+import AccountCalendarView from './components/account/AccountCalendarView.vue';
 import AccountNoteCreateView from './components/account/AccountNoteCreateView.vue';
+import AccountEventCreateView from './components/account/AccountEventCreateView.vue';
 import AccountNoteEditView from './components/account/AccountNoteEditView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountSpacesView from './components/account/AccountSpacesView.vue';
@@ -97,6 +99,11 @@ const routes = [
         name: 'AccountNoteCreate'
       },
       {
+        path: 'events/create',
+        component: AccountEventCreateView,
+        name: 'AccountEventCreate'
+      },
+      {
         path: 'notes/:noteId/edit',
         component: AccountNoteEditView,
         name: 'AccountNoteEdit'
@@ -106,6 +113,12 @@ const routes = [
         component: AccountNotesView,
         name: 'AccountNotes'
       },
+      {
+        path: 'calendar',
+        component: AccountCalendarView,
+        name: 'AccountCalendar'
+      },
+
     ],
   },
   {
