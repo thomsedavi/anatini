@@ -873,7 +873,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("RecurrenceRule")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("recurrence_rule");
 
