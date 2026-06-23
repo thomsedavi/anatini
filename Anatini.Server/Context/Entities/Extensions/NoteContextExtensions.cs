@@ -13,8 +13,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 
             if (publishedAtNZ.HasValue)
             {
-                var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-                publishedatUtc = TimeZoneInfo.ConvertTimeToUtc(publishedAtNZ.Value, timeZoneInfoNZ);
+                publishedatUtc = publishedAtNZ.Value.ConvertNzToUtc();
             }
 
             var note = new Content

@@ -4,6 +4,7 @@ namespace Anatini.Server.Utils
 {
     public static class DateTimeUtils
     {
+        private static readonly TimeZoneInfo TimeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
         private static readonly DateTimeFormatInfo Info = CultureInfo.GetCultureInfo("en-NZ").DateTimeFormat;
         private static readonly Calendar Calendar = Info.Calendar;
 
@@ -12,5 +13,7 @@ namespace Anatini.Server.Utils
         public static string GetDate(this DateOnly dateOnly) => dateOnly.ToString("O");
         public static string GetWeek(this DateOnly dateOnly) => $"{dateOnly.Year:D4}-W{Calendar.GetWeekOfYear(dateOnly.ToDateTime(TimeOnly.MinValue), Info.CalendarWeekRule, Info.FirstDayOfWeek):D2}";
         public static DateTime Truncate(this DateTime dateTime) => new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind);
+        public static DateTime ConvertNzToUtc(this DateTime dateTime) => TimeZoneInfo.ConvertTimeToUtc(dateTime, TimeZoneInfoNZ);
+        public static DateTime ConvertUtcToNz(this DateTime dateTime) => TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfoNZ);
     }
 }

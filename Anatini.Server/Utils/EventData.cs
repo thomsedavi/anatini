@@ -14,8 +14,7 @@
 
             DateTimeUtc = DateTime.UtcNow;
 
-            var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-            var dateTimeNZ = TimeZoneInfo.ConvertTimeFromUtc(DateTimeUtc, timeZoneInfoNZ);
+            var dateTimeNZ = DateTimeUtc.ConvertUtcToNz();
             DateOnlyNZNow = DateOnly.FromDateTime(dateTimeNZ);
         }
 

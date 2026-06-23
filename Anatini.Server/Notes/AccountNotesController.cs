@@ -108,8 +108,7 @@ namespace Anatini.Server.Notes
 
             if (updateNote.PublishedAtNz.HasValue)
             {
-                var timeZoneInfoNZ = TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time");
-                note.PublishedAtUtc = TimeZoneInfo.ConvertTimeToUtc(updateNote.PublishedAtNz.Value, timeZoneInfoNZ);
+                note.PublishedAtUtc = updateNote.PublishedAtNz.Value.ConvertNzToUtc();
             }
 
             note.UpdatedAtUtc = DateTime.UtcNow;
