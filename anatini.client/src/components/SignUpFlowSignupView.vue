@@ -8,6 +8,7 @@
   import { store } from '@/store';
   import { useRouter } from 'vue-router';
   import VisibilitySelect from './common/VisibilitySelect.vue';
+  import InputCheckbox from './common/InputCheckbox.vue';
 
   const router = useRouter();
 
@@ -198,9 +199,12 @@
 
         <VisibilitySelect v-model="inputVisibility" />
 
-        <input type="checkbox" id="input-is-persistent" name="is-persistent" v-model="inputIsPersistent" aria-describedby="help-is-persistent" />
-        <label for="input-is-persistent">Remember Me</label>
-        <small id="help-is-persistent">Remember you</small>
+        <InputCheckbox
+          v-model="inputIsPersistent"
+          label="Remember Me"
+          name="is-persistent"
+          id="is-persistent"
+          help="Remember you" />
       </fieldset>
 
       <SubmitButton

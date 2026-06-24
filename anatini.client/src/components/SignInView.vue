@@ -7,6 +7,7 @@
   import { store } from '@/store';
   import { useRoute, useRouter } from 'vue-router';
   import SubmitButton from './common/SubmitButton.vue';
+  import InputCheckbox from './common/InputCheckbox.vue';
 
   const router = useRouter();
   const route = useRoute();
@@ -136,9 +137,12 @@
           :error="getError('password')"
           autocomplete="current-password" />
 
-        <input type="checkbox" id="input-is-persistent" name="is-persistent" v-model="inputIsPersistent" aria-describedby="help-is-persistent" />
-        <label for="input-is-persistent">Remember Me</label>
-        <small id="help-is-persistent">Remember you</small>
+        <InputCheckbox
+          v-model="inputIsPersistent"
+          label="Remember Me"
+          name="is-persistent"
+          id="is-persistent"
+          help="Remember you" />
       </fieldset>
 
       <SubmitButton

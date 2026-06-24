@@ -5,6 +5,7 @@
   import { tidy } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
+  import InputCheckbox from '../common/InputCheckbox.vue';
  
   const props = defineProps<{
     status: Status,
@@ -17,7 +18,11 @@
   }>();
 
   const inputEventName = ref<string>('');
-  const inputEventStartsAtNz = ref<string>('');
+  const inputEventUrl = ref<string>('');
+  const inputEventDate = ref<string>('');
+  const inputEventIsFullDay = ref<boolean>(false);
+  const inputEventStartTime = ref<string>('');
+  const inputEventEndTime = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.inputErrors.find(inputError => inputError.id === id)?.message;
@@ -36,7 +41,7 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
-    body.append('startsAtNz', inputEventStartsAtNz.value);
+    body.append('date', inputEventDate.value);
 
     const init = { method: "POST", body: body };
 
@@ -52,25 +57,74 @@
 
     <form @submit.prevent="postEvent" :action="`/api/account/events`" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Create Event</legend>
+        <legend>Event Information</legend>
 
         <InputText
           v-model="inputEventName"
           label="Name"
           name="name"
           id="name"
-          :maxlength="64"
+          :maxlength="256"
+          :required="true"
           help="The name of your event"
           :error="getError('name')" />
 
         <InputText
-          v-model="inputEventStartsAtNz"
-          type="datetime-local"
-          label="Date & Time (NZ)"
-          name="startsAtNz"
-          id="startsAtNz"
-          help="Event starts here"
+          v-model="inputEventUrl"
+          label="Link"
+          name="url"
+          id="url"
+          type="url"
+          placeholder="https://example.com"
+          pattern="https://.*"
+          :maxlength="256"
+          help="The name of your event"
+          :error="getError('name')" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Date and Time</legend>
+
+        <InputText
+          v-model="inputEventDate"
+          type="date"
+          label="Event Date"
+          name="date"
+          id="date"
+          :required="true"
           :error="getError('startsAtNz')" />
+
+        <InputCheckbox
+          v-model="inputEventIsFullDay"
+          label="This is an all-day event"
+          id="is-full-day"
+          name="is-full-day"
+          controls="time-inputs"
+          :expanded="!inputEventIsFullDay" />
+
+        <fieldset id="time-inputs" :hidden="inputEventIsFullDay ? true : undefined">
+          <legend>Time</legend>
+
+          <InputText
+            v-model="inputEventStartTime"
+            type="time"
+            label="Start Time"
+            name="start-time"
+            id="start-time"
+            :required="!inputEventIsFullDay"
+            :disabled="inputEventIsFullDay"
+            :error="getError('startTime')" />
+
+          <InputText
+            v-model="inputEventEndTime"
+            type="time"
+            label="End Time"
+            name="end-time"
+            id="end-time"
+            :required="!inputEventIsFullDay"
+            :disabled="inputEventIsFullDay"
+            :error="getError('endTime')" />
+        </fieldset>
       </fieldset>
 
       <SubmitButton

@@ -5,6 +5,8 @@
     label?: string,
     name: string,
     id: string,
+    placeholder?: string,
+    pattern?: string,
     error?: string,
     maxlength?: number,
     help?: string,
@@ -31,6 +33,8 @@
     :required="required ? true : undefined"
     :disabled="disabled ?? undefined"
     :readonly="readonly ?? undefined"
+    :pattern="pattern ?? undefined"
+    :placeholder="placeholder ?? undefined"
     :aria-required="required ? true : undefined" />
   <small v-if="help" :id="`help-${id}`">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
