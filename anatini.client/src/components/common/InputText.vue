@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  const model = defineModel<string>();
+  import type { InputAutoCompleteAttribute, InputTypeHTMLAttribute } from 'vue';
+
+  const model = defineModel<string | number>();
 
   defineProps<{
     label?: string,
@@ -10,11 +12,12 @@
     error?: string,
     maxlength?: number,
     help?: string,
-    autocomplete?: string,
-    type?: string,
+    autocomplete?: InputAutoCompleteAttribute,
+    type?: InputTypeHTMLAttribute,
     required?: boolean,
     disabled?: boolean,
     readonly?: boolean,
+    min?: number | string,
     input?: (payload: InputEvent) => void,
   }>();
 </script>
@@ -35,6 +38,7 @@
     :disabled="disabled ?? undefined"
     :readonly="readonly ?? undefined"
     :pattern="pattern ?? undefined"
+    :min="min ?? undefined"
     :placeholder="placeholder ?? undefined"
     @input="input"
     :aria-required="required ? true : undefined" />

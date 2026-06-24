@@ -34,6 +34,8 @@
   const inputEventEndDate = ref<string>('');
   const inputEventEndTime = ref<string>('');
   const inputEventFrequency = ref<string>('Weekly');
+  const inputEventInterval = ref<number>(1);
+  const inputEventUntil = ref<string>('');
   const isEventEndDateDirty = ref<boolean>(false);
 
   watch(inputEventStartDate, (date) => {
@@ -160,6 +162,7 @@
           label="This event repeats"
           id="is-recurring" />
 
+        <!-- TODO handle requied?-->
         <InputSelect
           :options="frequencyOptions"
           label="Frequency"
@@ -167,6 +170,27 @@
           id="frequency"
           :disabled="!inputEventIsRecurring"
           v-model="inputEventFrequency" />
+
+        <InputText
+          type="number"
+          v-model="inputEventInterval"
+          label="Repeats every"
+          name="interval"
+          id="interval"
+          min="1"
+          :disabled="!inputEventIsRecurring"
+          :required="inputEventIsRecurring"
+          help="Every X Days/Weeks/Months/Years" />
+
+        <InputText
+          type="date"
+          label="Ends On"
+          name="until"
+          id="until"
+          :disabled="!inputEventIsRecurring"
+          :required="inputEventIsRecurring"
+          v-model="inputEventUntil"
+          help="Optional, leave blank if event has no end point" />
       </fieldset>
 
       <SubmitButton
