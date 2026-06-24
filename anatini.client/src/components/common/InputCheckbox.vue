@@ -3,7 +3,7 @@
 
   defineProps<{
     label: string,
-    name: string,
+    name?: string,
     id: string,
     help?: string,
     controls?: string,
@@ -15,7 +15,7 @@
   <input
     type="checkbox"
     :id="`input-${id}`"
-    :name="name"
+    :name="name ?? undefined"
     v-model="model"
     :aria-controls="controls ?? undefined"
     :aria-expanded="expanded ?? undefined"

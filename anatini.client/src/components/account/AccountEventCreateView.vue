@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import InputText from '../common/InputText.vue';
   import type { InputError, Status, StatusActions } from '@/types';
   import { tidy } from '../common/utils';
@@ -19,10 +19,22 @@
 
   const inputEventName = ref<string>('');
   const inputEventUrl = ref<string>('');
-  const inputEventDate = ref<string>('');
   const inputEventIsFullDay = ref<boolean>(false);
+  const inputEventStartDate = ref<string>('');
   const inputEventStartTime = ref<string>('');
+  const inputEventEndDate = ref<string>('');
   const inputEventEndTime = ref<string>('');
+  const isEventEndDateDirty = ref<boolean>(false);
+
+  watch(inputEventStartDate, (date) => {
+    if (!isEventEndDateDirty.value) {
+      inputEventEndDate.value = date;
+    }
+  });
+
+  function onEventEndDateInput(): void {
+    isEventEndDateDirty.value = true;
+  }
 
   function getError(id: string): string | undefined {
     return props.inputErrors.find(inputError => inputError.id === id)?.message;
@@ -41,7 +53,7 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
-    body.append('date', inputEventDate.value);
+    body.append('startDate', inputEventStartDate.value);
 
     const init = { method: "POST", body: body };
 
@@ -78,53 +90,56 @@
           placeholder="https://example.com"
           pattern="https://.*"
           :maxlength="256"
-          help="The name of your event"
+          help="The link to your event"
           :error="getError('name')" />
       </fieldset>
 
       <fieldset>
         <legend>Date and Time</legend>
 
-        <InputText
-          v-model="inputEventDate"
-          type="date"
-          label="Event Date"
-          name="date"
-          id="date"
-          :required="true"
-          :error="getError('startsAtNz')" />
-
         <InputCheckbox
           v-model="inputEventIsFullDay"
           label="This is an all-day event"
-          id="is-full-day"
-          name="is-full-day"
-          controls="time-inputs"
-          :expanded="!inputEventIsFullDay" />
+          id="is-full-day" />
 
-        <fieldset id="time-inputs" :hidden="inputEventIsFullDay ? true : undefined">
-          <legend>Time</legend>
+        <InputText
+          v-model="inputEventStartDate"
+          type="date"
+          label="Start Date"
+          name="start-date"
+          id="start-date"
+          :required="true"
+          :error="getError('startDate')" />
 
-          <InputText
-            v-model="inputEventStartTime"
-            type="time"
-            label="Start Time"
-            name="start-time"
-            id="start-time"
-            :required="!inputEventIsFullDay"
-            :disabled="inputEventIsFullDay"
-            :error="getError('startTime')" />
+        <InputText
+          v-model="inputEventStartTime"
+          type="time"
+          label="Start Time"
+          name="start-time"
+          id="start-time"
+          :required="!inputEventIsFullDay"
+          :disabled="inputEventIsFullDay"
+          :error="getError('startTime')" />
 
-          <InputText
-            v-model="inputEventEndTime"
-            type="time"
-            label="End Time"
-            name="end-time"
-            id="end-time"
-            :required="!inputEventIsFullDay"
-            :disabled="inputEventIsFullDay"
-            :error="getError('endTime')" />
-        </fieldset>
+        <InputText
+          v-model="inputEventEndDate"
+          type="date"
+          label="End Date"
+          name="end-date"
+          id="end-date"
+          :required="true"
+          :input="onEventEndDateInput"
+          :error="getError('endDate')" />
+
+        <InputText
+          v-model="inputEventEndTime"
+          type="time"
+          label="End Time"
+          name="end-time"
+          id="end-time"
+          :required="!inputEventIsFullDay"
+          :disabled="inputEventIsFullDay"
+          :error="getError('endTime')" />
       </fieldset>
 
       <SubmitButton

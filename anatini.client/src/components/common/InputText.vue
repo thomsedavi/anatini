@@ -15,6 +15,7 @@
     required?: boolean,
     disabled?: boolean,
     readonly?: boolean,
+    input?: (payload: InputEvent) => void,
   }>();
 </script>
 
@@ -35,6 +36,7 @@
     :readonly="readonly ?? undefined"
     :pattern="pattern ?? undefined"
     :placeholder="placeholder ?? undefined"
+    @input="input"
     :aria-required="required ? true : undefined" />
   <small v-if="help" :id="`help-${id}`">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
