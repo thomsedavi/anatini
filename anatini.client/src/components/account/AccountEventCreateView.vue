@@ -6,6 +6,7 @@
   import SubmitButton from '../common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import InputCheckbox from '../common/InputCheckbox.vue';
+  import InputSelect from '../common/InputSelect.vue';
  
   const props = defineProps<{
     status: Status,
@@ -17,13 +18,22 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
+  const frequencyOptions = ref([
+    { text: 'Daily', value: 'Daily' },
+    { text: 'Weekly', value: 'Weekly' },
+    { text: 'Monthly', value: 'Monthly' },
+    { text: 'Yearly', value: 'Yearly' }
+  ]);
+
   const inputEventName = ref<string>('');
   const inputEventUrl = ref<string>('');
   const inputEventIsFullDay = ref<boolean>(false);
+  const inputEventIsRecurring = ref<boolean>(false);
   const inputEventStartDate = ref<string>('');
   const inputEventStartTime = ref<string>('');
   const inputEventEndDate = ref<string>('');
   const inputEventEndTime = ref<string>('');
+  const inputEventFrequency = ref<string>('Weekly');
   const isEventEndDateDirty = ref<boolean>(false);
 
   watch(inputEventStartDate, (date) => {
@@ -140,6 +150,23 @@
           :required="!inputEventIsFullDay"
           :disabled="inputEventIsFullDay"
           :error="getError('endTime')" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Recurrence</legend>
+
+        <InputCheckbox
+          v-model="inputEventIsRecurring"
+          label="This event repeats"
+          id="is-recurring" />
+
+        <InputSelect
+          :options="frequencyOptions"
+          label="Frequency"
+          name="frequency"
+          id="frequency"
+          :disabled="!inputEventIsRecurring"
+          v-model="inputEventFrequency" />
       </fieldset>
 
       <SubmitButton
