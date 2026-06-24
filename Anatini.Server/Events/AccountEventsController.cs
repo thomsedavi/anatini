@@ -1,5 +1,7 @@
 ﻿using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +17,13 @@ namespace Anatini.Server.Events
         [Authorize(Policy = "IsTrusted")]
         public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user, context) =>
         {
-            return Ok(new { createEvent.Name });
+            var eventSeries = context.AddUserEventSeries(Visibility.Public, user.Id, createEvent.Name, createEvent.StartsAtNz);
+
+            context.AddEventInstances(eventSeries);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
         }, new ContextSettings { AccessRequired = true });
     }
 }
