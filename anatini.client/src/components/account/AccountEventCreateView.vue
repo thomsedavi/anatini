@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import InputText from '../common/InputText.vue';
-  import type { InputError, Status, StatusActions } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/types';
   import { tidy } from '../common/utils';
   import SubmitButton from '../common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import InputCheckbox from '../common/InputCheckbox.vue';
   import InputSelect from '../common/InputSelect.vue';
+  import VisibilitySelect from '../common/VisibilitySelect.vue';
  
   const props = defineProps<{
     status: Status,
@@ -36,7 +37,10 @@
   const inputEventFrequency = ref<string>('Weekly');
   const inputEventInterval = ref<number>(1);
   const inputEventUntil = ref<string>('');
+  const inputEventHandle = ref<string>('');
   const isEventEndDateDirty = ref<boolean>(false);
+  const inputEventIsDraft = ref<boolean>(false);
+  const inputEventVisibility = ref<Visibility>('Public');
 
   watch(inputEventStartDate, (date) => {
     if (!isEventEndDateDirty.value) {
@@ -57,6 +61,36 @@
 
     const tidiedName = tidy(inputEventName.value);
 
+    const inputErrors: InputError[] = [];
+
+    if (tidiedName === '') {
+      inputErrors.push({ id: 'name', message: 'Name is required' });
+    }
+
+    if (inputEventStartDate.value === '') {
+      inputErrors.push({ id: 'startDate', message: 'Start date is required' });
+    }
+
+    if (inputEventEndDate.value === '') {
+      inputErrors.push({ id: 'endDate', message: 'End date is required' });
+    }
+
+    if (!inputEventIsFullDay.value) {
+      if (inputEventStartTime.value === '') {
+        inputErrors.push({ id: 'startTime', message: 'Start time is required' });
+      }
+
+      if (inputEventEndTime.value === '') {
+        inputErrors.push({ id: 'endTime', message: 'End time is required' });
+      }
+    }
+
+    if (inputErrors.length > 0) {
+      emit('update-errors', inputErrors);
+
+      return;
+    }
+
     emit('update-status', 'pending');
 
     const statusActions: StatusActions = {
@@ -66,6 +100,20 @@
 
     body.append('name', tidiedName);
     body.append('startDate', inputEventStartDate.value);
+    body.append('endDate', inputEventEndDate.value);
+    body.append('visibility', inputEventVisibility.value);
+
+    if (tidy(inputEventHandle.value) !== '') {
+      body.append('handle', tidy(inputEventHandle.value));
+    }
+
+    if (tidy(inputEventUrl.value) !== '') {
+      body.append('url', tidy(inputEventUrl.value));
+    }
+
+    if (inputEventIsDraft.value === true) {
+      body.append('isDraft', 'true');
+    }
 
     const init = { method: "POST", body: body };
 
@@ -102,8 +150,26 @@
           placeholder="https://example.com"
           pattern="https://.*"
           :maxlength="256"
-          help="The link to your event"
-          :error="getError('name')" />
+          help="The external link to your event (e.g. a ticket booking site). For recurring events, this link will be applied to each event but can be modified per event."
+          :error="getError('url')" />
+
+        <InputText
+          v-model="inputEventHandle"
+          label="Handle"
+          name="handle"
+          id="handle"
+          :maxlength="64"
+          help="lower case with hyphens (e.g. 'my-anatini-event'), optional custom web address"
+          :error="getError('handle')" />
+
+        <VisibilitySelect v-model="inputEventVisibility" />
+
+        <InputCheckbox
+          v-model="inputEventIsDraft"
+          label="Save As Draft"
+          id="is-draft"
+          name="is-draft"
+          help="If event is recurring, this enables you to modify individual events before publishing event." />
       </fieldset>
 
       <fieldset>
