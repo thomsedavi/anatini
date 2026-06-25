@@ -786,23 +786,35 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("event_series_id");
 
-                    b.Property<DateTime>("OriginalDateUtc")
+                    b.Property<DateTime>("TargetStartsAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("original_date_utc");
-
-                    b.Property<string>("CustomName")
-                        .HasColumnType("text")
-                        .HasColumnName("custom_name");
+                        .HasColumnName("target_starts_at_utc");
 
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean")
                         .HasColumnName("is_cancelled");
 
-                    b.Property<DateTime?>("RescheduledStartUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("rescheduled_start_utc");
+                    b.Property<string>("OverrideArticle")
+                        .HasColumnType("text")
+                        .HasColumnName("override_article");
 
-                    b.HasKey("EventSeriesId", "OriginalDateUtc")
+                    b.Property<TimeSpan?>("OverrideDuration")
+                        .HasColumnType("interval")
+                        .HasColumnName("override_duration");
+
+                    b.Property<string>("OverrideName")
+                        .HasColumnType("text")
+                        .HasColumnName("override_name");
+
+                    b.Property<DateTime?>("OverrideStartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("override_starts_at_utc");
+
+                    b.Property<string>("OverrideUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("override_url");
+
+                    b.HasKey("EventSeriesId", "TargetStartsAtUtc")
                         .HasName("pk_event_exceptions");
 
                     b.ToTable("event_exceptions", (string)null);
@@ -815,6 +827,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Article")
+                        .HasColumnType("text")
+                        .HasColumnName("article");
+
                     b.Property<DateTime>("EndsAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("ends_at_utc");
@@ -822,6 +838,11 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid>("EventSeriesId")
                         .HasColumnType("uuid")
                         .HasColumnName("event_series_id");
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("handle");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -862,6 +883,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Article")
+                        .HasColumnType("text")
+                        .HasColumnName("article");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc");
@@ -869,6 +894,15 @@ namespace Anatini.Server.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval")
                         .HasColumnName("duration");
+
+                    b.Property<DateTime?>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("handle");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -887,21 +921,21 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("starts_at_utc");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc");
 
+                    b.Property<string>("Url")
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
-
-                    b.Property<DateOnly>("ValidFrom")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_from");
-
-                    b.Property<DateOnly?>("ValidUntil")
-                        .HasColumnType("date")
-                        .HasColumnName("valid_until");
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
