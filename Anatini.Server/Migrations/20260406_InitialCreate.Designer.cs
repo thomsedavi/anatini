@@ -864,6 +864,9 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_event_instances");
 
+                    b.HasIndex("EventSeriesId")
+                        .HasDatabaseName("ix_event_instances_event_series_id");
+
                     b.HasIndex("SpaceId")
                         .HasDatabaseName("ix_event_instances_space_id");
 
@@ -1371,8 +1374,27 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Content");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
+                        .WithMany("Exceptions")
+                        .HasForeignKey("EventSeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_event_exceptions_event_series_event_series_id");
+
+                    b.Navigation("Series");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
                 {
+                    b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
+                        .WithMany("Instances")
+                        .HasForeignKey("EventSeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_event_instances_event_series_event_series_id");
+
                     b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
                         .WithMany("EventInstances")
                         .HasForeignKey("SpaceId")
@@ -1384,6 +1406,8 @@ namespace Anatini.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_event_instances_users_user_id");
+
+                    b.Navigation("Series");
 
                     b.Navigation("Space");
 
@@ -1499,6 +1523,13 @@ namespace Anatini.Server.Migrations
                     b.Navigation("UserEdges");
 
                     b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+                {
+                    b.Navigation("Exceptions");
+
+                    b.Navigation("Instances");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>

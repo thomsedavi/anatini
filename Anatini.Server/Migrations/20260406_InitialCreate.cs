@@ -13,24 +13,6 @@ namespace Anatini.Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "event_exceptions",
-                columns: table => new
-                {
-                    event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
-                    override_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    override_name = table.Column<string>(type: "text", nullable: true),
-                    override_article = table.Column<string>(type: "text", nullable: true),
-                    override_url = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_series_id, x.target_starts_at_utc });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
                 {
@@ -188,38 +170,6 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_contents_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "event_instances",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "text", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    article = table.Column<string>(type: "text", nullable: true),
-                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_event_instances", x => x.id);
-                    table.CheckConstraint("ck_event_instances_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
-                    table.ForeignKey(
-                        name: "fk_event_instances_spaces_space_id",
-                        column: x => x.space_id,
-                        principalTable: "spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_event_instances_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -569,6 +519,68 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "event_exceptions",
+                columns: table => new
+                {
+                    event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
+                    override_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    override_name = table.Column<string>(type: "text", nullable: true),
+                    override_article = table.Column<string>(type: "text", nullable: true),
+                    override_url = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_series_id, x.target_starts_at_utc });
+                    table.ForeignKey(
+                        name: "fk_event_exceptions_event_series_event_series_id",
+                        column: x => x.event_series_id,
+                        principalTable: "event_series",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "event_instances",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    handle = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    article = table.Column<string>(type: "text", nullable: true),
+                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_event_instances", x => x.id);
+                    table.CheckConstraint("ck_event_instances_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.ForeignKey(
+                        name: "fk_event_instances_event_series_event_series_id",
+                        column: x => x.event_series_id,
+                        principalTable: "event_series",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_event_instances_spaces_space_id",
+                        column: x => x.space_id,
+                        principalTable: "spaces",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_event_instances_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_contents_space_id_type_handle",
                 table: "contents",
@@ -588,6 +600,11 @@ namespace Anatini.Server.Migrations
                 table: "contents",
                 column: "published_at_utc",
                 filter: "status = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_instances_event_series_id",
+                table: "event_instances",
+                column: "event_series_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_event_instances_space_id",
@@ -745,9 +762,6 @@ namespace Anatini.Server.Migrations
                 name: "event_instances");
 
             migrationBuilder.DropTable(
-                name: "event_series");
-
-            migrationBuilder.DropTable(
                 name: "logs");
 
             migrationBuilder.DropTable(
@@ -788,6 +802,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_user_edges");
+
+            migrationBuilder.DropTable(
+                name: "event_series");
 
             migrationBuilder.DropTable(
                 name: "contents");

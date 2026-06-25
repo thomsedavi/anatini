@@ -20,8 +20,8 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public ApplicationUser? User { get; set; }
-        public Space? Space { get; set; }
+        public virtual ApplicationUser? User { get; set; }
+        public virtual Space? Space { get; set; }
         public virtual ICollection<ContentImage> Images { get; set; } = [];
         public virtual ICollection<ApplicationUserContentEdge> UserEdges { get; set; } = [];
         public virtual ICollection<ContentVersion> Versions { get; set; } = [];
