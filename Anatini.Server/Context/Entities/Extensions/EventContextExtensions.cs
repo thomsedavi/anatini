@@ -1,22 +1,32 @@
 ﻿using Anatini.Server.Enums;
+using Anatini.Server.Events;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class EventContextExtensions
     {
-        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Visibility visibility, Guid userId, string name, DateTime startsAtNZ)
+        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent)
         {
+            var eventSeriesId = Guid.CreateVersion7();
+            var utcNow = DateTime.UtcNow;
+
             var eventSeries = new EventSeries
             {
-                Id = Guid.CreateVersion7(),
+                Id = eventSeriesId,
                 UserId = userId,
-                Visibility = visibility,
-                Name = name,
-                Duration = new TimeSpan(1, 0, 0),
-                StartsAtUtc = startsAtNZ.ConvertNzToUtc(),
-                CreatedAtUtc = DateTime.UtcNow,
-                UpdatedAtUtc = DateTime.UtcNow
+                Visibility = createEvent.Visibility,
+                Name = createEvent.Name,
+                Article = createEvent.Article,
+                Url = createEvent.Url,
+                StartsAtNz = createEvent.StartsAtNz,
+                EndsAtNz = createEvent.EndsAtNz,
+                Duration = createEvent.Duration,
+                RecurrenceRule = createEvent.RecurrenceRule,
+                ExpiresAtNz = createEvent.StartsAtNz,
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow,
+                Handle = createEvent.Handle ?? eventSeriesId.ToString()
             };
 
             context.Add(eventSeries);
@@ -24,19 +34,24 @@ namespace Anatini.Server.Context.Entities.Extensions
             return eventSeries;
         }
 
-        public static int AddEventInstances(this ApplicationDbContext context, EventSeries eventSeries)
+        public static int AddEventInstances(this ApplicationDbContext context, EventSeries eventSeries, Status status)
         {
             if (eventSeries.RecurrenceRule == null)
             {
                 var eventInstance = new EventInstance
                 {
                     Id = Guid.CreateVersion7(),
+                    Handle = eventSeries.StartsAtNz.GetDate(),
                     EventSeriesId = eventSeries.Id,
                     UserId = eventSeries.UserId,
                     SpaceId = eventSeries.SpaceId,
                     Name = eventSeries.Name,
-                    StartsAtUtc = eventSeries.StartsAtUtc,
-                    EndsAtUtc = eventSeries.StartsAtUtc.Add(eventSeries.Duration)
+                    StartsAtNz = eventSeries.StartsAtNz,
+                    EndsAtNz = eventSeries.StartsAtNz,
+                    Article = eventSeries.Article,
+                    Url = eventSeries.Url,
+                    Status = status,
+                    Visibility = eventSeries.Visibility
                 };
 
                 context.Add(eventInstance);

@@ -187,12 +187,12 @@ namespace Anatini.Server.Migrations
                     name = table.Column<string>(type: "text", nullable: false),
                     article = table.Column<string>(type: "text", nullable: true),
                     url = table.Column<string>(type: "text", nullable: true),
-                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    duration = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    duration = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     recurrence_rule = table.Column<string>(type: "text", nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    expires_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -524,17 +524,18 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    target_starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
-                    override_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    override_starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     override_name = table.Column<string>(type: "text", nullable: true),
                     override_article = table.Column<string>(type: "text", nullable: true),
                     override_url = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_series_id, x.target_starts_at_utc });
+                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_series_id, x.target_starts_at_nz });
                     table.ForeignKey(
                         name: "fk_event_exceptions_event_series_event_series_id",
                         column: x => x.event_series_id,
@@ -554,8 +555,11 @@ namespace Anatini.Server.Migrations
                     handle = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     article = table.Column<string>(type: "text", nullable: true),
-                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    url = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

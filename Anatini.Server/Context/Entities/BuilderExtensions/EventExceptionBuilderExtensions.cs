@@ -9,7 +9,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             eventExceptionBuilder.ToTable("event_exceptions");
 
-            eventExceptionBuilder.HasKey(eventException => new { eventException.EventSeriesId, eventException.OriginalDateUtc });
+            eventExceptionBuilder.HasKey(eventException => new { eventException.EventSeriesId, eventException.TargetStartsAtNz });
+
+            eventExceptionBuilder.HasOneWithMany(eventException => eventException.Series, eventSeries => eventSeries.Exceptions, eventException => eventException.EventSeriesId, DeleteBehavior.Cascade);
         }
     }
 }

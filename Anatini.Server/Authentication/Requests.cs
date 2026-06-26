@@ -14,10 +14,10 @@ namespace Anatini.Server.Authentication
 
     public class SignUpForm
     {
-        [MaxLength(256), DataType(DataType.Text)]
+        [MaxLength(256)]
         public required string Name { get; set; }
 
-        [Handle, MaxLength(256), DataType(DataType.Text)]
+        [Handle, MaxLength(256)]
         public required string Handle { get; set; }
 
         [DataType(DataType.EmailAddress)]
@@ -26,7 +26,7 @@ namespace Anatini.Server.Authentication
         [DataType(DataType.Password)]
         public required string Password { get; set; }
 
-        [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
+        [Display(Name = "Verification Code"), StringLength(8)]
         public required string ConfirmationCode { get; set; }
 
         [EnumDataType(typeof(Visibility))]
@@ -53,7 +53,7 @@ namespace Anatini.Server.Authentication
         [Display(Name = "Email Address"), DataType(DataType.EmailAddress)]
         public required string EmailAddress { get; set; }
 
-        [Display(Name = "Verification Code"), StringLength(8), DataType(DataType.Text)]
+        [Display(Name = "Verification Code"), StringLength(8)]
         public required string VerificationCode { get; set; }
     }
 }

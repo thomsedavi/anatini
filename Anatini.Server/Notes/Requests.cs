@@ -6,7 +6,7 @@ namespace Anatini.Server.Notes
 {
     public class CreateNote
     {
-        [Handle(nullable: true), MaxLength(256), DataType(DataType.Text)]
+        [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }
 
         public required string Article { get; set; }

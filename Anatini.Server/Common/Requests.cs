@@ -7,13 +7,13 @@ namespace Anatini.Server.Common
     {
         public required IFormFile File { get; set; }
 
-        [MaxLength(8), DataType(DataType.Text)]
+        [MaxLength(8)]
         public required string Type { get; set; }
 
-        [Handle, MaxLength(256), DataType(DataType.Text)]
+        [Handle, MaxLength(256)]
         public required string Handle { get; set; }
 
-        [Display(Name = "Alt Text"), MaxLength(125), DataType(DataType.Text)]
+        [Display(Name = "Alt Text"), MaxLength(125)]
         public string? AltText { get; set; }
     }
 }

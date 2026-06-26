@@ -5,7 +5,7 @@ namespace Anatini.Server.Account
 {
     public class UpdateUser
     {
-        [MaxLength(256), DataType(DataType.Text)]
+        [MaxLength(256)]
         public string? Name { get; set; }
 
         public string? About { get; set; }

@@ -11,12 +11,12 @@ namespace Anatini.Server.Context.Entities
         public required string Name { get; set; }
         public string? Article { get; set; }
         public string? Url { get; set; }
-        public required DateTime StartsAtUtc { get; set; }
-        public required TimeSpan Duration { get; set; }
+        public required DateTime StartsAtNz { get; set; }
+        public TimeSpan? Duration { get; set; }
+        public DateTime? EndsAtNz { get; set; }
         public string? RecurrenceRule { get; set; }
-        public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
-        public DateTime? ExpiresAtUtc { get; set; }
+        public DateTime? ExpiresAtNz { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
@@ -29,10 +29,11 @@ namespace Anatini.Server.Context.Entities
     public class EventException
     {
         public required Guid EventSeriesId { get; set; }
-        public required DateTime TargetStartsAtUtc { get; set; }
+        public required DateTime TargetStartsAtNz { get; set; }
         public required bool IsCancelled { get; set; }
-        public DateTime? OverrideStartsAtUtc { get; set; }
+        public DateTime? OverrideStartsAtNz { get; set; }
         public TimeSpan? OverrideDuration { get; set; }
+        public DateTime? OverrideEndsAtNz { get; set; }
         public string? OverrideName { get; set; }
         public string? OverrideArticle { get; set; }
         public string? OverrideUrl { get; set; }
@@ -49,8 +50,11 @@ namespace Anatini.Server.Context.Entities
         public required string Handle { get; set; }
         public required string Name { get; set; }
         public string? Article { get; set; }
-        public required DateTime StartsAtUtc { get; set; }
-        public required DateTime EndsAtUtc { get; set; }
+        public string? Url { get; set; }
+        public required Status Status { get; set; }
+        public required Visibility Visibility { get; set; }
+        public required DateTime StartsAtNz { get; set; }
+        public required DateTime EndsAtNz { get; set; }
 
         public virtual EventSeries Series { get; set; } = null!;
         public virtual ApplicationUser? User { get; set; }

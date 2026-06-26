@@ -11,8 +11,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             eventInstanceBuilder.HasKey(eventInstance => eventInstance.Id);
 
-            eventInstanceBuilder.HasOneWithMany(content => content.User, user => user.EventInstances, content => content.UserId, DeleteBehavior.Restrict, required: false);
-            eventInstanceBuilder.HasOneWithMany(content => content.Space, space => space.EventInstances, content => content.SpaceId, DeleteBehavior.Restrict, required: false);
+            eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.Series, eventSeries => eventSeries.Instances, eventInstance => eventInstance.EventSeriesId, DeleteBehavior.Cascade);
+            eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.User, user => user.EventInstances, eventInstance => eventInstance.UserId, DeleteBehavior.Restrict, required: false);
+            eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.Space, space => space.EventInstances, eventInstance => eventInstance.SpaceId, DeleteBehavior.Restrict, required: false);
         }
     }
 }
