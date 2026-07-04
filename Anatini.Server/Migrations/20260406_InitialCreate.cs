@@ -17,8 +17,8 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalized_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    normalized_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -31,10 +31,10 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    about = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    about = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -48,11 +48,11 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     phone_number = table.Column<string>(type: "text", nullable: true),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     about = table.Column<string>(type: "text", nullable: true),
                     password_hash = table.Column<string>(type: "text", nullable: true),
@@ -64,8 +64,8 @@ namespace Anatini.Server.Migrations
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true),
                     email_confirmed = table.Column<bool>(type: "boolean", nullable: false),
                     phone_number_confirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    normalized_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalized_email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    normalized_user_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -101,7 +101,7 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     space_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -120,10 +120,10 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     space_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -145,14 +145,14 @@ namespace Anatini.Server.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     article = table.Column<string>(type: "text", nullable: true),
-                    url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
                     current_version_number = table.Column<int>(type: "integer", nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -183,15 +183,16 @@ namespace Anatini.Server.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "text", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     article = table.Column<string>(type: "text", nullable: true),
-                    url = table.Column<string>(type: "text", nullable: true),
-                    starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
+                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     duration = table.Column<TimeSpan>(type: "interval", nullable: true),
                     ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    recurrence_rule = table.Column<string>(type: "text", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    recurrence_rule = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     expires_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -222,8 +223,8 @@ namespace Anatini.Server.Migrations
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
                     event_type = table.Column<int>(type: "integer", nullable: false),
-                    ip_address = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    user_agent = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
+                    ip_address = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    user_agent = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     meta_data = table.Column<string>(type: "jsonb", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -271,10 +272,10 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    confirmation_code = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: true),
+                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    confirmation_code = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     email_confirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    normalized_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    normalized_email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -295,7 +296,7 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -314,10 +315,10 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -453,10 +454,10 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     content_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -524,14 +525,14 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    target_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
+                    override_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    override_article = table.Column<string>(type: "text", nullable: true),
+                    override_url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
                     override_starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    override_name = table.Column<string>(type: "text", nullable: true),
-                    override_article = table.Column<string>(type: "text", nullable: true),
-                    override_url = table.Column<string>(type: "text", nullable: true)
+                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -552,14 +553,14 @@ namespace Anatini.Server.Migrations
                     event_series_id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "text", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    article = table.Column<string>(type: "text", nullable: true),
-                    url = table.Column<string>(type: "text", nullable: true),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    article = table.Column<string>(type: "text", nullable: true),
+                    url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
+                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -37,14 +37,14 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(3);
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name")
                         .HasColumnOrder(1);
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("normalized_name")
                         .HasColumnOrder(2);
 
@@ -134,8 +134,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
@@ -151,20 +151,20 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name")
                         .HasColumnOrder(5);
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("normalized_email")
                         .HasColumnOrder(17);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("normalized_user_name")
                         .HasColumnOrder(18);
 
@@ -301,8 +301,8 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("ConfirmationCode")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("confirmation_code")
                         .HasColumnOrder(3);
 
@@ -313,8 +313,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email")
                         .HasColumnOrder(2);
 
@@ -325,8 +325,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("normalized_email")
                         .HasColumnOrder(5);
 
@@ -369,8 +369,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(2);
 
@@ -400,28 +400,28 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Handle")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
                         .HasColumnName("alt_text")
                         .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_container_name")
                         .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_name")
                         .HasColumnOrder(2);
 
@@ -614,14 +614,14 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name")
                         .HasColumnOrder(8);
 
@@ -651,8 +651,8 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(14);
 
                     b.Property<string>("Url")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
                         .HasColumnName("url")
                         .HasColumnOrder(10);
 
@@ -697,28 +697,28 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Handle")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
                         .HasColumnName("alt_text")
                         .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_container_name")
                         .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_name")
                         .HasColumnOrder(2);
 
@@ -781,39 +781,50 @@ namespace Anatini.Server.Migrations
                 {
                     b.Property<Guid>("EventSeriesId")
                         .HasColumnType("uuid")
-                        .HasColumnName("event_series_id");
+                        .HasColumnName("event_series_id")
+                        .HasColumnOrder(0);
 
                     b.Property<DateTime>("TargetStartsAtNz")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("target_starts_at_nz");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("target_starts_at_nz")
+                        .HasColumnOrder(1);
 
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_cancelled");
+                        .HasColumnName("is_cancelled")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("OverrideArticle")
                         .HasColumnType("text")
-                        .HasColumnName("override_article");
+                        .HasColumnName("override_article")
+                        .HasColumnOrder(4);
 
                     b.Property<TimeSpan?>("OverrideDuration")
                         .HasColumnType("interval")
-                        .HasColumnName("override_duration");
+                        .HasColumnName("override_duration")
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime?>("OverrideEndsAtNz")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("override_ends_at_nz");
+                        .HasColumnName("override_ends_at_nz")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("OverrideName")
-                        .HasColumnType("text")
-                        .HasColumnName("override_name");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("override_name")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime?>("OverrideStartsAtNz")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("override_starts_at_nz");
+                        .HasColumnName("override_starts_at_nz")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("OverrideUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("override_url");
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
+                        .HasColumnName("override_url")
+                        .HasColumnOrder(5);
 
                     b.HasKey("EventSeriesId", "TargetStartsAtNz")
                         .HasName("pk_event_exceptions");
@@ -826,53 +837,68 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("Article")
                         .HasColumnType("text")
-                        .HasColumnName("article");
+                        .HasColumnName("article")
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("EndsAtNz")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ends_at_nz");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("ends_at_nz")
+                        .HasColumnOrder(11);
 
                     b.Property<Guid>("EventSeriesId")
                         .HasColumnType("uuid")
-                        .HasColumnName("event_series_id");
+                        .HasColumnName("event_series_id")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("handle");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name")
+                        .HasColumnOrder(7);
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
-                        .HasColumnName("space_id");
+                        .HasColumnName("space_id")
+                        .HasColumnOrder(3);
 
                     b.Property<DateTime>("StartsAtNz")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("starts_at_nz");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("starts_at_nz")
+                        .HasColumnOrder(10);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnName("status")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Url")
-                        .HasColumnType("text")
-                        .HasColumnName("url");
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
+                        .HasColumnName("url")
+                        .HasColumnOrder(9);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
-                        .HasColumnName("visibility");
+                        .HasColumnName("visibility")
+                        .HasColumnOrder(6);
 
                     b.HasKey("Id")
                         .HasName("pk_event_instances");
@@ -897,65 +923,89 @@ namespace Anatini.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("Article")
                         .HasColumnType("text")
-                        .HasColumnName("article");
+                        .HasColumnName("article")
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(14);
 
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("interval")
-                        .HasColumnName("duration");
+                        .HasColumnName("duration")
+                        .HasColumnOrder(10);
 
                     b.Property<DateTime?>("EndsAtNz")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ends_at_nz");
+                        .HasColumnName("ends_at_nz")
+                        .HasColumnOrder(11);
 
                     b.Property<DateTime?>("ExpiresAtNz")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires_at_nz");
+                        .HasColumnName("expires_at_nz")
+                        .HasColumnOrder(13);
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("handle");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name")
+                        .HasColumnOrder(6);
 
                     b.Property<string>("RecurrenceRule")
-                        .HasColumnType("text")
-                        .HasColumnName("recurrence_rule");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("recurrence_rule")
+                        .HasColumnOrder(12);
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
-                        .HasColumnName("space_id");
+                        .HasColumnName("space_id")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("StartsAtNz")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("starts_at_nz");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("starts_at_nz")
+                        .HasColumnOrder(9);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc");
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(15);
 
                     b.Property<string>("Url")
-                        .HasColumnType("text")
-                        .HasColumnName("url");
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
+                        .HasColumnName("url")
+                        .HasColumnOrder(8);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
-                        .HasColumnName("visibility");
+                        .HasColumnName("visibility")
+                        .HasColumnOrder(5);
 
                     b.HasKey("Id")
                         .HasName("pk_event_series");
@@ -992,8 +1042,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("ip_address")
                         .HasColumnOrder(4);
 
@@ -1009,8 +1059,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("UserAgent")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("user_agent")
                         .HasColumnOrder(5);
 
@@ -1046,8 +1096,8 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("About")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
                         .HasColumnName("about")
                         .HasColumnOrder(4);
 
@@ -1058,15 +1108,15 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name")
                         .HasColumnOrder(2);
 
@@ -1105,8 +1155,8 @@ namespace Anatini.Server.Migrations
 
                     b.Property<string>("Handle")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(2);
 
@@ -1136,28 +1186,28 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Handle")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(1);
 
                     b.Property<string>("AltText")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
                         .HasColumnName("alt_text")
                         .HasColumnOrder(4);
 
                     b.Property<string>("BlobContainerName")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_container_name")
                         .HasColumnOrder(3);
 
                     b.Property<string>("BlobName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("blob_name")
                         .HasColumnOrder(2);
 
