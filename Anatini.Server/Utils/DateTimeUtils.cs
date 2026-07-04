@@ -16,5 +16,6 @@ namespace Anatini.Server.Utils
         public static DateTime Truncate(this DateTime dateTime) => new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind);
         public static DateTime ConvertNzToUtc(this DateTime dateTime) => TimeZoneInfo.ConvertTimeToUtc(dateTime, TimeZoneInfoNZ);
         public static DateTime ConvertUtcToNz(this DateTime dateTime) => TimeZoneInfo.ConvertTimeFromUtc(dateTime, TimeZoneInfoNZ);
+        public static DateTime NzNow => TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfoNZ);
     }
 }

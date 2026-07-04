@@ -64,7 +64,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
         public static PropertyBuilder<DateTime> Has(this PropertyBuilder<DateTime> propertyBuilder, int? order = null)
         {
-            propertyBuilder.HasColumnType("timestamp with time zone");
+            var isUtc = propertyBuilder.Metadata.GetColumnName().EndsWith("utc");
+
+            propertyBuilder.HasColumnType(isUtc ? "timestamp with time zone" : "timestamp without time zone");
 
             if (order.HasValue)
             {
