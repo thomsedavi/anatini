@@ -805,7 +805,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(7);
 
                     b.Property<DateTime?>("OverrideEndsAtNz")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("override_ends_at_nz")
                         .HasColumnOrder(8);
 
@@ -816,7 +816,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(3);
 
                     b.Property<DateTime?>("OverrideStartsAtNz")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("override_starts_at_nz")
                         .HasColumnOrder(6);
 
@@ -942,12 +942,12 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(10);
 
                     b.Property<DateTime?>("EndsAtNz")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("ends_at_nz")
                         .HasColumnOrder(11);
 
                     b.Property<DateTime?>("ExpiresAtNz")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("expires_at_nz")
                         .HasColumnOrder(13);
 

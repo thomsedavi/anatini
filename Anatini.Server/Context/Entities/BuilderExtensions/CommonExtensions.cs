@@ -76,6 +76,20 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             return propertyBuilder;
         }
 
+        public static PropertyBuilder<DateTime?> Has(this PropertyBuilder<DateTime?> propertyBuilder, int? order = null)
+        {
+            var isUtc = propertyBuilder.Metadata.GetColumnName().EndsWith("utc");
+
+            propertyBuilder.HasColumnType(isUtc ? "timestamp with time zone" : "timestamp without time zone");
+
+            if (order.HasValue)
+            {
+                propertyBuilder.HasColumnOrder(order.Value);
+            }
+
+            return propertyBuilder;
+        }
+
         public static ReferenceCollectionBuilder<TRelatedEntity, TEntity> HasOneWithMany<TEntity, TRelatedEntity>(this EntityTypeBuilder<TEntity> builder, Expression<Func<TEntity, TRelatedEntity?>> navigationExpression1, Expression<Func<TRelatedEntity, IEnumerable<TEntity>?>> navigationExpression2, Expression<Func<TEntity, object?>> navigationExpression3, DeleteBehavior deleteBehavior, bool required = true) where TEntity : class where TRelatedEntity : class
         {
             return builder.HasOne(navigationExpression1).WithMany(navigationExpression2).HasForeignKey(navigationExpression3).OnDelete(deleteBehavior).IsRequired(required);

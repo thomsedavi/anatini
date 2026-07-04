@@ -191,9 +191,9 @@ namespace Anatini.Server.Migrations
                     url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
                     starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     recurrence_rule = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    expires_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    expires_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -530,9 +530,9 @@ namespace Anatini.Server.Migrations
                     override_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     override_article = table.Column<string>(type: "text", nullable: true),
                     override_url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
-                    override_starts_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    override_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
