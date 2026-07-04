@@ -12,10 +12,10 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userImageBuilder.HasKey(userImage => new { userImage.UserId, userImage.Handle });
 
             userImageBuilder.Property(userImage => userImage.UserId).Has(order: 0);
-            userImageBuilder.Property(userImage => userImage.Handle)!.Has(maxLength: 256, order: 1);
-            userImageBuilder.Property(userImage => userImage.BlobName)!.Has(maxLength: 64, order: 2);
-            userImageBuilder.Property(userImage => userImage.BlobContainerName)!.Has(maxLength: 16, order: 3);
-            userImageBuilder.Property(userImage => userImage.AltText).Has(maxLength: 512, order: 4);
+            userImageBuilder.Property(userImage => userImage.Handle)!.Has(maxLength: 255, order: 1);
+            userImageBuilder.Property(userImage => userImage.BlobName)!.Has(maxLength: 255, order: 2);
+            userImageBuilder.Property(userImage => userImage.BlobContainerName)!.Has(maxLength: 255, order: 3);
+            userImageBuilder.Property(userImage => userImage.AltText).Has(maxLength: 511, order: 4);
             userImageBuilder.Property(userImage => userImage.CreatedAtUtc).Has(order: 5);
             userImageBuilder.Property(userImage => userImage.UpdatedAtUtc).Has(order: 6);
 

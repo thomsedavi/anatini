@@ -12,11 +12,11 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userBuilder.HasKey(user => user.Id);
 
             userBuilder.Property(user => user.Id).Has(order: 0);
-            userBuilder.Property(user => user.Handle)!.Has(maxLength: 256, order: 1);
+            userBuilder.Property(user => user.Handle)!.Has(maxLength: 255, order: 1);
             userBuilder.Property(user => user.Email).Has(order: 2);
             userBuilder.Property(user => user.PhoneNumber).Has(order: 3);
             userBuilder.Property(user => user.UserName).Has(order: 4);
-            userBuilder.Property(user => user.Name)!.Has(maxLength: 256, order: 5);
+            userBuilder.Property(user => user.Name)!.Has(maxLength: 255, order: 5);
             userBuilder.Property(user => user.Visibility).Has(order: 6);
             userBuilder.Property(user => user.About).Has(order: 7);
             userBuilder.Property(user => user.PasswordHash).Has(order: 8);
@@ -28,8 +28,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             userBuilder.Property(user => user.ConcurrencyStamp).Has(order: 14).IsConcurrencyToken();
             userBuilder.Property(user => user.EmailConfirmed).Has(order: 15);
             userBuilder.Property(user => user.PhoneNumberConfirmed).Has(order: 16);
-            userBuilder.Property(user => user.NormalizedEmail).Has(maxLength: 256, order: 17);
-            userBuilder.Property(user => user.NormalizedUserName).Has(maxLength: 256, order: 18);
+            userBuilder.Property(user => user.NormalizedEmail).Has(maxLength: 255, order: 17);
+            userBuilder.Property(user => user.NormalizedUserName).Has(maxLength: 255, order: 18);
             userBuilder.Property(user => user.CreatedAtUtc).Has(order: 19);
             userBuilder.Property(user => user.UpdatedAtUtc).Has(order: 20);
 

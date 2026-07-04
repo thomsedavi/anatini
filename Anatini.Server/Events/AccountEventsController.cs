@@ -17,7 +17,7 @@ namespace Anatini.Server.Events
         [Authorize(Policy = "IsTrusted")]
         public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user, context) =>
         {
-            var eventSeries = context.AddUserEventSeries(user.Id, createEvent);
+            var eventSeries = context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 
             context.AddEventInstances(eventSeries, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 

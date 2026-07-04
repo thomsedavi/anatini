@@ -12,8 +12,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             roleBuilder.HasKey(role => role.Id);
 
             roleBuilder.Property(role => role.Id).Has(order: 0);
-            roleBuilder.Property(role => role.Name).Has(maxLength: 256, order: 1);
-            roleBuilder.Property(role => role.NormalizedName).Has(maxLength: 256, order: 2);
+            roleBuilder.Property(role => role.Name).Has(maxLength: 255, order: 1);
+            roleBuilder.Property(role => role.NormalizedName).Has(maxLength: 255, order: 2);
             roleBuilder.Property(role => role.ConcurrencyStamp).Has(order: 3).IsConcurrencyToken();
 
             roleBuilder.HasIndex(role => role.NormalizedName).HasDatabaseName("ix_roles_normalized_name");

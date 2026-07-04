@@ -8,6 +8,8 @@ namespace Anatini.Server.Context.Entities
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
+        public required Status Status { get; set; }
+        public required Visibility Visibility { get; set; }
         public required string Name { get; set; }
         public string? Article { get; set; }
         public string? Url { get; set; }
@@ -15,7 +17,6 @@ namespace Anatini.Server.Context.Entities
         public TimeSpan? Duration { get; set; }
         public DateTime? EndsAtNz { get; set; }
         public string? RecurrenceRule { get; set; }
-        public required Visibility Visibility { get; set; }
         public DateTime? ExpiresAtNz { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }

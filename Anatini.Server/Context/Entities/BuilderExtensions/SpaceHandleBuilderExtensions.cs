@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             spaceHandleBuilder.Property(spaceHandle => spaceHandle.Id).Has(order: 0);
             spaceHandleBuilder.Property(spaceHandle => spaceHandle.SpaceId).Has(order: 1);
-            spaceHandleBuilder.Property(spaceHandle => spaceHandle.Handle)!.Has(maxLength: 256, order: 2);
+            spaceHandleBuilder.Property(spaceHandle => spaceHandle.Handle)!.Has(maxLength: 255, order: 2);
             spaceHandleBuilder.Property(spaceHandle => spaceHandle.CreatedAtUtc).Has(order: 3);
 
             spaceHandleBuilder.HasOneWithMany(spaceHandle => spaceHandle.Space, space => space.Handles, spaceHandle => spaceHandle.SpaceId, DeleteBehavior.Cascade);

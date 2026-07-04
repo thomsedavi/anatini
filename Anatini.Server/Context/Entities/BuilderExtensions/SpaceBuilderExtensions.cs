@@ -12,10 +12,10 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             spaceBuilder.HasKey(space => space.Id);
 
             spaceBuilder.Property(space => space.Id).Has(order: 0);
-            spaceBuilder.Property(space => space.Handle)!.Has(maxLength: 256, order: 1);
-            spaceBuilder.Property(space => space.Name)!.Has(maxLength: 256, order: 2);
+            spaceBuilder.Property(space => space.Handle)!.Has(maxLength: 255, order: 1);
+            spaceBuilder.Property(space => space.Name)!.Has(maxLength: 255, order: 2);
             spaceBuilder.Property(space => space.Visibility).Has(order: 3);
-            spaceBuilder.Property(space => space.About).Has(maxLength: 512, order: 4);
+            spaceBuilder.Property(space => space.About).Has(maxLength: 511, order: 4);
             spaceBuilder.Property(space => space.CreatedAtUtc).Has(order: 5);
             spaceBuilder.Property(space => space.UpdatedAtUtc).Has(order: 6);
 

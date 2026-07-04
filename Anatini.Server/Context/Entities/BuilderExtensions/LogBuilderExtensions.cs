@@ -15,8 +15,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             logBuilder.Property(log => log.UserId).Has(order: 1);
             logBuilder.Property(log => log.SpaceId).Has(order: 2);
             logBuilder.Property(log => log.EventType).Has(order: 3);
-            logBuilder.Property(log => log.IPAddress)!.Has(maxLength: 16, order: 4);
-            logBuilder.Property(log => log.UserAgent)!.Has(maxLength: 16, order: 5);
+            logBuilder.Property(log => log.IPAddress)!.Has(maxLength: 255, order: 4);
+            logBuilder.Property(log => log.UserAgent)!.Has(maxLength: 255, order: 5);
             logBuilder.Property(log => log.MetaData).Has(order: 6).HasConversion();
             logBuilder.Property(log => log.CreatedAtUtc).Has(order: 7);
 

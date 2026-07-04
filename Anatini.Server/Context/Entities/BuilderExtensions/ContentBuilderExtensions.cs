@@ -15,14 +15,14 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             contentBuilder.Property(content => content.Id).Has(order: 0);
             contentBuilder.Property(content => content.UserId).Has(order: 1);
             contentBuilder.Property(content => content.SpaceId).Has(order: 2);
-            contentBuilder.Property(content => content.Handle)!.Has(maxLength: 256, order: 3);
+            contentBuilder.Property(content => content.Handle)!.Has(maxLength: 255, order: 3);
             contentBuilder.Property(content => content.Type).Has(order: 4);
             contentBuilder.Property(content => content.Status).Has(order: 5);
             contentBuilder.Property(content => content.PublishedAtUtc).Has(order: 6);
             contentBuilder.Property(content => content.Visibility).Has(order: 7);
-            contentBuilder.Property(content => content.Name).Has(maxLength: 256, order: 8);
+            contentBuilder.Property(content => content.Name).Has(maxLength: 255, order: 8);
             contentBuilder.Property(content => content.Article).Has(order: 9);
-            contentBuilder.Property(content => content.Url).Has(maxLength: 2048, order: 10);
+            contentBuilder.Property(content => content.Url).Has(maxLength: 2047, order: 10);
             contentBuilder.Property(content => content.CurrentVersionNumber).Has(order: 11);
             contentBuilder.Property(content => content.ConcurrencyStamp)!.Has(order: 12).IsConcurrencyToken();
             contentBuilder.Property(content => content.CreatedAtUtc).Has(order: 13);
