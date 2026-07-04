@@ -23,7 +23,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 EndsAtNz = createEvent.EndsAtNz,
                 Duration = createEvent.Duration,
                 RecurrenceRule = createEvent.RecurrenceRule,
-                ExpiresAtNz = createEvent.StartsAtNz,
+                ExpiresAtNz = new RecurrenceRule(createEvent.RecurrenceRule).ExpiresAtNz(createEvent.StartsAtNz, createEvent.EndsAtNz, createEvent.Duration),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
                 Handle = createEvent.Handle ?? eventSeriesId.ToString()
