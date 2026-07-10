@@ -16,14 +16,18 @@
     type?: InputTypeHTMLAttribute,
     required?: boolean,
     disabled?: boolean,
+    hidden?: boolean,
     readonly?: boolean,
     min?: number | string,
+    max?: number | string,
+    step?: number | string,
     input?: (payload: InputEvent) => void,
+    change?: (payload: Event) => void,
   }>();
 </script>
 
 <template>
-  <label v-if="label" :for="`input-${id}`">{{ label }}</label>
+  <label v-if="label" :for="`input-${id}`" :hidden="hidden ?? undefined">{{ label }}</label>
   <input
     :type="type ?? 'text'"
     :id="`input-${id}`"
@@ -35,13 +39,17 @@
     :aria-errormessage="error ? `error-${id}` : undefined"
     :autocomplete="autocomplete ?? 'on'"
     :required="required ? true : undefined"
+    :hidden="hidden ?? undefined"
     :disabled="disabled ?? undefined"
     :readonly="readonly ?? undefined"
     :pattern="pattern ?? undefined"
     :min="min ?? undefined"
+    :max="max ?? undefined"
     :placeholder="placeholder ?? undefined"
+    :step="step ?? undefined"
     @input="input"
+    @change="change"
     :aria-required="required ? true : undefined" />
-  <small v-if="help" :id="`help-${id}`">{{ help }}</small>
-  <small v-if="error" :id="`error-${id}`" role="alert">{{ error }}</small>
+  <small v-if="help" :id="`help-${id}`" :hidden="hidden ?? undefined">{{ help }}</small>
+  <small v-if="error" :id="`error-${id}`" role="alert" :hidden="hidden ?? undefined">{{ error }}</small>
 </template>

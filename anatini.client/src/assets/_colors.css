@@ -227,6 +227,12 @@ body {
           background-color: var(--red1);
         }
 
+        select[aria-invalid="true"] {
+          border-color: var(--red2);
+          background-color: var(--red1);
+        }
+
+
         small, output {
           color: var(--text-light);
         }

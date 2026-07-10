@@ -8,6 +8,12 @@ export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
 
+export type SelectOption = {
+  text: string;
+  value: string;
+  disabled?: boolean;
+};
+
 export type Image = {
   uri: string;
   altText: string | null;
