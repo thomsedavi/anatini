@@ -16,7 +16,7 @@
   const inputUserAbout = ref<string>('');
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
-  const pageStatus = ref<string>('Loading account information...'); // TODO add other statuses
+  const pageStatus = ref<string>('Loading account information...');
   const headingMainRef = ref<HTMLElement | null>(null);
   const notes = ref<Note[] | null>(null);
 
@@ -124,6 +124,14 @@
     status.value = newStatus;
   }
 
+  function handleUpdatePageStatus(newPageStatus: string): void {
+    pageStatus.value = newPageStatus;
+
+    setTimeout(() => {
+      pageStatus.value = '';
+    }, 3000);
+  }
+
   function handleUpdateErrors(newInputErrors: InputError[]): void {
     inputErrors.value = newInputErrors;
 
@@ -187,12 +195,13 @@
           @update-about="handleUpdateAbout"
           @update-visibility="handleUpdateVisibility"
           @update-status="handleUpdateStatus"
+          @update-page-status="handleUpdatePageStatus"
           @update-notes="handleUpdateNotes"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>
     </template>
 
-    <p role="status" class="visuallyhidden">{{ pageStatus }}</p>
+    <p role="status" aria-live="polite" class="visuallyhidden" aria-atomic="true">{{ pageStatus }}</p>
   </main>
 </template>

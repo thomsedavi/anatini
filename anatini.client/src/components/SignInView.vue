@@ -147,7 +147,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputEmail) === '' || inputPassword === ''"
         text="Log In"
         busy-text="Logging In..." />
     </form>

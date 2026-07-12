@@ -50,11 +50,11 @@
   }
 
   async function postPost() {
-    inputErrors.value = [];
-
     if (space.value.data === undefined) {
       return;
     }
+
+    inputErrors.value = [];
 
     const tidiedName = tidy(inputPostName.value);
     const tidiedHandle = tidy(inputPostHandle.value);
@@ -179,7 +179,6 @@
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="tidy(inputPostName) === '' || tidy(inputPostHandle) === ''"
           text="Create"
           busy-text="Creating..." />
       </form>

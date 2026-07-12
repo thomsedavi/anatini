@@ -71,12 +71,18 @@
   }
 
   async function patchNote() {
-    if (note.value.data === undefined || noChange()) {
+    if (note.value.data === undefined) {
       return;
     }
 
     emit('update-errors', []);
 
+    if (noChange()) {
+      emit('update-errors', [{ id: 'article', message: 'Note has not been modified' }]);
+
+      return;
+    }
+    
     if (tidy(inputArticle.value) === '') {
       emit('update-errors', [{ id: 'article', message: 'Content is required' }]);
 
@@ -158,7 +164,6 @@
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="noChange()"
           text="Update"
           busy-text="Updating..." />
       </form>

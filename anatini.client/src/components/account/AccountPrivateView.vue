@@ -24,6 +24,10 @@
   }
 
   async function patchAccountPrivacy() {
+    if (noChangePrivacy()) {
+      return;
+    }
+
     emit('update-errors', []);
     emit('update-status', 'pending');
 
@@ -74,7 +78,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="noChangePrivacy()"
         text="Save"
         busy-text="Saving..." />
     </form>

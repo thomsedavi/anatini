@@ -66,6 +66,10 @@
   }
 
   async function patchAccountDisplay() {
+    if (noChangeDisplay()) {
+      return;
+    }
+
     emit('update-errors', []);
 
     const tidiedName = tidy(inputUserName.value);
@@ -195,7 +199,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="noChangeDisplay()"
         text="Save"
         busy-text="Saving..." />
     </form>

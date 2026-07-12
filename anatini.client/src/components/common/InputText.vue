@@ -10,6 +10,7 @@
     placeholder?: string,
     pattern?: string,
     error?: string,
+    controls?: string,
     maxlength?: number,
     help?: string,
     autocomplete?: InputAutoCompleteAttribute,
@@ -21,6 +22,7 @@
     min?: number | string,
     max?: number | string,
     step?: number | string,
+    helpclass?: string,
     input?: (payload: InputEvent) => void,
     change?: (payload: Event) => void,
   }>();
@@ -37,6 +39,7 @@
     :aria-describedby="help ? `help-${id}` : undefined"
     :aria-invalid="error ? true : undefined"
     :aria-errormessage="error ? `error-${id}` : undefined"
+    :aria-controls="controls ?? undefined"
     :autocomplete="autocomplete ?? 'on'"
     :required="required ? true : undefined"
     :hidden="hidden ?? undefined"
@@ -50,6 +53,6 @@
     @input="input"
     @change="change"
     :aria-required="required ? true : undefined" />
-  <small v-if="help" :id="`help-${id}`" :hidden="hidden ?? undefined">{{ help }}</small>
+  <small v-if="help" :id="`help-${id}`" :hidden="hidden ?? undefined" :class="helpclass ?? undefined">{{ help }}</small>
   <small v-if="error" :id="`error-${id}`" role="alert" :hidden="hidden ?? undefined">{{ error }}</small>
 </template>

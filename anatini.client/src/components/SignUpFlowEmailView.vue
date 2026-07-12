@@ -100,7 +100,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputEmail) === ''"
         text="Sign Up"
         busy-text="Signing Up..." />
 

@@ -14,7 +14,6 @@
 
   const props = defineProps<{
     email?: string,
-    confirmationFailed: boolean,
   }>();
 
   const emit = defineEmits<{
@@ -209,7 +208,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputName) === '' || tidy(inputHandle) === '' || tidy(inputPassword) === '' || tidy(inputConfirmationCode) === '' || tidy(inputEmail) === '' || confirmationFailed"
         text="Complete Sign Up"
         busy-text="Completing Sign Up..." />
 

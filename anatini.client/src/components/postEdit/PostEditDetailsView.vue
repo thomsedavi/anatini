@@ -26,6 +26,10 @@
   const inputName = ref<string>(props.name);
 
   function patchPostDetail(): void {
+    if (!detailChanged()) {
+      return;
+    }
+
     if (props.eTag === null) {
       return;
     }
@@ -108,7 +112,6 @@
 
       <SubmitButton
         :busy="pageStatus === 'Updating...'"
-        :disabled="detailChanged() === false"
         text="Update"
         busy-text="Updating..." />
     </form>

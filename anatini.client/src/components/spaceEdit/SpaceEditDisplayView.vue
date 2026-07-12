@@ -85,6 +85,10 @@
   }
 
   async function patchSpaceDisplay() {
+    if (noChange()) {
+      return;
+    }
+
     emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
@@ -168,7 +172,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="noChange()"
         text="Save"
         busy-text="Saving..." />
     </form>

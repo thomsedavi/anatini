@@ -140,7 +140,6 @@
 
         <SubmitButton
           :busy="status === 'pending'"
-          :disabled="noChange()"
           text="Update"
           busy-text="Updating..." />
       </form>

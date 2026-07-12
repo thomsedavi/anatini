@@ -111,7 +111,6 @@
 
       <SubmitButton
         :busy="status === 'pending'"
-        :disabled="tidy(inputArticle) === ''"
         text="Create"
         busy-text="Creating..." />
     </form>
