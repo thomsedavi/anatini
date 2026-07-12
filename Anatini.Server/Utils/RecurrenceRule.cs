@@ -133,6 +133,49 @@ namespace Anatini.Server.Utils
 
         public string? ErrorMessage => errorMessage;
 
+        public IEnumerable<(DateTime, DateTime)> GetInstances(DateTime startsAtNz, DateTime? endsAtNz, TimeSpan? duration)
+        {
+            var result = new List<(DateTime, DateTime)>();
+
+            if (frequency == Frequency.Daily)
+            {
+                if (until.HasValue)
+                {
+
+                }
+                else if (count.HasValue)
+                {
+                    for (var i = 0; i < count.Value; i++)
+                    {
+                        var instanceStartsAtNz = startsAtNz.AddDays(i * interval ?? 1);
+                        DateTime instanceEndsAtNz;
+
+                        if (endsAtNz.HasValue)
+                        {
+                            instanceEndsAtNz = instanceStartsAtNz
+                                .AddDays((int)(endsAtNz.Value.Date - startsAtNz.Date).TotalDays)
+                                .Date
+                                .Add(TimeOnly.FromDateTime(endsAtNz.Value).ToTimeSpan());
+                        }
+                        else if (duration.HasValue)
+                        {
+                            instanceEndsAtNz = instanceStartsAtNz
+                                .Add(duration.Value);
+                        }
+                        else
+                        {
+                            instanceEndsAtNz = instanceStartsAtNz
+                                .AddHours(1);
+                        }
+
+                        result.Add(new (instanceStartsAtNz, instanceEndsAtNz));
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public DateTime? ExpiresAtNz(DateTime startsAtNz, DateTime? endsAtNz, TimeSpan? duration)
         {
             if (!count.HasValue && !until.HasValue)

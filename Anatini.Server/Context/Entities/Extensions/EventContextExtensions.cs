@@ -6,15 +6,18 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class EventContextExtensions
     {
-        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent)
+        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent, Status status)
         {
             var eventSeriesId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
+
+            var recurrenceRule = new RecurrenceRule(createEvent.RecurrenceRule);
 
             var eventSeries = new EventSeries
             {
                 Id = eventSeriesId,
                 UserId = userId,
+                Status = status,
                 Visibility = createEvent.Visibility,
                 Name = createEvent.Name,
                 Article = createEvent.Article,
@@ -23,7 +26,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 EndsAtNz = createEvent.EndsAtNz,
                 Duration = createEvent.Duration,
                 RecurrenceRule = createEvent.RecurrenceRule,
-                ExpiresAtNz = new RecurrenceRule(createEvent.RecurrenceRule).ExpiresAtNz(createEvent.StartsAtNz, createEvent.EndsAtNz, createEvent.Duration),
+                ExpiresAtNz = recurrenceRule.ExpiresAtNz(createEvent.StartsAtNz, createEvent.EndsAtNz, createEvent.Duration),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
                 Handle = createEvent.Handle ?? eventSeriesId.ToString()
@@ -60,8 +63,31 @@ namespace Anatini.Server.Context.Entities.Extensions
             else
             {
                 var eventInstanceCount = 0;
+                var recurrenceRule = new RecurrenceRule(eventSeries.RecurrenceRule);
 
-                // Todo
+                var instances = recurrenceRule.GetInstances(eventSeries.StartsAtNz, eventSeries.EndsAtNz, eventSeries.Duration);
+
+                foreach (var instance in instances)
+                {
+                    var eventInstance = new EventInstance
+                    {
+                        Id = Guid.CreateVersion7(),
+                        Handle = instance.Item1.GetDate(),
+                        EventSeriesId = eventSeries.Id,
+                        UserId = eventSeries.UserId,
+                        SpaceId = eventSeries.SpaceId,
+                        Name = eventSeries.Name,
+                        StartsAtNz = instance.Item1,
+                        EndsAtNz = instance.Item2,
+                        Article = eventSeries.Article,
+                        Url = eventSeries.Url,
+                        Status = status,
+                        Visibility = eventSeries.Visibility
+                    };
+
+                    context.Add(eventInstance);
+                    eventInstanceCount++;
+                }
 
                 return eventInstanceCount;
             }
