@@ -178,6 +178,9 @@
     emit('update-status', 'pending');
 
     const statusActions: StatusActions = {
+      400: () => {
+        emit('update-status', 'error');
+      },
       500: () => {
         emit('update-status', 'error');
       }

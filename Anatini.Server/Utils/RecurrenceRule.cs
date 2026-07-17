@@ -8,6 +8,9 @@ namespace Anatini.Server.Utils
         private readonly int? interval;
         private readonly int? count;
         private readonly DateOnly? until;
+        private readonly int? byDayIndex;
+        private readonly string? byDayDay;
+        private readonly int? byMonthDay;
 
         private readonly string? errorMessage;
 
@@ -76,7 +79,7 @@ namespace Anatini.Server.Utils
                         }
                     }
                     
-                    if (intervalValue != null && intervalValue <= 0)
+                    if (intervalValue != null && intervalValue < 1)
                     {
                         errorMessage = "Recurrence Rule interval must be greater than zero";
 
@@ -97,7 +100,7 @@ namespace Anatini.Server.Utils
                         }
                     }
 
-                    if (countValue != null && countValue <= 0)
+                    if (countValue != null && countValue < 1)
                     {
                         errorMessage = "Recurrence Rule count must be greater than zero";
 
@@ -106,7 +109,7 @@ namespace Anatini.Server.Utils
 
                     if (untilString != null)
                     {
-                        if (DateOnly.TryParse(untilString, out DateOnly untilResult))
+                        if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
                         {
                             untilValue = untilResult;
                         }
@@ -118,11 +121,169 @@ namespace Anatini.Server.Utils
                         }
                     }
 
-                    // if no errors then assign values
                     frequency = Frequency.Daily;
                     interval = intervalValue;
                     count = countValue;
                     until = untilValue;
+                }
+                else if (frequencyString == "MONTHLY")
+                {
+                    var allowedKeys = new HashSet<string> { "FREQ", "INTERVAL", "COUNT", "UNTIL", "BYDAY", "BYMONTHDAY" };
+
+                    if (!dictionary.Keys.All(key => allowedKeys.Contains(key)))
+                    {
+                        errorMessage = "Invalid key in Recurrence Rule";
+                    }
+
+                    dictionary.TryGetValue("INTERVAL", out string? intervalString);
+                    dictionary.TryGetValue("COUNT", out string? countString);
+                    dictionary.TryGetValue("UNTIL", out string? untilString);
+                    dictionary.TryGetValue("BYMONTHDAY", out string? byMonthDayString);
+                    dictionary.TryGetValue("BYDAY", out string? byDayString);
+
+                    int? intervalValue = null;
+                    int? countValue = null;
+                    int? byDayIndexValue = null;
+                    int? byMonthDayValue = null;
+                    string? byDayDayValue = null;
+                    DateOnly? untilValue = null;
+
+                    if (countString != null && untilString != null)
+                    {
+                        errorMessage = "Recurrence Rule must contain either 'COUNT' or 'UNTIL' but not both";
+
+                        return;
+                    }
+
+                    if (intervalString != null)
+                    {
+                        if (int.TryParse(intervalString, out int intervalResult))
+                        {
+                            intervalValue = intervalResult;
+                        }
+                        else
+                        {
+                            errorMessage = "Recurrence Rule interval must be integer";
+
+                            return;
+                        }
+                    }
+
+                    if (intervalValue != null && intervalValue < 1)
+                    {
+                        errorMessage = "Recurrence Rule interval must be greater than zero";
+
+                        return;
+                    }
+
+                    if (countString != null)
+                    {
+                        if (int.TryParse(countString, out int countResult))
+                        {
+                            countValue = countResult;
+                        }
+                        else
+                        {
+                            errorMessage = "Recurrence Rule count must be integer";
+
+                            return;
+                        }
+                    }
+
+                    if (countValue != null && countValue < 1)
+                    {
+                        errorMessage = "Recurrence Rule count must be greater than zero";
+
+                        return;
+                    }
+
+                    if (untilString != null)
+                    {
+                        if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
+                        {
+                            untilValue = untilResult;
+                        }
+                        else
+                        {
+                            errorMessage = "Recurrence Rule until must be date only";
+
+                            return;
+                        }
+                    }
+
+                    if (byMonthDayString != null)
+                    {
+                        if (int.TryParse(byMonthDayString, out int byMonthDayResult))
+                        {
+                            byMonthDayValue = byMonthDayResult;
+                        }
+                        else
+                        {
+                            errorMessage = "Recurrence Rule by month day must be integer";
+
+                            return;
+                        }
+                    }
+
+                    if (byMonthDayValue != null && (byMonthDayValue < 1 || byMonthDayValue > 31))
+                    {
+                        errorMessage = "Recurrence Rule by month day must be between 1 and 31";
+
+                        return;
+                    }
+
+                    if (byDayString != null)
+                    {
+                        if (byDayString.Length < 3)
+                        {
+                            errorMessage = "By Day has a minimum length of three characters";
+
+                            return;
+                        }
+
+                        var byDayDay = byDayString[^2..];
+
+                        var allowedByDayDays = new HashSet<string> { "MO", "TU", "WE", "TH", "FR", "SA", "SU" };
+
+                        if (!allowedByDayDays.Contains(byDayDay))
+                        {
+                            errorMessage = "By Day invalid";
+
+                            return;
+                        }
+
+                        byDayDayValue = byDayDay;
+
+                        var byDayIndex = byDayString[..^2];
+
+                        if (int.TryParse(byDayIndex, out int byDayIndexResult))
+                        {
+                            var allowedByDayIndexes = new HashSet<int> { -1, 1, 2, 3, 4 };
+
+                            if (!allowedByDayIndexes.Contains(byDayIndexResult))
+                            {
+                                errorMessage = "By Day invalid";
+
+                                return;
+                            }
+
+                            byDayIndexValue = byDayIndexResult;
+                        }
+                        else
+                        {
+                            errorMessage = "By Day invalid";
+
+                            return;
+                        }
+                    }
+
+                    frequency = Frequency.Monthly;
+                    interval = intervalValue;
+                    count = countValue;
+                    until = untilValue;
+                    byDayIndex = byDayIndexValue;
+                    byDayDay = byDayDayValue;
+                    byMonthDay = byMonthDayValue;
                 }
                 else
                 {
