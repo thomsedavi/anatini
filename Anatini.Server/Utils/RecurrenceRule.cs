@@ -51,57 +51,7 @@ namespace Anatini.Server.Utils
                         errorMessage = "Invalid key in Recurrence Rule";
                     }
 
-                    dictionary.TryGetValue("COUNT", out string? countString);
-                    dictionary.TryGetValue("UNTIL", out string? untilString);
-
-                    int? countValue = null;
-                    DateOnly? untilValue = null;
-
-                    if (countString != null && untilString != null)
-                    {
-                        errorMessage = "Recurrence Rule must contain either 'COUNT' or 'UNTIL' but not both";
-
-                        return;
-                    }
-
-                    if (countString != null)
-                    {
-                        if (int.TryParse(countString, out int countResult))
-                        {
-                            countValue = countResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule count must be integer";
-
-                            return;
-                        }
-                    }
-
-                    if (countValue != null && countValue < 1)
-                    {
-                        errorMessage = "Recurrence Rule count must be greater than zero";
-
-                        return;
-                    }
-
-                    if (untilString != null)
-                    {
-                        if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
-                        {
-                            untilValue = untilResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule until must be date only";
-
-                            return;
-                        }
-                    }
-
                     frequency = Frequency.Daily;
-                    count = countValue;
-                    until = untilValue;
                 }
                 else if (frequencyString == "WEEKLY")
                 {
@@ -112,55 +62,9 @@ namespace Anatini.Server.Utils
                         errorMessage = "Invalid key in Recurrence Rule";
                     }
 
-                    dictionary.TryGetValue("COUNT", out string? countString);
-                    dictionary.TryGetValue("UNTIL", out string? untilString);
                     dictionary.TryGetValue("BYDAY", out string? byDayString);
 
-                    int? countValue = null;
-                    DateOnly? untilValue = null;
                     string[]? byDayDaysValue = null;
-
-                    if (countString != null && untilString != null)
-                    {
-                        errorMessage = "Recurrence Rule must contain either 'COUNT' or 'UNTIL' but not both";
-
-                        return;
-                    }
-
-                    if (countString != null)
-                    {
-                        if (int.TryParse(countString, out int countResult))
-                        {
-                            countValue = countResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule count must be integer";
-
-                            return;
-                        }
-                    }
-
-                    if (countValue != null && countValue < 1)
-                    {
-                        errorMessage = "Recurrence Rule count must be greater than zero";
-
-                        return;
-                    }
-
-                    if (untilString != null)
-                    {
-                        if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
-                        {
-                            untilValue = untilResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule until must be date only";
-
-                            return;
-                        }
-                    }
 
                     if (byDayString != null)
                     {
@@ -183,8 +87,6 @@ namespace Anatini.Server.Utils
                     }
 
                     frequency = Frequency.Weekly;
-                    count = countValue;
-                    until = untilValue;
                     byDayDays = byDayDaysValue;
                 }
                 else if (frequencyString == "MONTHLY")
@@ -196,58 +98,12 @@ namespace Anatini.Server.Utils
                         errorMessage = "Invalid key in Recurrence Rule";
                     }
 
-                    dictionary.TryGetValue("COUNT", out string? countString);
-                    dictionary.TryGetValue("UNTIL", out string? untilString);
                     dictionary.TryGetValue("BYMONTHDAY", out string? byMonthDayString);
                     dictionary.TryGetValue("BYDAY", out string? byDayString);
 
-                    int? countValue = null;
                     int? byDayIndexValue = null;
                     int? byMonthDayValue = null;
                     string? byDayDayValue = null;
-                    DateOnly? untilValue = null;
-
-                    if (countString != null && untilString != null)
-                    {
-                        errorMessage = "Recurrence Rule must contain either 'COUNT' or 'UNTIL' but not both";
-
-                        return;
-                    }
-
-                    if (countString != null)
-                    {
-                        if (int.TryParse(countString, out int countResult))
-                        {
-                            countValue = countResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule count must be integer";
-
-                            return;
-                        }
-                    }
-
-                    if (countValue != null && countValue < 1)
-                    {
-                        errorMessage = "Recurrence Rule count must be greater than zero";
-
-                        return;
-                    }
-
-                    if (untilString != null)
-                    {
-                        if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
-                        {
-                            untilValue = untilResult;
-                        }
-                        else
-                        {
-                            errorMessage = "Recurrence Rule until must be date only";
-
-                            return;
-                        }
-                    }
 
                     if (byMonthDayString != null)
                     {
@@ -316,8 +172,6 @@ namespace Anatini.Server.Utils
                     }
 
                     frequency = Frequency.Monthly;
-                    count = countValue;
-                    until = untilValue;
                     byDayIndex = byDayIndexValue;
                     byDayDay = byDayDayValue;
                     byMonthDay = byMonthDayValue;
@@ -358,6 +212,57 @@ namespace Anatini.Server.Utils
 
                     interval = intervalValue;
                 }
+
+                dictionary.TryGetValue("COUNT", out string? countString);
+                dictionary.TryGetValue("UNTIL", out string? untilString);
+
+                int? countValue = null;
+                DateOnly? untilValue = null;
+
+                if (countString != null && untilString != null)
+                {
+                    errorMessage = "Recurrence Rule must contain either 'COUNT' or 'UNTIL' but not both";
+
+                    return;
+                }
+
+                if (countString != null)
+                {
+                    if (int.TryParse(countString, out int countResult))
+                    {
+                        countValue = countResult;
+                    }
+                    else
+                    {
+                        errorMessage = "Recurrence Rule count must be integer";
+
+                        return;
+                    }
+                }
+
+                if (countValue != null && countValue < 1)
+                {
+                    errorMessage = "Recurrence Rule count must be greater than zero";
+
+                    return;
+                }
+
+                if (untilString != null)
+                {
+                    if (DateOnly.TryParseExact(untilString, "yyyyMMdd", out DateOnly untilResult))
+                    {
+                        untilValue = untilResult;
+                    }
+                    else
+                    {
+                        errorMessage = "Recurrence Rule until must be date only";
+
+                        return;
+                    }
+                }
+
+                count = countValue;
+                until = untilValue;
             }
         }
 
