@@ -46,7 +46,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
+        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
             return NoContent();
         });
@@ -64,7 +64,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
+        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
@@ -78,8 +78,8 @@ namespace Anatini.Server.Spaces
 
             await BlobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddSpaceImage(space.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
-            await context.SaveChangesAsync();
+            Context.AddSpaceImage(space.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
+            await Context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetImage), new { spaceId = space.Id, imageId = normalizedHandle }, new { SpaceId = space.Id, ImageId = normalizedHandle });
         }, new ContextSettings { AccessRequired = true });
@@ -99,10 +99,10 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountContextAsync(async (user) =>
         {
-            var space = context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
-            await context.SaveChangesAsync();
+            var space = Context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
+            await Context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetSpace), new { spaceId = createSpace.Handle }, space.ToSpaceDto());
         });

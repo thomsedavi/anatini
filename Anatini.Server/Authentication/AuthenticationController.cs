@@ -23,12 +23,12 @@ namespace Anatini.Server.Authentication
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostEmail([FromForm] EmailForm emailForm) => await UsingContextAsync(async context =>
+        public async Task<IActionResult> PostEmail([FromForm] EmailForm emailForm) => await UsingContextAsync(async () =>
         {
             try
             {
-                context.AddUserEmail(emailForm.Email, NormalizeEmail(emailForm.Email));
-                await context.SaveChangesAsync();
+                Context.AddUserEmail(emailForm.Email, NormalizeEmail(emailForm.Email));
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
             {
@@ -46,9 +46,9 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async () =>
         {
-            var userEmail = await context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(NormalizeEmail(signUpForm.Email)));
+            var userEmail = await Context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(NormalizeEmail(signUpForm.Email)));
 
             if (userEmail == null || userEmail.EmailConfirmed)
             {
@@ -57,8 +57,8 @@ namespace Anatini.Server.Authentication
 
             if (userEmail.ConfirmationCode != signUpForm.ConfirmationCode)
             {
-                context.UserEmails.Remove(userEmail);
-                await context.SaveChangesAsync();
+                Context.UserEmails.Remove(userEmail);
+                await Context.SaveChangesAsync();
                 return NotFound();
             }
 
@@ -95,9 +95,9 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async () =>
         {
-            var user = await context.GetUserAsync(NormalizeEmail(signInForm.Email));
+            var user = await Context.GetUserAsync(NormalizeEmail(signInForm.Email));
 
             if (user == null)
             {
@@ -134,7 +134,7 @@ namespace Anatini.Server.Authentication
                 response.IsAuthenticated = true;
                 response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
 
-                var spaces = await context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
+                var spaces = await Context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
                 
                 if (spaces.Count != 0)
                 {

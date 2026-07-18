@@ -33,7 +33,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes(MediaTypeNames.Multipart.FormData)]
-        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingAccountContextAsync(async (user) =>
         {
             if (updateUser.Name != null)
             {
@@ -68,7 +68,7 @@ namespace Anatini.Server.Account
                 user.Visibility = updateUser.Visibility.Value;
             }
 
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return NoContent();
         }, new ContextSettings { AsNoTracking = false });
@@ -86,7 +86,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingAccountContextAsync(async (user) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
@@ -100,8 +100,8 @@ namespace Anatini.Server.Account
 
             await BlobService.UploadAsync(createImage.File, blobContainerName, blobName);
 
-            context.AddUserImage(user.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
-            await context.SaveChangesAsync();
+            Context.AddUserImage(user.Id, normalizedHandle, blobContainerName, blobName, createImage.AltText);
+            await Context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(UsersController.GetImage), "Users", new { userId = user.Id, imageId = normalizedHandle }, new { UserId = user.Id, ImageId = normalizedHandle });
         });

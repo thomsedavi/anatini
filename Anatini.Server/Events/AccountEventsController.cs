@@ -15,13 +15,13 @@ namespace Anatini.Server.Events
     {
         [HttpPost]
         [Authorize(Policy = "IsTrusted")]
-        public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user, context) =>
+        public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user) =>
         {
-            var eventSeries = context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
+            var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 
-            context.AddEventInstances(eventSeries, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
+            Context.AddEventInstances(eventSeries, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return Ok();
         }, new ContextSettings { AccessRequired = true });

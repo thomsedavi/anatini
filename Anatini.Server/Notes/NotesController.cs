@@ -16,9 +16,9 @@ namespace Anatini.Server.Notes
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async (context) =>
+        public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async () =>
         {
-            var notes = context.Notes;
+            var notes = Context.Notes;
 
             notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
             notes = notes.Include(note => note.User).ThenInclude(user => user!.Images);

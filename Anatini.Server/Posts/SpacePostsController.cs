@@ -22,14 +22,14 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string spaceId, [FromForm] CreatePost createPost) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
+        public async Task<IActionResult> PostPost(string spaceId, [FromForm] CreatePost createPost) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
             var eventData = new EventData(HttpContext);
 
             var postId = Guid.CreateVersion7();
 
-            context.AddPost(postId, createPost.Name, createPost.Handle, space.Id);
-            await context.SaveChangesAsync();
+            Context.AddPost(postId, createPost.Name, createPost.Handle, space.Id);
+            await Context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
         }, new ContextSettings { AccessRequired = true });
@@ -44,7 +44,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string spaceId, string postId, [FromForm] UpdatePost updatePost) => await UsingSpacePostContextAsync(spaceId, postId, async (post, context) =>
+        public async Task<IActionResult> PatchPost(string spaceId, string postId, [FromForm] UpdatePost updatePost) => await UsingSpacePostContextAsync(spaceId, postId, async (post) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });

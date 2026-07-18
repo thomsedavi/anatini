@@ -18,9 +18,9 @@ namespace Anatini.Server.Notes
     public class SpaceNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
-        public async Task<IActionResult> GetNotes(string spaceId, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
+        public async Task<IActionResult> GetNotes(string spaceId, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
-            var notes = context.Notes;
+            var notes = Context.Notes;
 
             notes = notes.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtUtc < DateTime.UtcNow);
 
@@ -50,7 +50,7 @@ namespace Anatini.Server.Notes
 
         [Authorize]
         [HttpPost("{noteId}/bookmark")]
-        public async Task<IActionResult> PostNoteBookmark(string spaceId, string noteId) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note, context) =>
+        public async Task<IActionResult> PostNoteBookmark(string spaceId, string noteId) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note) =>
         {
             return Ok();
         });
@@ -61,7 +61,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostNote(string spaceId, [FromForm] CreateNote createNote) => await UsingSpaceContextAsync(spaceId, async (space, context) =>
+        public async Task<IActionResult> PostNote(string spaceId, [FromForm] CreateNote createNote) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createNote.Article);
 
@@ -74,9 +74,9 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, space.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null);
+            var note = Context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, space.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null);
 
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetNote), new { spaceId = space.Id, noteId = note.Id }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
         }, new ContextSettings { AccessRequired = true });
@@ -90,7 +90,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string spaceId, string noteId, [FromForm] UpdateNote updateNote) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note, context) =>
+        public async Task<IActionResult> PatchNote(string spaceId, string noteId, [FromForm] UpdateNote updateNote) => await UsingSpaceNoteContextAsync(spaceId, noteId, async (note) =>
         {
             if (updateNote.Article != null)
             {
@@ -115,7 +115,7 @@ namespace Anatini.Server.Notes
 
             note.UpdatedAtUtc = DateTime.UtcNow;
 
-            await context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return Ok(note.ToNoteEditDto());
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });

@@ -21,15 +21,17 @@ namespace Anatini.Server
         public string NormalizeHandle(string handle) => handle.ToLower();
         public string NormalizeName(string name) => userManager.NormalizeName(name);
         public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
+
+        public ApplicationDbContext Context => context;
         public UserManager<ApplicationUser> UserManager => userManager;
         public IBlobService BlobService => blobService;
 
         [NonAction]
-        public async Task<IActionResult> UsingContextAsync(Func<ApplicationDbContext, Task<IActionResult>> contextFunction)
+        public async Task<IActionResult> UsingContextAsync(Func<Task<IActionResult>> contextFunction)
         {
             try
             {
-                return await contextFunction(context);
+                return await contextFunction();
             }
             catch (Exception ex)
             {
@@ -38,11 +40,11 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountContextAsync(Func<ApplicationUser, ApplicationDbContext, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> UsingAccountContextAsync(Func<ApplicationUser, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
             try
             {
-                return await userContextFunction(user, context);
+                return await userContextFunction(user);
             }
             catch (Exception ex)
             {
@@ -51,11 +53,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
+        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
             try
             {
-                return await noteContextFunction(note, context);
+                return await noteContextFunction(note);
             }
             catch (Exception ex)
             {
@@ -64,11 +66,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceContextAsync(string spaceHandle, Func<Space, ApplicationDbContext, Task<IActionResult>> spaceContextFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceContextAsync(string spaceHandle, Func<Space, Task<IActionResult>> spaceContextFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             try
             {
-                return await spaceContextFunction(space, context);
+                return await spaceContextFunction(space);
             }
             catch (Exception ex)
             {
@@ -77,11 +79,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceNoteContextAsync(string spaceHandle, string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingSpaceNoteContextAsync(string spaceHandle, string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
         {
             try
             {
-                return await noteContextFunction(note, context);
+                return await noteContextFunction(note);
             }
             catch (Exception ex)
             {
@@ -90,11 +92,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContextAsync(string userHandle, Func<ApplicationUser, ApplicationDbContext, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserContextAsync(string userHandle, Func<ApplicationUser, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             try
             {
-                return await userContextFunction(user, context);
+                return await userContextFunction(user);
             }
             catch (Exception ex)
             {
@@ -103,11 +105,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
             try
             {
-                return await noteContextFunction(note, context);
+                return await noteContextFunction(note);
             }
             catch (Exception ex)
             {
@@ -116,11 +118,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpacePostContextAsync(string spaceHandle, string postHandle, Func<Content, ApplicationDbContext, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> UsingSpacePostContextAsync(string spaceHandle, string postHandle, Func<Content, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             try
             {
-                return await postContextFunction(post, context);
+                return await postContextFunction(post);
             }
             catch (Exception ex)
             {
