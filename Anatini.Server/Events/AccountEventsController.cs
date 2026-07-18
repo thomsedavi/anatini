@@ -15,6 +15,8 @@ namespace Anatini.Server.Events
     {
         [HttpPost]
         [Authorize(Policy = "IsTrusted")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user) =>
         {
             var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
@@ -23,7 +25,14 @@ namespace Anatini.Server.Events
 
             await Context.SaveChangesAsync();
 
-            return Ok();
+            return CreatedAtAction(nameof(GetEvent), new { eventId = eventSeries.Id });
         }, new ContextSettings { AccessRequired = true });
+
+        [HttpGet("{eventId}")]
+        [Authorize(Policy = "IsTrusted")]
+        public async Task<IActionResult> GetEvent(string eventId)
+        {
+            return Ok(eventId);
+        }
     }
 }

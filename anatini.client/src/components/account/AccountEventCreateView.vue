@@ -178,6 +178,11 @@
     emit('update-status', 'pending');
 
     const statusActions: StatusActions = {
+      201: () => {
+        emit('update-status', 'success');
+
+        console.log('Handle thing');
+      },
       400: () => {
         emit('update-status', 'error');
       },
