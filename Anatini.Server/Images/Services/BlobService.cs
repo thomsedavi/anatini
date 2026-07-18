@@ -42,13 +42,18 @@ namespace Anatini.Server.Images.Services
             {
                 if (!_cache.TryGetValue(CacheKey, out key) || key == null)
                 {
-                    var startTime = DateTimeOffset.UtcNow.AddMinutes(-15);
-                    var expiryTime = startTime.AddDays(6);
+                    var startsOn = DateTimeOffset.UtcNow.AddMinutes(-15);
+                    var expiresOn = startsOn.AddDays(6);
 
-                    key = await blobServiceClient.GetUserDelegationKeyAsync(startTime, expiryTime);
+                    var options = new BlobGetUserDelegationKeyOptions(expiresOn)
+                    {
+                        StartsOn = startsOn
+                    };
+
+                    key = await blobServiceClient.GetUserDelegationKeyAsync(options);
 
                     var cacheOptions = new MemoryCacheEntryOptions()
-                        .SetAbsoluteExpiration(expiryTime.AddMinutes(-30));
+                        .SetAbsoluteExpiration(expiresOn.AddMinutes(-30));
 
                     _cache.Set(CacheKey, key, cacheOptions);
                 }

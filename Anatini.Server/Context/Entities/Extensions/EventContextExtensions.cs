@@ -65,20 +65,20 @@ namespace Anatini.Server.Context.Entities.Extensions
                 var eventInstanceCount = 0;
                 var recurrenceRule = new RecurrenceRule(eventSeries.RecurrenceRule);
 
-                var instances = recurrenceRule.GetInstances(eventSeries.StartsAtNz, eventSeries.EndsAtNz, eventSeries.Duration);
+                var instancesNz = recurrenceRule.GetInstancesNz(eventSeries.StartsAtNz, eventSeries.EndsAtNz, eventSeries.Duration);
 
-                foreach (var instance in instances)
+                foreach (var instanceNz in instancesNz)
                 {
                     var eventInstance = new EventInstance
                     {
                         Id = Guid.CreateVersion7(),
-                        Handle = instance.Item1.GetDate(),
+                        Handle = instanceNz.Item1.GetDate(),
                         EventSeriesId = eventSeries.Id,
                         UserId = eventSeries.UserId,
                         SpaceId = eventSeries.SpaceId,
                         Name = eventSeries.Name,
-                        StartsAtNz = instance.Item1,
-                        EndsAtNz = instance.Item2,
+                        StartsAtNz = instanceNz.Item1,
+                        EndsAtNz = instanceNz.Item2,
                         Article = eventSeries.Article,
                         Url = eventSeries.Url,
                         Status = status,
