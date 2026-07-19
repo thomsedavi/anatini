@@ -50,25 +50,25 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes(DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingAccountContextAsync(async (user) =>
         {
-            var notes = Context.Notes;
+            var notesQuery = Context.Notes;
 
-            notes = notes.AsNoTracking();
+            notesQuery = notesQuery.AsNoTracking();
 
-            notes = notes.Where(note => note.UserId == user.Id);
+            notesQuery = notesQuery.Where(note => note.UserId == user.Id);
 
             if (lastPublishedAtUtc.HasValue && lastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
             }
 
-            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
 
-            if (noteList == null)
+            if (notes == null)
             {
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
+            return Ok(await Task.WhenAll(notes.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
         });
 
         [Authorize]

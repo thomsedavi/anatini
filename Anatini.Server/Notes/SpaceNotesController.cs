@@ -20,32 +20,32 @@ namespace Anatini.Server.Notes
         [HttpGet]
         public async Task<IActionResult> GetNotes(string spaceId, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceContextAsync(spaceId, async (space) =>
         {
-            var notes = Context.Notes;
+            var notesQuery = Context.Notes;
 
-            notes = notes.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtUtc < DateTime.UtcNow);
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtUtc < DateTime.UtcNow);
 
             if (IsAuthenticated)
             {
-                notes = notes.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                notesQuery = notesQuery.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
             }
             else
             {
-                notes = notes.Where(note => note.Visibility == Visibility.Public);
+                notesQuery = notesQuery.Where(note => note.Visibility == Visibility.Public);
             }
 
             if (lastPublishedAtUtc.HasValue && lastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
             }
 
-            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
 
-            if (noteList == null)
+            if (notes == null)
             {
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
+            return Ok(await Task.WhenAll(notes.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
         });
 
         [Authorize]

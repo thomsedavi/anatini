@@ -18,72 +18,72 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async () =>
         {
-            var notes = Context.Notes;
+            var notesQuery = Context.Notes;
 
-            notes = notes.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
-            notes = notes.Include(note => note.User).ThenInclude(user => user!.Images);
-            notes = notes.Include(note => note.Space).ThenInclude(space => space!.Images);
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
+            notesQuery = notesQuery.Include(note => note.User).ThenInclude(user => user!.Images);
+            notesQuery = notesQuery.Include(note => note.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid userId))
             {
-                notes = notes.Include(note => note.UserEdges.Where(userNote => userNote.SourceUserId == userId));
+                notesQuery = notesQuery.Include(note => note.UserEdges.Where(userNote => userNote.SourceUserId == userId));
 
-                notes = notes.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                notesQuery = notesQuery.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
                 if (query.Bookmarked == "only")
                 {
-                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    notes = notes.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    notes = notes.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
                 }
 
                 if (query.Followed == "only")
                 {
-                    notes = notes.Where(note => note.User != null && note.User.ReceivedUserEdges.Any(userEdge => userEdge.SourceUserId == userId && userEdge.Label == UserUserEdgeLabel.HasFollowed));
+                    notesQuery = notesQuery.Where(note => note.User != null && note.User.ReceivedUserEdges.Any(userEdge => userEdge.SourceUserId == userId && userEdge.Label == UserUserEdgeLabel.HasFollowed));
                 }
                 else if (query.Followed == "hide")
                 {
-                    notes = notes.Where(note => note.User != null && !note.User.ReceivedUserEdges.Any(test => test.SourceUserId == userId && test.Label == UserUserEdgeLabel.HasFollowed));
+                    notesQuery = notesQuery.Where(note => note.User != null && !note.User.ReceivedUserEdges.Any(test => test.SourceUserId == userId && test.Label == UserUserEdgeLabel.HasFollowed));
                 }
             }
             else
             {
-                notes = notes.Where(note => note.Visibility == Visibility.Public);
+                notesQuery = notesQuery.Where(note => note.Visibility == Visibility.Public);
             }
 
             if (query.LastPublishedAtUtc.HasValue && query.LastNoteId.HasValue)
             {
-                notes = notes.Where(note => note.PublishedAtUtc < query.LastPublishedAtUtc.Value || (note.PublishedAtUtc == query.LastPublishedAtUtc.Value && note.Id < query.LastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < query.LastPublishedAtUtc.Value || (note.PublishedAtUtc == query.LastPublishedAtUtc.Value && note.Id < query.LastNoteId.Value));
             }
 
-            var noteList = await notes.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
 
-            if (noteList == null)
+            if (notes == null)
             {
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(noteList.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
+            return Ok(await Task.WhenAll(notes.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
         });
 
         public class NotesQuery

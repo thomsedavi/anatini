@@ -133,20 +133,20 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
         {
-            var users = context.Users.AsQueryable();
+            var usersQuery = context.Users.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                users = users.AsNoTracking();
+                usersQuery = usersQuery.AsNoTracking();
             }
 
-            users = users
+            usersQuery = usersQuery
                 .Include(user => user.Images)
                 .Include(user => user.SpaceEdges.Where(userSpaceEdge => userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ThenInclude(userSpaceEdge => userSpaceEdge.TargetSpace);
 
             if (TryGetUserId(out Guid userId))
             {
-                var user = await users.FirstOrDefaultAsync(user => user.Id == userId);
+                var user = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
 
                 if (user == null)
                 {
@@ -164,35 +164,35 @@ namespace Anatini.Server
         {
             ApplicationUser? user;
 
-            var users = context.Users.AsQueryable();
+            var usersQuery = context.Users.AsQueryable();
 
             if (settings != null)
             {
                 if (settings.AsNoTracking)
                 {
-                    users = users.AsNoTracking();
+                    usersQuery = usersQuery.AsNoTracking();
                 }
 
                 if (settings.IncludeImages)
                 {
-                    users = users.Include((user) => user.Images);
+                    usersQuery = usersQuery.Include((user) => user.Images);
                 }
             }
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                users = users.Include(user => user.ReceivedUserEdges.Where(userUserEdge => userUserEdge.SourceUserId == sourceUserId));
+                usersQuery = usersQuery.Include(user => user.ReceivedUserEdges.Where(userUserEdge => userUserEdge.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(userHandle, out Guid userId))
             {
-                user = await users.FirstOrDefaultAsync(user => user.Id == userId);
+                user = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
             }
             else
             {
                 var normalizedUserHandle = NormalizeHandle(userHandle);
 
-                user = await users.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
+                user = await usersQuery.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
             }
 
             if (user == null)
@@ -224,24 +224,24 @@ namespace Anatini.Server
         {
             Space? space;
 
-            var spaces = context.Spaces.AsQueryable();
+            var spacesQuery = context.Spaces.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                spaces = spaces.AsNoTracking();
+                spacesQuery = spacesQuery.AsNoTracking();
             }
 
-            spaces = spaces.Include(space => space.Images);
+            spacesQuery = spacesQuery.Include(space => space.Images);
 
             if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {
-                space = await spaces.FirstOrDefaultAsync(space => space.Id == spaceId);
+                space = await spacesQuery.FirstOrDefaultAsync(space => space.Id == spaceId);
             }
             else
             {
                 var normalizedSpaceHandle = NormalizeHandle(spaceHandle);
 
-                space = await spaces.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
+                space = await spacesQuery.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
             }
 
             if (space == null)
@@ -283,22 +283,22 @@ namespace Anatini.Server
         {
             Content? post;
 
-            var posts = context.Posts;
+            var postsQuery = context.Posts;
 
             if (settings?.AsNoTracking ?? true)
             {
-                posts = posts.AsNoTracking();
+                postsQuery = postsQuery.AsNoTracking();
             }
 
             if (Guid.TryParse(postHandle, out Guid postId))
             {
-                post = await posts.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
             }
             else
             {
                 var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                post = await posts.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
             }
 
             if (post == null)
@@ -330,22 +330,22 @@ namespace Anatini.Server
         {
             Content? note;
 
-            var notes = context.Notes;
+            var notesQuery = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {
-                notes = notes.AsNoTracking();
+                notesQuery = notesQuery.AsNoTracking();
             }
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                note = await notes.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Id == noteId);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                note = await notes.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Handle == normalizedNoteHandle);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Handle == normalizedNoteHandle);
             }
 
             if (note == null)
@@ -373,26 +373,74 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventHandle, Func<EventSeries, Task<IActionResult>> eventFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            EventSeries? eventSeries;
+
+            var eventSeriesQuery = context.EventSeries.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                eventSeriesQuery = eventSeriesQuery.AsNoTracking();
+            }
+
+            if (Guid.TryParse(eventHandle, out Guid eventId))
+            {
+                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == eventId);
+            }
+            else
+            {
+                var normalizedNoteHandle = NormalizeHandle(eventHandle);
+
+                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+            }
+
+            if (eventSeries == null)
+            {
+                return NotFound();
+            }
+
+            if (eventSeries.Visibility == Visibility.Public)
+            {
+                return await eventFunction(eventSeries);
+            }
+
+            if (!IsAuthenticated)
+            {
+                return NotFound();
+            }
+
+            if (eventSeries.Visibility == Visibility.Protected)
+            {
+                return await eventFunction(eventSeries);
+            }
+
+            // TODO handle Private
+            return NotFound();
+        }, settings);
+
+
+        [NonAction]
         public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             Content? note;
 
-            var notes = context.Notes;
+            var notesQuery = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {
-                notes = notes.AsNoTracking();
+                notesQuery = notesQuery.AsNoTracking();
             }
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
             }
 
             if (note == null)
@@ -424,22 +472,22 @@ namespace Anatini.Server
         {
             Content? note;
 
-            var notes = context.Notes;
+            var notesQuery = context.Notes;
 
             if (settings?.AsNoTracking ?? true)
             {
-                notes = notes.AsNoTracking();
+                notesQuery = notesQuery.AsNoTracking();
             }
 
             if (Guid.TryParse(noteHandle, out Guid noteId))
             {
-                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
             }
             else
             {
                 var normalizedNoteHandle = NormalizeHandle(noteHandle);
 
-                note = await notes.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
             }
 
             if (note == null)
