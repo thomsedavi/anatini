@@ -27,6 +27,8 @@
 
   onMounted(() => {
     if (props.notes === null) {
+      const input = 'notes';
+
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
@@ -36,7 +38,7 @@
         }
       }
 
-      apiFetch('notes', statusActions);
+      apiFetch({ input, statusActions });
     }
   });
 
@@ -67,6 +69,8 @@
   }
   
   function getNotes() {
+    const input = 'notes';
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -98,11 +102,15 @@
       baseSearchParams.value.push({ key: 'followed', value: followedFilter.value });
     }
 
-    apiFetch('notes', statusActions, undefined, baseSearchParams.value);
+    const searchParameters = baseSearchParams.value;
+
+    apiFetch({ input, statusActions, searchParameters });
   }
 
   function getMoreNotes() {
     if (props.notes !== null) {
+      const input = 'notes';
+
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
@@ -118,12 +126,12 @@
 
       const lastNote = props.notes[props.notes.length - 1];
 
-      const moreSearchParams = [...baseSearchParams.value];
+      const searchParameters = [...baseSearchParams.value];
 
-      moreSearchParams.push({ key: 'lastPublishedAtUtc', value: lastNote.publishedAtUtc });
-      moreSearchParams.push({ key: 'lastNoteId', value: lastNote.id });
+      searchParameters.push({ key: 'lastPublishedAtUtc', value: lastNote.publishedAtUtc });
+      searchParameters.push({ key: 'lastNoteId', value: lastNote.id });
 
-      apiFetch('notes', statusActions, undefined, moreSearchParams);
+      apiFetch({ input, statusActions, searchParameters });
     }
   }
 
@@ -146,9 +154,9 @@
       const init: RequestInit = { method: "DELETE" };
 
       if (note.spaceHeader !== null) {
-        apiFetchAuthenticated(`spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+        apiFetchAuthenticated({ input: `spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init });
       } else if (note.userHeader !== null) {
-        apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+        apiFetchAuthenticated({ input: `users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init });
       }
     } else {
       const statusActions: StatusActions = {
@@ -166,9 +174,9 @@
       const init: RequestInit = { method: "POST" };
 
       if (note.spaceHeader !== null) {
-        apiFetchAuthenticated(`spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+        apiFetchAuthenticated({ input: `spaces/${note.spaceHeader.handle}/notes/${note.handle}/${action}`, statusActions, init });
       } else if (note.userHeader !== null) {
-        apiFetchAuthenticated(`users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init);
+        apiFetchAuthenticated({ input: `users/${note.userHeader.handle}/notes/${note.handle}/${action}`, statusActions, init });
       }
     }
   }

@@ -27,6 +27,8 @@
   watch([() => route.params.spaceId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
+    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -45,7 +47,7 @@
       }
     };
 
-    apiFetchAuthenticated(`spaces/${params[0]}/notes/${params[1]}/edit`, statusActions);
+    apiFetchAuthenticated({ input, statusActions });
   };
 
   function noChange(): boolean {
@@ -79,13 +81,15 @@
 
     emit('update-status', 'pending');
 
-    const body = new FormData();
+    const input = `spaces/${route.params.spaceId}/notes/${route.params.noteId}`;
 
     const statusActions: StatusActions = {
       200: () => {
         emit('update-status', 'success');
       }
     }
+
+    const body = new FormData();
 
     if (formatArticle(inputArticle.value) !== note.value.data.article) {
       body.append('article', formatArticle(inputArticle.value));
@@ -97,7 +101,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`spaces/${route.params.spaceId}/notes/${route.params.noteId}`, statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

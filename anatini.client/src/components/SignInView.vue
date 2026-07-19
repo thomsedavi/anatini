@@ -51,6 +51,8 @@
 
     status.value = 'pending';
 
+    const input = 'authentication/sign-in';
+
     const statusActions: StatusActions = {
       200: () => {
         status.value = 'success';
@@ -96,7 +98,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/sign-in', statusActions, init);
+    apiFetch({ input, statusActions, init });
   }
 </script>
 

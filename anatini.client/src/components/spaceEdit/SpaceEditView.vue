@@ -32,6 +32,8 @@
   watch([() => route.params.spaceId], (source: Source) => fetchSpace(parseSource(source)), { immediate: true });
 
   async function fetchSpace(params: string[]) {
+    const input = `spaces/${params[0]}/edit`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -55,7 +57,7 @@
       }
     };
 
-    apiFetchAuthenticated(`spaces/${params[0]}/edit`, statusActions);
+    apiFetchAuthenticated({ input, statusActions });
   };
 
   function getHeading(): string {

@@ -38,6 +38,8 @@
 
     emit('update-status', 'pending');
 
+    const input = 'account/notes';
+
     const statusActions: StatusActions = {
       201: () => {
         emit('update-status', 'success');
@@ -64,7 +66,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated('account/notes', statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

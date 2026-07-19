@@ -43,6 +43,8 @@
 
     status.value = 'pending';
 
+    const input = 'authentication/email';
+
     const statusActions: StatusActions = {
       204: () => {
         emit('submitEmail', tidiedEmail);
@@ -64,7 +66,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/email', statusActions, init);
+    apiFetch({ input, statusActions, init });
   }
 </script>
 

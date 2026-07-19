@@ -83,6 +83,8 @@
 
     status.value = 'pending';
 
+    const input = 'authentication/sign-up';
+
     const statusActions: StatusActions = {
       200: () => {
         store.isAuthenticated = true;
@@ -124,7 +126,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetch('authentication/sign-up', statusActions, init);
+    apiFetch({ input, statusActions, init });
   }
 </script>
 

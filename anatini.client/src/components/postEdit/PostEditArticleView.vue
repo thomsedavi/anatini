@@ -43,6 +43,8 @@
 
       const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
 
+      const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+
       const statusActions: StatusActions = {
         204: (response?: Response) => {
           emit('update-article', article);
@@ -53,7 +55,7 @@
         }
       }
 
-      apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     }
   }
 
@@ -78,6 +80,8 @@
 
       const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
 
+      const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+
       const statusActions: StatusActions = {
         204: (response?: Response) => {
           emit('update-article', article);
@@ -88,7 +92,7 @@
         }
       }
 
-      apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     }
   }
   

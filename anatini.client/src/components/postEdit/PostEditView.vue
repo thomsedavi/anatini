@@ -32,6 +32,8 @@
   watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
   async function fetchPost(params: string[]) {
+    const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -55,7 +57,7 @@
       }
     }
 
-    apiFetchAuthenticated(`spaces/${params[0]}/posts/${params[1]}/edit`, statusActions);
+    apiFetchAuthenticated({ input, statusActions });
   }
 
   function getHeading(): string {

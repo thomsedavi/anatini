@@ -10,8 +10,8 @@ namespace Anatini.Server.Events
     [Route("api/users/{userId}/events")]
     public class UserEventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [HttpGet("{eventId}")]
-        public async Task<IActionResult> GetEvent(string userId, string eventId) => await UsingUserEventAsync(userId, eventId, async (userEvent) =>
+        [HttpGet("{eventSeriesId}")]
+        public async Task<IActionResult> GetEvent(string userId, string eventSeriesId) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
         {
             return Ok();
         });

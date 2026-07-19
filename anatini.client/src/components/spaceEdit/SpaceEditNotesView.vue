@@ -19,6 +19,8 @@
 
   onMounted(() => {
     if (props.notes === null) {
+      const input = `spaces/${props.spaceId}/notes`;
+
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
@@ -28,7 +30,7 @@
         }
       }
 
-      apiFetchAuthenticated(`spaces/${props.spaceId}/notes`, statusActions);
+      apiFetchAuthenticated({ input, statusActions });
     }
   });
 </script>

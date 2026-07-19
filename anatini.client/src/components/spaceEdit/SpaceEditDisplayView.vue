@@ -53,6 +53,8 @@
   };
 
   async function patch(body: FormData, tidiedName: string) {
+    const input = `spaces/${props.spaceId}`;
+
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
@@ -81,7 +83,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated(`spaces/${props.spaceId}`, statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 
   async function patchSpaceDisplay() {
@@ -114,7 +116,9 @@
       bodyIcon.append('type', 'Icon');
       bodyIcon.append('handle', 'icon');
 
-      const statusActionsIcon: StatusActions = {
+      const input = `spaces/${props.spaceId}/images`;
+
+      const statusActions: StatusActions = {
         201: () => {
           fileIcon.value = null; 
         },
@@ -124,9 +128,9 @@
         }
       }
 
-      const initIcon = { method: "POST", body: bodyIcon };
+      const init = { method: "POST", body: bodyIcon };
 
-      apiFetchAuthenticated(`spaces/${props.spaceId}/images`, statusActionsIcon, initIcon);
+      apiFetchAuthenticated({ input, statusActions, init });
     } else {
       patch(body, tidiedName);
     }

@@ -38,6 +38,8 @@
 
     emit('update-status', 'pending');
 
+    const input = `spaces/${props.spaceId}/notes`;
+
     const statusActions: StatusActions = {
       201: () => {
         emit('update-status', 'success');
@@ -60,7 +62,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated(`spaces/${props.spaceId}/notes`, statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

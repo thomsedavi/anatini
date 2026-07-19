@@ -31,6 +31,8 @@
     emit('update-errors', []);
     emit('update-status', 'pending');
 
+    const input = 'account';
+
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
@@ -59,7 +61,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated('account', statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

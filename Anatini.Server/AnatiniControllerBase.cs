@@ -373,7 +373,7 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventHandle, Func<EventSeries, Task<IActionResult>> eventFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventSeriesHandle, Func<EventSeries, Task<IActionResult>> eventFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             EventSeries? eventSeries;
 
@@ -384,13 +384,13 @@ namespace Anatini.Server
                 eventSeriesQuery = eventSeriesQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(eventHandle, out Guid eventId))
+            if (Guid.TryParse(eventSeriesHandle, out Guid eventId))
             {
                 eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == eventId);
             }
             else
             {
-                var normalizedNoteHandle = NormalizeHandle(eventHandle);
+                var normalizedNoteHandle = NormalizeHandle(eventSeriesHandle);
 
                 eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
             }

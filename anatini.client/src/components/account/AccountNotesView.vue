@@ -18,6 +18,8 @@
 
   onMounted(() => {
     if (props.notes === null) {
+      const input = 'account/notes';
+
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
@@ -27,7 +29,7 @@
         }
       }
 
-      apiFetchAuthenticated(`account/notes`, statusActions);
+      apiFetchAuthenticated({ input, statusActions });
     }
   });
 

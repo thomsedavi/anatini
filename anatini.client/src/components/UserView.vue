@@ -14,6 +14,8 @@
   async function fetchUser(array: (() => string | string[])[]) {
     user.value = { fetching: true };
 
+    const input = `users/${array[0]}`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -32,7 +34,7 @@
       }
     };
 
-    apiFetch(`users/${array[0]}`, statusActions);
+    apiFetch({ input, statusActions });
   }
 
   function getHeading(): string {
@@ -49,6 +51,8 @@
 
   function toggleTrust(): void {
     if (user.value.data?.hasTrusted === true) {
+      const input = `users/${route.params.userId}/trust`;
+
       const statusActions: StatusActions = {
         204: () => {
           if (user.value.data !== undefined) user.value.data.hasTrusted = false;
@@ -57,8 +61,10 @@
 
       const init: RequestInit = { method: "DELETE" };
 
-      apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     } else if (user.value.data?.hasTrusted === false) {
+      const input = `users/${route.params.userId}/trust`;
+
       const statusActions: StatusActions = {
         201: () => {
           if (user.value.data !== undefined) user.value.data.hasTrusted = true;
@@ -67,12 +73,14 @@
 
       const init: RequestInit = { method: "POST" };
 
-      apiFetchAuthenticated(`users/${route.params.userId}/trust`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     }
   }
 
   function toggleFollow(): void {
     if (user.value.data?.hasFollowed === true) {
+      const input = `users/${route.params.userId}/follow`;
+
       const statusActions: StatusActions = {
         204: () => {
           if (user.value.data !== undefined) user.value.data.hasFollowed = false;
@@ -81,8 +89,10 @@
 
       const init: RequestInit = { method: "DELETE" };
 
-      apiFetchAuthenticated(`users/${route.params.userId}/follow`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     } else if (user.value.data?.hasFollowed === false) {
+      const input = `users/${route.params.userId}/follow`;
+
       const statusActions: StatusActions = {
         201: () => {
           if (user.value.data !== undefined) user.value.data.hasFollowed = true;
@@ -91,7 +101,7 @@
 
       const init: RequestInit = { method: "POST" };
 
-      apiFetchAuthenticated(`users/${route.params.userId}/follow`, statusActions, init);
+      apiFetchAuthenticated({ input, statusActions, init });
     }
   }
 </script>

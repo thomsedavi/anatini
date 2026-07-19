@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from 'vue-router'
+import { createWebHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 
 import AboutView from './components/AboutView.vue';
 import HomeView from './components/home/HomeView.vue';
@@ -8,6 +8,7 @@ import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
+import UserEventView from './components/events/UserEventView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';
 import PostEditArticleView from './components/postEdit/PostEditArticleView.vue';
 import PostEditDetailsView from './components/postEdit/PostEditDetailsView.vue';
@@ -36,7 +37,7 @@ import SpaceView from './components/SpaceView.vue';
 import UsersView from './components/UsersView.vue';
 import TagsView from './components/TagsView.vue';
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: HomeView,
@@ -165,6 +166,11 @@ const routes = [
     name: 'Note',
   },
   {
+    path: '/users/:userId/events/:eventId',
+    component: UserEventView,
+    name: 'Event',
+  },
+  {
     path: '/users/:userId',
     component: UserView,
   },
@@ -211,7 +217,7 @@ const routes = [
     component: SpaceView,
     name: 'Space',
   },
-   {
+  {
     path: '/tags/:tagId',
     component: TagsView,
     name: 'Tags',

@@ -33,6 +33,8 @@
   onMounted(() => {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
 
+    const input = 'account';
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -56,7 +58,7 @@
       }
     };
 
-    apiFetchAuthenticated('account', statusActions);
+    apiFetchAuthenticated({ input, statusActions });
   });
 
   function getHeading(): string {

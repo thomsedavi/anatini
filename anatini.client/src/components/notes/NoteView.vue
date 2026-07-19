@@ -12,6 +12,8 @@
   watch([() => route.params.spaceId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
+    const input = `spaces/${params[0]}/notes/${params[1]}`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -29,7 +31,7 @@
       }
     }
 
-    apiFetch(`spaces/${params[0]}/notes/${params[1]}`, statusActions);
+    apiFetch({ input, statusActions });
   }
 
   function getMainHtml(): string {

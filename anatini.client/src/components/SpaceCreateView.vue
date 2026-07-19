@@ -45,6 +45,8 @@
 
     status.value = 'pending';
 
+    const input = 'spaces';
+
     const statusActions: StatusActions = {
       201: () => {
         status.value = 'success';
@@ -70,7 +72,7 @@
 
     const init = { method: "POST", body: body };
 
-    apiFetchAuthenticated('spaces', statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

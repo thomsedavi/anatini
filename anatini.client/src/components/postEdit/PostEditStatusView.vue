@@ -29,6 +29,8 @@
 
     const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
 
+    const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+
     const statusActions: StatusActions = {
         204: (response?: Response) => {
           emit('update-etag', response?.headers.get("ETag") ?? null);
@@ -37,7 +39,7 @@
         }
     }
 
-    apiFetchAuthenticated(`spaces/${props.spaceId}/posts/${props.postId}`, statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 </script>
 

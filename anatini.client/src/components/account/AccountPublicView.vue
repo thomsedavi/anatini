@@ -29,6 +29,8 @@
   const uploadStatus = ref<string>('No file selected');
 
   async function patch(body: FormData, tidiedName: string, formattedAbout: string) {
+    const input = 'account';
+
     const statusActions: StatusActions = {
       204: () => {
         emit('update-status', 'success');
@@ -62,7 +64,7 @@
 
     const init = { method: "PATCH", body: body };
 
-    apiFetchAuthenticated('account', statusActions, init);
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 
   async function patchAccountDisplay() {
@@ -100,7 +102,9 @@
       bodyIcon.append('type', 'Icon');
       bodyIcon.append('handle', 'icon');
 
-      const statusActionsIcon: StatusActions = {
+      const input = 'account/images';
+
+      const statusActions: StatusActions = {
         201: () => {
           patch(body, tidiedName, formattedAbout);
 
@@ -112,9 +116,9 @@
         }
       }
 
-      const initIcon = { method: "POST", body: bodyIcon };
+      const init = { method: "POST", body: bodyIcon };
 
-      apiFetchAuthenticated('account/images', statusActionsIcon, initIcon);
+      apiFetchAuthenticated({ input, statusActions, init });
     } else {
       patch(body, tidiedName, formattedAbout);
     }

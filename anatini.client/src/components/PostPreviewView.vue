@@ -13,6 +13,8 @@
   async function fetchPost(array: (() => string | string[])[]) {
     post.value = { fetching: true };
 
+    const input = `spaces/${array[0]}/posts/${array[1]}/preview`;
+
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
@@ -29,7 +31,7 @@
       }
     };
 
-    await apiFetchAuthenticated(`spaces/${array[0]}/posts/${array[1]}/preview`, statusActions);
+    await apiFetchAuthenticated({ input, statusActions });
   }
 
   function getMainHtml(): string {
