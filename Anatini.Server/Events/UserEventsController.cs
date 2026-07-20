@@ -19,7 +19,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvent(string userId, string eventSeriesId) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
         {
-            return Ok();
+            return Ok(eventSeries.ToEventSeriesDto());
         });
 
         [HttpGet("{eventSeriesId}/occurrences")]
