@@ -5,18 +5,18 @@ namespace Anatini.Server.Events.Extensions
 {
     public static class EventExtensions
     {
-        public static EventSeriesDto ToEventSeriesDto(this EventSeries eventSeries)
+        public static EventOccurrenceDto ToEventSeriesDto(this EventSeries eventSeries)
         {
-            return new EventSeriesDto
+            return new EventOccurrenceDto
             {
                 Id = eventSeries.Id,
                 Name = eventSeries.Name
             };
         }
 
-        public static EventInstanceDto ToEventInstanceDto(this EventInstance eventInstance)
+        public static EventDto ToEventInstanceDto(this EventInstance eventInstance)
         {
-            return new EventInstanceDto
+            return new EventDto
             {
                 Id = eventInstance.Id,
                 Handle = eventInstance.Handle,

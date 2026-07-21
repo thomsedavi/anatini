@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Dtos
 {
-    public class EventInstanceDto
+    public class EventDto
     {
         public required Guid Id { get; set; }
         public required string Handle { get; set; }

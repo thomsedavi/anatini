@@ -116,6 +116,18 @@ export type Post = {
   version: PostVersion;
 }
 
+export type Event = {
+  id: string;
+  name: string;
+}
+
+export type EventOccurrence = {
+  id: string;
+  handle: string;
+  startsAtUtc: string;
+  endsAtUtc: string;
+}
+
 export type Note = {
   id: string;
   userHeader: UserHeader | null;

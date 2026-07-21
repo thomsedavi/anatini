@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import { parseSource, type Source } from '../common/utils';
   import { apiFetchAll } from '../common/apiFetch';
-  import type { Request } from '@/types';
+  import type { Event, EventOccurrence, Request } from '@/types';
 
   const route = useRoute();
 
@@ -14,7 +14,10 @@
       input: `users/${params[0]}/events/${params[1]}`,
       statusActions: {
         200: (response?: Response) => {
-          console.log('response', response);
+          response?.json()
+            .then((value: Event) => {
+              console.log(value.name);
+            });
         }
       }
     };
@@ -23,7 +26,10 @@
       input: `users/${params[0]}/events/${params[1]}/occurrences`,
       statusActions: {
         200: (response?: Response) => {
-          console.log('response', response);
+          response?.json()
+            .then((value: EventOccurrence[]) => {
+              console.log(value);
+            });
         }
       }
     };
