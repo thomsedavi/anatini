@@ -1,41 +1,60 @@
-using System.Text;
-using Anatini.Server;
+using Anatini.Server.Authorization;
+using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Middleware;
 using Azure.Identity;
 using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options => {
+    options
+    .UseNpgsql("TODO", x =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidIssuer = "https://id.anatini.com",
-            ValidAudience = "https://api.anatini.com",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMeItsMe2"))
-        };
+        x.MigrationsHistoryTable("history", "migrations");
+    })
+    .UseSnakeCaseNamingConvention();
+    options.LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging().EnableDetailedErrors();
+});
 
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                context.Token = context.Request.Cookies[Constants.AccessToken];
-                return Task.CompletedTask;
-            }
-        };
-    });
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
+
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+    options.User.RequireUniqueEmail = true;
+})
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
+
+    options.SlidingExpiration = true;
+
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("IsTrusted", policy => policy.AddRequirements(new TrustedUserRequirement()))
@@ -46,7 +65,7 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(x =>
     new BlobServiceClient(
-        new Uri("https://TODO.blob.core.windows.net"),
+        new Uri("TODO"),
         new DefaultAzureCredential()
     ));
 
@@ -61,7 +80,6 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.MapStaticAssets();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
