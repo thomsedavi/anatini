@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Authorization
 {
-    public class TrustedUserRequirement : IAuthorizationRequirement { }
+    public sealed class TrustedUserRequirement : IAuthorizationRequirement { }
 
-    public class TrustedUserHandler(ApplicationDbContext dbContext) : AuthorizationHandler<TrustedUserRequirement>
+    public sealed class TrustedUserHandler(ApplicationDbContext dbContext) : AuthorizationHandler<TrustedUserRequirement>
     {
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TrustedUserRequirement requirement)
         {

@@ -23,7 +23,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostNote([FromForm] CreateNote createNote) => await UsingAccountContextAsync(async (user) =>
+        public async Task<IActionResult> PostNote([FromForm] CreateNote createNote) => await UsingAccountAsync(async (user) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createNote.Article);
 
@@ -88,7 +88,7 @@ namespace Anatini.Server.Notes
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string noteId, [FromForm] UpdateNote updateNote) => await UsingAccountNoteContextAsync(noteId, async (note) =>
+        public async Task<IActionResult> PatchNote(string noteId, [FromForm] UpdateNote updateNote) => await UsingAccountNoteAsync(noteId, async (note) =>
         {
             if (updateNote.Article != null)
             {

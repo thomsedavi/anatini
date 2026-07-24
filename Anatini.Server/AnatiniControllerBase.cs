@@ -6,10 +6,10 @@ using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Anatini.Server
 {
@@ -21,114 +21,12 @@ namespace Anatini.Server
         public string NormalizeHandle(string handle) => handle.ToLower();
         public string NormalizeName(string name) => userManager.NormalizeName(name);
         public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
+        private IActionResult CannotReadResponse() => IsAuthenticated ? Forbid() : Unauthorized();
 
         public ApplicationDbContext Context => context;
         public UserManager<ApplicationUser> UserManager => userManager;
         public IBlobService BlobService => blobService;
-
-        [NonAction]
-        public async Task<IActionResult> UsingContextAsync(Func<Task<IActionResult>> contextFunction)
-        {
-            try
-            {
-                return await contextFunction();
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }
-
-        [NonAction]
-        public async Task<IActionResult> UsingAccountContextAsync(Func<ApplicationUser, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
-        {
-            try
-            {
-                return await userContextFunction(user);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingAccountNoteContextAsync(string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingAccountNoteAsync(noteHandle, async (note) =>
-        {
-            try
-            {
-                return await noteContextFunction(note);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingSpaceContextAsync(string spaceHandle, Func<Space, Task<IActionResult>> spaceContextFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
-        {
-            try
-            {
-                return await spaceContextFunction(space);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingSpaceNoteContextAsync(string spaceHandle, string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
-        {
-            try
-            {
-                return await noteContextFunction(note);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserContextAsync(string userHandle, Func<ApplicationUser, Task<IActionResult>> userContextFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
-        {
-            try
-            {
-                return await userContextFunction(user);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserNoteContextAsync(string userHandle, string noteHandle, Func<Content, Task<IActionResult>> noteContextFunction, ContextSettings? settings = null) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
-        {
-            try
-            {
-                return await noteContextFunction(note);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingSpacePostContextAsync(string spaceHandle, string postHandle, Func<Content, Task<IActionResult>> postContextFunction, ContextSettings? settings = null) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
-        {
-            try
-            {
-                return await postContextFunction(post);
-            }
-            catch (Exception ex)
-            {
-                return ExceptionResult(ex);
-            }
-        }, settings);
+        private IAuthorizationService AuthorizationService => HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
 
         [NonAction]
         public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
@@ -200,23 +98,12 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (user.Visibility == Visibility.Public)
+            if (await CanReadAsync(user.Visibility))
             {
                 return await userFunction(user);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (user.Visibility == Visibility.Protected)
-            {
-                return await userFunction(user);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }
 
         [NonAction]
@@ -251,31 +138,20 @@ namespace Anatini.Server
 
             if (settings?.AccessRequired ?? false)
             {
-                if (TryGetUserId(out Guid userId) && await context.UserSpaceEdges.AnyAsync(userSpace => userSpace.SourceUserId == userId && userSpace.TargetSpaceId == space.Id && userSpace.Label == UserSpaceEdgeLabel.Owner))
+                if (await CanWriteSpaceAsync(space))
                 {
                     return await spaceFunction(space);
                 }
 
-                return Unauthorized();
+                return CannotReadResponse();
             }
 
-            if (space.Visibility == Visibility.Public)
+            if (await CanReadAsync(space.Visibility))
             {
                 return await spaceFunction(space);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (space.Visibility == Visibility.Protected)
-            {
-                return await spaceFunction(space);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }
 
         [NonAction]
@@ -306,23 +182,12 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (post.Visibility == Visibility.Public)
+            if (await CanReadAsync(post.Visibility))
             {
                 return await postFunction(post);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (post.Visibility == Visibility.Protected)
-            {
-                return await postFunction(post);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }, settings);
 
         [NonAction]
@@ -353,23 +218,12 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (note.Visibility == Visibility.Public)
+            if (await CanReadAsync(note.Visibility))
             {
                 return await noteFunction(note);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (note.Visibility == Visibility.Protected)
-            {
-                return await noteFunction(note);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }, settings);
 
         [NonAction]
@@ -400,23 +254,12 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (eventSeries.Visibility == Visibility.Public)
+            if (await CanReadAsync(eventSeries.Visibility))
             {
                 return await eventFunction(eventSeries);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (eventSeries.Visibility == Visibility.Protected)
-            {
-                return await eventFunction(eventSeries);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }, settings);
 
 
@@ -448,23 +291,12 @@ namespace Anatini.Server
                 return NotFound();
             }
 
-            if (note.Visibility == Visibility.Public)
+            if (await CanReadAsync(note.Visibility))
             {
                 return await noteFunction(note);
             }
 
-            if (!IsAuthenticated)
-            {
-                return NotFound();
-            }
-
-            if (note.Visibility == Visibility.Protected)
-            {
-                return await noteFunction(note);
-            }
-
-            // TODO handle Private
-            return NotFound();
+            return CannotReadResponse();
         }, settings);
 
         [NonAction]
@@ -548,16 +380,17 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        private IActionResult ExceptionResult(Exception ex)
+        private async Task<bool> CanReadAsync(Visibility visibility)
         {
-            if (ex is DbUpdateException dbUpdateException && dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
-            {
-                return Conflict();
-            }
-            else
-            {
-                return Problem();
-            }
+            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, visibility, "CanRead");
+            return authorizationResult.Succeeded;
+        }
+
+        [NonAction]
+        private async Task<bool> CanWriteSpaceAsync(Space space)
+        {
+            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, space, "CanWriteSpace");
+            return authorizationResult.Succeeded;
         }
     }
 

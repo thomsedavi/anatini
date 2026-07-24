@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Anatini.Server.Middleware;
 
@@ -18,7 +20,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
             {
                 UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 KeyNotFoundException => HttpStatusCode.NotFound,
-                //DbUpdateException dbEx when dbEx.InnerException is CosmosException { StatusCode: HttpStatusCode.Conflict } => HttpStatusCode.Conflict,
+                DbUpdateException dbEx when dbEx.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => HttpStatusCode.Conflict,
                 _ => HttpStatusCode.InternalServerError
             };
         

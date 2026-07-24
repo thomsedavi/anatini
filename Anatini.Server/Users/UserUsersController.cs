@@ -16,28 +16,28 @@ namespace Anatini.Server.Users
     {
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("trust")]
-        public async Task<IActionResult> PostUserTrust(string userId) => await UsingUserContextAsync(userId, async (user) =>
+        public async Task<IActionResult> PostUserTrust(string userId) => await UsingUserAsync(userId, async (user) =>
         {
             return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("trust")]
-        public async Task<IActionResult> DeleteUserTrust(string userId) => await UsingUserContextAsync(userId, async (user) =>
+        public async Task<IActionResult> DeleteUserTrust(string userId) => await UsingUserAsync(userId, async (user) =>
         {
             return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("follow")]
-        public async Task<IActionResult> PostUserFollow(string userId) => await UsingUserContextAsync(userId, async (user) =>
+        public async Task<IActionResult> PostUserFollow(string userId) => await UsingUserAsync(userId, async (user) =>
         {
             return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("follow")]
-        public async Task<IActionResult> DeleteUserFollow(string userId) => await UsingUserContextAsync(userId, async (user) =>
+        public async Task<IActionResult> DeleteUserFollow(string userId) => await UsingUserAsync(userId, async (user) =>
         {
             return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
         });

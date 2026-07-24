@@ -17,7 +17,7 @@ namespace Anatini.Server.Events
         [Authorize(Policy = "IsTrusted")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountContextAsync(async (user) =>
+        public async Task<IActionResult> PostEvent([FromForm] CreateEvent createEvent) => await UsingAccountAsync(async (user) =>
         {
             var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 

@@ -16,7 +16,7 @@ namespace Anatini.Server.Notes
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query) => await UsingContextAsync(async () =>
+        public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query)
         {
             var notesQuery = Context.Notes;
 
@@ -84,7 +84,7 @@ namespace Anatini.Server.Notes
             }
 
             return Ok(await Task.WhenAll(notes.Select(note => note.ToNoteDtoAsync(note.Handle, BlobService))));
-        });
+        }
 
         public class NotesQuery
         {

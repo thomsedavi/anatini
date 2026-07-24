@@ -46,7 +46,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceContextAsync(spaceId, async (space) =>
+        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceAsync(spaceId, async (space) =>
         {
             return NoContent();
         });
@@ -64,7 +64,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceContextAsync(spaceId, async (space) =>
+        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceAsync(spaceId, async (space) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
@@ -99,7 +99,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountContextAsync(async (user) =>
+        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountAsync(async (user) =>
         {
             var space = Context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
             await Context.SaveChangesAsync();

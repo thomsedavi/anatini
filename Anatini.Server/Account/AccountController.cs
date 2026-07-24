@@ -33,7 +33,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Consumes(MediaTypeNames.Multipart.FormData)]
-        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingAccountContextAsync(async (user) =>
+        public async Task<IActionResult> PatchUser([FromForm] UpdateUser updateUser) => await UsingAccountAsync(async (user) =>
         {
             if (updateUser.Name != null)
             {
@@ -86,7 +86,7 @@ namespace Anatini.Server.Account
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingAccountContextAsync(async (user) =>
+        public async Task<IActionResult> PostImage([FromForm] CreateImage createImage) => await UsingAccountAsync(async (user) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {

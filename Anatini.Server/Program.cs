@@ -37,7 +37,10 @@ builder.Services.AddAuthentication()
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("IsTrusted", policy => policy.AddRequirements(new TrustedUserRequirement()))
+    .AddPolicy("CanRead", policy => policy.AddRequirements(new ReadRequirement()))
+    .AddPolicy("CanWriteSpace", policy => policy.AddRequirements(new WriteSpaceRequirement()));
 
 builder.Services.AddMemoryCache();
 
@@ -47,8 +50,11 @@ builder.Services.AddSingleton(x =>
         new DefaultAzureCredential()
     ));
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 builder.Services.AddScoped<IBlobService, BlobService>();
+builder.Services.AddScoped<IAuthorizationHandler, TrustedUserHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ReadHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, WriteSpaceHandler>();
 
 var app = builder.Build();
 

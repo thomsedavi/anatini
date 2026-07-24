@@ -23,7 +23,7 @@ namespace Anatini.Server.Authentication
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostEmail([FromForm] EmailForm emailForm) => await UsingContextAsync(async () =>
+        public async Task<IActionResult> PostEmail([FromForm] EmailForm emailForm)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace Anatini.Server.Authentication
             }
 
             return NoContent();
-        });
+        }
 
         [HttpPost("sign-up")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
@@ -46,7 +46,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm) => await UsingContextAsync(async () =>
+        public async Task<IActionResult> PostSignUp([FromForm] SignUpForm signUpForm)
         {
             var userEmail = await Context.UserEmails.FirstOrDefaultAsync(userEmail => userEmail.NormalizedEmail.Equals(NormalizeEmail(signUpForm.Email)));
 
@@ -73,7 +73,7 @@ namespace Anatini.Server.Authentication
             await signInManager.SignInAsync(user, isPersistent: signUpForm.IsPersistent ?? false);
 
             return Ok();
-        });
+        }
 
         [Authorize]
         [HttpPost("sign-out")]
@@ -95,7 +95,7 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm) => await UsingContextAsync(async () =>
+        public async Task<IActionResult> PostSignIn([FromForm] SignInForm signInForm)
         {
             var user = await Context.GetUserAsync(NormalizeEmail(signInForm.Email));
 
@@ -112,7 +112,7 @@ namespace Anatini.Server.Authentication
             }
 
             return Ok();
-        });
+        }
 
         [Authorize]
         [HttpPost("email/verify")]
