@@ -105,7 +105,7 @@
 <template>
   <main id="main" tabindex="-1">
     <header>
-      <h1>Log In</h1>
+      <h1>Sign In</h1>
     </header>
 
     <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
@@ -117,41 +117,43 @@
       </ul>
     </section>
 
-    <form @submit.prevent="signIn" action="/api/authentication/sign-in" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
-      <fieldset>
-        <legend>Credentials</legend>
+    <section>
+      <form @submit.prevent="signIn" action="/api/authentication/sign-in" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
+        <fieldset>
+          <legend>Credentials</legend>
 
-        <InputText
-          type="email"
-          v-model="inputEmail"
-          label="Email"
-          name="email"
-          id="email"
-          :error="getError('email')"
-          autocomplete="email" />
+          <InputText
+            type="email"
+            v-model="inputEmail"
+            label="Email"
+            name="email"
+            id="email"
+            :error="getError('email')"
+            autocomplete="email" />
 
-        <InputText
-          type="password"
-          v-model="inputPassword"
-          label="Password"
-          name="password"
-          id="password"
-          :error="getError('password')"
-          autocomplete="current-password" />
+          <InputText
+            type="password"
+            v-model="inputPassword"
+            label="Password"
+            name="password"
+            id="password"
+            :error="getError('password')"
+            autocomplete="current-password" />
 
-        <InputCheckbox
-          v-model="inputIsPersistent"
-          label="Remember Me"
-          name="is-persistent"
-          id="is-persistent"
-          help="Remember you" />
-      </fieldset>
+          <InputCheckbox
+            v-model="inputIsPersistent"
+            label="Remember Me"
+            name="is-persistent"
+            id="is-persistent"
+            help="Remember you" />
+        </fieldset>
 
-      <SubmitButton
-        :busy="status === 'pending'"
-        text="Log In"
-        busy-text="Logging In..." />
-    </form>
+        <SubmitButton
+          :busy="status === 'pending'"
+          text="Log In"
+          busy-text="Logging In..." />
+      </form>
+    </section>
 
     <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>

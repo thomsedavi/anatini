@@ -112,17 +112,17 @@
       <h2>Edit Note</h2>
     </header>
 
-    <section v-if="note === null">
+    <template v-if="note === null">
       <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the note information is fetched.</p>
                 
       <progress max="100">Fetching note...</progress>
-    </section>
+    </template>
 
-    <section v-if="note.error !== undefined">
+    <template v-if="note.error !== undefined">
       <p>
         {{ note.error.body }}
       </p>
-    </section>
+    </template>
 
     <template v-if="note.data !== undefined">
       <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>

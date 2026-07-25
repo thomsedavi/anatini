@@ -201,7 +201,6 @@ body {
       }
     }
 
-    > form,
     > section > form {
       > fieldset {
         border: none;

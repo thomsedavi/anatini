@@ -91,36 +91,38 @@
       </ul>
     </section>
 
-    <form @submit.prevent="postSpace" action="/api/spaces" method="POST" novalidate>
-      <fieldset>
-        <legend class="visuallyhidden">Create Space</legend>
+    <section>
+      <form @submit.prevent="postSpace" action="/api/spaces" method="POST" novalidate>
+        <fieldset>
+          <legend class="visuallyhidden">Create Space</legend>
 
-        <InputText
-          v-model="inputSpaceName"
-          label="Name"
-          name="name"
-          id="name"
-          :maxlength="64"
-          help="The display name of your space"
-          :error="getError('name')" />
+          <InputText
+            v-model="inputSpaceName"
+            label="Name"
+            name="name"
+            id="name"
+            :maxlength="64"
+            help="The display name of your space"
+            :error="getError('name')" />
 
-        <InputText
-          v-model="inputSpaceHandle"
-          label="Handle"
-          name="handle"
-          id="handle"
-          :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-space')"
-          :error="getError('handle')" />
+          <InputText
+            v-model="inputSpaceHandle"
+            label="Handle"
+            name="handle"
+            id="handle"
+            :maxlength="64"
+            help="lower case with hyphens (e.g. 'my-anatini-space')"
+            :error="getError('handle')" />
 
-        <VisibilitySelect v-model="inputVisibility" />
-      </fieldset>
+          <VisibilitySelect v-model="inputVisibility" />
+        </fieldset>
 
-      <SubmitButton
-        :busy="status === 'pending'"
-        text="Create"
-        busy-text="Creating..." />
-    </form>
+        <SubmitButton
+          :busy="status === 'pending'"
+          text="Create"
+          busy-text="Creating..." />
+      </form>
+    </section>
 
     <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
   </main>

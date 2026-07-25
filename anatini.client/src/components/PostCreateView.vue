@@ -158,34 +158,36 @@
         </ul>
       </section>
 
-      <form @submit.prevent="postPost" :action="`/api/spaces/${space.data.id}/posts`" method="POST" novalidate>
-        <fieldset>
-          <legend class="visuallyhidden">Create Post</legend>
+      <section>
+        <form @submit.prevent="postPost" :action="`/api/spaces/${space.data.id}/posts`" method="POST" novalidate>
+          <fieldset>
+            <legend class="visuallyhidden">Create Post</legend>
 
-          <InputText
-            v-model="inputPostName"
-            label="Name"
-            name="name"
-            id="name"
-            :maxlength="64"
-            help="The display name of your post"
-            :error="getError('name')" />
+            <InputText
+              v-model="inputPostName"
+              label="Name"
+              name="name"
+              id="name"
+              :maxlength="64"
+              help="The display name of your post"
+              :error="getError('name')" />
 
-          <InputText
-            v-model="inputPostHandle"
-            label="Handle"
-            name="handle"
-            id="handle"
-            :maxlength="64"
-            help="lower case with hyphens (e.g. 'my-anatini-post')"
-            :error="getError('handle')" />
-        </fieldset>
+            <InputText
+              v-model="inputPostHandle"
+              label="Handle"
+              name="handle"
+              id="handle"
+              :maxlength="64"
+              help="lower case with hyphens (e.g. 'my-anatini-post')"
+              :error="getError('handle')" />
+          </fieldset>
 
-        <SubmitButton
-          :busy="status === 'pending'"
-          text="Create"
-          busy-text="Creating..." />
-      </form>
+          <SubmitButton
+            :busy="status === 'pending'"
+            text="Create"
+            busy-text="Creating..." />
+        </form>
+      </section>
 
       <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
     </template>

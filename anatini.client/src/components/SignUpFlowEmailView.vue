@@ -85,28 +85,30 @@
       </ul>
     </section>
 
-    <form @submit.prevent="email" action="/api/authentication/email" method="POST">
-      <fieldset>
-        <legend class="visuallyhidden">Email Address</legend>
+    <section>
+      <form @submit.prevent="email" action="/api/authentication/email" method="POST">
+        <fieldset>
+          <legend class="visuallyhidden">Email Address</legend>
 
-        <InputText
-          type="email"
-          v-model="inputEmail"
-          label="Email"
-          name="email"
-          id="email"
-          :error="getError('email')"
-          autocomplete="email"
-          :required="true" />
-      </fieldset>
+          <InputText
+            type="email"
+            v-model="inputEmail"
+            label="Email"
+            name="email"
+            id="email"
+            :error="getError('email')"
+            autocomplete="email"
+            :required="true" />
+        </fieldset>
 
-      <SubmitButton
-        :busy="status === 'pending'"
-        text="Sign Up"
-        busy-text="Signing Up..." />
+        <SubmitButton
+          :busy="status === 'pending'"
+          text="Sign Up"
+          busy-text="Signing Up..." />
 
-      <button type="button" @click="emit('submitEmail', undefined)">I Have A Code</button>
-    </form>
+        <button type="button" @click="emit('submitEmail', undefined)">I Have A Code</button>
+      </form>
+    </section>
 
     <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>

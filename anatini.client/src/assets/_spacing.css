@@ -94,6 +94,14 @@ body {
       width: 100%;
       max-width: 50rem;
     }
+
+    > section {
+      > form {
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 25rem;
+      }
+    }
   }
 
   #skip {
@@ -110,12 +118,6 @@ body {
   menu > li > button,
   footer > button {
     padding: 0.5rem;
-  }
-
-  form {
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 25rem;
   }
 
   fieldset {
