@@ -21,7 +21,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
         x.MigrationsHistoryTable("history", "migrations");
     })
     .UseSnakeCaseNamingConvention();
-    options.LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging().EnableDetailedErrors();
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.LogTo(Console.WriteLine, LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors();
+    }
 });
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -77,6 +83,8 @@ builder.Services.AddScoped<IAuthorizationHandler, WriteSpaceHandler>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseDefaultFiles();
 app.MapStaticAssets();
 
@@ -94,7 +102,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();
