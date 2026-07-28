@@ -11,12 +11,23 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+
+var blobServiceUriRaw = builder.Configuration["AzureStorage:BlobServiceUri"]
+    ?? throw new InvalidOperationException("Configuration value 'AzureStorage:BlobServiceUri' is not configured.");
+
+if (!Uri.TryCreate(blobServiceUriRaw, UriKind.Absolute, out var blobServiceUri))
+{
+    throw new InvalidOperationException("Configuration value 'AzureStorage:BlobServiceUri' must be a valid absolute URI.");
+}
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options
-    .UseNpgsql("TODO", x =>
+    .UseNpgsql(defaultConnection, x =>
     {
         x.MigrationsHistoryTable("history", "migrations");
     })
@@ -71,7 +82,7 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(x =>
     new BlobServiceClient(
-        new Uri("TODO"),
+        new Uri(blobServiceUri),
         new DefaultAzureCredential()
     ));
 
