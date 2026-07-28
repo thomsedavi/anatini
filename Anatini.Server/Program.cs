@@ -82,7 +82,7 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddSingleton(x =>
     new BlobServiceClient(
-        new Uri(blobServiceUri),
+        blobServiceUri,
         new DefaultAzureCredential()
     ));
 
