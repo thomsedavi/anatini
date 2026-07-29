@@ -7,6 +7,7 @@ using Anatini.Server.Context.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Spaces.Extensions;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +18,28 @@ namespace Anatini.Server.Authentication
 {
     [ApiController]
     [Route("api/authentication")]
-    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
+    public class AuthenticationController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IBlobService blobService, IAntiforgery antiforgery) : AnatiniControllerBase(context, userManager, blobService)
     {
+        [HttpGet("csrf-token")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public IActionResult GetCsrfToken()
+        {
+            var tokens = antiforgery.GetAndStoreTokens(HttpContext);
+
+            if (!string.IsNullOrWhiteSpace(tokens.RequestToken))
+            {
+                Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken, new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Path = "/"
+                });
+            }
+
+            return NoContent();
+        }
+
         [HttpPost("email")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

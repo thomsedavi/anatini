@@ -7,6 +7,7 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,19 @@ if (!Uri.TryCreate(blobServiceUriRaw, UriKind.Absolute, out var blobServiceUri))
     throw new InvalidOperationException("Configuration value 'AzureStorage:BlobServiceUri' must be a valid absolute URI.");
 }
 
-builder.Services.AddControllers();
+builder.Services.AddAntiforgery(setupAction =>
+{
+    setupAction.HeaderName = "X-CSRF-TOKEN";
+    setupAction.Cookie.Name = "__Host-anatini-csrf";
+    setupAction.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    setupAction.Cookie.HttpOnly = true;
+    setupAction.Cookie.SameSite = SameSiteMode.Strict;
+});
+
+builder.Services.AddControllers(configure =>
+{
+    configure.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
