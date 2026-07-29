@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mime;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -20,6 +21,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
             {
                 UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 KeyNotFoundException => HttpStatusCode.NotFound,
+                AntiforgeryValidationException => HttpStatusCode.BadRequest,
                 DbUpdateException dbEx when dbEx.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => HttpStatusCode.Conflict,
                 _ => HttpStatusCode.InternalServerError
             };

@@ -2,6 +2,7 @@ import { store } from "@/store";
 import type { Request, SearchParameter } from "@/types";
 
 let csrfBootstrapPromise: Promise<void> | null = null;
+let csrfTokenAuthState: boolean | null = null;
 
 export async function apiFetch({ input, statusActions, init, searchParameters, onfinally }: Request): Promise<void> {
   const requestInit = await createRequestInitWithCsrf(init);
@@ -88,7 +89,9 @@ function isUnsafeMethod(method?: string): boolean {
 }
 
 async function ensureCsrfToken(): Promise<void> {
-  if (getCookieValue('XSRF-TOKEN') !== null) {
+  const isAuthenticated = store.isAuthenticated === true;
+
+  if (getCookieValue('XSRF-TOKEN') !== null && csrfTokenAuthState === isAuthenticated) {
     return;
   }
 
@@ -97,6 +100,7 @@ async function ensureCsrfToken(): Promise<void> {
   });
 
   await csrfBootstrapPromise;
+  csrfTokenAuthState = isAuthenticated;
 }
 
 function getCookieValue(name: string): string | null {

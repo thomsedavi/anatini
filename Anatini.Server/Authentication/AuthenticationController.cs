@@ -99,6 +99,8 @@ namespace Anatini.Server.Authentication
         [Authorize]
         [HttpPost("sign-out")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> PostSignOut()
         {
             await signInManager.SignOutAsync();

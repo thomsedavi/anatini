@@ -27,12 +27,13 @@ builder.Services.AddAntiforgery(setupAction =>
 {
     setupAction.HeaderName = "X-CSRF-TOKEN";
     setupAction.Cookie.Name = "__Host-anatini-csrf";
+    setupAction.Cookie.Path = "/";
     setupAction.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     setupAction.Cookie.HttpOnly = true;
     setupAction.Cookie.SameSite = SameSiteMode.Strict;
 });
 
-builder.Services.AddControllers(configure =>
+builder.Services.AddControllersWithViews(configure =>
 {
     configure.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });

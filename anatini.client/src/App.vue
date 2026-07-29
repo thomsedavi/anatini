@@ -2,7 +2,8 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { store } from './store.ts';
-  import type { IsAuthenticated } from '@/types';
+  import type { IsAuthenticated, StatusActions } from '@/types';
+  import { apiFetch } from './components/common/apiFetch.ts';
 
   const router = useRouter();
 
@@ -51,20 +52,29 @@
   })
 
   async function signOut() {
-    fetch("/api/authentication/sign-out", {
-      method: "POST",
-    }).then((response: Response) => {
-      if (response.ok) {
+    const input = 'authentication/sign-out';
+
+    const statusActions: StatusActions = {
+      204: () => {
         store.isAuthenticated = false;
-      } else {
+      },
+      400: () => {
+        store.isAuthenticated = false;
+      },
+      401: () => {
         store.isAuthenticated = false;
       }
-    }).catch(() => {
-      store.isAuthenticated = false;
-    }).finally(() => {
+    };
+
+    const init = { method: "POST" };
+
+    const onfinally = () => {
       isShowing.value = [];
       router.replace({ path: '/' });
-    });
+
+    }
+
+    await apiFetch({ input, statusActions, init, onfinally });
   }
 
   function toggleShow(show: string) {
