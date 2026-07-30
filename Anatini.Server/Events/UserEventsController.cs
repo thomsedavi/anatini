@@ -53,5 +53,11 @@ namespace Anatini.Server.Events
 
             return Ok(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDto()));
         });
+
+        [HttpGet("{eventSeriesId}/occurrence/{eventOccurrenceId}")]
+        public async Task<IActionResult> GetEventOccurrence(string userId, string eventSeriesId, string eventOccurrenceId) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
+        {
+            return Ok();
+        });
     }
 }

@@ -10,7 +10,7 @@
   watch([() => route.params.userId, () => route.params.eventId], (source: Source) => fetchEvent(parseSource(source)), { immediate: true });
 
   async function fetchEvent(params: string[]) {
-    const eventRequest: Request = {
+    const userEventRequest: Request = {
       input: `users/${params[0]}/events/${params[1]}`,
       statusActions: {
         200: (response?: Response) => {
@@ -22,7 +22,7 @@
       }
     };
 
-    const eventInstancesRequest: Request = {
+    const userEventOccurrencesRequest: Request = {
       input: `users/${params[0]}/events/${params[1]}/occurrences`,
       statusActions: {
         200: (response?: Response) => {
@@ -34,10 +34,10 @@
       }
     };
 
-    apiFetchAll([eventRequest, eventInstancesRequest]);
+    apiFetchAll([userEventRequest, userEventOccurrencesRequest]);
   }
 </script>
 
 <template>
-  <h1>Test</h1>
+  <h1>User Event</h1>
 </template>

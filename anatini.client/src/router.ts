@@ -8,6 +8,7 @@ import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
 import PostCreateView from './components/PostCreateView.vue';
 import NoteView from './components/notes/NoteView.vue';
+import UserEventOccurrenceView from './components/events/UserEventOccurrenceView.vue';
 import UserEventView from './components/events/UserEventView.vue';
 import PostEditView from './components/postEdit/PostEditView.vue';
 import PostEditArticleView from './components/postEdit/PostEditArticleView.vue';
@@ -164,6 +165,11 @@ const routes: RouteRecordRaw[] = [
     path: '/spaces/:spaceId/notes/:noteId',
     component: NoteView,
     name: 'Note',
+  },
+  {
+    path: '/users/:userId/events/:eventId/occurrence/:occurrenceId',
+    component: UserEventOccurrenceView,
+    name: '',
   },
   {
     path: '/users/:userId/events/:eventId',
