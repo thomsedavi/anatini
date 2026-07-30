@@ -13,7 +13,7 @@ export async function apiFetch({ input, statusActions, init, searchParameters, o
     if (statusAction !== undefined) {
       statusAction(response);
     } else {
-      console.log('unhandled response', response.status);
+      console.log('unhandled response', { input, status: response.status });
     }
   })
   .finally(onfinally);
@@ -22,13 +22,13 @@ export async function apiFetch({ input, statusActions, init, searchParameters, o
 export async function apiFetchAll(requests: Request[]): Promise<void> {
   const responses: Response[] = await Promise.all(requests.map(async request => {
     const requestInit = await createRequestInitWithCsrf(request.init);
+
     return fetch(`/api/${request.input}${getParameters(request.searchParameters)}`, requestInit);
   }));
 
   if (responses.every(response => response.ok)) {
     responses.forEach((response: Response, index: number) => {
       const statusAction = requests[index].statusActions[response.status];
-
 
       if (statusAction !== undefined) {
         statusAction(response);

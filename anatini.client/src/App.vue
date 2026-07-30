@@ -3,7 +3,7 @@
   import { useRouter } from 'vue-router';
   import { store } from './store.ts';
   import type { IsAuthenticated, StatusActions } from '@/types';
-  import { apiFetch } from './components/common/apiFetch.ts';
+  import { apiFetch, apiFetchAuthenticated } from './components/common/apiFetch.ts';
 
   const router = useRouter();
 
@@ -24,11 +24,11 @@
 
     isFetching.value = true;
 
-    fetch("/api/authentication/is-authenticated", {
-      method: "GET",
-    }).then((response: Response) => {
-      if (response.ok) {
-        response.json()
+    const input = 'authentication/is-authenticated';
+
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
           .then((value: IsAuthenticated) => {
             store.isAuthenticated = value.isAuthenticated;
             store.isTrusted = value.isTrusted;
@@ -37,14 +37,14 @@
           .catch(() => {
             store.isAuthenticated = false;
           });
-      } else {
-        store.isAuthenticated = false;
       }
-    }).catch(() => {
-      store.isAuthenticated = false;
-    }).finally(() => {
+    };
+
+    const onfinally = () => {
       isFetching.value = false;
-    });
+    };
+
+    apiFetch({ input, statusActions, onfinally });
   });
 
   onUnmounted(() => {
@@ -71,10 +71,9 @@
     const onfinally = () => {
       isShowing.value = [];
       router.replace({ path: '/' });
-
     }
 
-    await apiFetch({ input, statusActions, init, onfinally });
+    await apiFetchAuthenticated({ input, statusActions, init, onfinally });
   }
 
   function toggleShow(show: string) {

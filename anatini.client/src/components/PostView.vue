@@ -24,7 +24,9 @@
               document.querySelector('h1')?.focus();
             });
           })
-          .catch(() => { post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }}});
+          .catch(() => {
+            post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
+          });
       },
       404: () => {
         post.value = { error: { heading: '404 Not Found', body: 'Post not found' }};

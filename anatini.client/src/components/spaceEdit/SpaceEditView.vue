@@ -41,7 +41,9 @@
             space.value = { data: value };
             inputName.value = value.name;
           })
-          .catch(() => { space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => {
+            space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
+          });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });

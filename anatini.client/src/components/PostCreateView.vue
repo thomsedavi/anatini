@@ -28,7 +28,9 @@
           .then((value: SpaceEdit) => {
             space.value = { data: value };
           })
-          .catch(() => { space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => {
+            space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+          });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });

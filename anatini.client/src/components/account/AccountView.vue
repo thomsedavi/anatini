@@ -48,7 +48,9 @@
               headingMainRef.value?.focus();
             });
           })
-          .catch(() => { user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => {
+            user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+          });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: '/account' } });

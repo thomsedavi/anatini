@@ -53,7 +53,9 @@
               headingMainRef.value?.focus();
             });
           })
-          .catch(() => { post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }}});
+          .catch(() => {
+            post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
+          });
       }
     }
 

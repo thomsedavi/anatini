@@ -1,48 +1,43 @@
 <script setup lang="ts">
-  import type { Space } from '@/types';
+  import type { APIResponse, Space, StatusActions } from '@/types';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
+  import { apiFetch } from './common/apiFetch';
   
   const route = useRoute();
 
-  const loading = ref<boolean>(false);
-  const error = ref<string | null>(null);
-  const space = ref<Space | null>(null);
+  const space = ref<APIResponse<Space>>({ fetching: true });
 
   watch([() => route.params.spaceId], fetchSpace, { immediate: true });
 
   async function fetchSpace(array: (() => string | string[])[]) {
-    error.value = space.value = null
-    loading.value = true
+    const input = `spaces/${array[0]}`;
 
-    fetch(`/api/spaces/${array[0]}`, { method: "GET" })
-      .then((value: Response) => {
-        if (value.ok) {
-          value.json()
-            .then((value: Space) => {
-              space.value = value;
-            })
-            .catch(() => {
-              error.value = 'Unknown Error';
-            });
-        } else if (value.status === 401) {
-          error.value = 'Unauthorised';
-        } else {
-          error.value = 'Unkown Error';
-        }
-      })
-      .catch(() => {
-        error.value = 'Unknown Error';
-      }).
-      finally(() => {
-        loading.value = false
-      });
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: Space) => {
+            space.value = { data: value };
+          })
+          .catch(() => {
+            space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
+          });
+      },
+      404: () => {
+        space.value = { error: { heading: '404 Not Found', body: 'Space not found' }};
+      },
+      500: () => {
+        space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
+      }
+    }
+
+    apiFetch({ input, statusActions });
   }
 </script>
 
 <template>
   <main id="main" tabindex="-1">
     <h2>SpaceView</h2>
-    <h3 v-if="space">{{ space.name }}</h3>
+    <h3 v-if="space.data">{{ space.data.name }}</h3>
   </main>
 </template>

@@ -41,7 +41,9 @@
             inputVisibility.value = value.visibility;
             inputNotePublishedAtNz.value = formatDateTimeNz(value.publishedAtUtc);
           })
-          .catch(() => { note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }}});
+          .catch(() => {
+            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+          });
       },
       404: () => {
         note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};

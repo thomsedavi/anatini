@@ -24,7 +24,9 @@
               data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null }
             };
           })
-          .catch(() => { user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }}});
+          .catch(() => {
+            user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+          });
       },
       404: () => {
         user.value = { error: { heading: '404 Not Found', body: 'User not found' }};
