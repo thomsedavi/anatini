@@ -12,20 +12,20 @@ namespace Anatini.Server.Users
     [Route("api/users")]
     public class UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [HttpGet("{userId}")]
+        [HttpGet("{userHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUser(string userId) => await UsingUserAsync(userId, async (user) =>
+        public async Task<IActionResult> GetUser(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return Ok(await user.ToUserDtoAsync(IsAuthenticated, BlobService));
         }, new ContextSettings { IncludeImages = true });
 
         [Authorize]
-        [HttpGet("{userId}/images/{imageId}")]
-        public async Task<IActionResult> GetImage(string userId, string imageId) => await UsingUserAsync(userId, async (user) =>
+        [HttpGet("{userHandle}/images/{imageHandle}")]
+        public async Task<IActionResult> GetImage(string userHandle, string imageHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
+            return await Task.FromResult(Ok($"TODO Image Result for {imageHandle}"));
         });
     }
 }

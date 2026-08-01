@@ -72,23 +72,23 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
-        [HttpGet("{noteId}/edit")]
+        [HttpGet("{noteHandle}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string noteId) => await UsingAccountNoteAsync(noteId, async (note) =>
+        public async Task<IActionResult> GetNoteEdit(string noteHandle) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
-            return Ok(note.ToNoteEditDto(noteId));
+            return Ok(note.ToNoteEditDto(noteHandle));
         });
 
         [Authorize]
-        [HttpPatch("{noteId}")]
+        [HttpPatch("{noteHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string noteId, [FromForm] UpdateNote updateNote) => await UsingAccountNoteAsync(noteId, async (note) =>
+        public async Task<IActionResult> PatchNote(string noteHandle, [FromForm] UpdateNote updateNote) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
             if (updateNote.Article != null)
             {
@@ -119,14 +119,14 @@ namespace Anatini.Server.Notes
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [Authorize]
-        [HttpGet("{noteId}")]
+        [HttpGet("{noteHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNote(string noteId) => await UsingAccountNoteAsync(noteId, async (note) =>
+        public async Task<IActionResult> GetNote(string noteHandle) => await UsingAccountNoteAsync(noteHandle, async (note) =>
         {
-            return Ok(await note.ToNoteDtoAsync(noteId, BlobService));
+            return Ok(await note.ToNoteDtoAsync(noteHandle, BlobService));
         });
     }
 }

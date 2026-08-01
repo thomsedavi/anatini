@@ -15,44 +15,44 @@ namespace Anatini.Server.Spaces
     [Route("api/spaces")]
     public class SpacesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [HttpGet("{spaceId}")]
+        [HttpGet("{spaceHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSpace(string spaceId) => await UsingSpaceAsync(spaceId, async (space) =>
+        public async Task<IActionResult> GetSpace(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             return Ok(space.ToSpaceDto());
         });
 
         [Authorize]
-        [HttpGet("{spaceId}/edit")]
+        [HttpGet("{spaceHandle}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetSpaceEdit(string spaceId) => await UsingSpaceAsync(spaceId, async (space) =>
+        public async Task<IActionResult> GetSpaceEdit(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             return Ok(await space.ToSpaceEditDtoAsync(BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpPatch("{spaceId}")]
+        [HttpPatch("{spaceHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchSpace(string spaceId, [FromForm] UpdateSpace updateSpace) => await UsingSpaceAsync(spaceId, async (space) =>
+        public async Task<IActionResult> PatchSpace(string spaceHandle, [FromForm] UpdateSpace updateSpace) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             return NoContent();
         });
 
         [Authorize]
-        [HttpPost("{spaceId}/images")]
+        [HttpPost("{spaceHandle}/images")]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -64,7 +64,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostImage(string spaceId, [FromForm] CreateImage createImage) => await UsingSpaceAsync(spaceId, async (space) =>
+        public async Task<IActionResult> PostImage(string spaceHandle, [FromForm] CreateImage createImage) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             if (ImageValidationError(createImage, out ActionResult? issue))
             {
@@ -85,10 +85,10 @@ namespace Anatini.Server.Spaces
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpGet("{spaceId}/images/{imageId}")]
-        public async Task<IActionResult> GetImage(string spaceId, string imageId) => await UsingSpaceAsync(spaceId, async (space) =>
+        [HttpGet("{spaceHandle}/images/{imageHandle}")]
+        public async Task<IActionResult> GetImage(string spaceHandle, string imageHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            return await Task.FromResult(Ok($"TODO Image Result for {imageId}"));
+            return await Task.FromResult(Ok($"TODO Image Result for {imageHandle}"));
         });
 
         [Authorize(Policy = "IsTrusted")]

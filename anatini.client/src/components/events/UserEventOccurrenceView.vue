@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import { parseSource, type Source } from '../common/utils';
   import { apiFetchAll } from '../common/apiFetch';
-  import type { Event, Request, User } from '@/types';
+  import type { EventOccurrence, Request, User } from '@/types';
 
   const route = useRoute();
 
@@ -16,19 +16,7 @@
         200: (response?: Response) => {
           response?.json()
             .then((value: User) => {
-              console.log(value.name);
-            });
-        }
-      }
-    };
-
-    const userEventRequest: Request = {
-      input: `users/${params[0]}/events/${params[1]}`,
-      statusActions: {
-        200: (response?: Response) => {
-          response?.json()
-            .then((value: Event) => {
-              console.log(value.name);
+              console.log(value);
             });
         }
       }
@@ -38,12 +26,15 @@
       input: `users/${params[0]}/events/${params[1]}/occurrence/${params[2]}`,
       statusActions: {
         200: (response?: Response) => {
-          console.log(response);
+          response?.json()
+            .then((value: EventOccurrence) => {
+              console.log(value);
+            });
         }
       }
     };
 
-    apiFetchAll([userRequest, userEventRequest, userEventOccurrenceRequest]);
+    apiFetchAll([userRequest, userEventOccurrenceRequest]);
   }
 </script>
 

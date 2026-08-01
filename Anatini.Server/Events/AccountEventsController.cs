@@ -28,11 +28,11 @@ namespace Anatini.Server.Events
             return CreatedAtAction(nameof(GetEvent), new { eventId = eventSeries.Id });
         }, new ContextSettings { AccessRequired = true });
 
-        [HttpGet("{eventId}")]
+        [HttpGet("{eventHandle}")]
         [Authorize(Policy = "IsTrusted")]
-        public async Task<IActionResult> GetEvent(string eventId)
+        public async Task<IActionResult> GetEvent(string eventHandle)
         {
-            return Ok(eventId);
+            return Ok(eventHandle);
         }
     }
 }

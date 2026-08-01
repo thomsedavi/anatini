@@ -11,33 +11,33 @@ using Npgsql;
 namespace Anatini.Server.Users
 {
     [ApiController]
-    [Route("api/users/{userId}")]
+    [Route("api/users/{userHandle}")]
     public class UserUsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("trust")]
-        public async Task<IActionResult> PostUserTrust(string userId) => await UsingUserAsync(userId, async (user) =>
+        public async Task<IActionResult> PostUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("trust")]
-        public async Task<IActionResult> DeleteUserTrust(string userId) => await UsingUserAsync(userId, async (user) =>
+        public async Task<IActionResult> DeleteUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("follow")]
-        public async Task<IActionResult> PostUserFollow(string userId) => await UsingUserAsync(userId, async (user) =>
+        public async Task<IActionResult> PostUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("follow")]
-        public async Task<IActionResult> DeleteUserFollow(string userId) => await UsingUserAsync(userId, async (user) =>
+        public async Task<IActionResult> DeleteUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
         });

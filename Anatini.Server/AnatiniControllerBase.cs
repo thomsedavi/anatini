@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UnreachableException = System.Diagnostics.UnreachableException;
 
 namespace Anatini.Server
 {
@@ -227,7 +227,57 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventSeriesHandle, Func<EventSeries, Task<IActionResult>> eventFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserEventInstanceAsync(string userHandle, string eventSeriesHandle, string eventInstanceHandle, Func<EventInstance, Task<IActionResult>> eventInstanceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            EventInstance? eventInstance;
+
+            var eventInstancesQuery = context.EventInstances.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                eventInstancesQuery = eventInstancesQuery.AsNoTracking();
+            }
+
+            if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
+            {
+                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
+
+                var eventSeries = await context.EventSeries.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
+
+                if (eventSeries == null)
+                {
+                    return NotFound();
+                }
+
+                eventSeriesId = eventSeries.Id;
+            }
+
+            if (Guid.TryParse(eventInstanceHandle, out Guid eventInstanceId))
+            {
+                eventInstance = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
+            }
+            else
+            {
+                var normalizedEventInstanceHandle = NormalizeHandle(eventInstanceHandle);
+
+                eventInstance = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
+            }
+
+            if (eventInstance == null)
+            {
+                return NotFound();
+            }
+
+            if (await CanReadAsync(eventInstance.Visibility))
+            {
+                return await eventInstanceFunction(eventInstance);
+            }
+
+            return CannotReadResponse();
+        }, settings);
+
+        [NonAction]
+        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventSeriesHandle, Func<EventSeries, Task<IActionResult>> eventSeriesFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             EventSeries? eventSeries;
 
@@ -240,13 +290,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventSeriesHandle, out Guid eventId))
             {
-                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == eventId);
+                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Id == eventId);
             }
             else
             {
-                var normalizedNoteHandle = NormalizeHandle(eventSeriesHandle);
+                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
 
-                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
             }
 
             if (eventSeries == null)
@@ -256,7 +306,7 @@ namespace Anatini.Server
 
             if (await CanReadAsync(eventSeries.Visibility))
             {
-                return await eventFunction(eventSeries);
+                return await eventSeriesFunction(eventSeries);
             }
 
             return CannotReadResponse();

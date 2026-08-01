@@ -21,7 +21,10 @@ namespace Anatini.Server.Events.Extensions
                 Id = eventInstance.Id,
                 Handle = eventInstance.Handle,
                 StartsAtNz = eventInstance.StartsAtNz,
-                EndsAtNz = eventInstance.EndsAtNz
+                EndsAtNz = eventInstance.EndsAtNz,
+                Name = eventInstance.Name,
+                Article = eventInstance.Article,
+                Url = eventInstance.Url
             };
         }
     }

@@ -126,6 +126,9 @@ export type EventOccurrence = {
   handle: string;
   startsAtUtc: string;
   endsAtUtc: string;
+  name: string;
+  article: string | null;
+  url: string | null;
 }
 
 export type Note = {

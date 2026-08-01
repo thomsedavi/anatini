@@ -10,23 +10,23 @@ using Microsoft.EntityFrameworkCore;
 namespace Anatini.Server.Events
 {
     [ApiController]
-    [Route("api/users/{userId}/events")]
+    [Route("api/users/{userHandle}/events")]
     public class UserEventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [HttpGet("{eventSeriesId}")]
+        [HttpGet("{eventSeriesHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEvent(string userId, string eventSeriesId) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
+        public async Task<IActionResult> GetEvent(string userHandle, string eventSeriesHandle) => await UsingUserEventAsync(userHandle, eventSeriesHandle, async (eventSeries) =>
         {
             return Ok(eventSeries.ToEventSeriesDto());
         });
 
-        [HttpGet("{eventSeriesId}/occurrences")]
+        [HttpGet("{eventSeriesHandle}/occurrences")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventOccurrences(string userId, string eventSeriesId, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
+        public async Task<IActionResult> GetEventOccurrences(string userHandle, string eventSeriesHandle, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserEventAsync(userHandle, eventSeriesHandle, async (eventSeries) =>
         {
             var eventInstancesQuery = Context.EventInstances.Where(eventInstance => eventInstance.EventSeriesId == eventSeries.Id);
 
@@ -54,10 +54,10 @@ namespace Anatini.Server.Events
             return Ok(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDto()));
         });
 
-        [HttpGet("{eventSeriesId}/occurrence/{eventOccurrenceId}")]
-        public async Task<IActionResult> GetEventOccurrence(string userId, string eventSeriesId, string eventOccurrenceId) => await UsingUserEventAsync(userId, eventSeriesId, async (eventSeries) =>
+        [HttpGet("{eventSeriesHandle}/occurrence/{eventInstanceHandle}")]
+        public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return Ok();
+            return Ok(eventInstance.ToEventInstanceDto());
         });
     }
 }

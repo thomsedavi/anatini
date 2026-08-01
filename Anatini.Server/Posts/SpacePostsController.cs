@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Anatini.Server.Posts
 {
     [ApiController]
-    [Route("api/spaces/{spaceId}/posts")]
+    [Route("api/spaces/{spaceHandle}/posts")]
     public class SpacePostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
@@ -22,7 +22,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string spaceId, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceId, async (space) =>
+        public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             var eventData = new EventData(HttpContext);
 
@@ -35,7 +35,7 @@ namespace Anatini.Server.Posts
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpPatch("{postId}")]
+        [HttpPatch("{postHandle}")]
         [ETagRequired]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -44,41 +44,41 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string spaceId, string postId, [FromForm] UpdatePost updatePost) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
+        public async Task<IActionResult> PatchPost(string spaceHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });
 
-        [HttpGet("{postId}")]
+        [HttpGet("{postHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
+        public async Task<IActionResult> GetPost(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             return Ok();
         });
 
-        [HttpGet("{postId}/edit")]
+        [HttpGet("{postHandle}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostEdit(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
+        public async Task<IActionResult> GetPostEdit(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
 
-        [HttpGet("{postId}/preview")]
+        [HttpGet("{postHandle}/preview")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostPreview(string spaceId, string postId) => await UsingSpacePostAsync(spaceId, postId, async (post) =>
+        public async Task<IActionResult> GetPostPreview(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
