@@ -66,10 +66,17 @@ namespace Anatini.Server.Utils
             var calendarEvent = new CalendarEvent
             {
                 Start = new CalDateTime(start, "Pacific/Auckland"),
-                End = end.HasValue ? new CalDateTime(end.Value, "Pacific/Auckland") : null,
-                Duration = duration.HasValue ? Duration.FromTimeSpanExact(duration.Value) : null,
                 RecurrenceRule = recurrencePattern
             };
+
+            if (end.HasValue)
+            {
+                calendarEvent.End = new CalDateTime(end.Value, "Pacific/Auckland");
+            }
+            else if (duration.HasValue)
+            {
+                calendarEvent.Duration = Duration.FromTimeSpanExact(duration.Value);
+            }
 
             return calendarEvent.GetOccurrences();
         }
