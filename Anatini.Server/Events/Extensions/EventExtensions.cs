@@ -1,5 +1,6 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
+using Anatini.Server.Enums;
 
 namespace Anatini.Server.Events.Extensions
 {
@@ -24,7 +25,8 @@ namespace Anatini.Server.Events.Extensions
                 EndsAtNz = eventInstance.EndsAtNz,
                 Name = eventInstance.Name,
                 Article = eventInstance.Article,
-                Url = eventInstance.Url
+                Url = eventInstance.Url,
+                HasBookmarked = eventInstance.UserEdges.Any(userEdge => userEdge.Label == UserEventInstanceEdgeLabel.HasBookmarked)
             };
         }
     }

@@ -238,6 +238,11 @@ namespace Anatini.Server
                 eventInstancesQuery = eventInstancesQuery.AsNoTracking();
             }
 
+            if (TryGetUserId(out Guid userId))
+            {
+                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserEdges.Where(userNote => userNote.SourceUserId == userId));
+            }
+
             if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
             {
                 var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);

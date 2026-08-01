@@ -9,5 +9,6 @@
         public required string Name { get; set; }
         public string? Article { get; set; }
         public string? Url { get; set; }
+        public bool? HasBookmarked { get; set; }
     }
 }
