@@ -3,18 +3,18 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from './common/apiFetch';
-  import { formatParagraph } from './common/utils';
+  import { parseSource, type Source } from './common/utils';
 
   const route = useRoute();
 
   const user = ref<APIResponse<User>>({ fetching: true });
 
-  watch([() => route.params.userId], fetchUser, { immediate: true });
+  watch([() => route.params.userId], (source: Source) => fetchUser(parseSource(source)), { immediate: true });
 
-  async function fetchUser(array: (() => string | string[])[]) {
+  async function fetchUser(params: string[]) {
     user.value = { fetching: true };
 
-    const input = `users/${array[0]}`;
+    const input = `users/${params[0]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -139,7 +139,7 @@
       </section>
 
       <template v-if="user.data !== undefined">
-        <section v-if="user.data.about !== null" aria-label="About user" v-html="formatParagraph(user.data.about)">
+        <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
         </section>
 
         <menu v-if="user.data.hasTrusted !== null || user.data.hasFollowed !== null">

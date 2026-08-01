@@ -60,5 +60,6 @@ namespace Anatini.Server.Context.Entities
         public virtual EventSeries Series { get; set; } = null!;
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
+        public virtual ICollection<ApplicationUserEventInstanceEdge> UserEdges { get; set; } = [];
     }
 }

@@ -129,6 +129,7 @@ export type EventOccurrence = {
   name: string;
   article: string | null;
   url: string | null;
+  hasBookmarked: boolean | null;
 }
 
 export type Note = {

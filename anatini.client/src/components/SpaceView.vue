@@ -3,15 +3,16 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { apiFetch } from './common/apiFetch';
+  import { parseSource, type Source } from './common/utils';
   
   const route = useRoute();
 
   const space = ref<APIResponse<Space>>({ fetching: true });
 
-  watch([() => route.params.spaceId], fetchSpace, { immediate: true });
+  watch([() => route.params.spaceId], (source: Source) => fetchSpace(parseSource(source)), { immediate: true });
 
-  async function fetchSpace(array: (() => string | string[])[]) {
-    const input = `spaces/${array[0]}`;
+  async function fetchSpace(params: string[]) {
+    const input = `spaces/${params[0]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {

@@ -20,7 +20,7 @@ namespace Anatini.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -355,6 +355,37 @@ namespace Anatini.Server.Migrations
                         .HasFilter("user_id IS NULL");
 
                     b.ToTable("user_emails", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventInstanceEdge", b =>
+                {
+                    b.Property<Guid>("SourceUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_user_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<Guid>("TargetEventInstanceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_event_instance_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Label")
+                        .HasColumnType("integer")
+                        .HasColumnName("label")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("SourceUserId", "TargetEventInstanceId", "Label")
+                        .HasName("pk_user_event_instance_edges");
+
+                    b.HasIndex("TargetEventInstanceId", "Label", "SourceUserId")
+                        .HasDatabaseName("ix_user_event_instance_edges_target_event_instance_id_label_so");
+
+                    b.ToTable("user_event_instance_edges", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserHandle", b =>
@@ -1286,6 +1317,27 @@ namespace Anatini.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventInstanceEdge", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
+                        .WithMany("EventInstanceEdges")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_event_instance_edges_users_source_user_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.EventInstance", "TargetEventInstance")
+                        .WithMany("UserEdges")
+                        .HasForeignKey("TargetEventInstanceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_event_instance_edges_event_instances_target_event_inst");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetEventInstance");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserHandle", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
@@ -1559,6 +1611,8 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Emails");
 
+                    b.Navigation("EventInstanceEdges");
+
                     b.Navigation("EventInstances");
 
                     b.Navigation("EventSeries");
@@ -1589,6 +1643,11 @@ namespace Anatini.Server.Migrations
                     b.Navigation("UserEdges");
 
                     b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+                {
+                    b.Navigation("UserEdges");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>

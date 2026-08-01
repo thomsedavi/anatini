@@ -586,6 +586,32 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_event_instance_edges",
+                columns: table => new
+                {
+                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_event_instance_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_event_instance_edges", x => new { x.source_user_id, x.target_event_instance_id, x.label });
+                    table.ForeignKey(
+                        name: "fk_user_event_instance_edges_event_instances_target_event_inst",
+                        column: x => x.target_event_instance_id,
+                        principalTable: "event_instances",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_event_instance_edges_users_source_user_id",
+                        column: x => x.source_user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_contents_space_id_type_handle",
                 table: "contents",
@@ -702,6 +728,11 @@ namespace Anatini.Server.Migrations
                 filter: "user_id IS NULL");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_event_instance_edges_target_event_instance_id_label_so",
+                table: "user_event_instance_edges",
+                columns: new[] { "target_event_instance_id", "label", "source_user_id" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_handles_handle",
                 table: "user_handles",
                 column: "handle",
@@ -764,9 +795,6 @@ namespace Anatini.Server.Migrations
                 name: "event_exceptions");
 
             migrationBuilder.DropTable(
-                name: "event_instances");
-
-            migrationBuilder.DropTable(
                 name: "logs");
 
             migrationBuilder.DropTable(
@@ -786,6 +814,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_emails");
+
+            migrationBuilder.DropTable(
+                name: "user_event_instance_edges");
 
             migrationBuilder.DropTable(
                 name: "user_handles");
@@ -809,13 +840,16 @@ namespace Anatini.Server.Migrations
                 name: "user_user_edges");
 
             migrationBuilder.DropTable(
-                name: "event_series");
-
-            migrationBuilder.DropTable(
                 name: "contents");
 
             migrationBuilder.DropTable(
+                name: "event_instances");
+
+            migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "event_series");
 
             migrationBuilder.DropTable(
                 name: "spaces");

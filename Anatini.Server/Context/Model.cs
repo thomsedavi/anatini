@@ -17,6 +17,7 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
         public DbSet<ApplicationUserSpaceEdge> UserSpaceEdges { get; set; }
         public DbSet<ApplicationUserContentEdge> UserContentEdges { get; set; }
+        public DbSet<ApplicationUserEventInstanceEdge> UserEventInstanceEdges { get; set; }
 
         public DbSet<Space> Spaces { get; set; }
         public DbSet<SpaceHandle> SpaceHandles { get; set; }
@@ -48,6 +49,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserSpaceEdge>().Configure();
             modelBuilder.Entity<ApplicationUserContentEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserEventInstanceEdge>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();

@@ -3,17 +3,18 @@
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from './common/apiFetch';
   import type { Post, StatusActions, APIResponse } from '@/types';
+  import { parseSource, type Source } from './common/utils';
 
   const route = useRoute();
 
   const post = ref<APIResponse<Post>>({ fetching: true });
 
-  watch([() => route.params.spaceId, () => route.params.postId], fetchPost, { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
-  async function fetchPost(array: (() => string | string[])[]) {
+  async function fetchPost(params: string[]) {
     post.value = { fetching: true };
 
-    const input = `spaces/${array[0]}/posts/${array[1]}/preview`;
+    const input = `spaces/${params[0]}/posts/${params[1]}/preview`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
