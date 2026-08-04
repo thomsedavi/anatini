@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import { nextTick, ref } from 'vue';
-  import InputText from './common/InputText.vue';
-  import SubmitButton from './common/SubmitButton.vue';
-  import { tidy } from './common/utils';
+  import InputText from '../common/InputText.vue';
+  import SubmitButton from '../common/SubmitButton.vue';
+  import { tidy } from '../common/utils';
   import type { InputError, Status, StatusActions } from '@/types';
-  import { apiFetch } from './common/apiFetch';
+  import { apiFetch } from '../common/apiFetch';
 
   const emit = defineEmits<{
     submitEmail: [email: string | undefined];

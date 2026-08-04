@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { nextTick, onMounted, ref } from 'vue';
   import type { Note, Tab } from '@/types';
-  import TabButton from '../common/TabButton.vue';
-  import { getTabIndex } from '../common/utils';
+  import TabButton from './common/TabButton.vue';
+  import { getTabIndex } from './common/utils';
   import { useRoute, useRouter } from 'vue-router';
 
   const route = useRoute();
@@ -66,7 +66,7 @@
         :key="tab.id"
         :selected="tabIndex === index"
         @click="() => handleClick(index)"
-        @keydown="event => handleKeyDown(event, index)"
+        @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
         :text="tab.text"
         :id="tab.id"
         :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />

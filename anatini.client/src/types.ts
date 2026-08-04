@@ -156,4 +156,5 @@ export type IsAuthenticated = {
   isAuthenticated: boolean;
   isTrusted: boolean | null;
   spaces: SpaceEdit[] | null;
+  userHandle: string | null;
 }

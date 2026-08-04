@@ -154,14 +154,20 @@ namespace Anatini.Server.Authentication
 
             if (TryGetUserId(out Guid userId))
             {
-                response.IsAuthenticated = true;
-                response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
+                var user = await Context.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
-                var spaces = await Context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
-                
-                if (spaces.Count != 0)
+                if (user != null)
                 {
-                    response.Spaces = await Task.WhenAll(spaces.Select(space => space.ToSpaceEditDtoAsync()));
+                    response.IsAuthenticated = true;
+                    response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
+                    response.UserHandle = user.Handle;
+
+                    var spaces = await Context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
+
+                    if (spaces.Count != 0)
+                    {
+                        response.Spaces = await Task.WhenAll(spaces.Select(space => space.ToSpaceEditDtoAsync()));
+                    }
                 }
             }
 

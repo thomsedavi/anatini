@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import type { APIResponse, SpaceEdit, InputError, Note, Status, StatusActions, Tab } from '@/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch.ts';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
-  import { getTabIndex, parseSource, type Source } from '../common/utils.ts';
+  import { getTabIndex, parseSource, type Source } from '../common/utils';
   import TabButton from '../common/TabButton.vue';
 
   const route = useRoute();
@@ -157,7 +157,7 @@
           :key="tab.id"
           :selected="tabIndex === index"
           @click="() => handleClick(index)"
-          @keydown="event => handleKeyDown(event, index)"
+          @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />

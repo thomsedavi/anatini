@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { tidy } from '../common/utils.ts';
+  import { tidy } from '../common/utils';
   import type { Image, InputError, Status, StatusActions } from '@/types';
-  import { apiFetchAuthenticated } from '../common/apiFetch.ts';
+  import { apiFetchAuthenticated } from '../common/apiFetch';
   import InputText from '../common/InputText.vue';
   import SubmitButton from '../common/SubmitButton.vue';
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, UserEdit, Visibility } from '@/types';
+  import type { APIResponse, InputError, Status, StatusActions, Tab, UserEdit, Visibility } from '@/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import { getTabIndex } from '../common/utils';
-  import TabButton from '../common/TabButton.vue';
+  import { apiFetchAuthenticated } from './common/apiFetch';
+  import { getTabIndex } from './common/utils';
+  import TabButton from './common/TabButton.vue';
 
   const route = useRoute();
   const router = useRouter();
@@ -16,16 +16,13 @@
   const inputUserAbout = ref<string>('');
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
-  const pageStatus = ref<string>('Loading account information...');
+
   const headingMainRef = ref<HTMLElement | null>(null);
-  const notes = ref<Note[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'public', text: 'Display', name: 'AccountPublic' },
-    { id: 'notes', text: 'Notes', name: 'AccountNotes', childNames: ['AccountNoteCreate', 'AccountNoteEdit'] },
-    { id: 'calendar', text: 'Calendar', name: 'AccountCalendar', childNames: ['AccountEventCreate'] },
-    { id: 'spaces', text: 'Spaces', name: 'AccountSpaces' },
     { id: 'private', text: 'Privacy & Security', name: 'AccountPrivate' },
+    { id: 'spaces', text: 'Spaces', name: 'AccountSpaces' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -42,7 +39,6 @@
             user.value = { data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null } };
             inputName.value = value.name;
             inputUserAbout.value = value.about ?? '';
-            pageStatus.value = '';
 
             nextTick(() => {
               headingMainRef.value?.focus();
@@ -108,10 +104,6 @@
     }
   }
 
-  function handleUpdateNotes(newNotes: Note[]): void {
-    notes.value = newNotes;
-  }
-
   function handleUpdateAbout(newAbout: string): void {
     if (user.value !== null && 'about' in user.value) {
      user.value.about = newAbout;
@@ -126,14 +118,6 @@
 
   function handleUpdateStatus(newStatus: Status): void {
     status.value = newStatus;
-  }
-
-  function handleUpdatePageStatus(newPageStatus: string): void {
-    pageStatus.value = newPageStatus;
-
-    setTimeout(() => {
-      pageStatus.value = '';
-    }, 3000);
   }
 
   function handleUpdateErrors(newInputErrors: InputError[]): void {
@@ -178,7 +162,7 @@
           :key="tab.id"
           :selected="tabIndex === index"
           @click="() => handleClick(index)"
-          @keydown="event => handleKeyDown(event, index)"
+          @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
@@ -194,18 +178,15 @@
           :visibility="user.data.visibility"
           :status="status"
           :inputErrors="inputErrors"
-          :notes="notes"
           @update-name="handleUpdateName"
           @update-about="handleUpdateAbout"
           @update-visibility="handleUpdateVisibility"
           @update-status="handleUpdateStatus"
-          @update-page-status="handleUpdatePageStatus"
-          @update-notes="handleUpdateNotes"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>
     </template>
 
-    <p role="status" aria-live="polite" class="visuallyhidden" aria-atomic="true">{{ pageStatus }}</p>
+    <p role="status" aria-live="polite" class="visuallyhidden" aria-atomic="true">TODO</p>
   </main>
 </template>

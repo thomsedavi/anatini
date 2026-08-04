@@ -144,7 +144,7 @@
           :key="tab.id"
           :selected="tabIndex === index"
           @click="() => handleClick(index)"
-          @keydown="event => handleKeyDown(event, index)"
+          @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />

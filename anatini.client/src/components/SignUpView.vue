@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import SignUpFlowEmailView from './SignUpFlowEmailView.vue';
-  import SignUpFlowSignupView from './SignUpFlowSignupView.vue';
+  import SignUpEmailView from './signUp/SignUpEmailView.vue';
+  import SignUpSignupView from './signUp/SignUpSignupView.vue';
 
   const page = ref<'email' | 'signup'>('email');
   const email = ref<string | undefined>(undefined);
@@ -17,6 +17,6 @@
 </script>
 
 <template>
-  <SignUpFlowEmailView v-if="page === 'email'" @submit-email="submitEmail" />
-  <SignUpFlowSignupView v-else-if="page === 'signup'" :email="email" @go-back="goBack" />
+  <SignUpEmailView v-if="page === 'email'" @submit-email="submitEmail" />
+  <SignUpSignupView v-else-if="page === 'signup'" :email="email" @go-back="goBack" />
 </template>

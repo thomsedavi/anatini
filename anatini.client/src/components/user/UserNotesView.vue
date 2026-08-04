@@ -56,7 +56,7 @@
   <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
       <h2>Notes</h2>
-      <RouterLink :to="{ name: 'AccountNoteCreate' }">+ Create Note</RouterLink>
+      <RouterLink :to="{ name: 'UserNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
     <ul role="list" v-if="notes !== null">

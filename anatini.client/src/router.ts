@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 
 import AboutView from './components/AboutView.vue';
-import HomeView from './components/home/HomeView.vue';
+import HomeView from './components/HomeView.vue';
 import HomePostsView from './components/home/HomePostsView.vue';
 import HomeNotesView from './components/home/HomeNotesView.vue';
 import HomeCalendarView from './components/home/HomeCalendarView.vue';
@@ -16,16 +16,16 @@ import PostEditDetailsView from './components/postEdit/PostEditDetailsView.vue';
 import PostEditStatusView from './components/postEdit/PostEditStatusView.vue';
 import PostPreviewView from './components/PostPreviewView.vue';
 import PostView from './components/PostView.vue';
-import AccountView from './components/account/AccountView.vue';
+import AccountView from './components/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
-import AccountNotesView from './components/account/AccountNotesView.vue';
-import AccountCalendarView from './components/account/AccountCalendarView.vue';
-import AccountNoteCreateView from './components/account/AccountNoteCreateView.vue';
-import AccountEventCreateView from './components/account/AccountEventCreateView.vue';
-import AccountNoteEditView from './components/account/AccountNoteEditView.vue';
+import UserNotesView from './components/user/UserNotesView.vue';
+import UserEventsView from './components/user/UserEventsView.vue';
+import UserNoteCreateView from './components/user/UserNoteCreateView.vue';
+import UserEventCreateView from './components/user/UserEventCreateView.vue';
+import UserNoteEditView from './components/user/UserNoteEditView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountSpacesView from './components/account/AccountSpacesView.vue';
-import SignUpFlowView from './components/SignUpFlowView.vue';
+import SignUpView from './components/SignUpView.vue';
 import UserView from './components/UserView.vue';
 import SpaceCreateView from './components/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
@@ -68,7 +68,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/sign-up',
-    component: SignUpFlowView,
+    component: SignUpView,
   },
   {
     path: '/sign-in',

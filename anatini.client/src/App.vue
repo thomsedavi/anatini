@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { store } from './store.ts';
+  import { store } from './store';
   import type { IsAuthenticated, StatusActions } from '@/types';
-  import { apiFetch, apiFetchAuthenticated } from './components/common/apiFetch.ts';
+  import { apiFetch, apiFetchAuthenticated } from './components/common/apiFetch';
 
   const router = useRouter();
 
@@ -33,6 +33,7 @@
             store.isAuthenticated = value.isAuthenticated;
             store.isTrusted = value.isTrusted;
             store.spaces = value.spaces;
+            store.userHandle = value.userHandle;
           })
           .catch(() => {
             store.isAuthenticated = false;
@@ -119,9 +120,14 @@
               <li>
                 <RouterLink to="/account" @click="isShowing = []">Settings</RouterLink>
               </li>
-              <li>
-                <RouterLink to="/account/notes/create" @click="isShowing = []">Create Note</RouterLink>
-              </li>
+              <template v-if="store.userHandle !== null">
+                <li>
+                  <RouterLink :to="{ name: 'User', params: { userId: store.userHandle }}" @click="isShowing = []">Profile</RouterLink>
+                </li>
+                <li>
+                  <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle }}" @click="isShowing = []">Create Note</RouterLink>
+                </li>
+              </template>
             </ul>
           </li>
 

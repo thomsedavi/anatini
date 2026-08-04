@@ -3,8 +3,8 @@
   import { nextTick, ref } from 'vue';
   import InputText from './common/InputText.vue';
   import SubmitButton from './common/SubmitButton.vue';
-  import { tidy } from './common/utils.ts';
-  import { apiFetchAuthenticated } from './common/apiFetch.ts';
+  import { tidy } from './common/utils';
+  import { apiFetchAuthenticated } from './common/apiFetch';
   import { useRouter } from 'vue-router';
   import VisibilitySelect from './common/VisibilitySelect.vue';
 

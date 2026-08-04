@@ -1,17 +1,33 @@
 <script setup lang="ts">
-  import type { APIResponse, StatusActions, User } from '@/types';
-  import { ref, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, User } from '@/types';
+  import { nextTick, ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from './common/apiFetch';
-  import { parseSource, type Source } from './common/utils';
+  import { getTabIndex, parseSource, type Source } from './common/utils';
+  import TabButton from './common/TabButton.vue';
 
   const route = useRoute();
+  const router = useRouter();
 
   const user = ref<APIResponse<User>>({ fetching: true });
+  const errorSectionRef = ref<HTMLElement | null>(null);
+  const inputErrors = ref<InputError[]>([]);
+  const status = ref<Status>('idle');
+  const tabIndex = ref<number>(-1);
+  const notes = ref<Note[] | null>(null);
+
+  const tabs: Tab[] = [
+    { id: 'notes', text: 'Notes', name: 'UserNotes', childNames: ['UserNoteCreate', 'UserNoteEdit'] },
+    { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
+  ];
+
+  const tabRefs = ref<HTMLButtonElement[]>([]);
 
   watch([() => route.params.userId], (source: Source) => fetchUser(parseSource(source)), { immediate: true });
 
   async function fetchUser(params: string[]) {
+    tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
+
     user.value = { fetching: true };
 
     const input = `users/${params[0]}`;
@@ -37,6 +53,33 @@
     };
 
     apiFetch({ input, statusActions });
+  }
+
+  function handleKeyDown(event: KeyboardEvent, index: number): void {
+    const newIndex = getTabIndex(event.key, index, tabs.length);
+
+    if (newIndex === undefined) {
+      return;
+    }
+
+    event.preventDefault();
+    tabIndex.value = newIndex;
+
+    router.push({ name: tabs[newIndex].name });
+    
+    nextTick(() => {
+      tabRefs.value[newIndex].focus();
+    })
+  }
+
+  function handleClick(index: number): void {
+    tabIndex.value = index;
+
+    router.push({ name: tabs[index].name });
+    
+    nextTick(() => {
+      tabRefs.value[index].focus();
+    })
   }
 
   function getHeading(): string {
@@ -106,10 +149,33 @@
       apiFetchAuthenticated({ input, statusActions, init });
     }
   }
+
+  function handleUpdateNotes(newNotes: Note[]): void {
+    notes.value = newNotes;
+  }
+
+  function handleUpdateErrors(newInputErrors: InputError[]): void {
+    inputErrors.value = newInputErrors;
+
+    if (newInputErrors.length > 0) {
+      nextTick(() => {
+        errorSectionRef.value?.focus();
+      });
+    }
+  }
 </script>
 
 <template>
   <main id="main" tabindex="-1">
+    <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
+      <h2 id="heading-errors">There was a problem updating your account</h2>
+      <ul role="list">
+        <li v-for="error in inputErrors" :key="'error' + error.id">
+          <a :href="'#input-' + error.id">{{ error.message }}</a>
+        </li>
+      </ul>
+    </section>
+
     <article :aria-busy="user.fetching === true" aria-labelledby="heading-main">
       <header>
         <figure>
@@ -152,5 +218,27 @@
         </menu>
       </template>
     </article>
+
+    <ul role="tablist" aria-label="User Content">
+      <TabButton v-for="(tab, index) in tabs"
+        :key="tab.id"
+        :selected="tabIndex === index"
+        @click="() => handleClick(index)"
+        @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
+        :text="tab.text"
+        :id="tab.id"
+        :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
+    </ul>
+
+    <RouterView v-slot="{ Component }">
+      <component
+        :is="Component"
+        :status="status"
+        :inputErrors="inputErrors"
+        :notes="notes"
+        @update-notes="handleUpdateNotes"
+        @update-errors="handleUpdateErrors"
+      />
+    </RouterView>
   </main>
 </template>

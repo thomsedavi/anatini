@@ -8,7 +8,7 @@
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import VisibilitySelect from '../common/VisibilitySelect.vue';
-  import { formatDateTimeNz } from '../common/dateUtils.ts';
+  import { formatDateTimeNz } from '../common/dateUtils';
 
   const route = useRoute();
 

@@ -22,7 +22,7 @@
       :aria-controls="`panel-${id}`" 
       type="button"
       @click="emit('click')"
-      @keydown="(payload) => emit('keydown', payload)"
+      @keydown="(event: KeyboardEvent) => emit('keydown', event)"
       :tabindex="selected ? undefined : -1">
       {{ text }}
     </button>
