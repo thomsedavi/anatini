@@ -33,7 +33,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             activityBuilder.HasIndex(activity => new { activity.UserId, activity.Type, activity.Handle }).IsUnique().HasFilter($"{activityBuilder.GetColumnName(nameof(Activity.UserId))} IS NOT NULL");
             activityBuilder.HasIndex(activity => new { activity.SpaceId, activity.Type, activity.Handle }).IsUnique().HasFilter($"{activityBuilder.GetColumnName(nameof(Activity.SpaceId))} IS NOT NULL");
-            activityBuilder.HasIndex(activity => activity.PublishedAtUtc ).HasFilter($"{activityBuilder.GetColumnName(nameof(Activity))} = {(int)Status.Published}").HasDatabaseName("ix_published_activities_date_nz");
+            activityBuilder.HasIndex(activity => activity.PublishedAtUtc ).HasFilter($"{activityBuilder.GetColumnName(nameof(Activity.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_activities_date_nz");
         }
     }
 }

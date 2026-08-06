@@ -22,6 +22,200 @@ namespace Anatini.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Activity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Article")
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(9);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(12);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(13);
+
+                    b.Property<int?>("CurrentVersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("current_version_number")
+                        .HasColumnOrder(11);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name")
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc")
+                        .HasColumnOrder(6);
+
+                    b.Property<Guid?>("SpaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("space_id")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(14);
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
+                        .HasColumnName("url")
+                        .HasColumnOrder(10);
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility")
+                        .HasColumnOrder(7);
+
+                    b.HasKey("Id")
+                        .HasName("pk_activities");
+
+                    b.HasIndex("PublishedAtUtc")
+                        .HasDatabaseName("ix_published_activities_date_nz")
+                        .HasFilter("status = 1");
+
+                    b.HasIndex("SpaceId", "Type", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_activities_space_id_type_handle")
+                        .HasFilter("space_id IS NOT NULL");
+
+                    b.HasIndex("UserId", "Type", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_activities_user_id_type_handle")
+                        .HasFilter("user_id IS NOT NULL");
+
+                    b.ToTable("activities", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_activities_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ActivityImage", b =>
+                {
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
+                        .HasColumnName("alt_text")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("BlobContainerName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("blob_container_name")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("BlobName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("blob_name")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(6);
+
+                    b.HasKey("ActivityId", "Handle")
+                        .HasName("pk_activity_images");
+
+                    b.ToTable("activity_images", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ActivityVersion", b =>
+                {
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("version_number")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(3);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(5);
+
+                    b.HasKey("ActivityId", "VersionNumber")
+                        .HasName("pk_activity_versions");
+
+                    b.ToTable("activity_versions", (string)null);
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -227,6 +421,37 @@ namespace Anatini.Server.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserActivityEdge", b =>
+                {
+                    b.Property<Guid>("SourceUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_user_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<Guid>("TargetActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_activity_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Label")
+                        .HasColumnType("integer")
+                        .HasColumnName("label")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("SourceUserId", "TargetActivityId", "Label")
+                        .HasName("pk_user_activity_edges");
+
+                    b.HasIndex("TargetActivityId", "Label", "SourceUserId")
+                        .HasDatabaseName("ix_user_activity_edges_target_activity_id_label_source_user_id");
+
+                    b.ToTable("user_activity_edges", (string)null);
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserClaim", b =>
                 {
                     b.Property<int>("Id")
@@ -259,37 +484,6 @@ namespace Anatini.Server.Migrations
                         .HasDatabaseName("ix_user_claims_user_id");
 
                     b.ToTable("user_claims", (string)null);
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserContentEdge", b =>
-                {
-                    b.Property<Guid>("SourceUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("source_user_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<Guid>("TargetContentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("target_content_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<int>("Label")
-                        .HasColumnType("integer")
-                        .HasColumnName("label")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(3);
-
-                    b.HasKey("SourceUserId", "TargetContentId", "Label")
-                        .HasName("pk_user_content_edges");
-
-                    b.HasIndex("TargetContentId", "Label", "SourceUserId")
-                        .HasDatabaseName("ix_user_content_edges_target_content_id_label_source_user_id");
-
-                    b.ToTable("user_content_edges", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEmail", b =>
@@ -612,200 +806,6 @@ namespace Anatini.Server.Migrations
                         .HasDatabaseName("ix_user_user_edges_target_user_id_label_source_user_id");
 
                     b.ToTable("user_user_edges", (string)null);
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Content", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("Article")
-                        .HasColumnType("text")
-                        .HasColumnName("article")
-                        .HasColumnOrder(9);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(12);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(13);
-
-                    b.Property<int?>("CurrentVersionNumber")
-                        .HasColumnType("integer")
-                        .HasColumnName("current_version_number")
-                        .HasColumnOrder(11);
-
-                    b.Property<string>("Handle")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(3);
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("name")
-                        .HasColumnOrder(8);
-
-                    b.Property<DateTime>("PublishedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.Property<Guid?>("SpaceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("space_id")
-                        .HasColumnOrder(2);
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status")
-                        .HasColumnOrder(5);
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type")
-                        .HasColumnOrder(4);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(14);
-
-                    b.Property<string>("Url")
-                        .HasMaxLength(2047)
-                        .HasColumnType("character varying(2047)")
-                        .HasColumnName("url")
-                        .HasColumnOrder(10);
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer")
-                        .HasColumnName("visibility")
-                        .HasColumnOrder(7);
-
-                    b.HasKey("Id")
-                        .HasName("pk_contents");
-
-                    b.HasIndex("PublishedAtUtc")
-                        .HasDatabaseName("ix_published_contents_date_nz")
-                        .HasFilter("status = 1");
-
-                    b.HasIndex("SpaceId", "Type", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_contents_space_id_type_handle")
-                        .HasFilter("space_id IS NOT NULL");
-
-                    b.HasIndex("UserId", "Type", "Handle")
-                        .IsUnique()
-                        .HasDatabaseName("ix_contents_user_id_type_handle")
-                        .HasFilter("user_id IS NOT NULL");
-
-                    b.ToTable("contents", null, t =>
-                        {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
-                        });
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentImage", b =>
-                {
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("content_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<string>("Handle")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("handle")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("AltText")
-                        .HasMaxLength(511)
-                        .HasColumnType("character varying(511)")
-                        .HasColumnName("alt_text")
-                        .HasColumnOrder(4);
-
-                    b.Property<string>("BlobContainerName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("blob_container_name")
-                        .HasColumnOrder(3);
-
-                    b.Property<string>("BlobName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("blob_name")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(5);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(6);
-
-                    b.HasKey("ContentId", "Handle")
-                        .HasName("pk_content_images");
-
-                    b.ToTable("content_images", (string)null);
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentVersion", b =>
-                {
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("content_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("VersionNumber")
-                        .HasColumnType("integer")
-                        .HasColumnName("version_number")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("Article")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("article")
-                        .HasColumnOrder(2);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(3);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(4);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(5);
-
-                    b.HasKey("ContentId", "VersionNumber")
-                        .HasName("pk_content_versions");
-
-                    b.ToTable("content_versions", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
@@ -1258,6 +1258,49 @@ namespace Anatini.Server.Migrations
                     b.ToTable("space_images", (string)null);
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Activity", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
+                        .WithMany("Activities")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_activities_spaces_space_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
+                        .WithMany("Activities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_activities_users_user_id");
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ActivityImage", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Activity", "Activity")
+                        .WithMany("Images")
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_activity_images_activities_activity_id");
+
+                    b.Navigation("Activity");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ActivityVersion", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Activity", "Activity")
+                        .WithMany("Versions")
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_activity_versions_activities_activity_id");
+
+                    b.Navigation("Activity");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRoleClaim", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationRole", "Role")
@@ -1270,6 +1313,27 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserActivityEdge", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
+                        .WithMany("ActivityEdges")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_activity_edges_users_source_user_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.Activity", "TargetActivity")
+                        .WithMany("UserEdges")
+                        .HasForeignKey("TargetActivityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_activity_edges_activities_target_activity_id");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetActivity");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserClaim", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
@@ -1280,27 +1344,6 @@ namespace Anatini.Server.Migrations
                         .HasConstraintName("fk_user_claims_users_user_id");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserContentEdge", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
-                        .WithMany("ContentEdges")
-                        .HasForeignKey("SourceUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_content_edges_users_source_user_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.Content", "TargetContent")
-                        .WithMany("UserEdges")
-                        .HasForeignKey("TargetContentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_content_edges_contents_target_content_id");
-
-                    b.Navigation("SourceUser");
-
-                    b.Navigation("TargetContent");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEmail", b =>
@@ -1446,49 +1489,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("TargetUser");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Content", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
-                        .WithMany("Contents")
-                        .HasForeignKey("SpaceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_contents_spaces_space_id");
-
-                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
-                        .WithMany("Contents")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_contents_users_user_id");
-
-                    b.Navigation("Space");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentImage", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Content", "Content")
-                        .WithMany("Images")
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_content_images_contents_content_id");
-
-                    b.Navigation("Content");
-                });
-
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentVersion", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Content", "Content")
-                        .WithMany("Versions")
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_content_versions_contents_content_id");
-
-                    b.Navigation("Content");
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
@@ -1591,6 +1591,15 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Space");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Activity", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("UserEdges");
+
+                    b.Navigation("Versions");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRole", b =>
                 {
                     b.Navigation("RoleClaims");
@@ -1600,11 +1609,11 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("Activities");
+
+                    b.Navigation("ActivityEdges");
+
                     b.Navigation("Claims");
-
-                    b.Navigation("ContentEdges");
-
-                    b.Navigation("Contents");
 
                     b.Navigation("Emails");
 
@@ -1633,15 +1642,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Content", b =>
-                {
-                    b.Navigation("Images");
-
-                    b.Navigation("UserEdges");
-
-                    b.Navigation("Versions");
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
                 {
                     b.Navigation("UserEdges");
@@ -1656,7 +1656,7 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("Activities");
 
                     b.Navigation("EventInstances");
 
