@@ -2,13 +2,13 @@
 
 namespace Anatini.Server.Context.Entities
 {
-    public class Activity
+    public class Post
     {
         public required Guid Id { get; set; }
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
-        public required ActivityType Type { get; set; }
+        public required PostType Type { get; set; }
         public required DateTime PublishedAtUtc { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
@@ -22,26 +22,26 @@ namespace Anatini.Server.Context.Entities
 
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
-        public virtual ICollection<ActivityImage> Images { get; set; } = [];
-        public virtual ICollection<ApplicationUserActivityEdge> UserEdges { get; set; } = [];
-        public virtual ICollection<ActivityVersion> Versions { get; set; } = [];
+        public virtual ICollection<PostImage> Images { get; set; } = [];
+        public virtual ICollection<ApplicationUserPostEdge> UserEdges { get; set; } = [];
+        public virtual ICollection<PostVersion> Versions { get; set; } = [];
     }
 
-    public class ActivityVersion
+    public class PostVersion
     {
-        public required Guid ActivityId { get; set; }
+        public required Guid PostId { get; set; }
         public required int VersionNumber { get; set; }
         public required string Article { get; set; }
         public string? ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Activity Activity { get; set; } = null!;
+        public virtual Post Post { get; set; } = null!;
     }
 
-    public class ActivityImage
+    public class PostImage
     {
-        public required Guid ActivityId { get; set; }
+        public required Guid PostId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
@@ -49,6 +49,6 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Activity Activity { get; set; } = null!;
+        public virtual Post Post { get; set; } = null!;
     }
 }

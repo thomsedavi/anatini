@@ -23,9 +23,9 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserSpaceEdge> SpaceEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserActivityEdge> ActivityEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserPostEdge> PostEdges { get; set; } = [];
         public virtual ICollection<ApplicationUserEventInstanceEdge> EventInstanceEdges { get; set; } = [];
-        public virtual ICollection<Activity> Activities { get; set; } = [];
+        public virtual ICollection<Post> Posts { get; set; } = [];
         public virtual ICollection<EventSeries> EventSeries { get; set; } = [];
         public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
     }
@@ -76,15 +76,15 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser TargetUser { get; set; } = null!;
     }
     
-    public class ApplicationUserActivityEdge
+    public class ApplicationUserPostEdge
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetActivityId { get; set; }
+        public required Guid TargetPostId { get; set; }
         public required UserNoteEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Activity TargetActivity { get; set; } = null!;
+        public virtual Post TargetPost { get; set; } = null!;
     }
 
     public class ApplicationUserEventInstanceEdge

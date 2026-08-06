@@ -155,45 +155,45 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, Func<Activity, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceDocumentAsync(string spaceHandle, string documentHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Activity? post;
+            Post? document;
 
-            var postsQuery = context.Posts;
+            var documentsQuery = context.Documents;
 
             if (settings?.AsNoTracking ?? true)
             {
-                postsQuery = postsQuery.AsNoTracking();
+                documentsQuery = documentsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(postHandle, out Guid postId))
+            if (Guid.TryParse(documentHandle, out Guid postId))
             {
-                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
+                document = await documentsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
             }
             else
             {
-                var normalizedPostHandle = NormalizeHandle(postHandle);
+                var normalizedDocumentHandle = NormalizeHandle(documentHandle);
 
-                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
+                document = await documentsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedDocumentHandle);
             }
 
-            if (post == null)
+            if (document == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(post.Visibility))
+            if (await CanReadAsync(document.Visibility))
             {
-                return await postFunction(post);
+                return await postFunction(document);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Activity? note;
+            Post? note;
 
             var notesQuery = context.Notes;
 
@@ -319,9 +319,9 @@ namespace Anatini.Server
 
 
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Activity? note;
+            Post? note;
 
             var notesQuery = context.Notes;
 
@@ -355,9 +355,9 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            Activity? note;
+            Post? note;
 
             var notesQuery = context.Notes;
 

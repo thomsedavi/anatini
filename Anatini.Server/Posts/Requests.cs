@@ -3,7 +3,7 @@ using Anatini.Server.Utils;
 
 namespace Anatini.Server.Posts
 {
-    public class CreatePost
+    public class CreateDocument
     {
         [MaxLength(64)]
         public required string Name { get; set; }
@@ -12,7 +12,7 @@ namespace Anatini.Server.Posts
         public required string Handle { get; set; }
     }
 
-    public class UpdatePost
+    public class UpdateDocument
     {
         [MaxLength(64)]
         public string? Name { get; set; }

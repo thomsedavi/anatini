@@ -60,10 +60,10 @@ namespace Anatini.Server.Notes
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userNoteEdge = new ApplicationUserActivityEdge
+                var userNoteEdge = new ApplicationUserPostEdge
                 {
                     SourceUserId = sourceUserId,
-                    TargetActivityId = noteId,
+                    TargetPostId = noteId,
                     Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
@@ -90,7 +90,7 @@ namespace Anatini.Server.Notes
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userNoteEdge = await context.UserActivityEdges.FirstOrDefaultAsync(userNoteEdge => userNoteEdge.TargetActivityId == noteId && userNoteEdge.SourceUserId == sourceUserId && userNoteEdge.Label == label);
+                var userNoteEdge = await context.UserPostEdges.FirstOrDefaultAsync(userNoteEdge => userNoteEdge.TargetPostId == noteId && userNoteEdge.SourceUserId == sourceUserId && userNoteEdge.Label == label);
 
                 if (userNoteEdge != null)
                 {

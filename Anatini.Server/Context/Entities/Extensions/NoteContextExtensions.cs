@@ -5,7 +5,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class NoteContextExtensions
     {
-        public static Activity AddUserNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Post AddUserNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var noteId = Guid.CreateVersion7();
 
@@ -16,11 +16,11 @@ namespace Anatini.Server.Context.Entities.Extensions
                 publishedatUtc = publishedAtNZ.Value.ConvertNzToUtc();
             }
 
-            var note = new Activity
+            var note = new Post
             {
                 Id = noteId,
                 UserId = userId,
-                Type = ActivityType.Note,
+                Type = PostType.Note,
                 Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = publishedatUtc.Truncate(),
                 Article = article,
@@ -36,15 +36,15 @@ namespace Anatini.Server.Context.Entities.Extensions
             return note;
         }
 
-        public static Activity AddSpaceNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null)
+        public static Post AddSpaceNoteAsync(this ApplicationDbContext context, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null)
         {
             var noteId = Guid.CreateVersion7();
 
-            var note = new Activity
+            var note = new Post
             {
                 Id = noteId,
                 SpaceId = spaceId,
-                Type = ActivityType.Note,
+                Type = PostType.Note,
                 Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = utcNow.Truncate(),
                 Article = article,

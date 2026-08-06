@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Anatini.Server.Posts
 {
     [ApiController]
-    [Route("api/spaces/{spaceHandle}/posts")]
-    public class SpacePostsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
+    [Route("api/spaces/{spaceHandle}/documents")]
+    public class SpaceDocumentsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
         [HttpPost]
@@ -22,20 +22,20 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> PostDocument(string spaceHandle, [FromForm] CreateDocument createDocument) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             var eventData = new EventData(HttpContext);
 
-            var postId = Guid.CreateVersion7();
+            var documentId = Guid.CreateVersion7();
 
-            Context.AddPost(postId, createPost.Name, createPost.Handle, space.Id);
+            Context.AddDocument(documentId, createDocument.Name, createDocument.Handle, space.Id);
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = createPost.Handle }, new { postId, DefaultHandle = createPost.Handle, createPost.Name });
+            return CreatedAtAction(nameof(GetDocument), new { spaceId = space.Id, documentId = createDocument.Handle }, new { documentId, DefaultHandle = createDocument.Handle, createDocument.Name });
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
-        [HttpPatch("{postHandle}")]
+        [HttpPatch("{documentHandle}")]
         [ETagRequired]
         [Consumes(MediaTypeNames.Multipart.FormData)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -44,41 +44,41 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string spaceHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PatchDocument(string spaceHandle, string documentHandle, [FromForm] UpdateDocument updateDocument) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });
 
-        [HttpGet("{postHandle}")]
+        [HttpGet("{documentHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> GetDocument(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
         {
             return Ok();
         });
 
-        [HttpGet("{postHandle}/edit")]
+        [HttpGet("{documentHandle}/edit")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostEdit(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> GetDocumentEdit(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
 
-        [HttpGet("{postHandle}/preview")]
+        [HttpGet("{documentHandle}/preview")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPostPreview(string spaceHandle, string postHandle) => await UsingSpacePostAsync(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> GetDocumentPreview(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });

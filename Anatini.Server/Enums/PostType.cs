@@ -1,9 +1,9 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum ActivityType
+    public enum PostType
     {
         None = 0,
-        Post = 1,
+        Document = 1,
         Note = 2,
         Link = 4
     }
