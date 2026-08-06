@@ -9,7 +9,7 @@ namespace Anatini.Server.Notes.Extensions
 {
     public static class NoteExtensions
     {
-        public static async Task<NoteDto> ToNoteDtoAsync(this Content note, string? noteHandle = null, IBlobService? blobService = null)
+        public static async Task<NoteDto> ToNoteDtoAsync(this Activity note, string? noteHandle = null, IBlobService? blobService = null)
         {
             return new NoteDto
             {
@@ -25,7 +25,7 @@ namespace Anatini.Server.Notes.Extensions
             };
         }
 
-        public static NoteEditDto ToNoteEditDto(this Content note, string? handle = null)
+        public static NoteEditDto ToNoteEditDto(this Activity note, string? handle = null)
         {
             return new NoteEditDto
             {

@@ -16,23 +16,23 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserImage> UserImages { get; set; }
         public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
         public DbSet<ApplicationUserSpaceEdge> UserSpaceEdges { get; set; }
-        public DbSet<ApplicationUserContentEdge> UserContentEdges { get; set; }
+        public DbSet<ApplicationUserActivityEdge> UserActivityEdges { get; set; }
         public DbSet<ApplicationUserEventInstanceEdge> UserEventInstanceEdges { get; set; }
 
         public DbSet<Space> Spaces { get; set; }
         public DbSet<SpaceHandle> SpaceHandles { get; set; }
         public DbSet<SpaceImage> SpaceImages { get; set; }
 
-        public DbSet<Content> Contents { get; set; }
-        public DbSet<ContentVersion> ContentVersions { get; set; }
-        public DbSet<ContentImage> ContentImages { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<ActivityVersion> ActivityVersions { get; set; }
+        public DbSet<ActivityImage> ActivityImages { get; set; }
 
         public DbSet<EventSeries> EventSeries { get; set; }
         public DbSet<EventException> EventExceptions { get; set; }
         public DbSet<EventInstance> EventInstances { get; set; }
 
-        public IQueryable<Content> Posts => Contents.Where(content => content.Type == ContentType.Post);
-        public IQueryable<Content> Notes => Contents.Where(content => content.Type == ContentType.Note);
+        public IQueryable<Activity> Posts => Activities.Where(activity => activity.Type == ActivityType.Post);
+        public IQueryable<Activity> Notes => Activities.Where(activity => activity.Type == ActivityType.Note);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,7 +48,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserRole>().Configure();
             modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
             modelBuilder.Entity<ApplicationUserSpaceEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserContentEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserActivityEdge>().Configure();
             modelBuilder.Entity<ApplicationUserEventInstanceEdge>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
@@ -58,9 +58,9 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<SpaceHandle>().Configure();
             modelBuilder.Entity<SpaceImage>().Configure();
 
-            modelBuilder.Entity<Content>().Configure();
-            modelBuilder.Entity<ContentVersion>().Configure();
-            modelBuilder.Entity<ContentImage>().Configure();
+            modelBuilder.Entity<Activity>().Configure();
+            modelBuilder.Entity<ActivityVersion>().Configure();
+            modelBuilder.Entity<ActivityImage>().Configure();
 
             modelBuilder.Entity<EventSeries>().Configure();
             modelBuilder.Entity<EventException>().Configure();

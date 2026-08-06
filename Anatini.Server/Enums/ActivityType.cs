@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum ContentType
+    public enum ActivityType
     {
         None = 0,
         Post = 1,

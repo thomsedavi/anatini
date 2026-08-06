@@ -6,26 +6,26 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class PostContextExtensions
     {
-        public static Content AddPost(this ApplicationDbContext context, Guid postId, string name, string handle, Guid spaceId)
+        public static Activity AddPost(this ApplicationDbContext context, Guid postId, string name, string handle, Guid spaceId)
         {
             var utcNow = DateTime.UtcNow;
 
             var article = new XElement("article", new XElement("header", new XElement("h1", new XAttribute("tabindex", -1), name)));
 
-            var draftVersion = new ContentVersion
+            var draftVersion = new ActivityVersion
             {
                 VersionNumber = 0,
-                ContentId = postId,
+                ActivityId = postId,
                 Article = article.ToString(SaveOptions.DisableFormatting),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
             };
 
-            var post = new Content
+            var post = new Activity
             {
                 Id = postId,
                 SpaceId = spaceId,
-                Type = ContentType.Post,
+                Type = ActivityType.Post,
                 CurrentVersionNumber = 0,
                 Handle = handle,
                 Status = Status.Draft,

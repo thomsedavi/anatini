@@ -155,9 +155,9 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, Func<Content, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, Func<Activity, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Content? post;
+            Activity? post;
 
             var postsQuery = context.Posts;
 
@@ -191,9 +191,9 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Content? note;
+            Activity? note;
 
             var notesQuery = context.Notes;
 
@@ -319,9 +319,9 @@ namespace Anatini.Server
 
 
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Content? note;
+            Activity? note;
 
             var notesQuery = context.Notes;
 
@@ -355,9 +355,9 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Content, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Activity, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            Content? note;
+            Activity? note;
 
             var notesQuery = context.Notes;
 
