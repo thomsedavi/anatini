@@ -2,13 +2,13 @@
 
 namespace Anatini.Server.Context.Entities
 {
-    public class Project
+    public class Work
     {
         public required Guid Id { get; set; }
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
-        public required ProjectType Type { get; set; }
+        public required WorkType Type { get; set; }
         public DateTime? PublishedAtNz { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
@@ -18,12 +18,12 @@ namespace Anatini.Server.Context.Entities
 
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
-        public virtual ICollection<ProjectImage> Images { get; set; } = [];
+        public virtual ICollection<WorkImage> Images { get; set; } = [];
     }
 
-    public class ProjectImage
+    public class WorkImage
     {
-        public required Guid ProjectId { get; set; }
+        public required Guid WorkId { get; set; }
         public required string Handle { get; set; }
         public required string BlobName { get; set; }
         public required string BlobContainerName { get; set; }
@@ -31,6 +31,6 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual Project Project { get; set; } = null!;
+        public virtual Work Work { get; set; } = null!;
     }
 }

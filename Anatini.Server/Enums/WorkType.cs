@@ -1,9 +1,9 @@
 ﻿namespace Anatini.Server.Enums
 {
-    public enum ProjectType
+    public enum WorkType
     {
         None = 0,
-        Work = 1,
+        Product = 1,
         Website = 2
     }
 }
