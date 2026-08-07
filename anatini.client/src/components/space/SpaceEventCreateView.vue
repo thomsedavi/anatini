@@ -10,7 +10,7 @@
   import VisibilitySelect from '../common/VisibilitySelect.vue';
  
   const props = defineProps<{
-    userId: string,
+    spaceId: string,
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -178,7 +178,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `user/${props.userId}/events`;
+const input = `spaces/${props.spaceId}/events`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -283,7 +283,7 @@
       <h2>Create Event</h2>
     </header>
 
-    <form @submit.prevent="postEvent" :action="`/api/users/${userId}/events`" method="POST" novalidate>
+    <form @submit.prevent="postEvent" :action="`/api/spaces/${spaceId}/events`" method="POST" novalidate>
       <fieldset>
         <legend>Event Information</legend>
 
