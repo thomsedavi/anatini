@@ -1,15 +1,15 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
-  import InputText from '../common/InputText.vue';
-  import InputTextArea from '../common/InputTextArea.vue';
-  import { formatArticle, tidy } from '../common/utils';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
+  import InputText from '@/common/InputText.vue';
+  import InputTextArea from '@/common/InputTextArea.vue';
+  import { formatArticle, tidy } from '@/common/utils';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const props = defineProps<{
-    spaceId: string,
+    userId: string,
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -39,7 +39,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${props.spaceId}/notes`;
+    const input = `users/${props.userId}/notes`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -77,7 +77,7 @@
       <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/spaces/${spaceId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/users/${userId}/notes`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Create Note</legend>
 

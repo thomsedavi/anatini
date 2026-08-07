@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import type { SpaceEdit } from './types';
+import type { SpaceEdit } from '@/common/types';
 
 type Store = {
   isAuthenticated: boolean | null;

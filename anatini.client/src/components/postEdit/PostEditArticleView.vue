@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import InputText from '../common/InputText.vue';
-  import { markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, serializeToString } from '../common/utils';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import type { StatusActions } from '@/types';
+  import InputText from '@/common/InputText.vue';
+  import { markdownToHtml, paragraphToHTML, paragraphToMarkdown, parseFromString, serializeToString } from '@/common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import type { StatusActions } from '@/common/types';
 
   const props = defineProps<{
     article: Node | null,

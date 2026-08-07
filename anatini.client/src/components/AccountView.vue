@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Status, StatusActions, Tab, UserEdit, Visibility } from '@/types';
+  import type { APIResponse, InputError, Status, StatusActions, Tab, UserEdit, Visibility } from '@/common/types';
   import { nextTick, onMounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { apiFetchAuthenticated } from './common/apiFetch';
-  import { getTabIndex } from './common/utils';
-  import TabButton from './common/TabButton.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { getTabIndex } from '@/common/utils';
+  import TabButton from '@/common/TabButton.vue';
 
   const route = useRoute();
   const router = useRouter();

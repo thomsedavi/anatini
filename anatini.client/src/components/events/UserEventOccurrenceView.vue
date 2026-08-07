@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { parseSource, type Source } from '../common/utils';
-  import { apiFetchAll, apiFetchAuthenticated } from '../common/apiFetch';
-  import type { APIResponse, EventOccurrence, Request, StatusActions, User } from '@/types';
+  import { parseSource, type Source } from '@/common/utils';
+  import { apiFetchAll, apiFetchAuthenticated } from '@/common/apiFetch';
+  import type { APIResponse, EventOccurrence, Request, StatusActions, User } from '@/common/types';
 
   const route = useRoute();
 

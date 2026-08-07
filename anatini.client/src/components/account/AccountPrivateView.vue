@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/types';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import SubmitButton from '../common/SubmitButton.vue';
+  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import SubmitButton from '@/common/SubmitButton.vue';
   import { ref } from 'vue';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const props = defineProps<{
     visibility: Visibility;

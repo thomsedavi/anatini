@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import { tidy } from '../common/utils';
-  import type { StatusActions } from '@/types';
-  import InputText from '../common/InputText.vue';
-  import SubmitButton from '../common/SubmitButton.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { tidy } from '@/common/utils';
+  import type { StatusActions } from '@/common/types';
+  import InputText from '@/common/InputText.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
 
   const props = defineProps<{
     spaceId: string,

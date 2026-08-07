@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { SelectOption } from '@/types';
+  import type { SelectOption } from '@/common/types';
 
   const model = defineModel<string>();
 

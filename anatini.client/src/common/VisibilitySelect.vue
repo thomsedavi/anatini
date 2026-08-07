@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Visibility } from '@/types';
+  import type { Visibility } from '@/common/types';
   import { ref } from 'vue';
   import InputSelect from './InputSelect.vue';
 

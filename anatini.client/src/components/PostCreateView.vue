@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import type { APIResponse, SpaceEdit, InputError, Status, StatusActions } from '@/types';
+  import type { APIResponse, SpaceEdit, InputError, Status, StatusActions } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
-  import { parseSource, tidy, type Source } from './common/utils';
-  import { apiFetchAuthenticated } from './common/apiFetch';
+  import { parseSource, tidy, type Source } from '@/common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
-  import InputText from './common/InputText.vue';
-  import SubmitButton from './common/SubmitButton.vue';
+  import InputText from '@/common/InputText.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
 
   const route = useRoute();
   const router = useRouter();

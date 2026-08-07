@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
-  import InputTextArea from '../common/InputTextArea.vue';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
-  import InputText from '../common/InputText.vue';
-  import { formatArticle, tidy } from '../common/utils';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import InputTextArea from '@/common/InputTextArea.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import InputText from '@/common/InputText.vue';
+  import { formatArticle, tidy } from '@/common/utils';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
     status: Status,

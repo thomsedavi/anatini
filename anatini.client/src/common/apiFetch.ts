@@ -1,5 +1,5 @@
-import { store } from "@/store";
-import type { Request, SearchParameter } from "@/types";
+import { store } from "@/common/store";
+import type { Request, SearchParameter } from "@/common/types";
 
 let csrfBootstrapPromise: Promise<void> | null = null;
 let csrfTokenAuthState: boolean | null = null;

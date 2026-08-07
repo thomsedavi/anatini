@@ -1,13 +1,13 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions } from '@/types';
-  import InputText from './common/InputText.vue';
+  import type { InputError, Status, StatusActions } from '@/common/types';
+  import InputText from '@/common/InputText.vue';
   import { nextTick, ref } from 'vue';
-  import { tidy } from './common/utils';
-  import { apiFetch } from './common/apiFetch';
-  import { store } from '@/store';
+  import { tidy } from '@/common/utils';
+  import { apiFetch } from '@/common/apiFetch';
+  import { store } from '@/common/store';
   import { useRoute, useRouter } from 'vue-router';
-  import SubmitButton from './common/SubmitButton.vue';
-  import InputCheckbox from './common/InputCheckbox.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import InputCheckbox from '@/common/InputCheckbox.vue';
 
   const router = useRouter();
   const route = useRoute();

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/types';
+  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '../common/utils';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import InputText from '../common/InputText.vue';
-  import InputTextArea from '../common/InputTextArea.vue';
+  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import InputText from '@/common/InputText.vue';
+  import InputTextArea from '@/common/InputTextArea.vue';
   import { useRoute } from 'vue-router';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
-  import { formatDateTimeNz } from '../common/dateUtils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import { formatDateTimeNz } from '@/common/dateUtils';
 
   const route = useRoute();
 
@@ -30,7 +30,7 @@
   watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
-    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
+    const input = `users/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -95,7 +95,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${route.params.spaceId}/notes/${route.params.noteId}`;
+    const input = `users/${route.params.userId}/notes/${route.params.noteId}`;
 
     const statusActions: StatusActions = {
       200: () => {
@@ -142,7 +142,7 @@
     </template>
 
     <template v-if="note.data !== undefined">
-      <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
+      <form @submit.prevent="patchNote" :action="`/api/users/${route.params.userId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Edit Note</legend>
 

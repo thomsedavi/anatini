@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import InputText from '../common/InputText.vue';
-  import type { InputError, SelectOption, Status, StatusActions, Visibility } from '@/types';
-  import { tidy } from '../common/utils';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import InputCheckbox from '../common/InputCheckbox.vue';
-  import InputSelect from '../common/InputSelect.vue';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
+  import InputText from '@/common/InputText.vue';
+  import type { InputError, SelectOption, Status, StatusActions, Visibility } from '@/common/types';
+  import { tidy } from '@/common/utils';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import InputCheckbox from '@/common/InputCheckbox.vue';
+  import InputSelect from '@/common/InputSelect.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
  
   const props = defineProps<{
     spaceId: string,

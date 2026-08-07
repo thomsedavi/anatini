@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import type { PostEdit, StatusActions } from '@/types';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import type { PostEdit, StatusActions } from '@/common/types';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
     spaceId: string,

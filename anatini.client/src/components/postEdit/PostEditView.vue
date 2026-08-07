@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import type { PostEdit, StatusActions, Tab, APIResponse } from '@/types';
+  import type { PostEdit, StatusActions, Tab, APIResponse } from '@/common/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getTabIndex, parseFromString, parseSource, type Source } from '../common/utils';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import TabButton from '../common/TabButton.vue';
+  import { getTabIndex, parseFromString, parseSource, type Source } from '@/common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import TabButton from '@/common/TabButton.vue';
 
   const headingMainRef = ref<HTMLElement | null>(null);
 

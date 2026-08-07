@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { nextTick, onMounted, ref } from 'vue';
-  import type { Note, Tab } from '@/types';
-  import TabButton from './common/TabButton.vue';
-  import { getTabIndex } from './common/utils';
+  import type { Note, Tab } from '@/common/types';
+  import TabButton from '@/common/TabButton.vue';
+  import { getTabIndex } from '@/common/utils';
   import { useRoute, useRouter } from 'vue-router';
 
   const route = useRoute();

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/types';
+  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { nextTick, ref } from 'vue';
-  import InputText from './common/InputText.vue';
-  import SubmitButton from './common/SubmitButton.vue';
-  import { tidy } from './common/utils';
-  import { apiFetchAuthenticated } from './common/apiFetch';
+  import InputText from '@/common/InputText.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import { tidy } from '@/common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRouter } from 'vue-router';
-  import VisibilitySelect from './common/VisibilitySelect.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const router = useRouter();
 

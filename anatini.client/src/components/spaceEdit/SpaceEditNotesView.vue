@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import type { Note, StatusActions } from '@/types';
-  import { formatLong } from '../common/dateUtils';
+  import type { Note, StatusActions } from '@/common/types';
+  import { formatLong } from '@/common/dateUtils';
   import { onMounted } from 'vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
-  import { handleClick } from '../common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { handleClick } from '@/common/utils';
   import { useRouter } from 'vue-router';
 
   const router = useRouter();

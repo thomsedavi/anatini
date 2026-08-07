@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import type { Image, InputError, Status, StatusActions } from '@/types';
-  import { formatArticle, parseFromArticleString, tidy } from '../common/utils';
+  import type { Image, InputError, Status, StatusActions } from '@/common/types';
+  import { formatArticle, parseFromArticleString, tidy } from '@/common/utils';
   import { ref } from 'vue';
-  import InputText from '../common/InputText.vue';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import InputTextArea from '../common/InputTextArea.vue';
-  import { apiFetchAuthenticated } from '../common/apiFetch';
+  import InputText from '@/common/InputText.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import InputTextArea from '@/common/InputTextArea.vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
     name: string,

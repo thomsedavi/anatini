@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { store } from './store';
-  import type { IsAuthenticated, StatusActions } from '@/types';
-  import { apiFetch, apiFetchAuthenticated } from './components/common/apiFetch';
+  import { store } from '@/common/store';
+  import type { IsAuthenticated, StatusActions } from '@/common/types';
+  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
 
   const router = useRouter();
 

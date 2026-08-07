@@ -18,7 +18,7 @@ export function formatLong(value: string): string {
 
 export function formatDateTimeNz(value: string): string {
   const date = new Date(value);
-  
+
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Pacific/Auckland',
     year: 'numeric',
@@ -30,6 +30,6 @@ export function formatDateTimeNz(value: string): string {
   }).formatToParts(date);
 
   const partsMap = Object.fromEntries(parts.map(part => [part.type, part.value]));
-  
+
   return `${partsMap.year}-${partsMap.month}-${partsMap.day}T${partsMap.hour}:${partsMap.minute}`;
 }

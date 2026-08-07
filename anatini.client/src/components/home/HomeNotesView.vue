@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import type { Note, SearchParameter, StatusActions } from '@/types';
-  import { formatLong } from '../common/dateUtils';
+  import type { Note, SearchParameter, StatusActions } from '@/common/types';
+  import { formatLong } from '@/common/dateUtils';
   import { onMounted, ref } from 'vue';
-  import { apiFetch, apiFetchAuthenticated } from '../common/apiFetch';
+  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRouter } from 'vue-router';
-  import { handleClick } from '../common/utils';
-  import { store } from '@/store';
-  import RadioFieldset from '../common/RadioFieldset.vue';
+  import { handleClick } from '@/common/utils';
+  import { store } from '@/common/store';
+  import RadioFieldset from '@/common/RadioFieldset.vue';
 
   const router = useRouter();
 

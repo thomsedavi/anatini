@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import { nextTick, ref } from 'vue';
-  import type { InputError, Status, StatusActions, Visibility } from '@/types';
-  import { tidy } from '../common/utils';
-  import InputText from '../common/InputText.vue';
-  import SubmitButton from '../common/SubmitButton.vue';
-  import { apiFetch } from '../common/apiFetch';
-  import { store } from '@/store';
+  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import { tidy } from '@/common/utils';
+  import InputText from '@/common/InputText.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import { apiFetch } from '@/common/apiFetch';
+  import { store } from '@/common/store';
   import { useRouter } from 'vue-router';
-  import VisibilitySelect from '../common/VisibilitySelect.vue';
-  import InputCheckbox from '../common/InputCheckbox.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import InputCheckbox from '@/common/InputCheckbox.vue';
 
   const router = useRouter();
 
