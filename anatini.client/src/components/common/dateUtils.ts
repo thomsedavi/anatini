@@ -33,7 +33,3 @@ export function formatDateTimeNz(value: string): string {
   
   return `${partsMap.year}-${partsMap.month}-${partsMap.day}T${partsMap.hour}:${partsMap.minute}`;
 }
-
-export function formatUTC(value: string): string {
-    return new Date(value).toISOString().split('.')[0] + 'Z';
-}

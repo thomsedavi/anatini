@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Note, StatusActions } from '@/types';
-  import { formatLong, formatUTC } from '../common/dateUtils';
+  import { formatLong } from '../common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { handleClick } from '../common/utils';
@@ -44,7 +44,7 @@
 
     <ul role="list" v-if="notes !== null">
       <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time><menu><li><a href='/spaces/${spaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time><menu><li><a href='/spaces/${spaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

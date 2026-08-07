@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Note, StatusActions } from '@/types';
-  import { formatLong, formatUTC } from '../common/dateUtils';
+  import { formatLong } from '../common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '../common/apiFetch';
   import { useRouter } from 'vue-router';
@@ -34,21 +34,25 @@
   });
 
   function getHeader(note: Note): string {
-      return `<header><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
+      return `<header><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time></header>`;
   }
 
   function noteHtml(note: Note): string {
-    return `
-      ${getHeader(note)}
-      ${note.article.substring(9, note.article.length - 10)}
-      <footer>
-        <menu>
-          <li>
-            <a href='/account/notes/${note.handle ?? note.id}/edit'>Edit</a>
-          </li>
-        </menu>
-      </footer>
-    `;
+    if (note.userHeader !== null) {
+      return `
+        ${getHeader(note)}
+        ${note.article.substring(9, note.article.length - 10)}
+        <footer>
+          <menu>
+            <li>
+              <a href='/users/${note.userHeader.handle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
+            </li>
+          </menu>
+        </footer>
+      `;
+    }
+
+    return '<p>Error</p>';
   }
 </script>
 

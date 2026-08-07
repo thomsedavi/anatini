@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Note, SearchParameter, StatusActions } from '@/types';
-  import { formatLong, formatUTC } from '../common/dateUtils';
+  import { formatLong } from '../common/dateUtils';
   import { onMounted, ref } from 'vue';
   import { apiFetch, apiFetchAuthenticated } from '../common/apiFetch';
   import { useRouter } from 'vue-router';
@@ -50,7 +50,7 @@
         header += `<img src='${note.userHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
       }
       
-      header += `<span>${note.userHeader.name}</span></a></h3><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
+      header += `<span>${note.userHeader.name}</span></a></h3><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time></header>`;
 
       return header;
     } else if (note.spaceHeader !== null) {
@@ -60,7 +60,7 @@
         header += `<img src='${note.spaceHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
       }
       
-      header += `<span>${note.spaceHeader.name}</span></a></h3><time datetime='${formatUTC(note.publishedAtUtc)}'>${formatLong(note.publishedAtUtc)}</time></header>`;
+      header += `<span>${note.spaceHeader.name}</span></a></h3><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time></header>`;
 
       return header;
     }
@@ -128,7 +128,7 @@
 
       const searchParameters = [...baseSearchParams.value];
 
-      searchParameters.push({ key: 'lastPublishedAtUtc', value: lastNote.publishedAtUtc });
+      searchParameters.push({ key: 'lastPublishedAtNz', value: lastNote.publishedAtNz });
       searchParameters.push({ key: 'lastNoteId', value: lastNote.id });
 
       apiFetch({ input, statusActions, searchParameters });
