@@ -94,95 +94,98 @@ const routes: RouteRecordRaw[] = [
         component: AccountSpacesView,
         name: 'AccountSpaces'
       },
-      {
-        path: 'notes/create',
-        component: AccountNoteCreateView,
-        name: 'AccountNoteCreate'
-      },
-      {
-        path: 'events/create',
-        component: AccountEventCreateView,
-        name: 'AccountEventCreate'
-      },
-      {
-        path: 'notes/:noteId/edit',
-        component: AccountNoteEditView,
-        name: 'AccountNoteEdit'
-      },
-      {
-        path: 'notes',
-        component: AccountNotesView,
-        name: 'AccountNotes'
-      },
-      {
-        path: 'calendar',
-        component: AccountCalendarView,
-        name: 'AccountCalendar'
-      },
-
     ],
-  },
-  {
-    path: '/spaces/:spaceId/posts/create',
-    component: PostCreateView,
-    name: 'PostCreate',
-  },
-  {
-    path: '/spaces/:spaceId/posts/:postId/edit',
-    component: PostEditView,
-    name: 'PostEdit',
-    redirect: { name: 'PostEditArticle' },
-    children: [
-      {
-        path: 'article',
-        component: PostEditArticleView,
-        name: 'PostEditArticle'
-      },
-      {
-        path: 'details',
-        component: PostEditDetailsView,
-        name: 'PostEditDetails'
-      },
-      {
-        path: 'status',
-        component: PostEditStatusView,
-        name: 'PostEditStatus'
-      },
-    ],
-  },
-  {
-    path: '/spaces/:spaceId/posts/:postId/preview',
-    component: PostPreviewView,
-    name: 'PostPreview',
-  },
-  {
-    path: '/spaces/:spaceId/posts/:postId',
-    component: PostView,
-    name: 'Post',
-  },
-  {
-    path: '/spaces/:spaceId/notes/:noteId',
-    component: NoteView,
-    name: 'Note',
-  },
-  {
-    path: '/users/:userId/events/:eventId/occurrence/:occurrenceId',
-    component: UserEventOccurrenceView,
-    name: '',
-  },
-  {
-    path: '/users/:userId/events/:eventId',
-    component: UserEventView,
-    name: 'Event',
   },
   {
     path: '/users/:userId',
     component: UserView,
+    name: 'User',
+    redirect: { name: 'UserNotes' },
+    children: [
+      {
+        path: 'notes/create',
+        component: UserNoteCreateView,
+        name: 'UserNoteCreate'
+      },
+      {
+        path: 'notes/:noteId/edit',
+        component: UserNoteEditView,
+        name: 'UserNoteEdit'
+      },
+      {
+        path: 'notes/:noteId',
+        component: UserNoteView,
+        name: 'UserNote'
+      },
+      {
+        path: 'notes',
+        component: UserNotesView,
+        name: 'UserNotes'
+      },
+      {
+        path: 'events/create',
+        component: UserEventCreateView,
+        name: 'UserEventCreate'
+      },
+      {
+        path: 'events/:eventId/occurrence/:occurrenceId',
+        component: UserEventOccurrenceView,
+        name: 'EventOccurrence',
+      },
+      {
+        path: 'events/:eventId',
+        component: UserEventView,
+        name: 'Event',
+      },
+      {
+        path: 'events',
+        component: UserEventsView,
+        name: 'UserEvents'
+      },
+    ],
   },
   {
     path: '/spaces/create',
     component: SpaceCreateView,
     name: 'SpaceCreate',
+  },
+  {
+    path: '/spaces/:spaceId',
+    component: SpaceView,
+    name: 'Space',
+    redirect: { name: 'SpaceNotes' },
+    children: [
+      {
+        path: 'notes/create',
+        component: SpaceNoteCreateView,
+        name: 'SpaceNoteCreate'
+      },
+      {
+        path: 'notes/:noteId/edit',
+        component: SpaceNoteEditView,
+        name: 'SpaceNoteEdit'
+      },
+      {
+        path: 'notes/:noteId',
+        component: SpaceNoteView,
+        name: 'SpaceNote'
+      },
+      {
+        path: 'notes',
+        component: SpaceNotesView,
+        name: 'SpaceNotes'
+      },
+      {
+        path: 'events/create',
+        component: SpaceEventCreateView,
+        name: 'SpaceEventCreate'
+      },
+      {
+        path: 'events',
+        component: SpaceEventsView,
+        name: 'SpaceEvents'
+      },
+    ],
   },
   {
     path: '/spaces/:spaceId/edit',
