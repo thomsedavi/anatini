@@ -435,6 +435,7 @@ namespace Anatini.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_user_user_edges", x => new { x.source_user_id, x.target_user_id, x.label });
+                    table.CheckConstraint("ck_user_user_edges_source_user_id_not_target_user_id", "source_user_id <> target_user_id");
                     table.ForeignKey(
                         name: "fk_user_user_edges_users_source_user_id",
                         column: x => x.source_user_id,

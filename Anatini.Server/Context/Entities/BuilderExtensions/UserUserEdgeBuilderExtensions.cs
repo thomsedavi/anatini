@@ -7,7 +7,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<ApplicationUserUserEdge> userUserEdgeBuilder)
         {
-            userUserEdgeBuilder.ToTable("user_user_edges");
+            userUserEdgeBuilder.ToTable("user_user_edges", tableBuilder => tableBuilder.HasCheckConstraint("ck_user_user_edges_source_user_id_not_target_user_id", $"{userUserEdgeBuilder.GetColumnName(nameof(ApplicationUserUserEdge.SourceUserId))} <> {userUserEdgeBuilder.GetColumnName(nameof(ApplicationUserUserEdge.TargetUserId))}"));
 
             userUserEdgeBuilder.HasKey(userUserEdge => new { userUserEdge.SourceUserId, userUserEdge.TargetUserId, userUserEdge.Label });
 

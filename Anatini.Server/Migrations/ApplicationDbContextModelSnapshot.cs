@@ -611,7 +611,10 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("TargetUserId", "Label", "SourceUserId")
                         .HasDatabaseName("ix_user_user_edges_target_user_id_label_source_user_id");
 
-                    b.ToTable("user_user_edges", (string)null);
+                    b.ToTable("user_user_edges", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_user_user_edges_source_user_id_not_target_user_id", "source_user_id <> target_user_id");
+                        });
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
