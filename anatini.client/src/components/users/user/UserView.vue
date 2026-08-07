@@ -5,6 +5,7 @@
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
   import { getTabIndex, parseSource, type Source } from '@/common/utils';
   import TabButton from '@/common/TabButton.vue';
+  import { store } from '@/common/store';
 
   const route = useRoute();
   const router = useRouter();
@@ -208,7 +209,7 @@
         <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
         </section>
 
-        <menu v-if="user.data.hasTrusted !== null || user.data.hasFollowed !== null">
+        <menu v-if="store.userId !== user.data.id && (user.data.hasTrusted !== null || user.data.hasFollowed !== null)">
           <li v-if="user.data.hasTrusted !== null">
             <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
           </li>

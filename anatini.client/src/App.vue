@@ -33,6 +33,7 @@
             store.isAuthenticated = value.isAuthenticated;
             store.isTrusted = value.isTrusted;
             store.spaces = value.spaces;
+            store.userId = value.userId;
             store.userHandle = value.userHandle;
           })
           .catch(() => {

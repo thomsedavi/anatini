@@ -42,14 +42,19 @@ namespace Anatini.Server.Users
             return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
         });
 
-        private async Task<IActionResult> AddUserUserEdge(ApplicationDbContext context, Guid userId, UserUserEdgeLabel label)
+        private async Task<IActionResult> AddUserUserEdge(ApplicationDbContext context, Guid targetUserId, UserUserEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
+                if (sourceUserId == targetUserId)
+                {
+                    return BadRequest();
+                }
+
                 var userUserEdge = new ApplicationUserUserEdge
                 {
                     SourceUserId = sourceUserId,
-                    TargetUserId = userId,
+                    TargetUserId = targetUserId,
                     Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
@@ -72,11 +77,16 @@ namespace Anatini.Server.Users
             }
         }
 
-        private async Task<IActionResult> DeleteUserUserEdge(ApplicationDbContext context, Guid userId, UserUserEdgeLabel label)
+        private async Task<IActionResult> DeleteUserUserEdge(ApplicationDbContext context, Guid targetUserId, UserUserEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userUserEdge = await context.UserUserEdges.FirstOrDefaultAsync(userUserEdge => userUserEdge.TargetUserId == userId && userUserEdge.SourceUserId == sourceUserId && userUserEdge.Label == label);
+                if (sourceUserId == targetUserId)
+                {
+                    return BadRequest();
+                }
+
+                var userUserEdge = await context.UserUserEdges.FirstOrDefaultAsync(userUserEdge => userUserEdge.TargetUserId == targetUserId && userUserEdge.SourceUserId == sourceUserId && userUserEdge.Label == label);
 
                 if (userUserEdge != null)
                 {

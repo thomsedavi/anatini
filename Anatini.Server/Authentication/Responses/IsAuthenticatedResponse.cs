@@ -6,6 +6,7 @@ namespace Anatini.Server.Authentication.Responses
     {
         public bool IsAuthenticated { get; set; } = false;
         public bool? IsTrusted { get; set; }
+        public Guid? UserId { get; set; }
         public string? UserHandle { get; set; }
         public IEnumerable<SpaceEditDto>? Spaces { get; set; }
     }
