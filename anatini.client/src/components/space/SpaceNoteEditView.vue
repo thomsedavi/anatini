@@ -30,7 +30,7 @@
   watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
-    const input = `users/${params[0]}/notes/${params[1]}/edit`;
+    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -95,7 +95,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${route.params.userId}/notes/${route.params.noteId}`;
+    const input = `spaces/${route.params.spaceId}/notes/${route.params.noteId}`;
 
     const statusActions: StatusActions = {
       200: () => {
@@ -142,7 +142,7 @@
     </template>
 
     <template v-if="note.data !== undefined">
-      <form @submit.prevent="patchNote" :action="`/api/users/${route.params.userId}/notes/${route.params.noteId}`" method="POST" novalidate>
+      <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visuallyhidden">Edit Note</legend>
 
