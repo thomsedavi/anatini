@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import type { InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -42,7 +42,12 @@
     const input = `users/${props.userId}/notes`;
 
     const statusActions: StatusActions = {
-      201: () => {
+      201: (response?: Response) => {
+          response?.json()
+            .then((value: Note) => {
+              console.log('note', value);
+            });
+
         emit('update-status', 'success');
 
         console.log('Handle thing');
