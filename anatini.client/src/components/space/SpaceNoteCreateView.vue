@@ -9,7 +9,7 @@
   import VisibilitySelect from '../common/VisibilitySelect.vue';
 
   const props = defineProps<{
-    userId: string,
+    spaceId: string,
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -39,7 +39,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.userId}/notes`;
+    const input = `spaces/${props.spaceId}/notes`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -77,7 +77,7 @@
       <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/users/${userId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/spaces/${spaceId}/notes`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Create Note</legend>
 
