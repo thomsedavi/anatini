@@ -31,6 +31,9 @@ namespace Anatini.Server.Context
         public DbSet<EventException> EventExceptions { get; set; }
         public DbSet<EventInstance> EventInstances { get; set; }
 
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectImage> ProjectImages { get; set; }
+
         public IQueryable<Post> Documents => Posts.Where(post => post.Type == PostType.Document);
         public IQueryable<Post> Notes => Posts.Where(post => post.Type == PostType.Note);
 
@@ -65,6 +68,9 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<EventSeries>().Configure();
             modelBuilder.Entity<EventException>().Configure();
             modelBuilder.Entity<EventInstance>().Configure();
+
+            modelBuilder.Entity<Project>().Configure();
+            modelBuilder.Entity<ProjectImage>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

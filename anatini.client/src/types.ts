@@ -138,7 +138,7 @@ export type Note = {
   spaceHeader: SpaceHeader | null;
   handle: string | null;
   article: string;
-  publishedAtUtc: string;
+  publishedAtNz: string;
   hasStarred: boolean | null;
   hasBookmarked: boolean | null;
   hasDismissed: boolean | null;
@@ -149,7 +149,7 @@ export type NoteEdit = {
   handle: string | null;
   article: string;
   visibility: Visibility;
-  publishedAtUtc: string;
+  publishedAtNz: string;
 };
 
 export type IsAuthenticated = {

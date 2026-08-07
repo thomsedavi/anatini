@@ -217,7 +217,7 @@ namespace Anatini.Server.Migrations
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
-                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     article = table.Column<string>(type: "text", nullable: true),
@@ -239,6 +239,40 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_posts_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "projects",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_projects", x => x.id);
+                    table.CheckConstraint("ck_projects_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.ForeignKey(
+                        name: "fk_projects_spaces_space_id",
+                        column: x => x.space_id,
+                        principalTable: "spaces",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_projects_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -587,6 +621,29 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "project_images",
+                columns: table => new
+                {
+                    project_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_project_images", x => new { x.project_id, x.handle });
+                    table.ForeignKey(
+                        name: "fk_project_images_projects_project_id",
+                        column: x => x.project_id,
+                        principalTable: "projects",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_event_instance_edges",
                 columns: table => new
                 {
@@ -674,8 +731,28 @@ namespace Anatini.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_published_posts_date_nz",
                 table: "posts",
-                column: "published_at_utc",
+                column: "published_at_nz",
                 filter: "status = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_projects_space_id_type_handle",
+                table: "projects",
+                columns: new[] { "space_id", "type", "handle" },
+                unique: true,
+                filter: "space_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_projects_user_id_type_handle",
+                table: "projects",
+                columns: new[] { "user_id", "type", "handle" },
+                unique: true,
+                filter: "user_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_published_projects_date_nz",
+                table: "projects",
+                column: "published_at_nz",
+                filter: "published_at_nz IS NOT NULL AND status = 1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_role_claims_role_id",
@@ -798,6 +875,9 @@ namespace Anatini.Server.Migrations
                 name: "post_versions");
 
             migrationBuilder.DropTable(
+                name: "project_images");
+
+            migrationBuilder.DropTable(
                 name: "role_claims");
 
             migrationBuilder.DropTable(
@@ -838,6 +918,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_user_edges");
+
+            migrationBuilder.DropTable(
+                name: "projects");
 
             migrationBuilder.DropTable(
                 name: "event_instances");

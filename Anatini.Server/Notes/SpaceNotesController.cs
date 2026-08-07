@@ -18,11 +18,11 @@ namespace Anatini.Server.Notes
     public class SpaceNotesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
-        public async Task<IActionResult> GetNotes(string spaceHandle, DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> GetNotes(string spaceHandle, DateTime? lastPublishedAtNz, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             var notesQuery = Context.Notes;
 
-            notesQuery = notesQuery.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtUtc < DateTime.UtcNow);
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtNz < DateTime.UtcNow.ConvertUtcToNz());
 
             if (IsAuthenticated)
             {
@@ -33,12 +33,12 @@ namespace Anatini.Server.Notes
                 notesQuery = notesQuery.Where(note => note.Visibility == Visibility.Public);
             }
 
-            if (lastPublishedAtUtc.HasValue && lastNoteId.HasValue)
+            if (lastPublishedAtNz.HasValue && lastNoteId.HasValue)
             {
-                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtNz < lastPublishedAtNz.Value || (note.PublishedAtNz == lastPublishedAtNz.Value && note.Id < lastNoteId.Value));
             }
 
-            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtNz).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
 
             if (notes == null)
             {
@@ -110,7 +110,7 @@ namespace Anatini.Server.Notes
 
             if (updateNote.PublishedAtNz.HasValue)
             {
-                note.PublishedAtUtc = updateNote.PublishedAtNz.Value.ConvertNzToUtc();
+                note.PublishedAtNz = updateNote.PublishedAtNz.Value;
             }
 
             note.UpdatedAtUtc = DateTime.UtcNow;

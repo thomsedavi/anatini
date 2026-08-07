@@ -29,7 +29,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 CurrentVersionNumber = 0,
                 Handle = handle,
                 Status = Status.Draft,
-                PublishedAtUtc = utcNow.Truncate(),
+                PublishedAtNz = utcNow.ConvertUtcToNz().Truncate(),
                 Name = name,
                 Visibility = Visibility.Public,
                 Versions = [draftVersion],

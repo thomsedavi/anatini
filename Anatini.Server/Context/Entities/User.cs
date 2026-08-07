@@ -28,6 +28,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<Post> Posts { get; set; } = [];
         public virtual ICollection<EventSeries> EventSeries { get; set; } = [];
         public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
+        public virtual ICollection<Project> Projects { get; set; } = [];
     }
 
     public class ApplicationUserEmail

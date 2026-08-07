@@ -969,9 +969,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("name")
                         .HasColumnOrder(8);
 
-                    b.Property<DateTime>("PublishedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("published_at_utc")
+                    b.Property<DateTime>("PublishedAtNz")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("published_at_nz")
                         .HasColumnOrder(6);
 
                     b.Property<Guid?>("SpaceId")
@@ -1013,7 +1013,7 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_posts");
 
-                    b.HasIndex("PublishedAtUtc")
+                    b.HasIndex("PublishedAtNz")
                         .HasDatabaseName("ix_published_posts_date_nz")
                         .HasFilter("status = 1");
 
@@ -1119,6 +1119,139 @@ namespace Anatini.Server.Migrations
                         .HasName("pk_post_versions");
 
                     b.ToTable("post_versions", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(8);
+
+                    b.Property<string>("Handle")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name")
+                        .HasColumnOrder(7);
+
+                    b.Property<DateTime?>("PublishedAtNz")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("published_at_nz")
+                        .HasColumnOrder(5);
+
+                    b.Property<Guid?>("SpaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("space_id")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(9);
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("integer")
+                        .HasColumnName("visibility")
+                        .HasColumnOrder(6);
+
+                    b.HasKey("Id")
+                        .HasName("pk_projects");
+
+                    b.HasIndex("PublishedAtNz")
+                        .HasDatabaseName("ix_published_projects_date_nz")
+                        .HasFilter("published_at_nz IS NOT NULL AND status = 1");
+
+                    b.HasIndex("SpaceId", "Type", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_projects_space_id_type_handle")
+                        .HasFilter("space_id IS NOT NULL");
+
+                    b.HasIndex("UserId", "Type", "Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_projects_user_id_type_handle")
+                        .HasFilter("user_id IS NOT NULL");
+
+                    b.ToTable("projects", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_projects_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ProjectImage", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Handle")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("handle")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(511)
+                        .HasColumnType("character varying(511)")
+                        .HasColumnName("alt_text")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("BlobContainerName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("blob_container_name")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("BlobName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("blob_name")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(6);
+
+                    b.HasKey("ProjectId", "Handle")
+                        .HasName("pk_project_images");
+
+                    b.ToTable("project_images", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>
@@ -1570,6 +1703,37 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Project", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
+                        .WithMany("Projects")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_projects_spaces_space_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
+                        .WithMany("Projects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_projects_users_user_id");
+
+                    b.Navigation("Space");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ProjectImage", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Project", "Project")
+                        .WithMany("Images")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_project_images_projects_project_id");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.SpaceHandle", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
@@ -1627,6 +1791,8 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Posts");
 
+                    b.Navigation("Projects");
+
                     b.Navigation("ReceivedUserEdges");
 
                     b.Navigation("Roles");
@@ -1657,6 +1823,11 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Versions");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Project", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>
                 {
                     b.Navigation("EventInstances");
@@ -1670,6 +1841,8 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Logs");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("Projects");
 
                     b.Navigation("UserEdges");
                 });

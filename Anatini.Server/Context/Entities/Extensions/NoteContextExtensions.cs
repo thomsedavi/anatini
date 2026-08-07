@@ -9,11 +9,11 @@ namespace Anatini.Server.Context.Entities.Extensions
         {
             var noteId = Guid.CreateVersion7();
 
-            var publishedatUtc = utcNow;
+            var publishedatNz = utcNow.ConvertUtcToNz();
 
             if (publishedAtNZ.HasValue)
             {
-                publishedatUtc = publishedAtNZ.Value.ConvertNzToUtc();
+                publishedatNz = publishedAtNZ.Value;
             }
 
             var note = new Post
@@ -22,7 +22,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 UserId = userId,
                 Type = PostType.Note,
                 Handle = handle ?? noteId.ToString(),
-                PublishedAtUtc = publishedatUtc.Truncate(),
+                PublishedAtNz = publishedatNz.Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,
@@ -46,7 +46,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 SpaceId = spaceId,
                 Type = PostType.Note,
                 Handle = handle ?? noteId.ToString(),
-                PublishedAtUtc = utcNow.Truncate(),
+                PublishedAtNz = utcNow.ConvertUtcToNz().Truncate(),
                 Article = article,
                 Visibility = visibility,
                 Status = status,

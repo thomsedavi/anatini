@@ -18,7 +18,7 @@ namespace Anatini.Server.Notes.Extensions
                 SpaceHeader = note.Space != null ? await note.Space.ToSpaceHeaderDto(blobService) : null,
                 Handle = noteHandle,
                 Article = note.Article ?? "<article></article>",
-                PublishedAtUtc = note.PublishedAtUtc,
+                PublishedAtNz = note.PublishedAtNz,
                 HasBookmarked = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasBookmarked),
                 HasDismissed = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasDismissed),
                 HasStarred = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasStarred)
@@ -33,7 +33,7 @@ namespace Anatini.Server.Notes.Extensions
                 Handle = handle,
                 Article = note.Article ?? "<article></article>",
                 Visibility = note.Visibility.ToString(),
-                PublishedAtUtc = note.PublishedAtUtc
+                PublishedAtNz = note.PublishedAtNz
             };
         }
     }

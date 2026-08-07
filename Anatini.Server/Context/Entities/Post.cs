@@ -9,7 +9,7 @@ namespace Anatini.Server.Context.Entities
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
         public required PostType Type { get; set; }
-        public required DateTime PublishedAtUtc { get; set; }
+        public required DateTime PublishedAtNz { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
         public string? Name { get; set; }

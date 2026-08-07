@@ -3,6 +3,7 @@ using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Notes.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace Anatini.Server.Notes
         {
             var notesQuery = Context.Notes;
 
-            notesQuery = notesQuery.AsNoTracking().Where(note => note.PublishedAtUtc < DateTime.UtcNow);
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.PublishedAtNz < DateTime.UtcNow.ConvertUtcToNz());
             notesQuery = notesQuery.Include(note => note.User).ThenInclude(user => user!.Images);
             notesQuery = notesQuery.Include(note => note.Space).ThenInclude(space => space!.Images);
 
@@ -71,12 +72,12 @@ namespace Anatini.Server.Notes
                 notesQuery = notesQuery.Where(note => note.Visibility == Visibility.Public);
             }
 
-            if (query.LastPublishedAtUtc.HasValue && query.LastNoteId.HasValue)
+            if (query.LastPublishedAtNz.HasValue && query.LastNoteId.HasValue)
             {
-                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < query.LastPublishedAtUtc.Value || (note.PublishedAtUtc == query.LastPublishedAtUtc.Value && note.Id < query.LastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtNz < query.LastPublishedAtNz.Value || (note.PublishedAtNz == query.LastPublishedAtNz.Value && note.Id < query.LastNoteId.Value));
             }
 
-            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtNz).ThenByDescending(note => note.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (notes == null)
             {
@@ -88,7 +89,7 @@ namespace Anatini.Server.Notes
 
         public class NotesQuery
         {
-            public DateTime? LastPublishedAtUtc { get; set; }
+            public DateTime? LastPublishedAtNz { get; set; }
             public Guid? LastNoteId { get; set; }
             public int? PageSize { get; set; }
             public string? Bookmarked { get; set; }

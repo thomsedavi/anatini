@@ -48,7 +48,7 @@ namespace Anatini.Server.Notes
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAtUtc, Guid? lastNoteId, int pageSize = 20) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> GetNotes(DateTime? lastPublishedAtNz, Guid? lastNoteId, int pageSize = 20) => await UsingAccountAsync(async (user) =>
         {
             var notesQuery = Context.Notes;
 
@@ -56,12 +56,12 @@ namespace Anatini.Server.Notes
 
             notesQuery = notesQuery.Where(note => note.UserId == user.Id);
 
-            if (lastPublishedAtUtc.HasValue && lastNoteId.HasValue)
+            if (lastPublishedAtNz.HasValue && lastNoteId.HasValue)
             {
-                notesQuery = notesQuery.Where(note => note.PublishedAtUtc < lastPublishedAtUtc.Value || (note.PublishedAtUtc == lastPublishedAtUtc.Value && note.Id < lastNoteId.Value));
+                notesQuery = notesQuery.Where(note => note.PublishedAtNz < lastPublishedAtNz.Value || (note.PublishedAtNz == lastPublishedAtNz.Value && note.Id < lastNoteId.Value));
             }
 
-            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtUtc).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
+            var notes = await notesQuery.OrderByDescending(note => note.PublishedAtNz).ThenByDescending(note => note.Id).Take(pageSize).ToListAsync();
 
             if (notes == null)
             {
@@ -108,7 +108,7 @@ namespace Anatini.Server.Notes
 
             if (updateNote.PublishedAtNz.HasValue)
             {
-                note.PublishedAtUtc = updateNote.PublishedAtNz.Value.ConvertNzToUtc();
+                note.PublishedAtNz = updateNote.PublishedAtNz.Value;
             }
 
             note.UpdatedAtUtc = DateTime.UtcNow;

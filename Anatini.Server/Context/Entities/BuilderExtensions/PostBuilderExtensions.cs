@@ -18,7 +18,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             postBuilder.Property(post => post.Handle)!.Has(maxLength: 255, order: 3);
             postBuilder.Property(post => post.Type).Has(order: 4);
             postBuilder.Property(post => post.Status).Has(order: 5);
-            postBuilder.Property(post => post.PublishedAtUtc).Has(order: 6);
+            postBuilder.Property(post => post.PublishedAtNz).Has(order: 6);
             postBuilder.Property(post => post.Visibility).Has(order: 7);
             postBuilder.Property(post => post.Name).Has(maxLength: 255, order: 8);
             postBuilder.Property(post => post.Article).Has(order: 9);
@@ -33,7 +33,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             postBuilder.HasIndex(post => new { post.UserId, post.Type, post.Handle }).IsUnique().HasFilter($"{postBuilder.GetColumnName(nameof(Post.UserId))} IS NOT NULL");
             postBuilder.HasIndex(post => new { post.SpaceId, post.Type, post.Handle }).IsUnique().HasFilter($"{postBuilder.GetColumnName(nameof(Post.SpaceId))} IS NOT NULL");
-            postBuilder.HasIndex(post => post.PublishedAtUtc ).HasFilter($"{postBuilder.GetColumnName(nameof(Post.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_posts_date_nz");
+            postBuilder.HasIndex(post => post.PublishedAtNz).HasFilter($"{postBuilder.GetColumnName(nameof(Post.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_posts_date_nz");
         }
     }
 }
