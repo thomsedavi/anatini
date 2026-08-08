@@ -5,14 +5,16 @@
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
   import { formatDateTimeNz } from '@/common/dateUtils';
 
   const route = useRoute();
+  const router = useRouter();
 
   const props = defineProps<{
+    userHandle: string,
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -98,8 +100,8 @@
     const input = `users/${route.params.userId}/notes/${route.params.noteId}`;
 
     const statusActions: StatusActions = {
-      200: () => {
-        emit('update-status', 'success');
+      204: () => {
+        router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: note.value.data!.handle } });
       }
     }
 

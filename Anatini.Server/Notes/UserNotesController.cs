@@ -87,7 +87,7 @@ namespace Anatini.Server.Notes
 
         [Authorize]
         [HttpPatch("{noteHandle}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -118,7 +118,7 @@ namespace Anatini.Server.Notes
 
             await Context.SaveChangesAsync();
 
-            return Ok(note.ToNoteEditDto());
+            return NoContent();
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [Authorize]
