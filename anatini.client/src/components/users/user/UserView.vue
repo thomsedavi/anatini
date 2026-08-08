@@ -218,31 +218,32 @@
           </li>
         </menu>
       </template>
+
+      <template v-if="user.data !== undefined">
+        <ul role="tablist" aria-label="User Content">
+          <TabButton v-for="(tab, index) in tabs"
+            :key="tab.id"
+            :selected="tabIndex === index"
+            @click="() => handleClick(index)"
+            @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
+            :text="tab.text"
+            :id="tab.id"
+            :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
+        </ul>
+
+        <RouterView v-slot="{ Component }">
+          <component
+            :is="Component"
+            :status="status"
+            :inputErrors="inputErrors"
+            :notes="notes"
+            :userId="user.data.id"
+            :userHandle="user.data.handle"
+            @update-notes="handleUpdateNotes"
+            @update-errors="handleUpdateErrors"
+          />
+        </RouterView>
+      </template>
     </article>
-
-    <template v-if="user.data !== undefined">
-      <ul role="tablist" aria-label="User Content">
-        <TabButton v-for="(tab, index) in tabs"
-          :key="tab.id"
-          :selected="tabIndex === index"
-          @click="() => handleClick(index)"
-          @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
-          :text="tab.text"
-          :id="tab.id"
-          :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
-      </ul>
-
-      <RouterView v-slot="{ Component }">
-        <component
-          :is="Component"
-          :status="status"
-          :inputErrors="inputErrors"
-          :notes="notes"
-          :userId="user.data.id"
-          @update-notes="handleUpdateNotes"
-          @update-errors="handleUpdateErrors"
-        />
-      </RouterView>
-    </template>
   </main>
 </template>

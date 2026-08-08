@@ -27,7 +27,7 @@
   const inputVisibility = ref<Visibility>('Public');
   const inputNotePublishedAtNz = ref<string>('');
 
-  watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
     const input = `users/${params[0]}/notes/${params[1]}/edit`;

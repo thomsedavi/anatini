@@ -7,9 +7,13 @@
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const props = defineProps<{
     userId: string,
+    userHandle: string,
     status: Status,
     inputErrors: InputError[],
   }>();
@@ -45,12 +49,8 @@
       201: (response?: Response) => {
           response?.json()
             .then((value: Note) => {
-              console.log('note', value);
+              router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: value.handle } });
             });
-
-        emit('update-status', 'success');
-
-        console.log('Handle thing');
       },
       400: () => {
         emit('update-status', 'error');

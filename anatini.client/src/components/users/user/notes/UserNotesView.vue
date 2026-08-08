@@ -10,6 +10,7 @@
 
   const props = defineProps<{
     userId: string,
+    userHandle: string,
     notes: Note[] | null,
   }>();
 
@@ -39,21 +40,17 @@
   }
 
   function noteHtml(note: Note): string {
-    if (note.userHeader !== null) {
-      return `
-        ${getHeader(note)}
-        ${note.article.substring(9, note.article.length - 10)}
-        <footer>
-          <menu>
-            <li>
-              <a href='/users/${note.userHeader.handle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
-            </li>
-          </menu>
-        </footer>
-      `;
-    }
-
-    return '<p>Error</p>';
+    return `
+      ${getHeader(note)}
+      ${note.article.substring(9, note.article.length - 10)}
+      <footer>
+        <menu>
+          <li>
+            <a href='/users/${props.userHandle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
+          </li>
+        </menu>
+      </footer>
+    `;
   }
 </script>
 

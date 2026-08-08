@@ -9,7 +9,7 @@
 
   const note = ref<APIResponse<Note>>({ fetching: true });
 
-  watch([() => route.params.userIdId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
     const input = `users/${params[0]}/notes/${params[1]}`;
