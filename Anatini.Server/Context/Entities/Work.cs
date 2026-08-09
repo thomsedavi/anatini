@@ -19,6 +19,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
         public virtual ICollection<WorkImage> Images { get; set; } = [];
+        public virtual ICollection<ApplicationUserWorkEdge> UserEdges { get; set; } = [];
     }
 
     public class WorkImage

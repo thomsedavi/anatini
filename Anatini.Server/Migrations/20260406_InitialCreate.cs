@@ -622,6 +622,32 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_work_edges",
+                columns: table => new
+                {
+                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_work_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_work_edges", x => new { x.source_user_id, x.target_work_id, x.label });
+                    table.ForeignKey(
+                        name: "fk_user_work_edges_users_source_user_id",
+                        column: x => x.source_user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_work_edges_works_target_work_id",
+                        column: x => x.target_work_id,
+                        principalTable: "works",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "work_images",
                 columns: table => new
                 {
@@ -822,6 +848,11 @@ namespace Anatini.Server.Migrations
                 columns: new[] { "target_user_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_work_edges_target_work_id_label_source_user_id",
+                table: "user_work_edges",
+                columns: new[] { "target_work_id", "label", "source_user_id" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_users_handle",
                 table: "users",
                 column: "handle",
@@ -916,6 +947,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_user_edges");
+
+            migrationBuilder.DropTable(
+                name: "user_work_edges");
 
             migrationBuilder.DropTable(
                 name: "work_images");

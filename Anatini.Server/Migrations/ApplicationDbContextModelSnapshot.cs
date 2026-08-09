@@ -617,6 +617,37 @@ namespace Anatini.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserWorkEdge", b =>
+                {
+                    b.Property<Guid>("SourceUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_user_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<Guid>("TargetWorkId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_work_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Label")
+                        .HasColumnType("integer")
+                        .HasColumnName("label")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("SourceUserId", "TargetWorkId", "Label")
+                        .HasName("pk_user_work_edges");
+
+                    b.HasIndex("TargetWorkId", "Label", "SourceUserId")
+                        .HasDatabaseName("ix_user_work_edges_target_work_id_label_source_user_id");
+
+                    b.ToTable("user_work_edges", (string)null);
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
                     b.Property<Guid>("EventSeriesId")
@@ -1582,6 +1613,27 @@ namespace Anatini.Server.Migrations
                     b.Navigation("TargetUser");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserWorkEdge", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
+                        .WithMany("WorkEdges")
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_work_edges_users_source_user_id");
+
+                    b.HasOne("Anatini.Server.Context.Entities.Work", "TargetWork")
+                        .WithMany("UserEdges")
+                        .HasForeignKey("TargetWorkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_work_edges_works_target_work_id");
+
+                    b.Navigation("SourceUser");
+
+                    b.Navigation("TargetWork");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
@@ -1799,6 +1851,8 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Tokens");
 
+                    b.Navigation("WorkEdges");
+
                     b.Navigation("Works");
                 });
 
@@ -1845,6 +1899,8 @@ namespace Anatini.Server.Migrations
             modelBuilder.Entity("Anatini.Server.Context.Entities.Work", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("UserEdges");
                 });
 #pragma warning restore 612, 618
         }
