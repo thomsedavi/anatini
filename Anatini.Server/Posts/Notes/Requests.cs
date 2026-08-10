@@ -2,7 +2,7 @@
 using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Notes
+namespace Anatini.Server.Posts.Notes
 {
     public class CreateNote
     {

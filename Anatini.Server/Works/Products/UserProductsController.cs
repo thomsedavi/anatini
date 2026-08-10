@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Anatini.Server.Products
+namespace Anatini.Server.Works.Products
 {
     [ApiController]
     [Route("api/users/{userHandle}/products")]

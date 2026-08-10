@@ -4,14 +4,14 @@ using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Notes.Extensions;
+using Anatini.Server.Posts.Notes.Extensions;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anatini.Server.Notes
+namespace Anatini.Server.Posts.Notes
 {
     [ApiController]
     [Route("api/spaces/{spaceHandle}/notes")]

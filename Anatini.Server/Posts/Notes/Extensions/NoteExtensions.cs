@@ -5,7 +5,7 @@ using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Users.Extensions;
 
-namespace Anatini.Server.Notes.Extensions
+namespace Anatini.Server.Posts.Notes.Extensions
 {
     public static class NoteExtensions
     {
