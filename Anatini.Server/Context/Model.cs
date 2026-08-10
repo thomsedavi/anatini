@@ -37,6 +37,7 @@ namespace Anatini.Server.Context
 
         public IQueryable<Post> Documents => Posts.Where(post => post.Type == PostType.Document);
         public IQueryable<Post> Notes => Posts.Where(post => post.Type == PostType.Note);
+        public IQueryable<Work> Products => Works.Where(work => work.Type == WorkType.Product);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

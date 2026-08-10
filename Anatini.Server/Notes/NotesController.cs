@@ -33,29 +33,29 @@ namespace Anatini.Server.Notes
 
                 if (query.Bookmarked == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserNoteEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasDismissed));
                 }
 
                 if (query.Followed == "only")

@@ -19,9 +19,9 @@ namespace Anatini.Server.Notes.Extensions
                 Handle = noteHandle,
                 Article = note.Article ?? "<article></article>",
                 PublishedAtNz = note.PublishedAtNz,
-                HasBookmarked = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasBookmarked),
-                HasDismissed = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasDismissed),
-                HasStarred = note.UserEdges.Any(userEdge => userEdge.Label == UserNoteEdgeLabel.HasStarred)
+                HasBookmarked = note.UserEdges.Any(userEdge => userEdge.Label == UserPostEdgeLabel.HasBookmarked),
+                HasDismissed = note.UserEdges.Any(userEdge => userEdge.Label == UserPostEdgeLabel.HasDismissed),
+                HasStarred = note.UserEdges.Any(userEdge => userEdge.Label == UserPostEdgeLabel.HasStarred)
             };
         }
 

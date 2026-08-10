@@ -82,7 +82,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid SourceUserId { get; set; }
         public required Guid TargetPostId { get; set; }
-        public required UserNoteEdgeLabel Label { get; set; }
+        public required UserPostEdgeLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;

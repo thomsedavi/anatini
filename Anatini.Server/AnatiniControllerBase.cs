@@ -355,6 +355,42 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingUserProductAsync(string userHandle, string productHandle, Func<Work, Task<IActionResult>> productFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            Work? product;
+
+            var productsQuery = context.Products;
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                productsQuery = productsQuery.AsNoTracking();
+            }
+
+            if (Guid.TryParse(productHandle, out Guid productId))
+            {
+                product = await productsQuery.FirstOrDefaultAsync(product => product.UserId == user.Id && product.Id == productId);
+            }
+            else
+            {
+                var normalizedProductHandle = NormalizeHandle(productHandle);
+
+                product = await productsQuery.FirstOrDefaultAsync(product => product.UserId == user.Id && product.Handle == normalizedProductHandle);
+            }
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            if (await CanReadAsync(product.Visibility))
+            {
+                return await productFunction(product);
+            }
+
+            return CannotReadResponse();
+        }, settings);
+
+        [NonAction]
         public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
             Post? note;

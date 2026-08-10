@@ -136,45 +136,45 @@ namespace Anatini.Server.Notes
         [HttpPost("{noteHandle}/bookmark")]
         public async Task<IActionResult> PostNoteBookmark(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await AddUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasBookmarked);
+            return await AddUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/bookmark")]
         public async Task<IActionResult> DeleteNoteBookmark(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await DeleteUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasBookmarked);
+            return await DeleteUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpPost("{noteHandle}/star")]
         public async Task<IActionResult> PostNoteStar(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await AddUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasStarred);
+            return await AddUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/star")]
         public async Task<IActionResult> DeleteNoteStar(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await DeleteUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasStarred);
+            return await DeleteUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpPost("{noteHandle}/dismiss")]
         public async Task<IActionResult> PostNoteDismiss(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await AddUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasDismissed);
+            return await AddUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasDismissed);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/dismiss")]
         public async Task<IActionResult> DeleteNoteDismiss(string userHandle, string noteHandle) => await UsingUserNoteAsync(userHandle, noteHandle, async (note) =>
         {
-            return await DeleteUserNoteEdge(Context, note.Id, UserNoteEdgeLabel.HasDismissed);
+            return await DeleteUserNoteEdge(Context, note.Id, UserPostEdgeLabel.HasDismissed);
         });
 
-        private async Task<IActionResult> AddUserNoteEdge(ApplicationDbContext context, Guid noteId, UserNoteEdgeLabel label)
+        private async Task<IActionResult> AddUserNoteEdge(ApplicationDbContext context, Guid noteId, UserPostEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -204,7 +204,7 @@ namespace Anatini.Server.Notes
             }
         }
 
-        private async Task<IActionResult> DeleteUserNoteEdge(ApplicationDbContext context, Guid noteId, UserNoteEdgeLabel label)
+        private async Task<IActionResult> DeleteUserNoteEdge(ApplicationDbContext context, Guid noteId, UserPostEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
