@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Posts
+namespace Anatini.Server.Posts.Documents
 {
     public class CreateDocument
     {

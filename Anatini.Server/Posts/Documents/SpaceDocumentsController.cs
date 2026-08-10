@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Anatini.Server.Posts
+namespace Anatini.Server.Posts.Documents
 {
     [ApiController]
     [Route("api/spaces/{spaceHandle}/documents")]
