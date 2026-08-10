@@ -355,11 +355,11 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserProductAsync(string userHandle, string productHandle, Func<Work, Task<IActionResult>> productFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserWorkAsync(string userHandle, string productHandle, WorkType workType, Func<Work, Task<IActionResult>> productFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             Work? product;
 
-            var productsQuery = context.Products;
+            var productsQuery = context.Works.Where(work => work.Type == workType);
 
             if (settings?.AsNoTracking ?? true)
             {

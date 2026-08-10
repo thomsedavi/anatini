@@ -16,42 +16,42 @@ namespace Anatini.Server.Works.Products
     {
         [Authorize]
         [HttpPost("{productHandle}/bookmark")]
-        public async Task<IActionResult> PostProductBookmark(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> PostProductBookmark(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await AddUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{productHandle}/bookmark")]
-        public async Task<IActionResult> DeleteProductBookmark(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> DeleteProductBookmark(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await DeleteUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpPost("{productHandle}/star")]
-        public async Task<IActionResult> PostProductStar(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> PostProductStar(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await AddUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpDelete("{productHandle}/star")]
-        public async Task<IActionResult> DeleteProductStar(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> DeleteProductStar(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await DeleteUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpPost("{productHandle}/dismiss")]
-        public async Task<IActionResult> PostProductDismiss(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> PostProductDismiss(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await AddUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasDismissed);
         });
 
         [Authorize]
         [HttpDelete("{productHandle}/dismiss")]
-        public async Task<IActionResult> DeleteProductDismiss(string userHandle, string productHandle) => await UsingUserProductAsync(userHandle, productHandle, async (product) =>
+        public async Task<IActionResult> DeleteProductDismiss(string userHandle, string productHandle) => await UsingUserWorkAsync(userHandle, productHandle, WorkType.Product, async (product) =>
         {
             return await DeleteUserProductEdge(Context, product.Id, UserPostEdgeLabel.HasDismissed);
         });
