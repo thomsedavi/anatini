@@ -2,6 +2,7 @@
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +45,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status412PreconditionFailed)]
         [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchDocument(string spaceHandle, string documentHandle, [FromForm] UpdateDocument updateDocument) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
+        public async Task<IActionResult> PatchDocument(string spaceHandle, string documentHandle, [FromForm] UpdateDocument updateDocument) => await UsingSpacePostAsync(spaceHandle, documentHandle, PostType.Document, async (document) =>
         {
             return NoContent();
         }, new ContextSettings { AccessRequired = true });
@@ -54,7 +55,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDocument(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
+        public async Task<IActionResult> GetDocument(string spaceHandle, string documentHandle) => await UsingSpacePostAsync(spaceHandle, documentHandle, PostType.Document, async (document) =>
         {
             return Ok();
         });
@@ -66,7 +67,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDocumentEdit(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
+        public async Task<IActionResult> GetDocumentEdit(string spaceHandle, string documentHandle) => await UsingSpacePostAsync(spaceHandle, documentHandle, PostType.Document, async (document) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });
@@ -78,7 +79,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDocumentPreview(string spaceHandle, string documentHandle) => await UsingSpaceDocumentAsync(spaceHandle, documentHandle, async (document) =>
+        public async Task<IActionResult> GetDocumentPreview(string spaceHandle, string documentHandle) => await UsingSpacePostAsync(spaceHandle, documentHandle, PostType.Document, async (document) =>
         {
             return Ok();
         }, new ContextSettings { AccessRequired = true });

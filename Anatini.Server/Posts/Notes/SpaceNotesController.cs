@@ -50,7 +50,7 @@ namespace Anatini.Server.Posts.Notes
 
         [Authorize]
         [HttpPost("{noteId}/bookmark")]
-        public async Task<IActionResult> PostNoteBookmark(string spaceHandle, string noteId) => await UsingSpaceNoteAsync(spaceHandle, noteId, async (note) =>
+        public async Task<IActionResult> PostNoteBookmark(string spaceHandle, string noteId) => await UsingSpacePostAsync(spaceHandle, noteId, PostType.Note, async (note) =>
         {
             return Ok();
         });
@@ -90,7 +90,7 @@ namespace Anatini.Server.Posts.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchNote(string spaceHandle, string noteHandle, [FromForm] UpdateNote updateNote) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> PatchNote(string spaceHandle, string noteHandle, [FromForm] UpdateNote updateNote) => await UsingSpacePostAsync(spaceHandle, noteHandle, PostType.Note, async (note) =>
         {
             if (updateNote.Article != null)
             {
@@ -125,7 +125,7 @@ namespace Anatini.Server.Posts.Notes
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNote(string spaceHandle, string noteHandle) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> GetNote(string spaceHandle, string noteHandle) => await UsingSpacePostAsync(spaceHandle, noteHandle, PostType.Note, async (note) =>
         {
             return Ok(await note.ToNoteDtoAsync(noteHandle, BlobService));
         });
@@ -138,7 +138,7 @@ namespace Anatini.Server.Posts.Notes
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string spaceHandle, string noteHandle) => await UsingSpaceNoteAsync(spaceHandle, noteHandle, async (note) =>
+        public async Task<IActionResult> GetNoteEdit(string spaceHandle, string noteHandle) => await UsingSpacePostAsync(spaceHandle, noteHandle, PostType.Note, async (note) =>
         {
             return Ok(note.ToNoteEditDto());
         }, new ContextSettings { AccessRequired = true });

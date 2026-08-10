@@ -155,72 +155,72 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceDocumentAsync(string spaceHandle, string documentHandle, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Post? document;
+            Post? post;
 
-            var documentsQuery = context.Documents;
+            var postsQuery = context.Posts.Where(post => post.Type == postType);
 
             if (settings?.AsNoTracking ?? true)
             {
-                documentsQuery = documentsQuery.AsNoTracking();
+                postsQuery = postsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(documentHandle, out Guid postId))
+            if (Guid.TryParse(postHandle, out Guid postId))
             {
-                document = await documentsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
             }
             else
             {
-                var normalizedDocumentHandle = NormalizeHandle(documentHandle);
+                var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                document = await documentsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedDocumentHandle);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (document == null)
+            if (post == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(document.Visibility))
+            if (await CanReadAsync(post.Visibility))
             {
-                return await postFunction(document);
+                return await postFunction(post);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceNoteAsync(string spaceHandle, string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingUserPostAsync(string userHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Post? note;
+            Post? post;
 
-            var notesQuery = context.Notes;
+            var postsQuery = context.Posts.Where(post => post.Type == postType);
 
             if (settings?.AsNoTracking ?? true)
             {
-                notesQuery = notesQuery.AsNoTracking();
+                postsQuery = postsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(noteHandle, out Guid noteId))
+            if (Guid.TryParse(postHandle, out Guid postId))
             {
-                note = await notesQuery.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Id == noteId);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
             }
             else
             {
-                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+                var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                note = await notesQuery.FirstOrDefaultAsync(note => note.SpaceId == space.Id && note.Handle == normalizedNoteHandle);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (note == null)
+            if (post == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(note.Visibility))
+            if (await CanReadAsync(post.Visibility))
             {
-                return await noteFunction(note);
+                return await postFunction(post);
             }
 
             return CannotReadResponse();
@@ -317,74 +317,37 @@ namespace Anatini.Server
             return CannotReadResponse();
         }, settings);
 
-
         [NonAction]
-        public async Task<IActionResult> UsingUserNoteAsync(string userHandle, string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserWorkAsync(string userHandle, string workHandle, WorkType workType, Func<Work, Task<IActionResult>> workFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Post? note;
+            Work? work;
 
-            var notesQuery = context.Notes;
+            var worksQuery = context.Works.Where(work => work.Type == workType);
 
             if (settings?.AsNoTracking ?? true)
             {
-                notesQuery = notesQuery.AsNoTracking();
+                worksQuery = worksQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(noteHandle, out Guid noteId))
+            if (Guid.TryParse(workHandle, out Guid workId))
             {
-                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
+                work = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Id == workId);
             }
             else
             {
-                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+                var normalizedWorkHandle = NormalizeHandle(workHandle);
 
-                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+                work = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Handle == normalizedWorkHandle);
             }
 
-            if (note == null)
+            if (work == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(note.Visibility))
+            if (await CanReadAsync(work.Visibility))
             {
-                return await noteFunction(note);
-            }
-
-            return CannotReadResponse();
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserWorkAsync(string userHandle, string productHandle, WorkType workType, Func<Work, Task<IActionResult>> productFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
-        {
-            Work? product;
-
-            var productsQuery = context.Works.Where(work => work.Type == workType);
-
-            if (settings?.AsNoTracking ?? true)
-            {
-                productsQuery = productsQuery.AsNoTracking();
-            }
-
-            if (Guid.TryParse(productHandle, out Guid productId))
-            {
-                product = await productsQuery.FirstOrDefaultAsync(product => product.UserId == user.Id && product.Id == productId);
-            }
-            else
-            {
-                var normalizedProductHandle = NormalizeHandle(productHandle);
-
-                product = await productsQuery.FirstOrDefaultAsync(product => product.UserId == user.Id && product.Handle == normalizedProductHandle);
-            }
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            if (await CanReadAsync(product.Visibility))
-            {
-                return await productFunction(product);
+                return await workFunction(work);
             }
 
             return CannotReadResponse();

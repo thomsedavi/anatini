@@ -35,7 +35,6 @@ namespace Anatini.Server.Context
         public DbSet<Work> Works { get; set; }
         public DbSet<WorkImage> WorkImages { get; set; }
 
-        public IQueryable<Post> Documents => Posts.Where(post => post.Type == PostType.Document);
         public IQueryable<Post> Notes => Posts.Where(post => post.Type == PostType.Note);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
