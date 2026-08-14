@@ -4,7 +4,7 @@
     {
         public required Guid Id { get; set; }
         public string? Handle { get; set; }
-        public required string Article { get; set; }
+        public string? Article { get; set; }
         public required string Name { get; set; }
         public required string Url { get; set; }
         public DateTime? PublishedAtNz { get; set; }

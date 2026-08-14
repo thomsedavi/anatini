@@ -23,7 +23,7 @@
   }>();
 
   const inputUserName = ref<string>(props.name);
-  const inputUserAbout = ref<string>(props.about != null ? parseFromArticleString(props.about) : '');
+  const inputUserAbout = ref<string>(props.about !== null ? parseFromArticleString(props.about) : '');
   const fileUserIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');

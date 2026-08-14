@@ -74,11 +74,11 @@ namespace Anatini.Server.Posts.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = Context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, space.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null);
+            var note = Context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createNote.Handle));
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetNote), new { spaceId = space.Id, noteId = note.Id }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
+            return CreatedAtAction(nameof(GetNote), new { spaceId = space.Id, noteId = note.Id }, await note.ToNoteDtoAsync(NormalizeHandleOrNull(createNote.Handle), BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]

@@ -22,5 +22,8 @@ namespace Anatini.Server.Works.Websites
 
         [MaxLength(256)]
         public required string Name { get; set; }
+
+        [Display(Name = "Is Draft")]
+        public bool? IsDraft { get; set; }
     }
 }

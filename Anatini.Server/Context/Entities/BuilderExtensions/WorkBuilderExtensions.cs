@@ -18,7 +18,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             workBuilder.Property(work => work.PublishedAtNz).Has(order: 5);
             workBuilder.Property(work => work.Visibility).Has(order: 6);
             workBuilder.Property(work => work.Name)!.Has(maxLength: 255, order: 7);
-            workBuilder.Property(work => work.Article)!.Has(order: 8);
+            workBuilder.Property(work => work.Article).Has(order: 8);
             workBuilder.Property(work => work.Url)!.Has(maxLength: 2047, order: 9);
             workBuilder.Property(work => work.CreatedAtUtc).Has(order: 10);
             workBuilder.Property(work => work.UpdatedAtUtc).Has(order: 11);

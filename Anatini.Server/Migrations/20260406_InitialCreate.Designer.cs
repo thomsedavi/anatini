@@ -1304,7 +1304,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Article")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
                         .HasColumnOrder(8);

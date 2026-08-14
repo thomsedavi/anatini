@@ -37,13 +37,13 @@ namespace Anatini.Server.Posts.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = Context.AddUserNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, user.Id, Status.Published, DateTime.UtcNow, createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, createNote.PublishedAtNz);
+            var note = Context.AddUserNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createNote.Handle), createNote.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 
             note.User = user;
 
-            return CreatedAtAction(nameof(GetNote), new { userHandle = user.Handle, noteHandle = note.Handle }, await note.ToNoteDtoAsync(createNote.Handle != null ? NormalizeHandle(createNote.Handle) : null, BlobService));
+            return CreatedAtAction(nameof(GetNote), new { userHandle = user.Handle, noteHandle = note.Handle }, await note.ToNoteDtoAsync(NormalizeHandleOrNull(createNote.Handle), BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]

@@ -19,6 +19,7 @@ namespace Anatini.Server
 
         public bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
         public string NormalizeHandle(string handle) => handle.ToLower();
+        public string? NormalizeHandleOrNull(string? handle) => handle != null ? NormalizeHandle(handle) : null;
         public string NormalizeName(string name) => userManager.NormalizeName(name);
         public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
         private IActionResult CannotReadResponse() => IsAuthenticated ? Forbid() : Unauthorized();

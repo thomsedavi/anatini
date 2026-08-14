@@ -37,13 +37,13 @@ namespace Anatini.Server.Posts.Links
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var link = Context.AddUserLinkAsync(createLink.Name, validationResult.SanitizedHtml, createLink.Url, createLink.Visibility, user.Id, Status.Published, DateTime.UtcNow, createLink.Handle != null ? NormalizeHandle(createLink.Handle) : null, createLink.PublishedAtNz);
+            var link = Context.AddUserLinkAsync(createLink.Name, validationResult.SanitizedHtml, createLink.Url, createLink.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createLink.Handle), createLink.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 
             link.User = user;
 
-            return CreatedAtAction(nameof(GetLink), new { userHandle = user.Handle, linkHandle = link.Handle }, await link.ToLinkDtoAsync(createLink.Handle != null ? NormalizeHandle(createLink.Handle) : null, BlobService));
+            return CreatedAtAction(nameof(GetLink), new { userHandle = user.Handle, linkHandle = link.Handle }, await link.ToLinkDtoAsync(NormalizeHandleOrNull(createLink.Handle), BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]

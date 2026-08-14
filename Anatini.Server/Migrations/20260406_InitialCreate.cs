@@ -462,7 +462,7 @@ namespace Anatini.Server.Migrations
                     published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false),
+                    article = table.Column<string>(type: "text", nullable: true),
                     url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
