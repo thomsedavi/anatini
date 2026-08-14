@@ -152,6 +152,11 @@ export type NoteEdit = {
   publishedAtNz: string;
 };
 
+export type Website = {
+  id: string;
+  handle: string | null;
+}
+
 export type IsAuthenticated = {
   isAuthenticated: boolean;
   isTrusted: boolean | null;

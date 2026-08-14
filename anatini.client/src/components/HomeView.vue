@@ -13,8 +13,8 @@
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
-    { id: 'notes', text: 'Notes', name: 'HomeNotes' },
-    { id: 'calendar', text: 'Calendar', name: 'HomeCalendar' }
+    { id: 'events', text: 'Events', name: 'HomeEvents' },
+    { id: 'works', text: 'Works', name: 'HomeWorks' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);

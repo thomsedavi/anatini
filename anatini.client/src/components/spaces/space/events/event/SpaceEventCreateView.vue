@@ -178,7 +178,7 @@
 
     emit('update-status', 'pending');
 
-const input = `spaces/${props.spaceId}/events`;
+    const input = `spaces/${props.spaceId}/events`;
 
     const statusActions: StatusActions = {
       201: () => {

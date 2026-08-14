@@ -1,43 +1,46 @@
 import { createWebHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 
 import AboutView from './components/AboutView.vue';
-import HomeView from './components/HomeView.vue';
-import HomePostsView from './components/home/HomePostsView.vue';
-import HomeNotesView from './components/home/HomeNotesView.vue';
-import HomeCalendarView from './components/home/HomeCalendarView.vue';
 import SignInView from './components/SignInView.vue';
-import SpaceNoteView from './components/spaces/space/notes/note/SpaceNoteView.vue';
-import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
-import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import AccountView from './components/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
+import AccountPrivateView from './components/account/AccountPrivateView.vue';
+import AccountSpacesView from './components/account/AccountSpacesView.vue';
+import SignUpView from './components/SignUpView.vue';
+import SpaceView from './components/SpaceView.vue';
+import TagsView from './components/TagsView.vue';
+
+import HomeView from './components/HomeView.vue';
+import HomePostsView from './components/home/posts/HomePostsView.vue';
+import HomeEventsView from './components/home/events/HomeEventsView.vue';
+import HomeWorksView from './components/home/works/HomeWorksView.vue';
+
+import UsersView from './components/users/UsersView.vue';
+import UserView from './components/users/user/UserView.vue';
 import UserPostsView from './components/users/user/posts/UserPostsView.vue';
-import SpaceNotesView from './components/spaces/space/notes/SpaceNotesView.vue';
 import UserNoteView from './components/users/user/posts/note/UserNoteView.vue';
 import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
 import UserWebsiteCreateView from './components/users/user/works/website/UserWebsiteCreateView.vue';
-import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
 import UserNoteCreateView from './components/users/user/posts/note/UserNoteCreateView.vue';
-import SpaceNoteCreateView from './components/spaces/space/notes/note/SpaceNoteCreateView.vue';
+import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
-import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
+import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 import UserNoteEditView from './components/users/user/posts/note/UserNoteEditView.vue';
-import SpaceNoteEditView from './components/spaces/space/notes/note/SpaceNoteEditView.vue';
-import AccountPrivateView from './components/account/AccountPrivateView.vue';
-import AccountSpacesView from './components/account/AccountSpacesView.vue';
-import SignUpView from './components/SignUpView.vue';
-import UserView from './components/users/user/UserView.vue';
+
 import SpaceCreateView from './components/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
-import SpaceEditNotesView from './components/spaceEdit/SpaceEditNotesView.vue';
 import SpaceEditNoteCreateView from './components/spaceEdit/SpaceEditNoteCreateView.vue';
+import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
+import SpaceEditNotesView from './components/spaceEdit/SpaceEditNotesView.vue';
 import SpaceEditNoteEditView from './components/spaceEdit/SpaceEditNoteEditView.vue';
 import SpaceEditPostsView from './components/spaceEdit/SpaceEditPostsView.vue';
-import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
-import SpaceView from './components/SpaceView.vue';
-import UsersView from './components/users/UsersView.vue';
-import TagsView from './components/TagsView.vue';
+import SpaceNotesView from './components/spaces/space/notes/SpaceNotesView.vue';
+import SpaceNoteView from './components/spaces/space/notes/note/SpaceNoteView.vue';
+import SpaceNoteCreateView from './components/spaces/space/notes/note/SpaceNoteCreateView.vue';
+import SpaceNoteEditView from './components/spaces/space/notes/note/SpaceNoteEditView.vue';
+import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
+import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -52,14 +55,14 @@ const routes: RouteRecordRaw[] = [
         name: 'HomePosts'
       },
       {
-        path: 'home/notes',
-        component: HomeNotesView,
-        name: 'HomeNotes'
+        path: 'home/events',
+        component: HomeEventsView,
+        name: 'HomeEvents'
       },
       {
-        path: 'home/calendar',
-        component: HomeCalendarView,
-        name: 'HomeCalendar'
+        path: 'home/works',
+        component: HomeWorksView,
+        name: 'HomeWorks'
       },
     ],
   },

@@ -14,6 +14,17 @@ namespace Anatini.Server.Works.Websites
     [Route("api/users/{userHandle}/websites")]
     public class UserWebsitesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
+        [HttpPost]
+        [Authorize(Policy = "IsTrusted")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostWebsite([FromForm] CreateWebsite createWebsite) => await UsingAccountAsync(async (user) =>
+        {
+            return Ok(createWebsite);
+        }, new ContextSettings { AccessRequired = true });
+
         [Authorize]
         [HttpPost("{websiteHandle}/bookmark")]
         public async Task<IActionResult> PostWebsiteBookmark(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>

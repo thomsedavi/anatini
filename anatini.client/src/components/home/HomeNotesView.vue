@@ -203,7 +203,7 @@
 </script>
 
 <template>
-  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
+  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Notes</h2>
     </header>

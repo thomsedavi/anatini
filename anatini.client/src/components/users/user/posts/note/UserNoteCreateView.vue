@@ -77,45 +77,41 @@
 </script>
 
 <template>
-  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
+  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Create Note</h2>
     </header>
 
     <form @submit.prevent="postNote" :action="`/api/users/${userId}/notes`" method="POST" novalidate>
-      <fieldset>
-        <legend class="visuallyhidden">Create Note</legend>
+      <InputTextArea
+        v-model="inputArticle"
+        label="Content"
+        name="article"
+        id="article"
+        :maxLength="512"
+        :error="getError('article')"
+        :isArticle="true"
+        help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
-        <InputTextArea
-          v-model="inputArticle"
-          label="Content"
-          name="article"
-          id="article"
-          :maxLength="512"
-          :error="getError('article')"
-          :isArticle="true"
-          help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+      <VisibilitySelect v-model="inputVisibility" />
 
-        <VisibilitySelect v-model="inputVisibility" />
+      <InputText
+        v-model="inputNoteHandle"
+        label="Handle"
+        name="handle"
+        id="handle"
+        :maxlength="64"
+        help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
+        :error="getError('handle')" />
 
-        <InputText
-          v-model="inputNoteHandle"
-          label="Handle"
-          name="handle"
-          id="handle"
-          :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
-          :error="getError('handle')" />
-
-        <InputText
-          v-model="inputNotePublishedAtNz"
-          type="datetime-local"
-          label="Date & Time (NZ)"
-          name="publishedAtNz"
-          id="publishedAtNz"
-          help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
-          :error="getError('publishedAtNz')" />
-      </fieldset>
+      <InputText
+        v-model="inputNotePublishedAtNz"
+        type="datetime-local"
+        label="Date & Time (NZ)"
+        name="publishedAtNz"
+        id="publishedAtNz"
+        help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+        :error="getError('publishedAtNz')" />
 
       <SubmitButton
         :busy="status === 'pending'"
