@@ -52,7 +52,7 @@ namespace Anatini.Server.Posts.Links
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetLink(string linkHandle) => await UsingAccountPostAsync(linkHandle, PostType.Link, async (link) =>
+        public async Task<IActionResult> GetLink(string userHandle, string linkHandle) => await UsingUserPostAsync(userHandle, linkHandle, PostType.Link, async (link) =>
         {
             return Ok(await link.ToLinkDtoAsync(linkHandle, BlobService));
         });

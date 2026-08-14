@@ -13,6 +13,8 @@ namespace Anatini.Server.Context.Entities
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
         public required string Name { get; set; }
+        public required string Article { get; set; }
+        public required string Url { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 

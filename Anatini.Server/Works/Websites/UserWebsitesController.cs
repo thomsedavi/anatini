@@ -1,7 +1,9 @@
-﻿using Anatini.Server.Context;
+﻿using System.Net.Mime;
+using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Works.Websites.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,17 @@ namespace Anatini.Server.Works.Websites
         {
             return Ok(createWebsite);
         }, new ContextSettings { AccessRequired = true });
+
+        [Authorize]
+        [HttpGet("{websiteHandle}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetWebsite(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
+        {
+            return Ok(await website.ToWebsiteDtoAsync(websiteHandle, BlobService));
+        });
 
         [Authorize]
         [HttpPost("{websiteHandle}/bookmark")]

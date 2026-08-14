@@ -60,7 +60,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserAsync(string userHandle, Func<ApplicationUser, Task<IActionResult>> userFunction, ContextSettings? settings = null)
         {
-            ApplicationUser? user;
+            ApplicationUser? userResult;
 
             var usersQuery = context.Users.AsQueryable();
 
@@ -84,23 +84,23 @@ namespace Anatini.Server
 
             if (Guid.TryParse(userHandle, out Guid userId))
             {
-                user = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
+                userResult = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
             }
             else
             {
                 var normalizedUserHandle = NormalizeHandle(userHandle);
 
-                user = await usersQuery.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
+                userResult = await usersQuery.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
             }
 
-            if (user == null)
+            if (userResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(user.Visibility))
+            if (await CanReadAsync(userResult.Visibility))
             {
-                return await userFunction(user);
+                return await userFunction(userResult);
             }
 
             return CannotReadResponse();
@@ -109,7 +109,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingSpaceAsync(string spaceHandle, Func<Space, Task<IActionResult>> spaceFunction, ContextSettings? settings = null)
         {
-            Space? space;
+            Space? spaceResult;
 
             var spacesQuery = context.Spaces.AsQueryable();
 
@@ -122,33 +122,33 @@ namespace Anatini.Server
 
             if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {
-                space = await spacesQuery.FirstOrDefaultAsync(space => space.Id == spaceId);
+                spaceResult = await spacesQuery.FirstOrDefaultAsync(space => space.Id == spaceId);
             }
             else
             {
                 var normalizedSpaceHandle = NormalizeHandle(spaceHandle);
 
-                space = await spacesQuery.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
+                spaceResult = await spacesQuery.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
             }
 
-            if (space == null)
+            if (spaceResult == null)
             {
                 return NotFound();
             }
 
             if (settings?.AccessRequired ?? false)
             {
-                if (await CanWriteSpaceAsync(space))
+                if (await CanWriteSpaceAsync(spaceResult))
                 {
-                    return await spaceFunction(space);
+                    return await spaceFunction(spaceResult);
                 }
 
                 return CannotReadResponse();
             }
 
-            if (await CanReadAsync(space.Visibility))
+            if (await CanReadAsync(spaceResult.Visibility))
             {
-                return await spaceFunction(space);
+                return await spaceFunction(spaceResult);
             }
 
             return CannotReadResponse();
@@ -157,7 +157,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Post? post;
+            Post? postResult;
 
             var postsQuery = context.Posts.Where(post => post.Type == postType);
 
@@ -168,23 +168,23 @@ namespace Anatini.Server
 
             if (Guid.TryParse(postHandle, out Guid postId))
             {
-                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
+                postResult = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
             }
             else
             {
                 var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                post = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
+                postResult = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (post == null)
+            if (postResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(post.Visibility))
+            if (await CanReadAsync(postResult.Visibility))
             {
-                return await postFunction(post);
+                return await postFunction(postResult);
             }
 
             return CannotReadResponse();
@@ -193,7 +193,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserPostAsync(string userHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Post? post;
+            Post? postResult;
 
             var postsQuery = context.Posts.Where(post => post.Type == postType);
 
@@ -204,23 +204,23 @@ namespace Anatini.Server
 
             if (Guid.TryParse(postHandle, out Guid postId))
             {
-                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
+                postResult = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
             }
             else
             {
                 var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
+                postResult = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (post == null)
+            if (postResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(post.Visibility))
+            if (await CanReadAsync(postResult.Visibility))
             {
-                return await postFunction(post);
+                return await postFunction(postResult);
             }
 
             return CannotReadResponse();
@@ -229,7 +229,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserEventInstanceAsync(string userHandle, string eventSeriesHandle, string eventInstanceHandle, Func<EventInstance, Task<IActionResult>> eventInstanceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            EventInstance? eventInstance;
+            EventInstance? eventInstanceResult;
 
             var eventInstancesQuery = context.EventInstances.AsQueryable();
 
@@ -259,23 +259,23 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventInstanceHandle, out Guid eventInstanceId))
             {
-                eventInstance = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
+                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
             }
             else
             {
                 var normalizedEventInstanceHandle = NormalizeHandle(eventInstanceHandle);
 
-                eventInstance = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
+                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
             }
 
-            if (eventInstance == null)
+            if (eventInstanceResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(eventInstance.Visibility))
+            if (await CanReadAsync(eventInstanceResult.Visibility))
             {
-                return await eventInstanceFunction(eventInstance);
+                return await eventInstanceFunction(eventInstanceResult);
             }
 
             return CannotReadResponse();
@@ -284,7 +284,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventSeriesHandle, Func<EventSeries, Task<IActionResult>> eventSeriesFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            EventSeries? eventSeries;
+            EventSeries? eventSeriesResult;
 
             var eventSeriesQuery = context.EventSeries.AsQueryable();
 
@@ -295,23 +295,23 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventSeriesHandle, out Guid eventId))
             {
-                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Id == eventId);
+                eventSeriesResult = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Id == eventId);
             }
             else
             {
                 var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
 
-                eventSeries = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
+                eventSeriesResult = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
             }
 
-            if (eventSeries == null)
+            if (eventSeriesResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(eventSeries.Visibility))
+            if (await CanReadAsync(eventSeriesResult.Visibility))
             {
-                return await eventSeriesFunction(eventSeries);
+                return await eventSeriesFunction(eventSeriesResult);
             }
 
             return CannotReadResponse();
@@ -320,7 +320,7 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingUserWorkAsync(string userHandle, string workHandle, WorkType workType, Func<Work, Task<IActionResult>> workFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            Work? work;
+            Work? workResult;
 
             var worksQuery = context.Works.Where(work => work.Type == workType);
 
@@ -331,57 +331,26 @@ namespace Anatini.Server
 
             if (Guid.TryParse(workHandle, out Guid workId))
             {
-                work = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Id == workId);
+                workResult = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Id == workId);
             }
             else
             {
                 var normalizedWorkHandle = NormalizeHandle(workHandle);
 
-                work = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Handle == normalizedWorkHandle);
+                workResult = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Handle == normalizedWorkHandle);
             }
 
-            if (work == null)
+            if (workResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(work.Visibility))
+            if (await CanReadAsync(workResult.Visibility))
             {
-                return await workFunction(work);
+                return await workFunction(workResult);
             }
 
             return CannotReadResponse();
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingAccountPostAsync(string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
-        {
-            Post? post;
-
-            var postsQuery = context.Posts.Where(post => post.Type == postType);
-
-            if (settings?.AsNoTracking ?? true)
-            {
-                postsQuery = postsQuery.AsNoTracking();
-            }
-
-            if (Guid.TryParse(postHandle, out Guid postId))
-            {
-                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
-            }
-            else
-            {
-                var normalizedPostHandle = NormalizeHandle(postHandle);
-
-                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
-            }
-
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return await postFunction(post);
         }, settings);
 
         [NonAction]

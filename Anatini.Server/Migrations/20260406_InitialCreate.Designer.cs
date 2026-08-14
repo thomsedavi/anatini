@@ -1303,10 +1303,16 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(8);
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(10);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -1344,6 +1350,13 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(11);
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2047)
+                        .HasColumnType("character varying(2047)")
+                        .HasColumnName("url")
                         .HasColumnOrder(9);
 
                     b.Property<Guid?>("UserId")
