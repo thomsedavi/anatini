@@ -23,7 +23,7 @@ namespace Anatini.Server.Events
 
         public TimeSpan? Duration { get; set; }
 
-        [MaxLength(256)]
+        [Link]
         public string? Url { get; set; }
 
         public string? Article { get; set; }

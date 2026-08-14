@@ -55,9 +55,9 @@
 </script>
 
 <template>
-  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
+  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
-      <h2>Notes</h2>
+      <h2>Posts</h2>
       <RouterLink :to="{ name: 'UserNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
@@ -68,6 +68,6 @@
       </li>
     </ul>
 
-    <p v-else>You do not have any notes</p>
+    <p v-else>You do not have any posts</p>
   </section>
 </template>

@@ -354,34 +354,34 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingAccountNoteAsync(string noteHandle, Func<Post, Task<IActionResult>> noteFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> UsingAccountPostAsync(string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingAccountAsync(async (user) =>
         {
-            Post? note;
+            Post? post;
 
-            var notesQuery = context.Notes;
+            var postsQuery = context.Posts.Where(post => post.Type == postType);
 
             if (settings?.AsNoTracking ?? true)
             {
-                notesQuery = notesQuery.AsNoTracking();
+                postsQuery = postsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(noteHandle, out Guid noteId))
+            if (Guid.TryParse(postHandle, out Guid postId))
             {
-                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Id == noteId);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
             }
             else
             {
-                var normalizedNoteHandle = NormalizeHandle(noteHandle);
+                var normalizedPostHandle = NormalizeHandle(postHandle);
 
-                note = await notesQuery.FirstOrDefaultAsync(note => note.UserId == user.Id && note.Handle == normalizedNoteHandle);
+                post = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
             }
 
-            if (note == null)
+            if (post == null)
             {
                 return NotFound();
             }
 
-            return await noteFunction(note);
+            return await postFunction(post);
         }, settings);
 
         [NonAction]

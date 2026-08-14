@@ -11,16 +11,18 @@ import UserEventOccurrenceView from './components/users/user/events/event/UserEv
 import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import AccountView from './components/AccountView.vue';
 import AccountPublicView from './components/account/AccountPublicView.vue';
-import UserNotesView from './components/users/user/notes/UserNotesView.vue';
+import UserPostsView from './components/users/user/posts/UserPostsView.vue';
 import SpaceNotesView from './components/spaces/space/notes/SpaceNotesView.vue';
-import UserNoteView from './components/users/user/notes/note/UserNoteView.vue';
+import UserNoteView from './components/users/user/posts/note/UserNoteView.vue';
 import UserEventsView from './components/users/user/events/UserEventsView.vue';
+import UserWorksView from './components/users/user/works/UserWorksView.vue';
+import UserWebsiteCreateView from './components/users/user/works/website/UserWebsiteCreateView.vue';
 import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
-import UserNoteCreateView from './components/users/user/notes/note/UserNoteCreateView.vue';
+import UserNoteCreateView from './components/users/user/posts/note/UserNoteCreateView.vue';
 import SpaceNoteCreateView from './components/spaces/space/notes/note/SpaceNoteCreateView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
-import UserNoteEditView from './components/users/user/notes/note/UserNoteEditView.vue';
+import UserNoteEditView from './components/users/user/posts/note/UserNoteEditView.vue';
 import SpaceNoteEditView from './components/spaces/space/notes/note/SpaceNoteEditView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountSpacesView from './components/account/AccountSpacesView.vue';
@@ -100,7 +102,7 @@ const routes: RouteRecordRaw[] = [
     path: '/users/:userId',
     component: UserView,
     name: 'User',
-    redirect: { name: 'UserNotes' },
+    redirect: { name: 'UserPosts' },
     children: [
       {
         path: 'notes/create',
@@ -118,9 +120,9 @@ const routes: RouteRecordRaw[] = [
         name: 'UserNote'
       },
       {
-        path: 'notes',
-        component: UserNotesView,
-        name: 'UserNotes'
+        path: 'posts',
+        component: UserPostsView,
+        name: 'UserPosts'
       },
       {
         path: 'events/create',
@@ -141,6 +143,16 @@ const routes: RouteRecordRaw[] = [
         path: 'events',
         component: UserEventsView,
         name: 'UserEvents'
+      },
+      {
+        path: 'works',
+        component: UserWorksView,
+        name: 'UserWorks'
+      },
+      {
+        path: 'websites/create',
+        component: UserWebsiteCreateView,
+        name: 'UserWebsiteCreate'
       },
     ],
   },

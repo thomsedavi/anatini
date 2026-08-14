@@ -1,7 +1,11 @@
-﻿using Anatini.Server.Context;
+﻿using System.Net.Mime;
+using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Posts.Links.Extensions;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +18,45 @@ namespace Anatini.Server.Posts.Links
     [Route("api/users/{userHandle}/links")]
     public class UserLinksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
+        [HttpPost]
+        [Authorize(Policy = "IsTrusted")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostLink([FromForm] CreateLink createLink) => await UsingAccountAsync(async (user) =>
+        {
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createLink.Article);
+
+            if (validationResult.ErrorMessage != null)
+            {
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
+            }
+
+            var link = Context.AddUserLinkAsync(createLink.Name, validationResult.SanitizedHtml, createLink.Url, createLink.Visibility, user.Id, Status.Published, DateTime.UtcNow, createLink.Handle != null ? NormalizeHandle(createLink.Handle) : null, createLink.PublishedAtNz);
+
+            await Context.SaveChangesAsync();
+
+            link.User = user;
+
+            return CreatedAtAction(nameof(GetLink), new { userHandle = user.Handle, linkHandle = link.Handle }, await link.ToLinkDtoAsync(createLink.Handle != null ? NormalizeHandle(createLink.Handle) : null, BlobService));
+        }, new ContextSettings { AccessRequired = true });
+
+        [Authorize]
+        [HttpGet("{linkHandle}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetLink(string linkHandle) => await UsingAccountPostAsync(linkHandle, PostType.Link, async (link) =>
+        {
+            return Ok(await link.ToLinkDtoAsync(linkHandle, BlobService));
+        });
+
         [Authorize]
         [HttpPost("{linkHandle}/bookmark")]
         public async Task<IActionResult> PostLinkBookmark(string userHandle, string linkHandle) => await UsingUserPostAsync(userHandle, linkHandle, PostType.Link, async (link) =>
