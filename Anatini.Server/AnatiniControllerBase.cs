@@ -239,9 +239,9 @@ namespace Anatini.Server
                 eventInstancesQuery = eventInstancesQuery.AsNoTracking();
             }
 
-            if (TryGetUserId(out Guid userId))
+            if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserEdges.Where(userNote => userNote.SourceUserId == userId));
+                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserEdges.Where(userNote => userNote.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
@@ -328,6 +328,11 @@ namespace Anatini.Server
             if (settings?.AsNoTracking ?? true)
             {
                 worksQuery = worksQuery.AsNoTracking();
+            }
+
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                worksQuery = worksQuery.Include(work => work.UserEdges.Where(userWorkEdge => userWorkEdge.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(workHandle, out Guid workId))

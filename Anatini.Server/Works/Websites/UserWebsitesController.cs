@@ -68,52 +68,52 @@ namespace Anatini.Server.Works.Websites
         [HttpPost("{websiteHandle}/bookmark")]
         public async Task<IActionResult> PostWebsiteBookmark(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await AddUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasBookmarked);
+            return await AddUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{websiteHandle}/bookmark")]
         public async Task<IActionResult> DeleteWebsiteBookmark(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await DeleteUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasBookmarked);
+            return await DeleteUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpPost("{websiteHandle}/star")]
         public async Task<IActionResult> PostWebsiteStar(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await AddUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasStarred);
+            return await AddUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpDelete("{websiteHandle}/star")]
         public async Task<IActionResult> DeleteWebsiteStar(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await DeleteUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasStarred);
+            return await DeleteUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasStarred);
         });
 
         [Authorize]
         [HttpPost("{websiteHandle}/dismiss")]
         public async Task<IActionResult> PostWebsiteDismiss(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await AddUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasDismissed);
+            return await AddUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasDismissed);
         });
 
         [Authorize]
         [HttpDelete("{websiteHandle}/dismiss")]
         public async Task<IActionResult> DeleteWebsiteDismiss(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return await DeleteUserWebsiteEdge(Context, website.Id, UserPostEdgeLabel.HasDismissed);
+            return await DeleteUserWebsiteEdge(Context, website.Id, UserWorkEdgeLabel.HasDismissed);
         });
 
-        private async Task<IActionResult> AddUserWebsiteEdge(ApplicationDbContext context, Guid websiteId, UserPostEdgeLabel label)
+        private async Task<IActionResult> AddUserWebsiteEdge(ApplicationDbContext context, Guid websiteId, UserWorkEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userWebsiteEdge = new ApplicationUserPostEdge
+                var userWebsiteEdge = new ApplicationUserWorkEdge
                 {
                     SourceUserId = sourceUserId,
-                    TargetPostId = websiteId,
+                    TargetWorkId = websiteId,
                     Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
@@ -136,11 +136,11 @@ namespace Anatini.Server.Works.Websites
             }
         }
 
-        private async Task<IActionResult> DeleteUserWebsiteEdge(ApplicationDbContext context, Guid websiteId, UserPostEdgeLabel label)
+        private async Task<IActionResult> DeleteUserWebsiteEdge(ApplicationDbContext context, Guid websiteId, UserWorkEdgeLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userWebsiteEdge = await context.UserPostEdges.FirstOrDefaultAsync(userWebsiteEdge => userWebsiteEdge.TargetPostId == websiteId && userWebsiteEdge.SourceUserId == sourceUserId && userWebsiteEdge.Label == label);
+                var userWebsiteEdge = await context.UserWorkEdges.FirstOrDefaultAsync(userWebsiteEdge => userWebsiteEdge.TargetWorkId == websiteId && userWebsiteEdge.SourceUserId == sourceUserId && userWebsiteEdge.Label == label);
 
                 if (userWebsiteEdge != null)
                 {

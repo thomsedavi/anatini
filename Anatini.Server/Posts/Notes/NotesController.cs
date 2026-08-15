@@ -25,46 +25,46 @@ namespace Anatini.Server.Posts.Notes
             notesQuery = notesQuery.Include(note => note.User).ThenInclude(user => user!.Images);
             notesQuery = notesQuery.Include(note => note.Space).ThenInclude(space => space!.Images);
 
-            if (TryGetUserId(out Guid userId))
+            if (TryGetUserId(out Guid sourceUserId))
             {
-                notesQuery = notesQuery.Include(note => note.UserEdges.Where(userNote => userNote.SourceUserId == userId));
+                notesQuery = notesQuery.Include(note => note.UserEdges.Where(userNote => userNote.SourceUserId == sourceUserId));
 
                 notesQuery = notesQuery.Where(note => (note.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
                 if (query.Bookmarked == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasStarred));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == userId && userNote.Label == UserPostEdgeLabel.HasDismissed));
+                    notesQuery = notesQuery.Where(note => !note.UserEdges.Any(userNote => userNote.SourceUserId == sourceUserId && userNote.Label == UserPostEdgeLabel.HasDismissed));
                 }
 
                 if (query.Followed == "only")
                 {
-                    notesQuery = notesQuery.Where(note => note.User != null && note.User.ReceivedUserEdges.Any(userEdge => userEdge.SourceUserId == userId && userEdge.Label == UserUserEdgeLabel.HasFollowed));
+                    notesQuery = notesQuery.Where(note => note.User != null && note.User.ReceivedUserEdges.Any(userEdge => userEdge.SourceUserId == sourceUserId && userEdge.Label == UserUserEdgeLabel.HasFollowed));
                 }
                 else if (query.Followed == "hide")
                 {
-                    notesQuery = notesQuery.Where(note => note.User != null && !note.User.ReceivedUserEdges.Any(test => test.SourceUserId == userId && test.Label == UserUserEdgeLabel.HasFollowed));
+                    notesQuery = notesQuery.Where(note => note.User != null && !note.User.ReceivedUserEdges.Any(test => test.SourceUserId == sourceUserId && test.Label == UserUserEdgeLabel.HasFollowed));
                 }
             }
             else
