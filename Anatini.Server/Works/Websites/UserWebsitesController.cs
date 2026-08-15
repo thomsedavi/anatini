@@ -1,8 +1,10 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Utils;
 using Anatini.Server.Works.Websites.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +26,31 @@ namespace Anatini.Server.Works.Websites
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostWebsite([FromForm] CreateWebsite createWebsite) => await UsingAccountAsync(async (user) =>
         {
-            return Ok(createWebsite);
+            string? article = null;
+
+            if (createWebsite.Article != null)
+            {
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWebsite.Article);
+
+                if (validationResult.ErrorMessage != null)
+                {
+                    return BadRequest(new { error = validationResult.ErrorMessage });
+                }
+                else if (validationResult.SanitizedHtml == null)
+                {
+                    return BadRequest(new { error = "Unknown error" });
+                }
+
+                article = validationResult.SanitizedHtml;
+            }
+
+            var website = Context.AddUserWebsiteAsync(createWebsite.Name, createWebsite.Url, createWebsite.Visibility, user.Id, (createWebsite.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWebsite.Handle), article);
+
+            await Context.SaveChangesAsync();
+
+            website.User = user;
+
+            return CreatedAtAction(nameof(GetWebsite), new { userHandle = user.Handle, websiteHandle = website.Handle }, await website.ToWebsiteDtoAsync(NormalizeHandleOrNull(createWebsite.Handle), BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]

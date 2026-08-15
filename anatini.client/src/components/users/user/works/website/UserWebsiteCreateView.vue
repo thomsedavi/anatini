@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Website } from '@/common/types';
+  import type { InputError, Status, StatusActions, Visibility, Website } from '@/common/types';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
   import { tidy } from '@/common/utils';
 
   const router = useRouter();
@@ -24,6 +25,7 @@
 
   const inputName = ref<string>('');
   const inputArticle = ref<string>('');
+  const inputVisibility = ref<Visibility>('Public');
   const inputHandle = ref<string>('');
   const inputUrl = ref<string>('');
 
@@ -61,7 +63,7 @@
       201: (response?: Response) => {
           response?.json()
             .then((value: Website) => {
-              router.push({ name: 'UserWebsite', params: { userId: props.userHandle, websiteId: value.handle } });
+              router.push({ name: 'UserWebsite', params: { userId: props.userHandle, websiteId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -73,6 +75,11 @@
 
     body.append('url', tidiedUrl);
     body.append('name', tidiedName);
+    body.append('visibility', inputVisibility.value);
+
+    if (tidy(inputHandle.value) !== '') {
+      body.append('handle', tidy(inputHandle.value));
+    }
 
     const init = { method: "POST", body: body };
 
@@ -118,6 +125,8 @@
         :error="getError('article')"
         :isArticle="true"
         help="Describe your link. Asterisks allow for *emphasis* and **strong text**." />
+
+      <VisibilitySelect v-model="inputVisibility" />
 
       <InputText
         v-model="inputHandle"

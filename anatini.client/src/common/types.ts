@@ -155,6 +155,15 @@ export type NoteEdit = {
 export type Website = {
   id: string;
   handle: string | null;
+  article: string | null;
+  name: string;
+  url: string;
+  publishedAtNz: string | null;
+  userHeader: UserHeader | null;
+  spaceHeader: SpaceHeader | null;
+  hasStarred: boolean | null;
+  hasBookmarked: boolean | null;
+  hasDismissed: boolean | null;
 }
 
 export type IsAuthenticated = {

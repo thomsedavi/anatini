@@ -18,15 +18,16 @@ import HomeWorksView from './components/home/works/HomeWorksView.vue';
 import UsersView from './components/users/UsersView.vue';
 import UserView from './components/users/user/UserView.vue';
 import UserPostsView from './components/users/user/posts/UserPostsView.vue';
-import UserNoteView from './components/users/user/posts/note/UserNoteView.vue';
 import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
+import UserWebsiteView from './components/users/user/works/website/UserWebsiteView.vue';
 import UserWebsiteCreateView from './components/users/user/works/website/UserWebsiteCreateView.vue';
+import UserNoteView from './components/users/user/posts/note/UserNoteView.vue';
 import UserNoteCreateView from './components/users/user/posts/note/UserNoteCreateView.vue';
+import UserNoteEditView from './components/users/user/posts/note/UserNoteEditView.vue';
 import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
-import UserNoteEditView from './components/users/user/posts/note/UserNoteEditView.vue';
 
 import SpaceCreateView from './components/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
@@ -156,6 +157,11 @@ const routes: RouteRecordRaw[] = [
         path: 'websites/create',
         component: UserWebsiteCreateView,
         name: 'UserWebsiteCreate'
+      },
+      {
+        path: 'website/:websiteId',
+        component: UserWebsiteView,
+        name: 'UserWebsite'
       },
     ],
   },

@@ -18,9 +18,9 @@
   const notes = ref<Note[] | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserNoteCreate', 'UserNoteEdit'] },
+    { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserNote', 'UserNoteCreate', 'UserNoteEdit'] },
     { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
-    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsiteCreate'] },
+    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsite', 'UserWebsiteCreate'] },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);

@@ -49,7 +49,7 @@
       201: (response?: Response) => {
           response?.json()
             .then((value: Note) => {
-              router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: value.handle } });
+              router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: value.handle ?? value.id } });
             });
       },
       400: () => {

@@ -50,5 +50,5 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" :aria-busy="note === null" v-html="getMainHtml()"></main>
+  <main id="main" tabindex="-1" :aria-busy="note.fetching === true" v-html="getMainHtml()"></main>
 </template>
