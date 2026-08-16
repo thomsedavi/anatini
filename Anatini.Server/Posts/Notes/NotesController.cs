@@ -19,9 +19,11 @@ namespace Anatini.Server.Posts.Notes
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNotes([FromQuery] NotesQuery query)
         {
+            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+
             var notesQuery = Context.Notes;
 
-            notesQuery = notesQuery.AsNoTracking().Where(note => note.PublishedAtNz < DateTime.UtcNow.ConvertUtcToNz());
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.PublishedAtNz < nzNow);
             notesQuery = notesQuery.Include(note => note.User).ThenInclude(user => user!.Images);
             notesQuery = notesQuery.Include(note => note.Space).ThenInclude(space => space!.Images);
 

@@ -20,9 +20,11 @@ namespace Anatini.Server.Posts.Notes
         [HttpGet]
         public async Task<IActionResult> GetNotes(string spaceHandle, DateTime? lastPublishedAtNz, Guid? lastNoteId, int pageSize = 20) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
+            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+
             var notesQuery = Context.Notes;
 
-            notesQuery = notesQuery.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtNz < DateTime.UtcNow.ConvertUtcToNz());
+            notesQuery = notesQuery.AsNoTracking().Where(note => note.SpaceId == space.Id && note.PublishedAtNz < nzNow);
 
             if (IsAuthenticated)
             {

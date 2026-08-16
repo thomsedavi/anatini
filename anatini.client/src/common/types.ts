@@ -7,6 +7,7 @@ export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
+export type WorkType = 'Website' | 'Product';
 
 export type Request = {
   input: RequestInfo | URL,
@@ -130,6 +131,20 @@ export type EventOccurrence = {
   article: string | null;
   url: string | null;
   hasBookmarked: boolean | null;
+}
+
+export type Work = {
+  id: string;
+  userHeader: UserHeader | null;
+  spaceHeader: SpaceHeader | null;
+  type: WorkType;
+  name: string;
+  article: string | null;
+  url: string;
+  publishedAtNz: string | null;
+  hasStarred: boolean | null;
+  hasBookmarked: boolean | null;
+  hasDismissed: boolean | null;
 }
 
 export type Note = {

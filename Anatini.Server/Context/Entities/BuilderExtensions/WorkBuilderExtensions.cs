@@ -29,6 +29,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             workBuilder.HasIndex(work => new { work.UserId, work.Type, work.Handle }).IsUnique().HasFilter($"{workBuilder.GetColumnName(nameof(Work.UserId))} IS NOT NULL");
             workBuilder.HasIndex(work => new { work.SpaceId, work.Type, work.Handle }).IsUnique().HasFilter($"{workBuilder.GetColumnName(nameof(Work.SpaceId))} IS NOT NULL");
             workBuilder.HasIndex(work => work.PublishedAtNz).HasFilter($"{workBuilder.GetColumnName(nameof(Work.PublishedAtNz))} IS NOT NULL AND {workBuilder.GetColumnName(nameof(Work.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_works_date_nz");
+            workBuilder.HasIndex(work => work.Name).HasFilter($"{workBuilder.GetColumnName(nameof(Work.Status))} = {(int)Status.Published}").HasDatabaseName("ix_published_works_name");
         }
     }
 }

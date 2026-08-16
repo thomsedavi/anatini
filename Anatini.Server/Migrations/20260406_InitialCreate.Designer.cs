@@ -1371,6 +1371,10 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id")
                         .HasName("pk_works");
 
+                    b.HasIndex("Name")
+                        .HasDatabaseName("ix_published_works_name")
+                        .HasFilter("status = 1");
+
                     b.HasIndex("PublishedAtNz")
                         .HasDatabaseName("ix_published_works_date_nz")
                         .HasFilter("published_at_nz IS NOT NULL AND status = 1");

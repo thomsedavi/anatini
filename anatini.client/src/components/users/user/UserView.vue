@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, User } from '@/common/types';
+  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
@@ -16,6 +16,7 @@
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
   const notes = ref<Note[] | null>(null);
+  const works = ref<Work[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserNote', 'UserNoteCreate', 'UserNoteEdit'] },
@@ -156,6 +157,10 @@
     notes.value = newNotes;
   }
 
+  function handleUpdateWorks(newWorks: Work[]): void {
+    works.value = newWorks;
+  }
+
   function handleUpdateErrors(newInputErrors: InputError[]): void {
     inputErrors.value = newInputErrors;
 
@@ -178,73 +183,74 @@
       </ul>
     </section>
 
-    <article :aria-busy="user.fetching === true" aria-labelledby="heading-main">
-      <header>
-        <figure>
-          <img v-if="user.data !== undefined && user.data.iconImage !== null" :alt="user.data.iconImage.altText ?? 'User icon'" :src="user.data.iconImage.uri" width="400" height="400" />
-          <svg v-else
-            view-box="0 0 400 400"
-            width="400"
-            height="400">
-            <rect width="400" height="400" fill="#f0f" />
-          </svg>
-          <figcaption>Picture Of User</figcaption>
-        </figure>
+    <header>
+      <figure>
+        <img v-if="user.data !== undefined && user.data.iconImage !== null" :alt="user.data.iconImage.altText ?? 'User icon'" :src="user.data.iconImage.uri" width="400" height="400" />
+        <svg v-else
+          view-box="0 0 400 400"
+          width="400"
+          height="400">
+          <rect width="400" height="400" fill="#f0f" />
+        </svg>
+        <figcaption>Picture Of User</figcaption>
+      </figure>
 
-        <h1 id="heading-main">{{ getHeading() }}</h1>
-      </header>
+      <h1 id="heading-main">{{ getHeading() }}</h1>
+    </header>
 
-      <section v-if="user.fetching === true">
-        <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the user information is fetched.</p>
-                
-        <progress max="100">Fetching user...</progress>
+    <section v-if="user.fetching === true">
+      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the user information is fetched.</p>
+              
+      <progress max="100">Fetching user...</progress>
+    </section>
+
+    <section v-if="user.error !== undefined">
+      <p>
+        {{ user.error.body }}
+      </p>
+    </section>
+
+    <template v-if="user.data !== undefined">
+      <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
       </section>
 
-      <section v-if="user.error !== undefined">
-        <p>
-          {{ user.error.body }}
-        </p>
-      </section>
+      <menu v-if="store.userId !== user.data.id && (user.data.hasTrusted !== null || user.data.hasFollowed !== null)">
+        <li v-if="user.data.hasTrusted !== null">
+          <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
+        </li>
+        <li v-if="user.data.hasFollowed !== null">
+          <button type="button" :aria-pressed="user.data.hasFollowed" @click="toggleFollow">{{ user.data.hasFollowed ? "Remove Follow" : "Follow" }}</button>
+        </li>
+      </menu>
+    </template>
 
-      <template v-if="user.data !== undefined">
-        <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
-        </section>
+    <template v-if="user.data !== undefined">
+      <ul role="tablist" aria-label="User Content">
+        <TabButton v-for="(tab, index) in tabs"
+          :key="tab.id"
+          :selected="tabIndex === index"
+          @click="() => handleClick(index)"
+          @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
+          :text="tab.text"
+          :id="tab.id"
+          :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
+      </ul>
 
-        <menu v-if="store.userId !== user.data.id && (user.data.hasTrusted !== null || user.data.hasFollowed !== null)">
-          <li v-if="user.data.hasTrusted !== null">
-            <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
-          </li>
-          <li v-if="user.data.hasFollowed !== null">
-            <button type="button" :aria-pressed="user.data.hasFollowed" @click="toggleFollow">{{ user.data.hasFollowed ? "Remove Follow" : "Follow" }}</button>
-          </li>
-        </menu>
-      </template>
-
-      <template v-if="user.data !== undefined">
-        <ul role="tablist" aria-label="User Content">
-          <TabButton v-for="(tab, index) in tabs"
-            :key="tab.id"
-            :selected="tabIndex === index"
-            @click="() => handleClick(index)"
-            @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
-            :text="tab.text"
-            :id="tab.id"
-            :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
-        </ul>
-
-        <RouterView v-slot="{ Component }">
-          <component
-            :is="Component"
-            :status="status"
-            :inputErrors="inputErrors"
-            :notes="notes"
-            :userId="user.data.id"
-            :userHandle="user.data.handle"
-            @update-notes="handleUpdateNotes"
-            @update-errors="handleUpdateErrors"
-          />
-        </RouterView>
-      </template>
-    </article>
+      <RouterView v-slot="{ Component }">
+        <component
+          :is="Component"
+          :status="status"
+          :inputErrors="inputErrors"
+          :notes="notes"
+          :works="works"
+          :userId="user.data.id"
+          :userHandle="user.data.handle"
+          :userName="user.data.name"
+          @update-notes="handleUpdateNotes"
+          @update-works="handleUpdateWorks"
+          @update-errors="handleUpdateErrors"
+        />
+      </RouterView>
+    </template>
   </main>
 </template>
