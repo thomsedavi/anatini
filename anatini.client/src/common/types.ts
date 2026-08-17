@@ -7,7 +7,7 @@ export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
-export type WorkType = 'Website' | 'Product';
+export type WorkType = 'Website' | 'Product' | 'Art';
 
 export type Request = {
   input: RequestInfo | URL,

@@ -39,9 +39,18 @@
     </header>
 
     <ul role="list" v-if="works !== null">
-      <li v-for="work in works" :key="'work' + work.id">
+      <li v-for="work in works" :key="'work' + work.id" :data-work-type="work.type">
         <article>
-          <h1>{{ work.name }}</h1>
+          <h2 v-if="work.type === 'Website'">
+            <a :href="work.url" target="_blank">{{ work.name }}</a>
+          </h2>
+          <h2 v-else>
+            <a :href="work.url" target="_blank"><cite>{{ work.name }}</cite></a>
+          </h2>
+          <p>Some description might go here?</p>
+          <footer v-if="work.type === 'Product'">
+            <a :href="work.url" target="_blank">Purchase</a>
+          </footer>
         </article>
       </li>
     </ul>

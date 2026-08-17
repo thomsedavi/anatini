@@ -14,15 +14,13 @@ namespace Anatini.Server.Works
     public class UserWorksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
-        public async Task<IActionResult> GetWorks([FromQuery] WorksQuery query)
+        public async Task<IActionResult> GetWorks(string userHandle, [FromQuery] WorksQuery query) => await UsingUserAsync(userHandle, async (user) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
-            var worksQuery = Context.Works.AsQueryable();
+            var worksQuery = Context.Works.Where(work => work.UserId == user.Id);
 
             worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtNz.HasValue || work.PublishedAtNz.Value < nzNow);
-            worksQuery = worksQuery.Include(work => work.User).ThenInclude(user => user!.Images);
-            worksQuery = worksQuery.Include(work => work.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -84,7 +82,7 @@ namespace Anatini.Server.Works
             }
 
             return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(work.Handle, BlobService))));
-        }
+        });
 
         public class WorksQuery
         {
