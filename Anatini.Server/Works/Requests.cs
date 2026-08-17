@@ -2,9 +2,9 @@
 using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Works.Websites
+namespace Anatini.Server.Works
 {
-    public class CreateWebsite
+    public class CreateWork
     {
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }

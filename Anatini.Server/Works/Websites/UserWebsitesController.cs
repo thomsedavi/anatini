@@ -5,7 +5,6 @@ using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Utils;
-using Anatini.Server.Works.Websites.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +23,13 @@ namespace Anatini.Server.Works.Websites
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostWebsite([FromForm] CreateWebsite createWebsite) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> PostWebsite([FromForm] CreateWork createWork) => await UsingAccountAsync(async (user) =>
         {
             string? article = null;
 
-            if (createWebsite.Article != null)
+            if (createWork.Article != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWebsite.Article);
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Article);
 
                 if (validationResult.ErrorMessage != null)
                 {
@@ -44,13 +43,13 @@ namespace Anatini.Server.Works.Websites
                 article = validationResult.SanitizedHtml;
             }
 
-            var website = Context.AddUserWebsiteAsync(createWebsite.Name, createWebsite.Url, createWebsite.Visibility, user.Id, (createWebsite.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWebsite.Handle), article);
+            var website = Context.AddUserWorkAsync(WorkType.Product, createWork.Name, createWork.Url, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle), article);
 
             await Context.SaveChangesAsync();
 
             website.User = user;
 
-            return CreatedAtAction(nameof(GetWebsite), new { userHandle = user.Handle, websiteHandle = website.Handle }, await website.ToWebsiteDtoAsync(NormalizeHandleOrNull(createWebsite.Handle), BlobService));
+            return CreatedAtAction(nameof(GetWebsite), new { userHandle = user.Handle, websiteHandle = website.Handle }, await website.ToWorkDtoAsync(NormalizeHandleOrNull(createWork.Handle), BlobService));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -61,7 +60,7 @@ namespace Anatini.Server.Works.Websites
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetWebsite(string userHandle, string websiteHandle) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
         {
-            return Ok(await website.ToWebsiteDtoAsync(websiteHandle, BlobService));
+            return Ok(await website.ToWorkDtoAsync(websiteHandle, BlobService));
         });
 
         [Authorize]

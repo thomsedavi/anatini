@@ -21,7 +21,7 @@
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserNote', 'UserNoteCreate', 'UserNoteEdit'] },
     { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
-    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsite', 'UserWebsiteCreate'] },
+    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsite', 'UserWebsiteCreate', 'UserProduct', 'UserProductCreate', 'UserProject', 'UserProjectCreate'] },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);

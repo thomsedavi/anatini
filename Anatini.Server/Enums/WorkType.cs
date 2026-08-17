@@ -5,6 +5,6 @@
         None = 0,
         Product = 1,
         Website = 2,
-        Art = 4
+        Project = 4
     }
 }

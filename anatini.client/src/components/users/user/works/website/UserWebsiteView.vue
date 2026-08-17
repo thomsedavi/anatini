@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
-  import type { APIResponse, StatusActions, Website } from '@/common/types';
+  import type { APIResponse, StatusActions, Work } from '@/common/types';
   import { parseSource, type Source } from '@/common/utils';
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
@@ -13,7 +13,7 @@
     userName: string,
   }>();
 
-  const website = ref<APIResponse<Website>>({ fetching: true });
+  const website = ref<APIResponse<Work>>({ fetching: true });
 
   watch([() => route.params.userId, () => route.params.websiteId], (source: Source) => fetchWebsite(parseSource(source)), { immediate: true });
 
@@ -23,7 +23,7 @@
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: Website) => {
+          .then((value: Work) => {
             website.value = { data: value };
           })
           .catch(() => {

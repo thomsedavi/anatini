@@ -22,6 +22,10 @@ import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
 import UserWebsiteView from './components/users/user/works/website/UserWebsiteView.vue';
 import UserWebsiteCreateView from './components/users/user/works/website/UserWebsiteCreateView.vue';
+import UserProductView from './components/users/user/works/product/UserProductView.vue';
+import UserProductCreateView from './components/users/user/works/product/UserProductCreateView.vue';
+import UserProjectView from './components/users/user/works/project/UserProjectView.vue';
+import UserProjectCreateView from './components/users/user/works/project/UserProjectCreateView.vue';
 import UserNoteView from './components/users/user/posts/note/UserNoteView.vue';
 import UserNoteCreateView from './components/users/user/posts/note/UserNoteCreateView.vue';
 import UserNoteEditView from './components/users/user/posts/note/UserNoteEditView.vue';
@@ -162,6 +166,26 @@ const routes: RouteRecordRaw[] = [
         path: 'website/:websiteId',
         component: UserWebsiteView,
         name: 'UserWebsite'
+      },
+      {
+        path: 'products/create',
+        component: UserProductCreateView,
+        name: 'UserProductCreate'
+      },
+      {
+        path: 'product/:productId',
+        component: UserProductView,
+        name: 'UserProduct'
+      },
+      {
+        path: 'projects/create',
+        component: UserProjectCreateView,
+        name: 'UserProjectCreate'
+      },
+      {
+        path: 'project/:projectId',
+        component: UserProjectView,
+        name: 'UserProject'
       },
     ],
   },

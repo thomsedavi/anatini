@@ -36,6 +36,8 @@
     <header>
       <h2>Works</h2>
       <RouterLink :to="{ name: 'UserWebsiteCreate' }">+ Create Website</RouterLink>
+      <RouterLink :to="{ name: 'UserProductCreate' }">+ Create Product</RouterLink>
+      <RouterLink :to="{ name: 'UserProjectCreate' }">+ Create Project</RouterLink>
     </header>
 
     <ul role="list" v-if="works !== null">

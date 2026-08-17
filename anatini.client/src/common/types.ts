@@ -135,13 +135,14 @@ export type EventOccurrence = {
 
 export type Work = {
   id: string;
-  userHeader: UserHeader | null;
-  spaceHeader: SpaceHeader | null;
+  handle: string | null;
   type: WorkType;
   name: string;
   article: string | null;
   url: string;
   publishedAtNz: string | null;
+  userHeader: UserHeader | null;
+  spaceHeader: SpaceHeader | null;
   hasStarred: boolean | null;
   hasBookmarked: boolean | null;
   hasDismissed: boolean | null;
@@ -166,20 +167,6 @@ export type NoteEdit = {
   visibility: Visibility;
   publishedAtNz: string;
 };
-
-export type Website = {
-  id: string;
-  handle: string | null;
-  article: string | null;
-  name: string;
-  url: string;
-  publishedAtNz: string | null;
-  userHeader: UserHeader | null;
-  spaceHeader: SpaceHeader | null;
-  hasStarred: boolean | null;
-  hasBookmarked: boolean | null;
-  hasDismissed: boolean | null;
-}
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;
