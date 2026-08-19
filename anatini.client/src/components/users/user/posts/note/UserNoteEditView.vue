@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/common/types';
+  import type { APIResponse, InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
@@ -24,7 +24,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
+  const note = ref<APIResponse<Note>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputNotePublishedAtNz = ref<string>('');
@@ -32,12 +32,12 @@
   watch([() => route.params.userId, () => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
 
   async function fetchNote(params: string[]) {
-    const input = `users/${params[0]}/notes/${params[1]}/edit`;
+    const input = `users/${params[0]}/notes/${params[1]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: NoteEdit) => {
+          .then((value: Note) => {
             note.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
             inputVisibility.value = value.visibility;

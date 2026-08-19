@@ -12,5 +12,6 @@
         public bool? HasBookmarked { get; set; }
         public bool? HasStarred { get; set; }
         public bool? HasDismissed { get; set; }
+        public required string Visibility { get; set; }
     }
 }

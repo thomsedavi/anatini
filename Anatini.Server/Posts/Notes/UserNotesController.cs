@@ -75,17 +75,6 @@ namespace Anatini.Server.Posts.Notes
         });
 
         [Authorize]
-        [HttpGet("{noteHandle}/edit")]
-        [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string userHandle, string noteHandle) => await UsingUserPostAsync(userHandle, noteHandle, PostType.Note, async (note) =>
-        {
-            return Ok(note.ToNoteEditDto(noteHandle));
-        });
-
-        [Authorize]
         [HttpPatch("{noteHandle}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

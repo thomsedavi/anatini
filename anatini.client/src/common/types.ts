@@ -155,18 +155,11 @@ export type Note = {
   handle: string | null;
   article: string;
   publishedAtNz: string;
+  visibility: Visibility;
   hasStarred: boolean | null;
   hasBookmarked: boolean | null;
   hasDismissed: boolean | null;
 }
-
-export type NoteEdit = {
-  id: string;
-  handle: string | null;
-  article: string;
-  visibility: Visibility;
-  publishedAtNz: string;
-};
 
 export type IsAuthenticated = {
   isAuthenticated: boolean;

@@ -119,7 +119,7 @@ namespace Anatini.Server.Posts.Notes
 
             await Context.SaveChangesAsync();
 
-            return Ok(note.ToNoteEditDto());
+            return Ok(await note.ToNoteDtoAsync(noteHandle, BlobService));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [HttpGet("{noteHandle}")]
@@ -131,18 +131,5 @@ namespace Anatini.Server.Posts.Notes
         {
             return Ok(await note.ToNoteDtoAsync(noteHandle, BlobService));
         });
-
-        [Authorize]
-        [HttpGet("{noteHandle}/edit")]
-        [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetNoteEdit(string spaceHandle, string noteHandle) => await UsingSpacePostAsync(spaceHandle, noteHandle, PostType.Note, async (note) =>
-        {
-            return Ok(note.ToNoteEditDto());
-        }, new ContextSettings { AccessRequired = true });
     }
 }
