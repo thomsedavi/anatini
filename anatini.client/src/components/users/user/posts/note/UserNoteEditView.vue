@@ -52,7 +52,7 @@
       },
       500: () => {
         note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
-      }
+      },
     };
 
     apiFetchAuthenticated({ input, statusActions });

@@ -53,6 +53,40 @@ namespace Anatini.Server.Works.Websites
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
+        [HttpPatch("{websiteHandle}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchWebsite(string userHandle, string websiteHandle, [FromForm] UpdateWork updateWork) => await UsingUserWorkAsync(userHandle, websiteHandle, WorkType.Website, async (website) =>
+        {
+            if (updateWork.Article != null)
+            {
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateWork.Article);
+
+                if (validationResult.ErrorMessage != null)
+                {
+                    return BadRequest(new { error = validationResult.ErrorMessage });
+                }
+                else if (validationResult.SanitizedHtml == null)
+                {
+                    return BadRequest(new { error = "Unknown error" });
+                }
+
+                website.Article = validationResult.SanitizedHtml;
+            }
+
+            website.UpdatedAtUtc = DateTime.UtcNow;
+
+            await Context.SaveChangesAsync();
+
+            return Ok(await website.ToWorkDtoAsync(websiteHandle, BlobService));
+        }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
+
+        [Authorize]
         [HttpGet("{websiteHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
