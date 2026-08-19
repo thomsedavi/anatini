@@ -2,7 +2,7 @@
 
 namespace Anatini.Server.Utils
 {
-    public class LinkAttribute : ValidationAttribute
+    public class LinkAttribute(bool nullable = false) : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {

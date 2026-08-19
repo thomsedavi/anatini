@@ -14,8 +14,12 @@ export function parseFromString(string: string): Node | null {
 
 // input: html article, e.g. "<article><p>My <em>text</em></p><p>With a...<br>...line <strong>break</strong></p></article>"
 // output: article markdown, e.g. "My *article*\n\nWith a...\n...line **break**"
-export function parseFromArticleString(string: string): string {
+export function parseFromArticleString(string: string | null): string {
   let result = '';
+
+  if (string === null) {
+    return result;
+  }
 
   const node = parseFromString(string);
 

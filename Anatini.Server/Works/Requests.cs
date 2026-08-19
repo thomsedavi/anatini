@@ -26,4 +26,12 @@ namespace Anatini.Server.Works
         [Display(Name = "Is Draft")]
         public bool? IsDraft { get; set; }
     }
+
+    public class UpdateWork
+    {
+        [Link(nullable: true)]
+        public string? Url { get; set; }
+
+        public string? Article { get; set; }
+    }
 }

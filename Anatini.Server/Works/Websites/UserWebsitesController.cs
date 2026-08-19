@@ -79,6 +79,11 @@ namespace Anatini.Server.Works.Websites
                 website.Article = validationResult.SanitizedHtml;
             }
 
+            if (updateWork.Url != null)
+            {
+                website.Url = updateWork.Url;
+            }
+
             website.UpdatedAtUtc = DateTime.UtcNow;
 
             await Context.SaveChangesAsync();
