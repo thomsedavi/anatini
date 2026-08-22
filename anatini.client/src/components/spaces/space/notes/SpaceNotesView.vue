@@ -9,8 +9,8 @@
   const router = useRouter();
 
   const props = defineProps<{
-    spaceId: string,
-    notes: Note[] | null,
+    dataSpaceId: string,
+    dataNotes: Note[] | null,
   }>();
 
   const emit = defineEmits<{
@@ -18,8 +18,8 @@
   }>();
 
   onMounted(() => {
-    if (props.notes === null) {
-      const input = `spaces/${props.spaceId}/notes`;
+    if (props.dataNotes === null) {
+      const input = `spaces/${props.dataSpaceId}/notes`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -64,8 +64,8 @@
       <RouterLink :to="{ name: 'SpaceNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
-    <ul role="list" v-if="notes !== null">
-      <li v-for="note in notes" :key="'note' + note.id">
+    <ul role="list" v-if="dataNotes !== null">
+      <li v-for="note in dataNotes" :key="'note' + note.id">
         <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>

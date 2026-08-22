@@ -13,7 +13,7 @@
   const router = useRouter();
 
   const props = defineProps<{
-    email?: string,
+    dataEmail?: string,
   }>();
 
   const emit = defineEmits<{
@@ -21,7 +21,7 @@
   }>();
   
   const inputErrors = ref<InputError[]>([]);
-  const inputEmail = ref<string>(props.email ?? '');
+  const inputEmail = ref<string>(props.dataEmail ?? '');
   const inputName = ref<string>('');
   const inputConfirmationCode = ref<string>('');
   const inputHandle = ref<string>('');
@@ -158,7 +158,7 @@
             id="email"
             :error="getError('email')"
             autocomplete="email"
-            :readonly="email !== undefined"
+            :readonly="dataEmail !== undefined"
             :required="true" />
 
           <InputText

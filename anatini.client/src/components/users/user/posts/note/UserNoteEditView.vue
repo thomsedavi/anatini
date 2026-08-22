@@ -14,9 +14,9 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userHandle: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataUserHandle: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -73,7 +73,7 @@
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function patchNote() {
@@ -101,7 +101,7 @@
 
     const statusActions: StatusActions = {
       204: () => {
-        router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: note.value.data!.handle } });
+        router.push({ name: 'UserNote', params: { userId: props.dataUserHandle, noteId: note.value.data!.handle } });
       }
     }
 
@@ -171,7 +171,7 @@
         </fieldset>
 
         <SubmitButton
-          :busy="status === 'pending'"
+          :busy="dataStatus === 'pending'"
           text="Update"
           busy-text="Updating..." />
       </form>

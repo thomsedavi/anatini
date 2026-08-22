@@ -8,9 +8,9 @@
   const route = useRoute();
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
-    userName: string,
+    dataUserId: string,
+    dataUserHandle: string,
+    dataUserName: string,
   }>();
 
   const product = ref<APIResponse<Work>>({ fetching: true });
@@ -56,7 +56,7 @@
 
       const init: RequestInit = { method: "DELETE" };
 
-      apiFetchAuthenticated({ input: `users/${props.userId}/products/${product.value.data!.id}/${action}`, statusActions, init });
+      apiFetchAuthenticated({ input: `users/${props.dataUserId}/products/${product.value.data!.id}/${action}`, statusActions, init });
     } else {
       const statusActions: StatusActions = {
         201: () => {
@@ -72,14 +72,14 @@
 
       const init: RequestInit = { method: "POST" };
 
-      apiFetchAuthenticated({ input: `users/${props.userId}/products/${product.value.data!.id}/${action}`, statusActions, init });
+      apiFetchAuthenticated({ input: `users/${props.dataUserId}/products/${product.value.data!.id}/${action}`, statusActions, init });
     }
   }
 </script>
 
 <template>
   <nav aria-label="Breadcrumb">
-    <RouterLink :to="{ name: 'UserWorks', params: { userId: userHandle } }"><span aria-hidden="true">&larr;</span> Back to all works by {{ userName }}</RouterLink>
+    <RouterLink :to="{ name: 'UserWorks', params: { userId: dataUserHandle } }"><span aria-hidden="true">&larr;</span> Back to all works by {{ dataUserName }}</RouterLink>
   </nav>
 
   <article>

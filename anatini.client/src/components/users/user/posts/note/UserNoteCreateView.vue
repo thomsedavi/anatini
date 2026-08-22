@@ -12,10 +12,10 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataUserId: string,
+    dataUserHandle: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -29,7 +29,7 @@
   const inputNotePublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function postNote() {
@@ -43,13 +43,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.userId}/notes`;
+    const input = `users/${props.dataUserId}/notes`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
             .then((value: Note) => {
-              router.push({ name: 'UserNote', params: { userId: props.userHandle, noteId: value.handle ?? value.id } });
+              router.push({ name: 'UserNote', params: { userId: props.dataUserHandle, noteId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -82,7 +82,7 @@
       <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/users/${userId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/users/${dataUserId}/notes`" method="POST" novalidate>
       <InputTextArea
         v-model="inputArticle"
         label="Content"
@@ -114,7 +114,7 @@
         :error="getError('publishedAtNz')" />
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Create"
         busy-text="Creating..." />
     </form>

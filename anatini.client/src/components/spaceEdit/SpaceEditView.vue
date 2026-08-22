@@ -166,12 +166,12 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :spaceId="space.data.id"
-          :notes="notes"
-          :name="space.data.name"
-          :icon-image="space.data.iconImage"
-          :status="status"
-          :inputErrors="inputErrors"
+          :data-space-id="space.data.id"
+          :data-notes="notes"
+          :data-name="space.data.name"
+          :data-icon-image="space.data.iconImage"
+          :data-status="status"
+          :data-input-errors="inputErrors"
           @update-name="handleUpdateName"
           @update-status="handleUpdateStatus"
           @update-notes="handleUpdateNotes"

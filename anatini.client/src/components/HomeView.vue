@@ -75,8 +75,8 @@
     <RouterView v-slot="{ Component }">
       <component
         :is="Component"
-        :posts="[]"
-        :notes="notes"
+        :data-posts="[]"
+        :data-notes="notes"
         @update-notes="handleUpdateNotes"
       />
     </RouterView>

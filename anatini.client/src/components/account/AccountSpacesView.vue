@@ -3,7 +3,7 @@
   import type { Space } from '@/common/types';
 
   defineProps<{
-    spaces: Space[] | null,
+    dataSpaces: Space[] | null,
   }>();
 </script>
 
@@ -19,8 +19,8 @@
         <h3 id="section-your-spaces">Your Spaces</h3>
       </header>
 
-      <ul role="list" v-if="(spaces?.length ?? 0) > 0">
-        <li v-for="space in spaces" :key="`space-${space.handle}`">
+      <ul role="list" v-if="(dataSpaces?.length ?? 0) > 0">
+        <li v-for="space in dataSpaces" :key="`space-${space.handle}`">
           <article :aria-labelledby="`space-${space.handle}`">
             <header>
               <h4 :id="`space-${space.handle}`">

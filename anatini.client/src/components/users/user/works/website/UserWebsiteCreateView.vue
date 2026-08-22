@@ -12,10 +12,10 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataUserId: string,
+    dataUserHandle: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -30,7 +30,7 @@
   const inputUrl = ref<string>('');
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function postWebsite() {
@@ -57,13 +57,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.userId}/websites`;
+    const input = `users/${props.dataUserId}/websites`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserWebsite', params: { userId: props.userHandle, websiteId: value.handle ?? value.id } });
+              router.push({ name: 'UserWebsite', params: { userId: props.dataUserHandle, websiteId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -93,7 +93,7 @@
       <h2>Create Website</h2>
     </header>
 
-    <form @submit.prevent="postWebsite" :action="`/api/users/${userId}/websites`" method="POST" novalidate>
+    <form @submit.prevent="postWebsite" :action="`/api/users/${dataUserId}/websites`" method="POST" novalidate>
       <InputText
         v-model="inputUrl"
         label="Link"
@@ -138,7 +138,7 @@
         :error="getError('handle')" />
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Create"
         busy-text="Creating..." />
     </form>

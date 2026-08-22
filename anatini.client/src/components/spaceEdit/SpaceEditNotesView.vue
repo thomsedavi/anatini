@@ -9,8 +9,8 @@
   const router = useRouter();
 
   const props = defineProps<{
-    spaceId: string,
-    notes: Note[] | null,
+    dataSpaceId: string,
+    dataNotes: Note[] | null,
   }>();
 
   const emit = defineEmits<{
@@ -18,8 +18,8 @@
   }>();
 
   onMounted(() => {
-    if (props.notes === null) {
-      const input = `spaces/${props.spaceId}/notes`;
+    if (props.dataNotes === null) {
+      const input = `spaces/${props.dataSpaceId}/notes`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -42,9 +42,9 @@
       <RouterLink :to="{ name: 'SpaceEditNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
-    <ul role="list" v-if="notes !== null">
-      <li v-for="note in notes" :key="'note' + note.id">
-        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time><menu><li><a href='/spaces/${spaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+    <ul role="list" v-if="dataNotes !== null">
+      <li v-for="note in dataNotes" :key="'note' + note.id">
+        <article v-html="`${note.article.substring(9, note.article.length - 10)}<footer><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time><menu><li><a href='/spaces/${dataSpaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

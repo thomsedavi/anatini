@@ -3,11 +3,11 @@
   import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
-    spaceId: string,
-    postId: string,
-    post: PostEdit,
-    pageStatus: string,
-    eTag: string | null,
+    dataSpaceId: string,
+    dataPostId: string,
+    dataPost: PostEdit,
+    dataPageStatus: string,
+    dataETag: string | null,
   }>();
 
   const emit = defineEmits<{
@@ -17,7 +17,7 @@
   }>();
 
   function setStatus(status: 'Draft' | 'Published'): void {
-    if (props.eTag === null) {
+    if (props.dataETag === null) {
       return;
     }
 
@@ -27,9 +27,9 @@
       
     body.append('status', status);
 
-    const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
+    const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-    const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+    const input = `spaces/${props.dataSpaceId}/posts/${props.dataPostId}`;
 
     const statusActions: StatusActions = {
         204: (response?: Response) => {
@@ -49,16 +49,16 @@
       <h2>Status</h2>
     </header>
 
-    <p>This article is currently {{ post.status.toLowerCase() }}.</p>
+    <p>This article is currently {{ dataPost.status.toLowerCase() }}.</p>
 
-    <p v-if="post.status === 'Published'">Republish to update with any changes.</p>
+    <p v-if="dataPost.status === 'Published'">Republish to update with any changes.</p>
 
     <menu>
       <li>
-        <button type="button" @click="() => setStatus('Published')" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">{{ post.status === 'Published' ? 'Republish' : 'Publish' }}</button>
+        <button type="button" @click="() => setStatus('Published')" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">{{ dataPost.status === 'Published' ? 'Republish' : 'Publish' }}</button>
       </li>
       <li>
-        <button type="button" @click="() => setStatus('Draft')" v-if="post.status !== 'Draft'" :aria-disabled="pageStatus !== 'Ready' ? true : undefined">Unpublish</button>
+        <button type="button" @click="() => setStatus('Draft')" v-if="dataPost.status !== 'Draft'" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">Unpublish</button>
       </li>
     </menu>
   </section>

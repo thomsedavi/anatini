@@ -11,7 +11,7 @@
   const router = useRouter();
 
   const props = defineProps<{
-    notes: Note[] | null,
+    dataNotes: Note[] | null,
   }>();
 
   const emit = defineEmits<{
@@ -26,7 +26,7 @@
   const hasMore = ref<boolean>(true);
 
   onMounted(() => {
-    if (props.notes === null) {
+    if (props.dataNotes === null) {
       const input = 'notes';
 
       const statusActions: StatusActions = {
@@ -108,7 +108,7 @@
   }
 
   function getMoreNotes() {
-    if (props.notes !== null) {
+    if (props.dataNotes !== null) {
       const input = 'notes';
 
       const statusActions: StatusActions = {
@@ -119,12 +119,12 @@
                 hasMore.value = false;
               }
 
-              emit('update-notes', [...(props.notes ?? []), ...value]);
+              emit('update-notes', [...(props.dataNotes ?? []), ...value]);
             });
         }
       }
 
-      const lastNote = props.notes[props.notes.length - 1];
+      const lastNote = props.dataNotes[props.dataNotes.length - 1];
 
       const searchParameters = [...baseSearchParams.value];
 
@@ -271,11 +271,11 @@
     </search>
 
     <p role="status" aria-live="polite" class="visuallyhidden">
-      Showing {{ notes?.length }} note{{ notes?.length == 1 ? '' : 's' }}. TODO, move this status element to parent.
+      Showing {{ dataNotes?.length }} note{{ dataNotes?.length == 1 ? '' : 's' }}. TODO, move this status element to parent.
     </p>
 
-    <ul role="list" v-if="notes !== null">
-      <li v-for="note in notes" :key="'note' + note.id">
+    <ul role="list" v-if="dataNotes !== null">
+      <li v-for="note in dataNotes" :key="'note' + note.id">
         <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note))">
         </article>
       </li>
@@ -284,7 +284,7 @@
     <p v-else>We do not have any notes.</p>
 
     <footer>
-      <button type="button" aria-controls="panel-notes" v-if="notes !== null && hasMore" @click="() => getMoreNotes()">More</button>
+      <button type="button" aria-controls="panel-notes" v-if="dataNotes !== null && hasMore" @click="() => getMoreNotes()">More</button>
     </footer>
   </section>
 </template>

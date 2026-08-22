@@ -12,10 +12,10 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataUserId: string,
+    dataUserHandle: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -30,7 +30,7 @@
   const inputUrl = ref<string>('');
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function postProject() {
@@ -57,13 +57,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.userId}/projects`;
+    const input = `users/${props.dataUserId}/projects`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserProject', params: { userId: props.userHandle, projectId: value.handle ?? value.id } });
+              router.push({ name: 'UserProject', params: { userId: props.dataUserHandle, projectId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -93,7 +93,7 @@
       <h2>Create Project</h2>
     </header>
 
-    <form @submit.prevent="postProject" :action="`/api/users/${userId}/projects`" method="POST" novalidate>
+    <form @submit.prevent="postProject" :action="`/api/users/${dataUserId}/projects`" method="POST" novalidate>
       <InputText
         v-model="inputUrl"
         label="Link"
@@ -138,7 +138,7 @@
         :error="getError('handle')" />
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Create"
         busy-text="Creating..." />
     </form>

@@ -6,9 +6,9 @@
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const props = defineProps<{
-    visibility: Visibility;
-    status: Status,
-    inputErrors: InputError[],
+    dataVisibility: Visibility;
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -17,10 +17,10 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputVisibility = ref<Visibility>(props.visibility);
+  const inputVisibility = ref<Visibility>(props.dataVisibility);
 
   function noChangePrivacy(): boolean {
-    return props.visibility === inputVisibility.value;
+    return props.dataVisibility === inputVisibility.value;
   }
 
   async function patchAccountPrivacy() {
@@ -79,7 +79,7 @@
       </fieldset>
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Save"
         busy-text="Saving..." />
     </form>

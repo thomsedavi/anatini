@@ -7,11 +7,11 @@
   import SubmitButton from '@/common/SubmitButton.vue';
 
   const props = defineProps<{
-    spaceId: string,
-    name: string,
-    iconImage: Image | null,
-    status: Status,
-    inputErrors: InputError[],
+    dataSpaceId: string,
+    dataName: string,
+    dataIconImage: Image | null,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -20,17 +20,17 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputName = ref<string>(props.name ?? '');
+  const inputName = ref<string>(props.dataName ?? '');
   const fileIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');
 
   function noChange(): boolean {
-    return props.name === tidy(inputName.value) && fileIcon.value === null;
+    return props.dataName === tidy(inputName.value) && fileIcon.value === null;
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   const onChooseFile = (event: Event) => {
@@ -53,7 +53,7 @@
   };
 
   async function patch(body: FormData, tidiedName: string) {
-    const input = `spaces/${props.spaceId}`;
+    const input = `spaces/${props.dataSpaceId}`;
 
     const statusActions: StatusActions = {
       204: () => {
@@ -105,7 +105,7 @@
 
     const body = new FormData();
 
-    if (props.name !== tidiedName) {
+    if (props.dataName !== tidiedName) {
       body.append('name', tidiedName);
     }
 
@@ -116,7 +116,7 @@
       bodyIcon.append('type', 'Icon');
       bodyIcon.append('handle', 'icon');
 
-      const input = `spaces/${props.spaceId}/images`;
+      const input = `spaces/${props.dataSpaceId}/images`;
 
       const statusActions: StatusActions = {
         201: () => {
@@ -143,7 +143,7 @@
       <h2>Display</h2>
     </header>
 
-    <form @submit.prevent="patchSpaceDisplay" :action="`/api/spaces/${spaceId}`" method="POST" novalidate>
+    <form @submit.prevent="patchSpaceDisplay" :action="`/api/spaces/${dataSpaceId}`" method="POST" novalidate>
       <fieldset>
       <InputText
           v-model="inputName"
@@ -168,14 +168,14 @@
 
         <output id="file-preview" for="icon">
           <figure>
-            <img :alt="iconImage?.altText ?? 'Space icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+            <img :alt="dataIconImage?.altText ?? 'Space icon'" :src="previewUrl ?? dataIconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
             <figcaption>A preview will appear here</figcaption>
           </figure>
         </output>
       </fieldset>
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Save"
         busy-text="Saving..." />
     </form>

@@ -12,9 +12,9 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userHandle: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataUserHandle: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -58,7 +58,7 @@
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function patchWebsite() {
@@ -82,7 +82,7 @@
       200: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserWebsite', params: { userId: props.userHandle, websiteId: value.handle ?? value.id } });
+              router.push({ name: 'UserWebsite', params: { userId: props.dataUserHandle, websiteId: value.handle ?? value.id } });
             });
       }
     }
@@ -146,7 +146,7 @@
           help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
         <SubmitButton
-          :busy="status === 'pending'"
+          :busy="dataStatus === 'pending'"
           text="Update"
           busy-text="Updating..." />
       </form>

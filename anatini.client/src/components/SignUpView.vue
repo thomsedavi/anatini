@@ -18,5 +18,5 @@
 
 <template>
   <SignUpEmailView v-if="page === 'email'" @submit-email="submitEmail" />
-  <SignUpSignupView v-else-if="page === 'signup'" :email="email" @go-back="goBack" />
+  <SignUpSignupView v-else-if="page === 'signup'" :dataEmail="email" @go-back="goBack" />
 </template>

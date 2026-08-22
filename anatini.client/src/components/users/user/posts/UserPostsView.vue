@@ -9,9 +9,9 @@
   const router = useRouter();
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
-    notes: Note[] | null,
+    dataUserId: string,
+    dataUserHandle: string,
+    dataNotes: Note[] | null,
   }>();
 
   const emit = defineEmits<{
@@ -19,8 +19,8 @@
   }>();
 
   onMounted(() => {
-    if (props.notes === null) {
-      const input = `users/${props.userId}/notes`;
+    if (props.dataNotes === null) {
+      const input = `users/${props.dataUserId}/notes`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -46,7 +46,7 @@
       <footer>
         <menu>
           <li>
-            <a href='/users/${props.userHandle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
+            <a href='/users/${props.dataUserHandle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
           </li>
         </menu>
       </footer>
@@ -61,8 +61,8 @@
       <RouterLink :to="{ name: 'UserNoteCreate' }">+ Create Note</RouterLink>
     </header>
 
-    <ul role="list" v-if="notes !== null">
-      <li v-for="note in notes" :key="'note' + note.id">
+    <ul role="list" v-if="dataNotes !== null">
+      <li v-for="note in dataNotes" :key="'note' + note.id">
         <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>

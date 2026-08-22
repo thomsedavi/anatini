@@ -13,8 +13,8 @@
   const route = useRoute();
 
   const props = defineProps<{
-    status: Status,
-    inputErrors: InputError[],
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -71,7 +71,7 @@
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function patchNote() {
@@ -169,7 +169,7 @@
         </fieldset>
 
         <SubmitButton
-          :busy="status === 'pending'"
+          :busy="dataStatus === 'pending'"
           text="Update"
           busy-text="Updating..." />
       </form>

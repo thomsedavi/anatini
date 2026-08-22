@@ -9,9 +9,9 @@
   import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
-    status: Status,
-    spaceId: string,
-    inputErrors: InputError[],
+    dataStatus: Status,
+    dataSpaceId: string,
+    dataInputErrors: InputError[],
   }>();
 
    const emit = defineEmits<{
@@ -24,7 +24,7 @@
   const inputNoteHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   async function postNote() {
@@ -38,7 +38,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${props.spaceId}/notes`;
+    const input = `spaces/${props.dataSpaceId}/notes`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -72,7 +72,7 @@
       <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/spaces/${spaceId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
       <fieldset>
         <legend class="visuallyhidden">Create Note</legend>
 
@@ -99,7 +99,7 @@
       </fieldset>
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Create"
         busy-text="Creating..." />
     </form>

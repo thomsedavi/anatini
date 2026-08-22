@@ -10,9 +10,9 @@
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
  
   const props = defineProps<{
-    spaceId: string,
-    status: Status,
-    inputErrors: InputError[],
+    dataSpaceId: string,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -117,7 +117,7 @@
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
   function getByDays(): string[] {
@@ -178,7 +178,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${props.spaceId}/events`;
+    const input = `spaces/${props.dataSpaceId}/events`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -283,7 +283,7 @@
       <h2>Create Event</h2>
     </header>
 
-    <form @submit.prevent="postEvent" :action="`/api/spaces/${spaceId}/events`" method="POST" novalidate>
+    <form @submit.prevent="postEvent" :action="`/api/spaces/${dataSpaceId}/events`" method="POST" novalidate>
       <fieldset>
         <legend>Event Information</legend>
 
@@ -550,7 +550,7 @@
       </fieldset>
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Create"
         busy-text="Creating..." />
     </form>

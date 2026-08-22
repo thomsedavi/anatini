@@ -8,11 +8,11 @@
   import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
-    name: string,
-    about: string | null,
-    iconImage: Image | null,
-    status: Status,
-    inputErrors: InputError[],
+    dataName: string,
+    dataAbout: string | null,
+    dataIconImage: Image | null,
+    dataStatus: Status,
+    dataInputErrors: InputError[],
   }>();
 
   const emit = defineEmits<{
@@ -22,8 +22,8 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputUserName = ref<string>(props.name);
-  const inputUserAbout = ref<string>(props.about !== null ? parseFromArticleString(props.about) : '');
+  const inputUserName = ref<string>(props.dataName);
+  const inputUserAbout = ref<string>(props.dataAbout !== null ? parseFromArticleString(props.dataAbout) : '');
   const fileUserIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');
@@ -87,11 +87,11 @@
 
     const body = new FormData();
 
-    if (props.name !== tidiedName) {
+    if (props.dataName !== tidiedName) {
       body.append('name', tidiedName);
     }
 
-    if (props.about !== formattedAbout) {
+    if (props.dataAbout !== formattedAbout) {
       body.append('about', formattedAbout);
     }
 
@@ -144,11 +144,11 @@
   };
 
   function noChangeDisplay(): boolean {
-    return props.name === tidy(inputUserName.value) && (props.about ?? '') === (tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value)) && fileUserIcon.value === null;
+    return props.dataName === tidy(inputUserName.value) && (props.dataAbout ?? '') === (tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value)) && fileUserIcon.value === null;
   }
 
   function getError(id: string): string | undefined {
-    return props.inputErrors.find(inputError => inputError.id === id)?.message;
+    return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 </script>
 
@@ -195,14 +195,14 @@
 
         <output id="file-preview" for="icon-user">
           <figure>
-            <img :alt="iconImage?.altText ?? 'User icon'" :src="previewUrl ?? iconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
+            <img :alt="dataIconImage?.altText ?? 'User icon'" :src="previewUrl ?? dataIconImage?.uri ?? 'https://94e01200-c64f-4ff6-87b6-ce5a316b9ea8.mdnplay.dev/shared-assets/images/examples/grapefruit-slice.jpg'" />
             <figcaption>A preview will appear here</figcaption>
           </figure>
         </output>
       </fieldset>
 
       <SubmitButton
-        :busy="status === 'pending'"
+        :busy="dataStatus === 'pending'"
         text="Save"
         busy-text="Saving..." />
     </form>

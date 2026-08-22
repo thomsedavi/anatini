@@ -6,10 +6,10 @@
   import type { StatusActions } from '@/common/types';
 
   const props = defineProps<{
-    article: Node | null,
-    spaceId: string,
-    postId: string,
-    eTag: string | null,
+    dataArticle: Node | null,
+    dataSpaceId: string,
+    dataPostId: string,
+    dataETag: string | null,
   }>();
 
   const emit = defineEmits<{
@@ -23,11 +23,11 @@
   const addText = ref<string | null>(null);
 
   function saveParagraph(): void {
-    if (props.eTag === null || editText.value === null || props.article === null) {
+    if (props.dataETag === null || editText.value === null || props.dataArticle === null) {
       return;
     }
 
-    const article = props.article;
+    const article = props.dataArticle;
     const node = parseFromString(markdownToHtml(`<p>${editText.value}</p>`));
 
     if (node !== null) {
@@ -41,9 +41,9 @@
       
       body.append('article', serializeToString(article));
 
-      const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
+      const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-      const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+      const input = `spaces/${props.dataSpaceId}/posts/${props.dataPostId}`;
 
       const statusActions: StatusActions = {
         204: (response?: Response) => {
@@ -60,11 +60,11 @@
   }
 
   function addParagraph(): void {
-    if (props.eTag === null || addText.value === null || props.article == null) {
+    if (props.dataETag === null || addText.value === null || props.dataArticle == null) {
       return;
     }
 
-    const article = props.article;
+    const article = props.dataArticle;
     const node = parseFromString(markdownToHtml(`<p>${addText.value}</p>`));
 
     if (node !== null) {
@@ -78,9 +78,9 @@
       
       body.append('article', serializeToString(article));
 
-      const init = { method: "PATCH", headers: { "If-Match": props.eTag }, body: body };
+      const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-      const input = `spaces/${props.spaceId}/posts/${props.postId}`;
+      const input = `spaces/${props.dataSpaceId}/posts/${props.dataPostId}`;
 
       const statusActions: StatusActions = {
         204: (response?: Response) => {
@@ -113,8 +113,8 @@
       <h2>Article</h2>
     </header>
 
-    <template v-if="article !== null">
-      <section v-for="(child, index) in article.childNodes" :key="'child' + index">
+    <template v-if="dataArticle !== null">
+      <section v-for="(child, index) in dataArticle.childNodes" :key="'child' + index">
         <template v-if="child.nodeName === 'P'">
           <template v-if="editText === null || editIndex !== index">
             <p v-html="paragraphToHTML(child as Element)"></p>
