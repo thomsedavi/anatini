@@ -360,6 +360,47 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
+        public async Task<IActionResult> UsingSpaceWorkAsync(string spaceHandle, string workHandle, WorkType workType, Func<Work, Task<IActionResult>> workFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        {
+            Work? workResult;
+
+            var worksQuery = context.Works.Where(work => work.Type == workType);
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                worksQuery = worksQuery.AsNoTracking();
+            }
+
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                worksQuery = worksQuery.Include(work => work.UserEdges.Where(userWorkEdge => userWorkEdge.SourceUserId == sourceUserId));
+            }
+
+            if (Guid.TryParse(workHandle, out Guid workId))
+            {
+                workResult = await worksQuery.FirstOrDefaultAsync(work => work.SpaceId == space.Id && work.Id == workId);
+            }
+            else
+            {
+                var normalizedWorkHandle = NormalizeHandle(workHandle);
+
+                workResult = await worksQuery.FirstOrDefaultAsync(work => work.SpaceId == space.Id && work.Handle == normalizedWorkHandle);
+            }
+
+            if (workResult == null)
+            {
+                return NotFound();
+            }
+
+            if (await CanReadAsync(workResult.Visibility))
+            {
+                return await workFunction(workResult);
+            }
+
+            return CannotReadResponse();
+        }, settings);
+
+        [NonAction]
         public bool ImageValidationError(CreateImage createImage, out ActionResult? result)
         {
             if (createImage.File == null || createImage.File.Length == 0)
