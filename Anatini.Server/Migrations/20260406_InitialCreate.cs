@@ -458,15 +458,17 @@ namespace Anatini.Server.Migrations
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     article = table.Column<string>(type: "text", nullable: true),
                     url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: false),
+                    current_version_number = table.Column<int>(type: "integer", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    type = table.Column<int>(type: "integer", nullable: false)
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -670,6 +672,28 @@ namespace Anatini.Server.Migrations
                         principalTable: "works",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "work_versions",
+                columns: table => new
+                {
+                    work_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    version_number = table.Column<int>(type: "integer", nullable: false),
+                    article = table.Column<string>(type: "text", nullable: false),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_work_versions", x => new { x.work_id, x.version_number });
+                    table.ForeignKey(
+                        name: "fk_work_versions_works_work_id",
+                        column: x => x.work_id,
+                        principalTable: "works",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -961,6 +985,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "work_images");
+
+            migrationBuilder.DropTable(
+                name: "work_versions");
 
             migrationBuilder.DropTable(
                 name: "event_instances");

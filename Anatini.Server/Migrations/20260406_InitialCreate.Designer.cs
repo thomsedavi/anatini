@@ -1306,12 +1306,23 @@ namespace Anatini.Server.Migrations
                     b.Property<string>("Article")
                         .HasColumnType("text")
                         .HasColumnName("article")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(12);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(13);
+
+                    b.Property<int?>("CurrentVersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("current_version_number")
+                        .HasColumnOrder(11);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -1325,12 +1336,12 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("name")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime?>("PublishedAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("published_at_nz")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
@@ -1340,23 +1351,24 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<int>("Type")
                         .HasColumnType("integer")
-                        .HasColumnName("type");
+                        .HasColumnName("type")
+                        .HasColumnOrder(4);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(14);
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(2047)
                         .HasColumnType("character varying(2047)")
                         .HasColumnName("url")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
@@ -1366,7 +1378,7 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id")
                         .HasName("pk_works");
@@ -1442,6 +1454,45 @@ namespace Anatini.Server.Migrations
                         .HasName("pk_work_images");
 
                     b.ToTable("work_images", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.WorkVersion", b =>
+                {
+                    b.Property<Guid>("WorkId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("work_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("version_number")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("article")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp")
+                        .HasColumnOrder(3);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc")
+                        .HasColumnOrder(5);
+
+                    b.HasKey("WorkId", "VersionNumber")
+                        .HasName("pk_work_versions");
+
+                    b.ToTable("work_versions", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRoleClaim", b =>
@@ -1829,6 +1880,18 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Work");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.WorkVersion", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Work", "Work")
+                        .WithMany("Versions")
+                        .HasForeignKey("WorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_work_versions_works_work_id");
+
+                    b.Navigation("Work");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRole", b =>
                 {
                     b.Navigation("RoleClaims");
@@ -1920,6 +1983,8 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("UserEdges");
+
+                    b.Navigation("Versions");
                 });
 #pragma warning restore 612, 618
         }

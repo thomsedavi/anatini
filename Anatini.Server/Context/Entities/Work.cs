@@ -15,6 +15,8 @@ namespace Anatini.Server.Context.Entities
         public required string Name { get; set; }
         public string? Article { get; set; }
         public required string Url { get; set; }
+        public int? CurrentVersionNumber { get; set; }
+        public string? ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
@@ -22,6 +24,19 @@ namespace Anatini.Server.Context.Entities
         public virtual Space? Space { get; set; }
         public virtual ICollection<WorkImage> Images { get; set; } = [];
         public virtual ICollection<ApplicationUserWorkEdge> UserEdges { get; set; } = [];
+        public virtual ICollection<WorkVersion> Versions { get; set; } = [];
+    }
+
+    public class WorkVersion
+    {
+        public required Guid WorkId { get; set; }
+        public required int VersionNumber { get; set; }
+        public required string Article { get; set; }
+        public string? ConcurrencyStamp { get; set; }
+        public required DateTime CreatedAtUtc { get; set; }
+        public required DateTime UpdatedAtUtc { get; set; }
+
+        public virtual Work Work { get; set; } = null!;
     }
 
     public class WorkImage

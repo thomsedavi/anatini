@@ -33,6 +33,7 @@ namespace Anatini.Server.Context
         public DbSet<EventInstance> EventInstances { get; set; }
 
         public DbSet<Work> Works { get; set; }
+        public DbSet<WorkVersion> WorkVersions { get; set; }
         public DbSet<WorkImage> WorkImages { get; set; }
 
         public IQueryable<Post> Notes => Posts.Where(post => post.Type == PostType.Note);
@@ -71,6 +72,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<EventInstance>().Configure();
 
             modelBuilder.Entity<Work>().Configure();
+            modelBuilder.Entity<WorkVersion>().Configure();
             modelBuilder.Entity<WorkImage>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
