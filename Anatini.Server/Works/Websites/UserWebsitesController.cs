@@ -23,7 +23,7 @@ namespace Anatini.Server.Works.Websites
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostWebsite([FromForm] CreateWork createWork) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> PostWebsite(string userHandle, [FromForm] CreateWork createWork) => await UsingUserAsync(userHandle, async (user) =>
         {
             string? article = null;
 

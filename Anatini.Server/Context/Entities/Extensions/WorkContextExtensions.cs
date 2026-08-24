@@ -27,5 +27,29 @@ namespace Anatini.Server.Context.Entities.Extensions
 
             return work;
         }
+
+        public static Work AddSpaceWorkAsync(this ApplicationDbContext context, WorkType workType, string name, string url, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, string? article = null)
+        {
+            var workId = Guid.CreateVersion7();
+
+            var work = new Work
+            {
+                Id = workId,
+                SpaceId = spaceId,
+                Type = workType,
+                Handle = handle ?? workId.ToString(),
+                Name = name,
+                Article = article,
+                Url = url,
+                Visibility = visibility,
+                Status = status,
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow
+            };
+
+            context.Add(work);
+
+            return work;
+        }
     }
 }

@@ -99,6 +99,16 @@ namespace Anatini.Server
                 return NotFound();
             }
 
+            if (settings?.AccessRequired ?? false)
+            {
+                if (await CanWriteUserAsync(userResult))
+                {
+                    return await userFunction(userResult);
+                }
+
+                return CannotReadResponse();
+            }
+
             if (await CanReadAsync(userResult.Visibility))
             {
                 return await userFunction(userResult);
@@ -453,6 +463,13 @@ namespace Anatini.Server
         private async Task<bool> CanReadAsync(Visibility visibility)
         {
             var authorizationResult = await AuthorizationService.AuthorizeAsync(User, visibility, "CanRead");
+            return authorizationResult.Succeeded;
+        }
+
+        [NonAction]
+        private async Task<bool> CanWriteUserAsync(ApplicationUser user)
+        {
+            var authorizationResult = await AuthorizationService.AuthorizeAsync(User, user, "CanWriteUser");
             return authorizationResult.Succeeded;
         }
 
