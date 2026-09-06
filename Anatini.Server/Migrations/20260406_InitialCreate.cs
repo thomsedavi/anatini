@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 #nullable disable
 
@@ -139,38 +140,40 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "event_series",
+                name: "contents",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
+                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     article = table.Column<string>(type: "text", nullable: true),
                     url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
-                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    recurrence_rule = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    expires_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    current_version_number = table.Column<int>(type: "integer", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
+                        .Annotation("Npgsql:TsVectorConfig", "english")
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "name", "article" })
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_event_series", x => x.id);
-                    table.CheckConstraint("ck_event_series_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.PrimaryKey("PK_contents", x => x.id);
+                    table.CheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
                     table.ForeignKey(
-                        name: "fk_event_series_spaces_space_id",
+                        name: "fk_contents_spaces_space_id",
                         column: x => x.space_id,
                         principalTable: "spaces",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_event_series_users_user_id",
+                        name: "fk_contents_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -201,44 +204,6 @@ namespace Anatini.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_logs_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "posts",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    type = table.Column<int>(type: "integer", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    article = table.Column<string>(type: "text", nullable: true),
-                    url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: true),
-                    current_version_number = table.Column<int>(type: "integer", nullable: true),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_posts", x => x.id);
-                    table.CheckConstraint("ck_posts_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
-                    table.ForeignKey(
-                        name: "fk_posts_spaces_space_id",
-                        column: x => x.space_id,
-                        principalTable: "spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_posts_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -378,7 +343,7 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_space_edges",
+                name: "user_space_relationships",
                 columns: table => new
                 {
                     source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -388,15 +353,15 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_space_edges", x => new { x.source_user_id, x.target_space_id, x.label });
+                    table.PrimaryKey("pk_user_space_relationships", x => new { x.source_user_id, x.target_space_id, x.label });
                     table.ForeignKey(
-                        name: "fk_user_space_edges_spaces_target_space_id",
+                        name: "fk_user_space_relationships_spaces_target_space_id",
                         column: x => x.target_space_id,
                         principalTable: "spaces",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_space_edges_users_source_user_id",
+                        name: "fk_user_space_relationships_users_source_user_id",
                         column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -424,7 +389,7 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_user_edges",
+                name: "user_user_relationships",
                 columns: table => new
                 {
                     source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -434,17 +399,127 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_user_edges", x => new { x.source_user_id, x.target_user_id, x.label });
-                    table.CheckConstraint("ck_user_user_edges_source_user_id_not_target_user_id", "source_user_id <> target_user_id");
+                    table.PrimaryKey("pk_user_user_relationships", x => new { x.source_user_id, x.target_user_id, x.label });
+                    table.CheckConstraint("ck_user_user_relationships_source_user_id_not_target_user_id", "source_user_id <> target_user_id");
                     table.ForeignKey(
-                        name: "fk_user_user_edges_users_source_user_id",
+                        name: "fk_user_user_relationships_users_source_user_id",
                         column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_user_edges_users_target_user_id",
+                        name: "fk_user_user_relationships_users_target_user_id",
                         column: x => x.target_user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "content_images",
+                columns: table => new
+                {
+                    content_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_content_images", x => new { x.content_id, x.handle });
+                    table.ForeignKey(
+                        name: "fk_content_images_contents_content_id",
+                        column: x => x.content_id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "content_versions",
+                columns: table => new
+                {
+                    content_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    version_number = table.Column<int>(type: "integer", nullable: false),
+                    article = table.Column<string>(type: "text", nullable: false),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_content_versions", x => new { x.content_id, x.version_number });
+                    table.ForeignKey(
+                        name: "fk_content_versions_contents_content_id",
+                        column: x => x.content_id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "event_series",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    duration = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    recurrence_rule = table.Column<string>(type: "text", nullable: true),
+                    expires_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_event_series", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_event_series_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "posts",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_posts", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_posts_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_content_relationships",
+                columns: table => new
+                {
+                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_content_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    label = table.Column<int>(type: "integer", nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_content_relationships", x => new { x.source_user_id, x.target_content_id, x.label });
+                    table.ForeignKey(
+                        name: "fk_user_content_relationships_contents_target_content_id",
+                        column: x => x.target_content_id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_user_content_relationships_users_source_user_id",
+                        column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
@@ -454,38 +529,17 @@ namespace Anatini.Server.Migrations
                 name: "works",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    type = table.Column<int>(type: "integer", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    article = table.Column<string>(type: "text", nullable: true),
-                    url = table.Column<string>(type: "character varying(2047)", maxLength: 2047, nullable: false),
-                    current_version_number = table.Column<int>(type: "integer", nullable: true),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_works", x => x.id);
-                    table.CheckConstraint("ck_works_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.PrimaryKey("PK_works", x => x.id);
                     table.ForeignKey(
-                        name: "fk_works_spaces_space_id",
-                        column: x => x.space_id,
-                        principalTable: "spaces",
+                        name: "fk_works_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_works_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -555,149 +609,7 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "post_images",
-                columns: table => new
-                {
-                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_post_images", x => new { x.post_id, x.handle });
-                    table.ForeignKey(
-                        name: "fk_post_images_posts_post_id",
-                        column: x => x.post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "post_versions",
-                columns: table => new
-                {
-                    post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    version_number = table.Column<int>(type: "integer", nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_post_versions", x => new { x.post_id, x.version_number });
-                    table.ForeignKey(
-                        name: "fk_post_versions_posts_post_id",
-                        column: x => x.post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_post_edges",
-                columns: table => new
-                {
-                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_post_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    label = table.Column<int>(type: "integer", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_user_post_edges", x => new { x.source_user_id, x.target_post_id, x.label });
-                    table.ForeignKey(
-                        name: "fk_user_post_edges_posts_target_post_id",
-                        column: x => x.target_post_id,
-                        principalTable: "posts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_user_post_edges_users_source_user_id",
-                        column: x => x.source_user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_work_edges",
-                columns: table => new
-                {
-                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_work_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    label = table.Column<int>(type: "integer", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_user_work_edges", x => new { x.source_user_id, x.target_work_id, x.label });
-                    table.ForeignKey(
-                        name: "fk_user_work_edges_users_source_user_id",
-                        column: x => x.source_user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_user_work_edges_works_target_work_id",
-                        column: x => x.target_work_id,
-                        principalTable: "works",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "work_images",
-                columns: table => new
-                {
-                    work_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    blob_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    blob_container_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    alt_text = table.Column<string>(type: "character varying(511)", maxLength: 511, nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_work_images", x => new { x.work_id, x.handle });
-                    table.ForeignKey(
-                        name: "fk_work_images_works_work_id",
-                        column: x => x.work_id,
-                        principalTable: "works",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "work_versions",
-                columns: table => new
-                {
-                    work_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    version_number = table.Column<int>(type: "integer", nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_work_versions", x => new { x.work_id, x.version_number });
-                    table.ForeignKey(
-                        name: "fk_work_versions_works_work_id",
-                        column: x => x.work_id,
-                        principalTable: "works",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_event_instance_edges",
+                name: "user_event_instance_relationships",
                 columns: table => new
                 {
                     source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -707,20 +619,52 @@ namespace Anatini.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_event_instance_edges", x => new { x.source_user_id, x.target_event_instance_id, x.label });
+                    table.PrimaryKey("pk_user_event_instance_relationships", x => new { x.source_user_id, x.target_event_instance_id, x.label });
                     table.ForeignKey(
-                        name: "fk_user_event_instance_edges_event_instances_target_event_inst",
+                        name: "fk_user_event_instance_relationships_event_instances_target_ev",
                         column: x => x.target_event_instance_id,
                         principalTable: "event_instances",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_user_event_instance_edges_users_source_user_id",
+                        name: "fk_user_event_instance_relationships_users_source_user_id",
                         column: x => x.source_user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_contents_search_vector",
+                table: "contents",
+                column: "search_vector")
+                .Annotation("Npgsql:IndexMethod", "GIN");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_contents_space_id_type_handle",
+                table: "contents",
+                columns: new[] { "space_id", "type", "handle" },
+                unique: true,
+                filter: "space_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_contents_user_id_type_handle",
+                table: "contents",
+                columns: new[] { "user_id", "type", "handle" },
+                unique: true,
+                filter: "user_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_published_contents_date_nz",
+                table: "contents",
+                column: "published_at_nz",
+                filter: "published_at_nz IS NOT NULL AND status = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_published_works_name",
+                table: "contents",
+                column: "name",
+                filter: "type = 2 AND status = 1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_event_instances_event_series_id",
@@ -735,16 +679,6 @@ namespace Anatini.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_event_instances_user_id",
                 table: "event_instances",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_event_series_space_id",
-                table: "event_series",
-                column: "space_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_event_series_user_id",
-                table: "event_series",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
@@ -766,26 +700,6 @@ namespace Anatini.Server.Migrations
                 name: "ix_logs_user_id",
                 table: "logs",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_posts_space_id_type_handle",
-                table: "posts",
-                columns: new[] { "space_id", "type", "handle" },
-                unique: true,
-                filter: "space_id IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_posts_user_id_type_handle",
-                table: "posts",
-                columns: new[] { "user_id", "type", "handle" },
-                unique: true,
-                filter: "user_id IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_published_posts_date_nz",
-                table: "posts",
-                column: "published_at_nz",
-                filter: "status = 1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_role_claims_role_id",
@@ -821,6 +735,11 @@ namespace Anatini.Server.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_content_relationships_target_content_id_label_source_u",
+                table: "user_content_relationships",
+                columns: new[] { "target_content_id", "label", "source_user_id" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_emails_normalized_email",
                 table: "user_emails",
                 column: "normalized_email",
@@ -833,8 +752,8 @@ namespace Anatini.Server.Migrations
                 filter: "user_id IS NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_event_instance_edges_target_event_instance_id_label_so",
-                table: "user_event_instance_edges",
+                name: "ix_user_event_instance_relationships_target_event_instance_id_",
+                table: "user_event_instance_relationships",
                 columns: new[] { "target_event_instance_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
@@ -854,29 +773,19 @@ namespace Anatini.Server.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_post_edges_target_post_id_label_source_user_id",
-                table: "user_post_edges",
-                columns: new[] { "target_post_id", "label", "source_user_id" });
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_roles_role_id",
                 table: "user_roles",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_space_edges_target_space_id_label_source_user_id",
-                table: "user_space_edges",
+                name: "ix_user_space_relationships_target_space_id_label_source_user_",
+                table: "user_space_relationships",
                 columns: new[] { "target_space_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_user_edges_target_user_id_label_source_user_id",
-                table: "user_user_edges",
+                name: "ix_user_user_relationships_target_user_id_label_source_user_id",
+                table: "user_user_relationships",
                 columns: new[] { "target_user_id", "label", "source_user_id" });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_work_edges_target_work_id_label_source_user_id",
-                table: "user_work_edges",
-                columns: new[] { "target_work_id", "label", "source_user_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_users_handle",
@@ -895,37 +804,17 @@ namespace Anatini.Server.Migrations
                 table: "users",
                 column: "normalized_user_name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_published_works_date_nz",
-                table: "works",
-                column: "published_at_nz",
-                filter: "published_at_nz IS NOT NULL AND status = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_published_works_name",
-                table: "works",
-                column: "name",
-                filter: "status = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_works_space_id_type_handle",
-                table: "works",
-                columns: new[] { "space_id", "type", "handle" },
-                unique: true,
-                filter: "space_id IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_works_user_id_type_handle",
-                table: "works",
-                columns: new[] { "user_id", "type", "handle" },
-                unique: true,
-                filter: "user_id IS NOT NULL");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "content_images");
+
+            migrationBuilder.DropTable(
+                name: "content_versions");
+
             migrationBuilder.DropTable(
                 name: "event_exceptions");
 
@@ -933,10 +822,7 @@ namespace Anatini.Server.Migrations
                 name: "logs");
 
             migrationBuilder.DropTable(
-                name: "post_images");
-
-            migrationBuilder.DropTable(
-                name: "post_versions");
+                name: "posts");
 
             migrationBuilder.DropTable(
                 name: "role_claims");
@@ -951,10 +837,13 @@ namespace Anatini.Server.Migrations
                 name: "user_claims");
 
             migrationBuilder.DropTable(
+                name: "user_content_relationships");
+
+            migrationBuilder.DropTable(
                 name: "user_emails");
 
             migrationBuilder.DropTable(
-                name: "user_event_instance_edges");
+                name: "user_event_instance_relationships");
 
             migrationBuilder.DropTable(
                 name: "user_handles");
@@ -966,43 +855,31 @@ namespace Anatini.Server.Migrations
                 name: "user_logins");
 
             migrationBuilder.DropTable(
-                name: "user_post_edges");
-
-            migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
-                name: "user_space_edges");
+                name: "user_space_relationships");
 
             migrationBuilder.DropTable(
                 name: "user_tokens");
 
             migrationBuilder.DropTable(
-                name: "user_user_edges");
-
-            migrationBuilder.DropTable(
-                name: "user_work_edges");
-
-            migrationBuilder.DropTable(
-                name: "work_images");
-
-            migrationBuilder.DropTable(
-                name: "work_versions");
-
-            migrationBuilder.DropTable(
-                name: "event_instances");
-
-            migrationBuilder.DropTable(
-                name: "posts");
-
-            migrationBuilder.DropTable(
-                name: "roles");
+                name: "user_user_relationships");
 
             migrationBuilder.DropTable(
                 name: "works");
 
             migrationBuilder.DropTable(
+                name: "event_instances");
+
+            migrationBuilder.DropTable(
+                name: "roles");
+
+            migrationBuilder.DropTable(
                 name: "event_series");
+
+            migrationBuilder.DropTable(
+                name: "contents");
 
             migrationBuilder.DropTable(
                 name: "spaces");

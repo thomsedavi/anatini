@@ -18,31 +18,31 @@ namespace Anatini.Server.Users
         [HttpPost("trust")]
         public async Task<IActionResult> PostUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
+            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("trust")]
         public async Task<IActionResult> DeleteUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasTrusted);
+            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("follow")]
         public async Task<IActionResult> PostUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await AddUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
+            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasFollowed);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("follow")]
         public async Task<IActionResult> DeleteUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await DeleteUserUserEdge(Context, user.Id, UserUserEdgeLabel.HasFollowed);
+            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasFollowed);
         });
 
-        private async Task<IActionResult> AddUserUserEdge(ApplicationDbContext context, Guid targetUserId, UserUserEdgeLabel label)
+        private async Task<IActionResult> AddUserUserRelationship(ApplicationDbContext context, Guid targetUserId, UserUserRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -51,7 +51,7 @@ namespace Anatini.Server.Users
                     return BadRequest();
                 }
 
-                var userUserEdge = new ApplicationUserUserEdge
+                var userUserRelationship = new ApplicationUserUserRelationship
                 {
                     SourceUserId = sourceUserId,
                     TargetUserId = targetUserId,
@@ -59,7 +59,7 @@ namespace Anatini.Server.Users
                     CreatedAtUtc = DateTime.UtcNow
                 };
 
-                context.Add(userUserEdge);
+                context.Add(userUserRelationship);
 
                 try
                 {
@@ -77,7 +77,7 @@ namespace Anatini.Server.Users
             }
         }
 
-        private async Task<IActionResult> DeleteUserUserEdge(ApplicationDbContext context, Guid targetUserId, UserUserEdgeLabel label)
+        private async Task<IActionResult> DeleteUserUserRelationship(ApplicationDbContext context, Guid targetUserId, UserUserRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -86,11 +86,11 @@ namespace Anatini.Server.Users
                     return BadRequest();
                 }
 
-                var userUserEdge = await context.UserUserEdges.FirstOrDefaultAsync(userUserEdge => userUserEdge.TargetUserId == targetUserId && userUserEdge.SourceUserId == sourceUserId && userUserEdge.Label == label);
+                var userUserRelationship = await context.UserUserRelationships.FirstOrDefaultAsync(userUserRelationship => userUserRelationship.TargetUserId == targetUserId && userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == label);
 
-                if (userUserEdge != null)
+                if (userUserRelationship != null)
                 {
-                    context.Remove(userUserEdge);
+                    context.Remove(userUserRelationship);
                     await context.SaveChangesAsync();
                 }
 

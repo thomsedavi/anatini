@@ -20,16 +20,13 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; } = [];
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; } = [];
         public virtual ICollection<ApplicationUserClaim> Claims { get; set; } = [];
-        public virtual ICollection<ApplicationUserUserEdge> GivenUserEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserUserEdge> ReceivedUserEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserSpaceEdge> SpaceEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserPostEdge> PostEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserWorkEdge> WorkEdges { get; set; } = [];
-        public virtual ICollection<ApplicationUserEventInstanceEdge> EventInstanceEdges { get; set; } = [];
-        public virtual ICollection<Post> Posts { get; set; } = [];
-        public virtual ICollection<EventSeries> EventSeries { get; set; } = [];
+        public virtual ICollection<Content> Contents { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserRelationship> GivenUserRelationships { get; set; } = [];
+        public virtual ICollection<ApplicationUserUserRelationship> ReceivedUserRelationships { get; set; } = [];
+        public virtual ICollection<ApplicationUserSpaceRelationship> SpaceRelationships { get; set; } = [];
+        public virtual ICollection<ApplicationUserContentRelationship> ContentRelationships { get; set; } = [];
+        public virtual ICollection<ApplicationUserEventInstanceRelationship> EventInstanceRelationships { get; set; } = [];
         public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
-        public virtual ICollection<Work> Works { get; set; } = [];
     }
 
     public class ApplicationUserEmail
@@ -56,55 +53,44 @@ namespace Anatini.Server.Context.Entities
         public virtual ApplicationUser User { get; set; } = null!;
     }
 
-    public class ApplicationUserSpaceEdge
+    public class ApplicationUserSpaceRelationship
     {
         public required Guid SourceUserId { get; set; }
         public required Guid TargetSpaceId { get; set; }
-        public required UserSpaceEdgeLabel Label { get; set; }
+        public required UserSpaceRelationshipLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
         public virtual Space TargetSpace { get; set; } = null!;
     }
 
-    public class ApplicationUserUserEdge
+    public class ApplicationUserUserRelationship
     {
         public required Guid SourceUserId { get; set; }
         public required Guid TargetUserId { get; set; }
-        public required UserUserEdgeLabel Label { get; set; }
+        public required UserUserRelationshipLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
         public virtual ApplicationUser TargetUser { get; set; } = null!;
     }
-    
-    public class ApplicationUserPostEdge
+
+    public class ApplicationUserContentRelationship
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetPostId { get; set; }
-        public required UserPostEdgeLabel Label { get; set; }
+        public required Guid TargetContentId { get; set; }
+        public required UserContentRelationshipLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Post TargetPost { get; set; } = null!;
+        public virtual Content TargetContent { get; set; } = null!;
     }
 
-    public class ApplicationUserWorkEdge
-    {
-        public required Guid SourceUserId { get; set; }
-        public required Guid TargetWorkId { get; set; }
-        public required UserWorkEdgeLabel Label { get; set; }
-        public required DateTime CreatedAtUtc { get; set; }
-
-        public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual Work TargetWork { get; set; } = null!;
-    }
-
-    public class ApplicationUserEventInstanceEdge
+    public class ApplicationUserEventInstanceRelationship
     {
         public required Guid SourceUserId { get; set; }
         public required Guid TargetEventInstanceId { get; set; }
-        public required UserEventInstanceEdgeLabel Label { get; set; }
+        public required UserEventInstanceRelationshipLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;

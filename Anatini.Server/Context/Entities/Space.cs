@@ -12,14 +12,12 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
-        public virtual ICollection<ApplicationUserSpaceEdge> UserEdges { get; set; } = [];
+        public virtual ICollection<ApplicationUserSpaceRelationship> UserRelationships { get; set; } = [];
         public virtual ICollection<Log> Logs { get; set; } = [];
         public virtual ICollection<SpaceHandle> Handles { get; set; } = [];
         public virtual ICollection<SpaceImage> Images { get; set; } = [];
-        public virtual ICollection<Post> Posts { get; set; } = [];
-        public virtual ICollection<EventSeries> EventSeries { get; set; } = [];
+        public virtual ICollection<Content> Contents { get; set; } = [];
         public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
-        public virtual ICollection<Work> Works { get; set; } = [];
     }
 
     public class SpaceHandle

@@ -41,7 +41,7 @@ namespace Anatini.Server
 
             usersQuery = usersQuery
                 .Include(user => user.Images)
-                .Include(user => user.SpaceEdges.Where(userSpaceEdge => userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ThenInclude(userSpaceEdge => userSpaceEdge.TargetSpace);
+                .Include(user => user.SpaceRelationships.Where(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.Owner)).ThenInclude(userSpaceRelationship => userSpaceRelationship.TargetSpace);
 
             if (TryGetUserId(out Guid userId))
             {
@@ -80,7 +80,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                usersQuery = usersQuery.Include(user => user.ReceivedUserEdges.Where(userUserEdge => userUserEdge.SourceUserId == sourceUserId));
+                usersQuery = usersQuery.Include(user => user.ReceivedUserRelationships.Where(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(userHandle, out Guid userId))
@@ -166,72 +166,77 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingSpacePostAsync(string spaceHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceContentAsync<T>(string spaceHandle, string contentHandle, Func<T, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            Post? postResult;
+            T? contentResult;
 
-            var postsQuery = context.Posts.Where(post => post.Type == postType);
+            var contentsQuery = context.Contents.OfType<T>();
 
             if (settings?.AsNoTracking ?? true)
             {
-                postsQuery = postsQuery.AsNoTracking();
+                contentsQuery = contentsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(postHandle, out Guid postId))
+            if (Guid.TryParse(contentHandle, out Guid contentId))
             {
-                postResult = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Id == postId);
+                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Id == contentId);
             }
             else
             {
-                var normalizedPostHandle = NormalizeHandle(postHandle);
+                var normalizedContentHandle = NormalizeHandle(contentHandle);
 
-                postResult = await postsQuery.FirstOrDefaultAsync(post => post.SpaceId == space.Id && post.Handle == normalizedPostHandle);
+                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Handle == normalizedContentHandle);
             }
 
-            if (postResult == null)
+            if (contentResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(postResult.Visibility))
+            if (await CanReadAsync(contentResult.Visibility))
             {
-                return await postFunction(postResult);
+                return await contentFunction(contentResult);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserPostAsync(string userHandle, string postHandle, PostType postType, Func<Post, Task<IActionResult>> postFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserContentAsync<T>(string userHandle, string contentHandle, Func<T, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingUserAsync(userHandle, async (user) =>
         {
-            Post? postResult;
+            T? contentResult;
 
-            var postsQuery = context.Posts.Where(post => post.Type == postType);
+            var contentsQuery = context.Contents.OfType<T>();
 
             if (settings?.AsNoTracking ?? true)
             {
-                postsQuery = postsQuery.AsNoTracking();
+                contentsQuery = contentsQuery.AsNoTracking();
             }
 
-            if (Guid.TryParse(postHandle, out Guid postId))
+            if (TryGetUserId(out Guid sourceUserId))
             {
-                postResult = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Id == postId);
+                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userWorkRelationship => userWorkRelationship.SourceUserId == sourceUserId));
+            }
+
+            if (Guid.TryParse(contentHandle, out Guid contentId))
+            {
+                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Id == contentId);
             }
             else
             {
-                var normalizedPostHandle = NormalizeHandle(postHandle);
+                var normalizedContentHandle = NormalizeHandle(contentHandle);
 
-                postResult = await postsQuery.FirstOrDefaultAsync(post => post.UserId == user.Id && post.Handle == normalizedPostHandle);
+                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Handle == normalizedContentHandle);
             }
 
-            if (postResult == null)
+            if (contentResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(postResult.Visibility))
+            if (await CanReadAsync(contentResult.Visibility))
             {
-                return await postFunction(postResult);
+                return await contentFunction(contentResult);
             }
 
             return CannotReadResponse();
@@ -251,7 +256,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserEdges.Where(userNote => userNote.SourceUserId == sourceUserId));
+                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userNote => userNote.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
@@ -292,123 +297,6 @@ namespace Anatini.Server
             return CannotReadResponse();
         }, settings);
 
-        [NonAction]
-        public async Task<IActionResult> UsingUserEventAsync(string userHandle, string eventSeriesHandle, Func<EventSeries, Task<IActionResult>> eventSeriesFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
-        {
-            EventSeries? eventSeriesResult;
-
-            var eventSeriesQuery = context.EventSeries.AsQueryable();
-
-            if (settings?.AsNoTracking ?? true)
-            {
-                eventSeriesQuery = eventSeriesQuery.AsNoTracking();
-            }
-
-            if (Guid.TryParse(eventSeriesHandle, out Guid eventId))
-            {
-                eventSeriesResult = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Id == eventId);
-            }
-            else
-            {
-                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
-
-                eventSeriesResult = await eventSeriesQuery.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
-            }
-
-            if (eventSeriesResult == null)
-            {
-                return NotFound();
-            }
-
-            if (await CanReadAsync(eventSeriesResult.Visibility))
-            {
-                return await eventSeriesFunction(eventSeriesResult);
-            }
-
-            return CannotReadResponse();
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingUserWorkAsync(string userHandle, string workHandle, WorkType workType, Func<Work, Task<IActionResult>> workFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
-        {
-            Work? workResult;
-
-            var worksQuery = context.Works.Where(work => work.Type == workType);
-
-            if (settings?.AsNoTracking ?? true)
-            {
-                worksQuery = worksQuery.AsNoTracking();
-            }
-
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                worksQuery = worksQuery.Include(work => work.UserEdges.Where(userWorkEdge => userWorkEdge.SourceUserId == sourceUserId));
-            }
-
-            if (Guid.TryParse(workHandle, out Guid workId))
-            {
-                workResult = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Id == workId);
-            }
-            else
-            {
-                var normalizedWorkHandle = NormalizeHandle(workHandle);
-
-                workResult = await worksQuery.FirstOrDefaultAsync(work => work.UserId == user.Id && work.Handle == normalizedWorkHandle);
-            }
-
-            if (workResult == null)
-            {
-                return NotFound();
-            }
-
-            if (await CanReadAsync(workResult.Visibility))
-            {
-                return await workFunction(workResult);
-            }
-
-            return CannotReadResponse();
-        }, settings);
-
-        [NonAction]
-        public async Task<IActionResult> UsingSpaceWorkAsync(string spaceHandle, string workHandle, WorkType workType, Func<Work, Task<IActionResult>> workFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
-        {
-            Work? workResult;
-
-            var worksQuery = context.Works.Where(work => work.Type == workType);
-
-            if (settings?.AsNoTracking ?? true)
-            {
-                worksQuery = worksQuery.AsNoTracking();
-            }
-
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                worksQuery = worksQuery.Include(work => work.UserEdges.Where(userWorkEdge => userWorkEdge.SourceUserId == sourceUserId));
-            }
-
-            if (Guid.TryParse(workHandle, out Guid workId))
-            {
-                workResult = await worksQuery.FirstOrDefaultAsync(work => work.SpaceId == space.Id && work.Id == workId);
-            }
-            else
-            {
-                var normalizedWorkHandle = NormalizeHandle(workHandle);
-
-                workResult = await worksQuery.FirstOrDefaultAsync(work => work.SpaceId == space.Id && work.Handle == normalizedWorkHandle);
-            }
-
-            if (workResult == null)
-            {
-                return NotFound();
-            }
-
-            if (await CanReadAsync(workResult.Visibility))
-            {
-                return await workFunction(workResult);
-            }
-
-            return CannotReadResponse();
-        }, settings);
 
         [NonAction]
         public bool ImageValidationError(CreateImage createImage, out ActionResult? result)

@@ -6,7 +6,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class EventContextExtensions
     {
-        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent, Status status)
+        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent, Status status, string? article)
         {
             var eventSeriesId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
@@ -18,10 +18,12 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Id = eventSeriesId,
                 UserId = userId,
                 Status = status,
+                Type = ContentType.Event,
                 Visibility = createEvent.Visibility,
                 Name = createEvent.Name,
-                Article = createEvent.Article,
+                Article = article,
                 Url = createEvent.Url,
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 StartsAtNz = createEvent.StartsAtNz,
                 EndsAtNz = createEvent.EndsAtNz,
                 Duration = createEvent.Duration,
@@ -48,7 +50,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                     EventSeriesId = eventSeries.Id,
                     UserId = eventSeries.UserId,
                     SpaceId = eventSeries.SpaceId,
-                    Name = eventSeries.Name,
+                    Name = eventSeries.Name ?? throw new InvalidOperationException(),
                     StartsAtNz = eventSeries.StartsAtNz,
                     EndsAtNz = eventSeries.StartsAtNz,
                     Article = eventSeries.Article,
@@ -76,7 +78,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                         EventSeriesId = eventSeries.Id,
                         UserId = eventSeries.UserId,
                         SpaceId = eventSeries.SpaceId,
-                        Name = eventSeries.Name,
+                        Name = eventSeries.Name ?? throw new InvalidOperationException(),
                         StartsAtNz = instanceNz.Item1,
                         EndsAtNz = instanceNz.Item2,
                         Article = eventSeries.Article,

@@ -1,14 +1,14 @@
 ﻿namespace Anatini.Server.Dtos
 {
-    public class WorkDto
+    public class PostDto
     {
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
-        public required string Name { get; set; }
+        public string? Name { get; set; }
         public string? Article { get; set; }
         public string? Url { get; set; }
         public required string Visibility { get; set; }
-        public DateTime? PublishedAtNz { get; set; }
+        public DateTime PublishedAtNz { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
         public SpaceHeaderDto? SpaceHeader { get; set; }
         public bool? HasBookmarked { get; set; }

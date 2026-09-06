@@ -18,21 +18,21 @@ namespace Anatini.Server.Events
         [HttpPost("bookmark")]
         public async Task<IActionResult> PostEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return await AddUserEventInstanceEdge(Context, eventInstance.Id, UserEventInstanceEdgeLabel.HasBookmarked);
+            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.HasBookmarked);
         });
 
         [Authorize]
         [HttpDelete("bookmark")]
         public async Task<IActionResult> DeleteEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return await DeleteUserEventInstanceEdge(Context, eventInstance.Id, UserEventInstanceEdgeLabel.HasBookmarked);
+            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.HasBookmarked);
         });
 
-        private async Task<IActionResult> AddUserEventInstanceEdge(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceEdgeLabel label)
+        private async Task<IActionResult> AddUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventInstanceEdge = new ApplicationUserEventInstanceEdge
+                var userEventInstanceRelationship = new ApplicationUserEventInstanceRelationship
                 {
                     SourceUserId = sourceUserId,
                     TargetEventInstanceId = eventInstanceId,
@@ -40,7 +40,7 @@ namespace Anatini.Server.Events
                     CreatedAtUtc = DateTime.UtcNow
                 };
 
-                context.Add(userEventInstanceEdge);
+                context.Add(userEventInstanceRelationship);
 
                 try
                 {
@@ -58,15 +58,15 @@ namespace Anatini.Server.Events
             }
         }
 
-        private async Task<IActionResult> DeleteUserEventInstanceEdge(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceEdgeLabel label)
+        private async Task<IActionResult> DeleteUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventInstanceEdge = await context.UserEventInstanceEdges.FirstOrDefaultAsync(userEventInstanceEdge => userEventInstanceEdge.TargetEventInstanceId == eventInstanceId && userEventInstanceEdge.SourceUserId == sourceUserId && userEventInstanceEdge.Label == label);
+                var userEventInstanceRelationship = await context.UserEventInstanceRelationships.FirstOrDefaultAsync(userEventInstanceRelationship => userEventInstanceRelationship.TargetEventInstanceId == eventInstanceId && userEventInstanceRelationship.SourceUserId == sourceUserId && userEventInstanceRelationship.Label == label);
 
-                if (userEventInstanceEdge != null)
+                if (userEventInstanceRelationship != null)
                 {
-                    context.Remove(userEventInstanceEdge);
+                    context.Remove(userEventInstanceRelationship);
                     await context.SaveChangesAsync();
                 }
 

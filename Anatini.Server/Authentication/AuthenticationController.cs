@@ -163,7 +163,7 @@ namespace Anatini.Server.Authentication
                     response.UserId = user.Id;
                     response.UserHandle = user.Handle;
 
-                    var spaces = await Context.Spaces.Where(space => space.UserEdges.Any(userSpaceEdge => userSpaceEdge.SourceUserId == userId && userSpaceEdge.Label == UserSpaceEdgeLabel.Owner)).ToListAsync();
+                    var spaces = await Context.Spaces.Where(space => space.UserRelationships.Any(userSpaceRelationship => userSpaceRelationship.SourceUserId == userId && userSpaceRelationship.Label == UserSpaceRelationshipLabel.Owner)).ToListAsync();
 
                     if (spaces.Count != 0)
                     {

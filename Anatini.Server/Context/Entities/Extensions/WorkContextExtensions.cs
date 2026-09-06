@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class WorkContextExtensions
     {
-        public static Work AddUserWorkAsync(this ApplicationDbContext context, WorkType workType, string name, string url, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, string? article = null)
+        public static Work AddUserWorkAsync(this ApplicationDbContext context, string name, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, string? article = null, string? url = null)
         {
             var workId = Guid.CreateVersion7();
 
@@ -12,13 +12,14 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = workId,
                 UserId = userId,
-                Type = workType,
+                Type = ContentType.Work,
                 Handle = handle ?? workId.ToString(),
                 Name = name,
                 Article = article,
                 Url = url,
                 Visibility = visibility,
                 Status = status,
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
             };
@@ -28,7 +29,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return work;
         }
 
-        public static Work AddSpaceWorkAsync(this ApplicationDbContext context, WorkType workType, string name, string url, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, string? article = null)
+        public static Work AddSpaceWorkAsync(this ApplicationDbContext context, string name, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, string? article = null, string? url = null)
         {
             var workId = Guid.CreateVersion7();
 
@@ -36,13 +37,14 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = workId,
                 SpaceId = spaceId,
-                Type = workType,
+                Type = ContentType.Work,
                 Handle = handle ?? workId.ToString(),
                 Name = name,
                 Article = article,
                 Url = url,
                 Visibility = visibility,
                 Status = status,
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
             };

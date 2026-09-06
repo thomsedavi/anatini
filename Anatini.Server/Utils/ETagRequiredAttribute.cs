@@ -1,5 +1,4 @@
-﻿using Anatini.Server.Posts.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Anatini.Server.Utils

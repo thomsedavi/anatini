@@ -17,11 +17,11 @@ namespace Anatini.Server.Context.Entities.Extensions
                 CreatedAtUtc = utcNow
             };
 
-            var userSpaceEdge = new ApplicationUserSpaceEdge
+            var userSpaceRelationship = new ApplicationUserSpaceRelationship
             {
                 SourceUserId = userId,
                 TargetSpaceId = spaceId,
-                Label = UserSpaceEdgeLabel.Owner,
+                Label = UserSpaceRelationshipLabel.Owner,
                 CreatedAtUtc = utcNow
             };
 
@@ -32,7 +32,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Handle = handle,
                 Visibility = visibility,
                 Handles = [spaceHandle],
-                UserEdges = [userSpaceEdge],
+                UserRelationships = [userSpaceRelationship],
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
             };

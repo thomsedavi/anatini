@@ -1,6 +1,5 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.BuilderExtensions;
-using Anatini.Server.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,29 +13,26 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserHandle> UserHandles { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<ApplicationUserImage> UserImages { get; set; }
-        public DbSet<ApplicationUserUserEdge> UserUserEdges { get; set; }
-        public DbSet<ApplicationUserSpaceEdge> UserSpaceEdges { get; set; }
-        public DbSet<ApplicationUserPostEdge> UserPostEdges { get; set; }
-        public DbSet<ApplicationUserWorkEdge> UserWorkEdges { get; set; }
-        public DbSet<ApplicationUserEventInstanceEdge> UserEventInstanceEdges { get; set; }
+        public DbSet<ApplicationUserUserRelationship> UserUserRelationships { get; set; }
+        public DbSet<ApplicationUserSpaceRelationship> UserSpaceRelationships { get; set; }
+        public DbSet<ApplicationUserContentRelationship> UserContentRelationships { get; set; }
+        public DbSet<ApplicationUserEventInstanceRelationship> UserEventInstanceRelationships { get; set; }
 
         public DbSet<Space> Spaces { get; set; }
         public DbSet<SpaceHandle> SpaceHandles { get; set; }
         public DbSet<SpaceImage> SpaceImages { get; set; }
 
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<PostVersion> PostVersions { get; set; }
-        public DbSet<PostImage> PostImages { get; set; }
+        public DbSet<Content> Contents { get; set; }
+        public DbSet<ContentVersion> ContentVersions { get; set; }
+        public DbSet<ContentImage> ContentImages { get; set; }
 
         public DbSet<EventSeries> EventSeries { get; set; }
         public DbSet<EventException> EventExceptions { get; set; }
         public DbSet<EventInstance> EventInstances { get; set; }
 
-        public DbSet<Work> Works { get; set; }
-        public DbSet<WorkVersion> WorkVersions { get; set; }
-        public DbSet<WorkImage> WorkImages { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
-        public IQueryable<Post> Notes => Posts.Where(post => post.Type == PostType.Note);
+        public DbSet<Work> Works { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,11 +46,10 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserLogin>().Configure();
             modelBuilder.Entity<ApplicationUserToken>().Configure();
             modelBuilder.Entity<ApplicationUserRole>().Configure();
-            modelBuilder.Entity<ApplicationUserUserEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserSpaceEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserPostEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserWorkEdge>().Configure();
-            modelBuilder.Entity<ApplicationUserEventInstanceEdge>().Configure();
+            modelBuilder.Entity<ApplicationUserUserRelationship>().Configure();
+            modelBuilder.Entity<ApplicationUserSpaceRelationship>().Configure();
+            modelBuilder.Entity<ApplicationUserContentRelationship>().Configure();
+            modelBuilder.Entity<ApplicationUserEventInstanceRelationship>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -63,17 +58,16 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<SpaceHandle>().Configure();
             modelBuilder.Entity<SpaceImage>().Configure();
 
-            modelBuilder.Entity<Post>().Configure();
-            modelBuilder.Entity<PostVersion>().Configure();
-            modelBuilder.Entity<PostImage>().Configure();
-
-            modelBuilder.Entity<EventSeries>().Configure();
-            modelBuilder.Entity<EventException>().Configure();
-            modelBuilder.Entity<EventInstance>().Configure();
+            modelBuilder.Entity<Content>().Configure();
+            modelBuilder.Entity<ContentVersion>().Configure();
+            modelBuilder.Entity<ContentImage>().Configure();
 
             modelBuilder.Entity<Work>().Configure();
-            modelBuilder.Entity<WorkVersion>().Configure();
-            modelBuilder.Entity<WorkImage>().Configure();
+            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<EventSeries>().Configure();
+
+            modelBuilder.Entity<EventException>().Configure();
+            modelBuilder.Entity<EventInstance>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

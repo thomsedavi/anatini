@@ -21,7 +21,7 @@ namespace Anatini.Server.Authorization
                 return;
             };
 
-            var isOwner = await dbContext.UserSpaceEdges.AnyAsync(userSpace => userSpace.SourceUserId == sourceUserId && userSpace.TargetSpaceId == space.Id && userSpace.Label == UserSpaceEdgeLabel.Owner);
+            var isOwner = await dbContext.UserSpaceRelationships.AnyAsync(userSpace => userSpace.SourceUserId == sourceUserId && userSpace.TargetSpaceId == space.Id && userSpace.Label == UserSpaceRelationshipLabel.Owner);
 
             if (isOwner)
             {

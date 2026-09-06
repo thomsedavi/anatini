@@ -90,6 +90,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("IsTrusted", policy => policy.AddRequirements(new TrustedUserRequirement()))
     .AddPolicy("CanRead", policy => policy.AddRequirements(new ReadRequirement()))
+    .AddPolicy("CanWriteUser", policy => policy.AddRequirements(new WriteUserRequirement()))
     .AddPolicy("CanWriteSpace", policy => policy.AddRequirements(new WriteSpaceRequirement()));
 
 builder.Services.AddMemoryCache();

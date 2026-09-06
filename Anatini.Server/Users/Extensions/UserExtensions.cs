@@ -21,8 +21,8 @@ namespace Anatini.Server.Users.Extensions
 
             if (isAuthenticated)
             {
-                userDto.HasTrusted = user.ReceivedUserEdges.Any(userEdge => userEdge.Label == UserUserEdgeLabel.HasTrusted);
-                userDto.HasFollowed = user.ReceivedUserEdges.Any(userEdge => userEdge.Label == UserUserEdgeLabel.HasFollowed);
+                userDto.HasTrusted = user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.HasTrusted);
+                userDto.HasFollowed = user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.HasFollowed);
             }
 
             return userDto;
@@ -45,7 +45,7 @@ namespace Anatini.Server.Users.Extensions
                 Id = user.Id,
                 Name = user.Name,
                 About = user.About,
-                Spaces = await Task.WhenAll(user.SpaceEdges.Select(userSpaceEdge => userSpaceEdge.TargetSpace.ToSpaceEditDtoAsync(blobService))),
+                Spaces = await Task.WhenAll(user.SpaceRelationships.Select(userSpaceRelationship => userSpaceRelationship.TargetSpace.ToSpaceEditDtoAsync(blobService))),
                 Handle = user.Handle,
                 UserName = user.UserName,
                 Visibility = user.Visibility.ToString(),
