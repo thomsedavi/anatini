@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/common/types';
+  import type { APIResponse, InputError, PostEdit, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
@@ -22,34 +22,34 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
+  const post = ref<APIResponse<PostEdit>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputNotePublishedAtNz = ref<string>('');
+  const inputPostPublishedAtNz = ref<string>('');
 
-  watch([() => route.params.noteId], (source: Source) => fetchNote(parseSource(source)), { immediate: true });
+  watch([() => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
-  async function fetchNote(params: string[]) {
-    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
+  async function fetchPost(params: string[]) {
+    const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: NoteEdit) => {
-            note.value = { data: value };
+          .then((value: PostEdit) => {
+            post.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
             inputVisibility.value = value.visibility;
-            inputNotePublishedAtNz.value = formatDateTimeNz(value.publishedAtNz);
+            inputPostPublishedAtNz.value = formatDateTimeNz(value.publishedAtNz);
           })
           .catch(() => {
-            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
           });
       },
       404: () => {
-        note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};
+        post.value = { error: { heading: '404 Not Found', body: 'Post not found' }};
       },
       500: () => {
-        note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+        post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
       }
     };
 
@@ -57,13 +57,13 @@
   };
 
   function noChange(): boolean {
-    if (note.value.data === undefined) {
+    if (post.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== note.value.data.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== post.value.data.article) {
       return false;
-    } else if (inputVisibility.value !== note.value.data.visibility) {
+    } else if (inputVisibility.value !== post.value.data.visibility) {
       return false;
-    } else if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtNz)) {
+    } else if (inputPostPublishedAtNz.value !== '' && inputPostPublishedAtNz.value !== formatDateTimeNz(post.value.data.publishedAtNz)) {
       return false;
     }
 
@@ -74,15 +74,15 @@
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function patchNote() {
-    if (note.value.data === undefined) {
+  async function patchPost() {
+    if (post.value.data === undefined) {
       return;
     }
 
     emit('update-errors', []);
 
     if (noChange()) {
-      emit('update-errors', [{ id: 'article', message: 'Note has not been modified' }]);
+      emit('update-errors', [{ id: 'article', message: 'Post has not been modified' }]);
 
       return;
     }
@@ -95,7 +95,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${route.params.spaceId}/notes/${route.params.noteId}`;
+    const input = `spaces/${route.params.spaceId}/posts/${route.params.postId}`;
 
     const statusActions: StatusActions = {
       200: () => {
@@ -105,16 +105,16 @@
 
     const body = new FormData();
 
-    if (formatArticle(inputArticle.value) !== note.value.data.article) {
+    if (formatArticle(inputArticle.value) !== post.value.data.article) {
       body.append('article', formatArticle(inputArticle.value));
     }
 
-    if (inputVisibility.value !== note.value.data.visibility) {
+    if (inputVisibility.value !== post.value.data.visibility) {
       body.append('visibility', inputVisibility.value);
     }
 
-    if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtNz)) {
-      body.append('publishedAtNz', inputNotePublishedAtNz.value);
+    if (inputPostPublishedAtNz.value !== '' && inputPostPublishedAtNz.value !== formatDateTimeNz(post.value.data.publishedAtNz)) {
+      body.append('publishedAtNz', inputPostPublishedAtNz.value);
     }
 
     const init = { method: "PATCH", body: body };
@@ -126,25 +126,25 @@
 <template>
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
-      <h2>Edit Note</h2>
+      <h2>Edit Post</h2>
     </header>
 
-    <template v-if="note === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the note information is fetched.</p>
+    <template v-if="post === null">
+      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the post information is fetched.</p>
                 
-      <progress max="100">Fetching note...</progress>
+      <progress max="100">Fetching post...</progress>
     </template>
 
-    <template v-if="note.error !== undefined">
+    <template v-if="post.error !== undefined">
       <p>
-        {{ note.error.body }}
+        {{ post.error.body }}
       </p>
     </template>
 
-    <template v-if="note.data !== undefined">
-      <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
+    <template v-if="post.data !== undefined">
+      <form @submit.prevent="patchPost" :action="`/api/spaces/${route.params.spaceId}/posts/${route.params.postId}`" method="POST" novalidate>
         <fieldset>
-          <legend class="visuallyhidden">Edit Note</legend>
+          <legend class="visuallyhidden">Edit Post</legend>
 
           <InputTextArea
             v-model="inputArticle"
@@ -154,17 +154,17 @@
             :maxLength="512"
             :error="getError('article')"
             :isArticle="true"
-            help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+            help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
           <VisibilitySelect v-model="inputVisibility" />
 
           <InputText
-            v-model="inputNotePublishedAtNz"
+            v-model="inputPostPublishedAtNz"
             type="datetime-local"
             label="Date & Time (NZ)"
             name="publishedAtNz"
             id="publishedAtNz"
-            help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+            help="Leave blank to publish immediately. Posts set in the future will not be visible until that scheduled time."
             :error="getError('publishedAtNz')" />
         </fieldset>
 

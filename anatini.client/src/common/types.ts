@@ -113,10 +113,6 @@ export type PostEdit = {
   status: 'Draft' | 'Published';
 }
 
-export type Post = {
-  version: PostVersion;
-}
-
 export type Event = {
   id: string;
   name: string;
@@ -148,7 +144,7 @@ export type Work = {
   hasDismissed: boolean | null;
 }
 
-export type Note = {
+export type Post = {
   id: string;
   userHeader: UserHeader | null;
   spaceHeader: SpaceHeader | null;

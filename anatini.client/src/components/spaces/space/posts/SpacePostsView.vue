@@ -3,8 +3,8 @@
   import { formatLong } from '@/common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import { handleClick } from '@/common/utils';
   import { useRouter } from 'vue-router';
+  import { handleClick } from '@/common/utils';
 
   const router = useRouter();
 
@@ -33,18 +33,40 @@
       apiFetchAuthenticated({ input, statusActions });
     }
   });
+
+  function getHeader(post: Post): string {
+      return `<header><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
+  }
+
+  function postHtml(post: Post): string {
+    if (post.spaceHeader !== null) {
+      return `
+        ${getHeader(post)}
+        ${post.article.substring(9, post.article.length - 10)}
+        <footer>
+          <menu>
+            <li>
+              <a href='/spaces/${post.spaceHeader.handle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
+            </li>
+          </menu>
+        </footer>
+      `;
+    }
+
+    return '<p>Error</p>';
+  }
 </script>
 
 <template>
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Posts</h2>
-      <RouterLink :to="{ name: 'SpaceEditPostCreate' }">+ Create Post</RouterLink>
+      <RouterLink :to="{ name: 'SpacePostCreate' }">+ Create Post</RouterLink>
     </header>
 
     <ul role="list" v-if="dataPosts !== null">
       <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="`${post.article.substring(9, post.article.length - 10)}<footer><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time><menu><li><a href='/spaces/${dataSpaceId}/edit/posts/${post.handle ?? post.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="postHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

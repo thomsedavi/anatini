@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Note, Status, StatusActions, Tab, User, Work } from '@/common/types';
+  import type { APIResponse, InputError, Post, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
@@ -15,11 +15,11 @@
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
-  const notes = ref<Note[] | null>(null);
+  const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserNote', 'UserNoteCreate', 'UserNoteEdit'] },
+    { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserPost', 'UserPostCreate', 'UserPostEdit'] },
     { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
     { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsite', 'UserWebsiteCreate', 'UserProduct', 'UserProductCreate', 'UserProject', 'UserProjectCreate'] },
   ];
@@ -153,8 +153,8 @@
     }
   }
 
-  function handleUpdateNotes(newNotes: Note[]): void {
-    notes.value = newNotes;
+  function handleUpdatePosts(newPosts: Post[]): void {
+    posts.value = newPosts;
   }
 
   function handleUpdateWorks(newWorks: Work[]): void {
@@ -241,12 +241,12 @@
           :is="Component"
           :data-status="status"
           :data-input-errors="inputErrors"
-          :data-notes="notes"
+          :data-posts="posts"
           :data-works="works"
           :data-user-id="user.data.id"
           :data-user-handle="user.data.handle"
           :data-user-name="user.data.name"
-          @update-notes="handleUpdateNotes"
+          @update-posts="handleUpdatePosts"
           @update-works="handleUpdateWorks"
           @update-errors="handleUpdateErrors"
         />

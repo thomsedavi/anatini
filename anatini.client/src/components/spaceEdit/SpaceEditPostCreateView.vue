@@ -1,34 +1,33 @@
 <script setup lang="ts">
   import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
-  import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import InputText from '@/common/InputText.vue';
   import { formatArticle, tidy } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const props = defineProps<{
-    dataSpaceId: string,
     dataStatus: Status,
+    dataSpaceId: string,
     dataInputErrors: InputError[],
   }>();
 
-  const emit = defineEmits<{
+   const emit = defineEmits<{
     'update-status': [newStatus: Status],
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputNoteHandle = ref<string>('');
-  const inputNotePublishedAtNz = ref<string>('');
+  const inputPostHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postNote() {
+  async function postPost() {
     emit('update-errors', []);
 
     if (tidy(inputArticle.value) === '') {
@@ -39,7 +38,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${props.dataSpaceId}/notes`;
+    const input = `spaces/${props.dataSpaceId}/posts`;
 
     const statusActions: StatusActions = {
       201: () => {
@@ -57,12 +56,8 @@
     body.append('article', formatArticle(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
-    if (tidy(inputNoteHandle.value) !== '') {
-      body.append('handle', tidy(inputNoteHandle.value));
-    }
-
-    if (inputNotePublishedAtNz.value !== '') {
-      body.append('publishedAtNz', inputNotePublishedAtNz.value);
+    if (tidy(inputPostHandle.value) !== '') {
+      body.append('handle', tidy(inputPostHandle.value));
     }
 
     const init = { method: "POST", body: body };
@@ -74,12 +69,12 @@
 <template>
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
-      <h2>Create Note</h2>
+      <h2>Create Post</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/posts`" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Create Note</legend>
+        <legend class="visuallyhidden">Create Post</legend>
 
         <InputTextArea
           v-model="inputArticle"
@@ -89,27 +84,18 @@
           :maxLength="512"
           :error="getError('article')"
           :isArticle="true"
-          help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+          help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
         <VisibilitySelect v-model="inputVisibility" />
 
         <InputText
-          v-model="inputNoteHandle"
+          v-model="inputPostHandle"
           label="Handle"
           name="handle"
           id="handle"
           :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
+          help="lower case with hyphens (e.g. 'my-anatini-space'), optional"
           :error="getError('handle')" />
-
-        <InputText
-          v-model="inputNotePublishedAtNz"
-          type="datetime-local"
-          label="Date & Time (NZ)"
-          name="publishedAtNz"
-          id="publishedAtNz"
-          help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
-          :error="getError('publishedAtNz')" />
       </fieldset>
 
       <SubmitButton

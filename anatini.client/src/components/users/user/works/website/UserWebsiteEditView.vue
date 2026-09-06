@@ -122,7 +122,7 @@
     </template>
 
     <template v-if="website.data !== undefined">
-      <form @submit.prevent="patchWebsite" :action="`/api/users/${route.params.userId}/notes/${route.params.noteId}`" method="POST" novalidate>
+      <form @submit.prevent="patchWebsite" :action="`/api/users/${route.params.userId}/posts/${route.params.postId}`" method="POST" novalidate>
         <InputText
           v-model="inputUrl"
           label="Link"
@@ -143,7 +143,7 @@
           :maxLength="512"
           :error="getError('article')"
           :isArticle="true"
-          help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+          help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
         <SubmitButton
           :busy="dataStatus === 'pending'"

@@ -126,7 +126,7 @@
                   <RouterLink :to="{ name: 'User', params: { userId: store.userHandle }}" @click="isShowing = []">Profile</RouterLink>
                 </li>
                 <li>
-                  <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle }}" @click="isShowing = []">Create Note</RouterLink>
+                  <RouterLink :to="{ name: 'UserPostCreate', params: { userId: store.userHandle }}" @click="isShowing = []">Create Post</RouterLink>
                 </li>
               </template>
             </ul>
@@ -150,7 +150,7 @@
                     <RouterLink :to="`/spaces/${space.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
                   </li>
                   <li>
-                    <RouterLink :to="`/spaces/${space.handle}/edit/notes/create`" @click="isShowing = []">Create Note</RouterLink>
+                    <RouterLink :to="`/spaces/${space.handle}/edit/posts/create`" @click="isShowing = []">Create Post</RouterLink>
                   </li>
                 </ul>
               </li>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Note, StatusActions } from '@/common/types';
+  import type { Post, StatusActions } from '@/common/types';
   import { formatLong } from '@/common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
@@ -11,22 +11,22 @@
   const props = defineProps<{
     dataUserId: string,
     dataUserHandle: string,
-    dataNotes: Note[] | null,
+    dataPosts: Post[] | null,
   }>();
 
   const emit = defineEmits<{
-    'update-notes': [newNotes: Note[]],
+    'update-posts': [newPosts: Post[]],
   }>();
 
   onMounted(() => {
-    if (props.dataNotes === null) {
-      const input = `users/${props.dataUserId}/notes`;
+    if (props.dataPosts === null) {
+      const input = `users/${props.dataUserId}/posts`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
-            .then((value: Note[]) => {
-              emit('update-notes', value);
+            .then((value: Post[]) => {
+              emit('update-posts', value);
             });
         }
       }
@@ -35,18 +35,18 @@
     }
   });
 
-  function getHeader(note: Note): string {
-      return `<header><time datetime='${note.publishedAtNz}'>${formatLong(note.publishedAtNz)}</time></header>`;
+  function getHeader(post: Post): string {
+      return `<header><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
   }
 
-  function noteHtml(note: Note): string {
+  function postHtml(post: Post): string {
     return `
-      ${getHeader(note)}
-      ${note.article.substring(9, note.article.length - 10)}
+      ${getHeader(post)}
+      ${post.article.substring(9, post.article.length - 10)}
       <footer>
         <menu>
           <li>
-            <a href='/users/${props.dataUserHandle}/notes/${note.handle ?? note.id}/edit'>Edit</a>
+            <a href='/users/${props.dataUserHandle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
           </li>
         </menu>
       </footer>
@@ -58,12 +58,12 @@
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Posts</h2>
-      <RouterLink :to="{ name: 'UserNoteCreate' }">+ Create Note</RouterLink>
+      <RouterLink :to="{ name: 'UserPostCreate' }">+ Create Post</RouterLink>
     </header>
 
-    <ul role="list" v-if="dataNotes !== null">
-      <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article v-html="noteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+    <ul role="list" v-if="dataPosts !== null">
+      <li v-for="post in dataPosts" :key="'post' + post.id">
+        <article v-html="postHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

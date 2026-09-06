@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
+  import type { InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -25,14 +25,14 @@
 
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputNoteHandle = ref<string>('');
-  const inputNotePublishedAtNz = ref<string>('');
+  const inputPostHandle = ref<string>('');
+  const inputPostPublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postNote() {
+  async function postPost() {
     emit('update-errors', []);
 
     if (tidy(inputArticle.value) === '') {
@@ -43,13 +43,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.dataUserId}/notes`;
+    const input = `users/${props.dataUserId}/posts`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
-            .then((value: Note) => {
-              router.push({ name: 'UserNote', params: { userId: props.dataUserHandle, noteId: value.handle ?? value.id } });
+            .then((value: Post) => {
+              router.push({ name: 'UserPost', params: { userId: props.dataUserHandle, postId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -62,12 +62,12 @@
     body.append('article', formatArticle(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
-    if (tidy(inputNoteHandle.value) !== '') {
-      body.append('handle', tidy(inputNoteHandle.value));
+    if (tidy(inputPostHandle.value) !== '') {
+      body.append('handle', tidy(inputPostHandle.value));
     }
 
-    if (inputNotePublishedAtNz.value !== '') {
-      body.append('publishedAtNz', inputNotePublishedAtNz.value);
+    if (inputPostPublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputPostPublishedAtNz.value);
     }
 
     const init = { method: "POST", body: body };
@@ -79,10 +79,10 @@
 <template>
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
-      <h2>Create Note</h2>
+      <h2>Create Post</h2>
     </header>
 
-    <form @submit.prevent="postNote" :action="`/api/users/${dataUserId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postPost" :action="`/api/users/${dataUserId}/posts`" method="POST" novalidate>
       <InputTextArea
         v-model="inputArticle"
         label="Content"
@@ -91,12 +91,12 @@
         :maxLength="512"
         :error="getError('article')"
         :isArticle="true"
-        help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+        help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
 
       <InputText
-        v-model="inputNoteHandle"
+        v-model="inputPostHandle"
         label="Handle"
         name="handle"
         id="handle"
@@ -105,12 +105,12 @@
         :error="getError('handle')" />
 
       <InputText
-        v-model="inputNotePublishedAtNz"
+        v-model="inputPostPublishedAtNz"
         type="datetime-local"
         label="Date & Time (NZ)"
         name="publishedAtNz"
         id="publishedAtNz"
-        help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+        help="Leave blank to publish immediately. Posts set in the future will not be visible until that scheduled time."
         :error="getError('publishedAtNz')" />
 
       <SubmitButton

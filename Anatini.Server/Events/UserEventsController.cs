@@ -76,7 +76,7 @@ namespace Anatini.Server.Events
 
             if (lastStartsAtUtc.HasValue)
             {
-                eventInstancesQuery = eventInstancesQuery.Where(note => note.StartsAtNz < lastStartsAtUtc.Value);
+                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.StartsAtNz < lastStartsAtUtc.Value);
             }
 
             var eventInstances = await eventInstancesQuery.OrderBy(eventInstance => eventInstance.StartsAtNz).Take(pageSize).ToListAsync();

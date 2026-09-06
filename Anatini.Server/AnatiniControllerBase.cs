@@ -256,7 +256,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userNote => userNote.SourceUserId == sourceUserId));
+                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userEventInstance => userEventInstance.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))

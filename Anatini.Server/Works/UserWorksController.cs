@@ -169,7 +169,7 @@ namespace Anatini.Server.Works
 
             if (query.LastName != null && query.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(note => string.Compare(note.Name, query.LastName) > 0 || (note.Name == query.LastName && note.Id > query.LastWorkId.Value));
+                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id > query.LastWorkId.Value));
             }
 
             var works = await worksQuery.OrderBy(work => work.Name).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
