@@ -10,6 +10,7 @@
 
   const props = defineProps<{
     dataSpaceId: string,
+    dataSpaceHandle: string,
     dataPosts: Post[] | null,
   }>();
 
@@ -39,21 +40,17 @@
   }
 
   function postHtml(post: Post): string {
-    if (post.spaceHeader !== null) {
-      return `
-        ${getHeader(post)}
-        ${post.article.substring(9, post.article.length - 10)}
-        <footer>
-          <menu>
-            <li>
-              <a href='/spaces/${post.spaceHeader.handle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
-            </li>
-          </menu>
-        </footer>
-      `;
-    }
-
-    return '<p>Error</p>';
+    return `
+      ${getHeader(post)}
+      ${post.article.substring(9, post.article.length - 10)}
+      <footer>
+        <menu>
+          <li>
+            <a href='/spaces/${props.dataSpaceHandle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
+          </li>
+        </menu>
+      </footer>
+    `;
   }
 </script>
 
