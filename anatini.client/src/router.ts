@@ -266,11 +266,6 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/spaces/:spaceId',
-    component: SpaceView,
-    name: 'Space',
-  },
-  {
     path: '/tags/:tagId',
     component: TagsView,
     name: 'Tags',

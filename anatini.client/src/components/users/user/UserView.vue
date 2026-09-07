@@ -20,8 +20,8 @@
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserPost', 'UserPostCreate', 'UserPostEdit'] },
+    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWork', 'UserWorkCreate'] },
     { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
-    { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWebsite', 'UserWebsiteCreate', 'UserProduct', 'UserProductCreate', 'UserProject', 'UserProjectCreate'] },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -44,7 +44,7 @@
             };
           })
           .catch(() => {
-            user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+            user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
           });
       },
       404: () => {
