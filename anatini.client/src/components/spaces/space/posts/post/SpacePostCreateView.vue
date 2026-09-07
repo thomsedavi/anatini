@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import type { InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -7,9 +7,13 @@
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
 
   const props = defineProps<{
     dataSpaceId: string,
+    dataSpaceHandle: string,
     dataStatus: Status,
     dataInputErrors: InputError[],
   }>();
@@ -42,10 +46,11 @@
     const input = `spaces/${props.dataSpaceId}/posts`;
 
     const statusActions: StatusActions = {
-      201: () => {
-        emit('update-status', 'success');
-
-        console.log('Handle thing');
+      201: (response?: Response) => {
+          response?.json()
+            .then((value: Post) => {
+              router.push({ name: 'SpacePost', params: { spaceId: props.dataSpaceHandle, postId: value.handle ?? value.id } });
+            });
       },
       400: () => {
         emit('update-status', 'error');
@@ -78,39 +83,35 @@
     </header>
 
     <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/posts`" method="POST" novalidate>
-      <fieldset>
-        <legend class="visuallyhidden">Create Post</legend>
+      <InputTextArea
+        v-model="inputArticle"
+        label="Content"
+        name="article"
+        id="article"
+        :maxLength="512"
+        :error="getError('article')"
+        :isArticle="true"
+        help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
-        <InputTextArea
-          v-model="inputArticle"
-          label="Content"
-          name="article"
-          id="article"
-          :maxLength="512"
-          :error="getError('article')"
-          :isArticle="true"
-          help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
+      <VisibilitySelect v-model="inputVisibility" />
 
-        <VisibilitySelect v-model="inputVisibility" />
+      <InputText
+        v-model="inputPostHandle"
+        label="Handle"
+        name="handle"
+        id="handle"
+        :maxlength="64"
+        help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
+        :error="getError('handle')" />
 
-        <InputText
-          v-model="inputPostHandle"
-          label="Handle"
-          name="handle"
-          id="handle"
-          :maxlength="64"
-          help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
-          :error="getError('handle')" />
-
-        <InputText
-          v-model="inputPostPublishedAtNz"
-          type="datetime-local"
-          label="Date & Time (NZ)"
-          name="publishedAtNz"
-          id="publishedAtNz"
-          help="Leave blank to publish immediately. Posts set in the future will not be visible until that scheduled time."
-          :error="getError('publishedAtNz')" />
-      </fieldset>
+      <InputText
+        v-model="inputPostPublishedAtNz"
+        type="datetime-local"
+        label="Date & Time (NZ)"
+        name="publishedAtNz"
+        id="publishedAtNz"
+        help="Leave blank to publish immediately. Posts set in the future will not be visible until that scheduled time."
+        :error="getError('publishedAtNz')" />
 
       <SubmitButton
         :busy="dataStatus === 'pending'"

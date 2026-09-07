@@ -1,18 +1,20 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, PostEdit, Status, StatusActions, Visibility } from '@/common/types';
+  import type { APIResponse, InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
   import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
   import { formatDateTimeNz } from '@/common/dateUtils';
 
   const route = useRoute();
+  const router = useRouter();
 
   const props = defineProps<{
+    dataSpaceHandle: string,
     dataStatus: Status,
     dataInputErrors: InputError[],
   }>();
@@ -22,20 +24,20 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const post = ref<APIResponse<PostEdit>>({ fetching: true });
+  const post = ref<APIResponse<Post>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputPostPublishedAtNz = ref<string>('');
 
-  watch([() => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
 
   async function fetchPost(params: string[]) {
-    const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
+    const input = `spaces/${params[0]}/posts/${params[1]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: PostEdit) => {
+          .then((value: Post) => {
             post.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
             inputVisibility.value = value.visibility;
@@ -50,7 +52,7 @@
       },
       500: () => {
         post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
-      }
+      },
     };
 
     apiFetchAuthenticated({ input, statusActions });
@@ -98,8 +100,8 @@
     const input = `spaces/${route.params.spaceId}/posts/${route.params.postId}`;
 
     const statusActions: StatusActions = {
-      200: () => {
-        emit('update-status', 'success');
+      204: () => {
+        router.push({ name: 'SpacePost', params: { spaceId: props.dataSpaceHandle, postId: post.value.data!.handle } });
       }
     }
 
