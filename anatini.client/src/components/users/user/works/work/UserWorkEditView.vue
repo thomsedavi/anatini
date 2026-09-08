@@ -22,20 +22,20 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const website = ref<APIResponse<Work>>({ fetching: true });
+  const work = ref<APIResponse<Work>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputUrl = ref<string>('');
 
-  watch([() => route.params.userId, () => route.params.websiteId], (source: Source) => fetchWebsite(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.workId], (source: Source) => fetchWork(parseSource(source)), { immediate: true });
 
-  async function fetchWebsite(params: string[]) {
-    const input = `users/${params[0]}/websites/${params[1]}`;
+  async function fetchWork(params: string[]) {
+    const input = `users/${params[0]}/works/${params[1]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
           .then((value: Work) => {
-            website.value = { data: value };
+            work.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
             inputUrl.value = value.url;
           });
@@ -46,11 +46,11 @@
   }
 
   function noChange(): boolean {
-    if (website.value.data === undefined) {
+    if (work.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== website.value.data.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== work.value.data.article) {
       return false;
-    } else if (tidy(inputUrl.value) !== website.value.data.url) {
+    } else if (tidy(inputUrl.value) !== work.value.data.url) {
       return false;
     }
 
@@ -61,39 +61,39 @@
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function patchWebsite() {
-    if (website.value.data === undefined) {
+  async function patchWork() {
+    if (work.value.data === undefined) {
       return;
     }
 
     emit('update-errors', []);
 
     if (noChange()) {
-      emit('update-errors', [{ id: 'article', message: 'Website has not been modified' }]);
+      emit('update-errors', [{ id: 'article', message: 'Work has not been modified' }]);
 
       return;
     }
 
     const tidiedUrl = tidy(inputUrl.value);
 
-    const input = `users/${route.params.userId}/websites/${route.params.websiteId}`;
+    const input = `users/${route.params.userId}/works/${route.params.workId}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserWebsite', params: { userId: props.dataUserHandle, websiteId: value.handle ?? value.id } });
+              router.push({ name: 'UserWork', params: { userId: props.dataUserHandle, workId: value.handle ?? value.id } });
             });
       }
     }
     
     const body = new FormData();
 
-    if (tidiedUrl !== website.value.data.url) {
+    if (tidiedUrl !== work.value.data.url) {
       body.append('url', tidiedUrl);
     }
 
-    if (formatArticle(inputArticle.value) !== website.value.data.article) {
+    if (formatArticle(inputArticle.value) !== work.value.data.article) {
       body.append('article', formatArticle(inputArticle.value));
     }
 
@@ -106,23 +106,23 @@
 <template>
   <section id="panel-works" role="tabpanel" aria-labelledby="tab-works">
     <header>
-      <h2>Edit Website</h2>
+      <h2>Edit Work</h2>
     </header>
 
-    <template v-if="website === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the website information is fetched.</p>
+    <template v-if="work === null">
+      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the work information is fetched.</p>
                 
-      <progress max="100">Fetching website...</progress>
+      <progress max="100">Fetching work...</progress>
     </template>
 
-    <template v-if="website.error !== undefined">
+    <template v-if="work.error !== undefined">
       <p>
-        {{ website.error.body }}
+        {{ work.error.body }}
       </p>
     </template>
 
-    <template v-if="website.data !== undefined">
-      <form @submit.prevent="patchWebsite" :action="`/api/users/${route.params.userId}/posts/${route.params.postId}`" method="POST" novalidate>
+    <template v-if="work.data !== undefined">
+      <form @submit.prevent="patchWork" :action="`/api/users/${route.params.userId}/posts/${route.params.postId}`" method="POST" novalidate>
         <InputText
           v-model="inputUrl"
           label="Link"
@@ -132,7 +132,7 @@
           placeholder="https://example.com"
           pattern="https://.*"
           :maxlength="256"
-          help="The link to your website (e.g. a ticket booking site)."
+          help="The link to your work (e.g. a ticket booking site)."
           :error="getError('url')" />
 
         <InputTextArea

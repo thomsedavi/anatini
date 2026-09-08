@@ -7,7 +7,6 @@ import AccountPublicView from './components/account/AccountPublicView.vue';
 import AccountPrivateView from './components/account/AccountPrivateView.vue';
 import AccountSpacesView from './components/account/AccountSpacesView.vue';
 import SignUpView from './components/SignUpView.vue';
-import SpaceView from './components/SpaceView.vue';
 import TagsView from './components/TagsView.vue';
 
 import HomeView from './components/HomeView.vue';
@@ -20,13 +19,9 @@ import UserView from './components/users/user/UserView.vue';
 import UserPostsView from './components/users/user/posts/UserPostsView.vue';
 import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
-import UserWebsiteView from './components/users/user/works/website/UserWebsiteView.vue';
-import UserWebsiteCreateView from './components/users/user/works/website/UserWebsiteCreateView.vue';
-import UserWebsiteEditView from './components/users/user/works/website/UserWebsiteEditView.vue';
-import UserProductView from './components/users/user/works/product/UserProductView.vue';
-import UserProductCreateView from './components/users/user/works/product/UserProductCreateView.vue';
-import UserProjectView from './components/users/user/works/project/UserProjectView.vue';
-import UserProjectCreateView from './components/users/user/works/project/UserProjectCreateView.vue';
+import UserWorkView from './components/users/user/works/work/UserWorkView.vue';
+import UserWorkCreateView from './components/users/user/works/work/UserWorkCreateView.vue';
+import UserWorkEditView from './components/users/user/works/work/UserWorkEditView.vue';
 import UserPostView from './components/users/user/posts/post/UserPostView.vue';
 import UserPostCreateView from './components/users/user/posts/post/UserPostCreateView.vue';
 import UserPostEditView from './components/users/user/posts/post/UserPostEditView.vue';
@@ -34,6 +29,7 @@ import UserEventView from './components/users/user/events/event/UserEventView.vu
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 
+import SpaceView from './components/spaces/space/SpaceView.vue';
 import SpaceCreateView from './components/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
 import SpaceEditPostCreateView from './components/spaceEdit/SpaceEditPostCreateView.vue';
@@ -158,39 +154,19 @@ const routes: RouteRecordRaw[] = [
         name: 'UserWorks'
       },
       {
-        path: 'websites/create',
-        component: UserWebsiteCreateView,
-        name: 'UserWebsiteCreate'
+        path: 'works/create',
+        component: UserWorkCreateView,
+        name: 'UserWorkCreate'
       },
       {
-        path: 'websites/:websiteId/edit',
-        component: UserWebsiteEditView,
-        name: 'UserWebsiteEdit'
+        path: 'works/:workId/edit',
+        component: UserWorkEditView,
+        name: 'UserWorkEdit'
       },
       {
-        path: 'websites/:websiteId',
-        component: UserWebsiteView,
-        name: 'UserWebsite'
-      },
-      {
-        path: 'products/create',
-        component: UserProductCreateView,
-        name: 'UserProductCreate'
-      },
-      {
-        path: 'products/:productId',
-        component: UserProductView,
-        name: 'UserProduct'
-      },
-      {
-        path: 'projects/create',
-        component: UserProjectCreateView,
-        name: 'UserProjectCreate'
-      },
-      {
-        path: 'projects/:projectId',
-        component: UserProjectView,
-        name: 'UserProject'
+        path: 'works/:workId',
+        component: UserWorkView,
+        name: 'UserWork'
       },
     ],
   },

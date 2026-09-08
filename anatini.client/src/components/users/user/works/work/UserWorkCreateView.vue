@@ -33,7 +33,7 @@
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postWebsite() {
+  async function postWork() {
     emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
@@ -57,13 +57,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.dataUserId}/websites`;
+    const input = `users/${props.dataUserId}/works`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserWebsite', params: { userId: props.dataUserHandle, websiteId: value.handle ?? value.id } });
+              router.push({ name: 'UserWork', params: { userId: props.dataUserHandle, workId: value.handle ?? value.id } });
             });
       },
       400: () => {
@@ -90,10 +90,10 @@
 <template>
   <section id="panel-works" role="tabpanel" aria-labelledby="tab-works">
     <header>
-      <h2>Create Website</h2>
+      <h2>Create Work</h2>
     </header>
 
-    <form @submit.prevent="postWebsite" :action="`/api/users/${dataUserId}/websites`" method="POST" novalidate>
+    <form @submit.prevent="postWork" :action="`/api/users/${dataUserId}/works`" method="POST" novalidate>
       <InputText
         v-model="inputUrl"
         label="Link"
@@ -103,7 +103,7 @@
         placeholder="https://example.com"
         pattern="https://.*"
         :maxlength="256"
-        help="The link to your website (e.g. a ticket booking site)."
+        help="The link to your work (e.g. a ticket booking site)."
         :error="getError('url')" />
 
       <InputText
@@ -113,7 +113,7 @@
         id="name"
         :maxlength="256"
         :required="true"
-        help="The name of your website"
+        help="The name of your work"
         :error="getError('name')" />
 
       <InputTextArea
@@ -134,7 +134,7 @@
         name="handle"
         id="handle"
         :maxlength="64"
-        help="lower case with hyphens (e.g. 'my-anatini-website'), optional custom web address"
+        help="lower case with hyphens (e.g. 'my-anatini-work'), optional custom web address"
         :error="getError('handle')" />
 
       <SubmitButton
