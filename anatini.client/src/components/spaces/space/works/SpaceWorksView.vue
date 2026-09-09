@@ -4,8 +4,8 @@
   import { onMounted } from 'vue';
 
   const props = defineProps<{
-    userId: string,
-    userHandle: string,
+    spaceId: string,
+    spaceHandle: string,
     works: Work[] | null,
   }>();
 
@@ -15,7 +15,7 @@
 
   onMounted(() => {
     if (props.works === null) {
-      const input = `users/${props.userId}/works`;
+      const input = `spaces/${props.spaceId}/works`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -35,7 +35,7 @@
   <section id="panel-works" role="tabpanel" aria-labelledby="tab-works">
     <header>
       <h2>Works</h2>
-      <RouterLink :to="{ name: 'UserWorkCreate' }">+ Create Work</RouterLink>
+      <RouterLink :to="{ name: 'SpaceWorkCreate' }">+ Create Work</RouterLink>
     </header>
 
     <ul role="list" v-if="works !== null">

@@ -36,6 +36,10 @@ import SpaceEditPostCreateView from './components/spaceEdit/SpaceEditPostCreateV
 import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
 import SpaceEditPostEditView from './components/spaceEdit/SpaceEditPostEditView.vue';
 import SpaceEditPostsView from './components/spaceEdit/SpaceEditPostsView.vue';
+import SpaceWorksView from './components/spaces/space/works/SpaceWorksView.vue';
+import SpaceWorkView from './components/spaces/space/works/work/SpaceWorkView.vue';
+import SpaceWorkCreateView from './components/spaces/space/works/work/SpaceWorkCreateView.vue';
+import SpaceWorkEditView from './components/spaces/space/works/work/SpaceWorkEditView.vue';
 import SpacePostsView from './components/spaces/space/posts/SpacePostsView.vue';
 import SpacePostView from './components/spaces/space/posts/post/SpacePostView.vue';
 import SpacePostCreateView from './components/spaces/space/posts/post/SpacePostCreateView.vue';
@@ -210,6 +214,26 @@ const routes: RouteRecordRaw[] = [
         path: 'events',
         component: SpaceEventsView,
         name: 'SpaceEvents'
+      },
+      {
+        path: 'works',
+        component: SpaceWorksView,
+        name: 'SpaceWorks'
+      },
+      {
+        path: 'spaces/create',
+        component: SpaceWorkCreateView,
+        name: 'SpaceWorkCreate'
+      },
+      {
+        path: 'spaces/:spaceId/edit',
+        component: SpaceWorkEditView,
+        name: 'SpaceWorkEdit'
+      },
+      {
+        path: 'spaces/:spaceId',
+        component: SpaceWorkView,
+        name: 'SpaceWork'
       },
     ],
   },
