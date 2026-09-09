@@ -4,9 +4,9 @@
   import { onMounted } from 'vue';
 
   const props = defineProps<{
-    spaceId: string,
-    spaceHandle: string,
-    works: Work[] | null,
+    dataSpaceId: string,
+    dataSpaceHandle: string,
+    dataWorks: Work[] | null,
   }>();
 
   const emit = defineEmits<{
@@ -14,8 +14,8 @@
   }>();
 
   onMounted(() => {
-    if (props.works === null) {
-      const input = `spaces/${props.spaceId}/works`;
+    if (props.dataWorks === null) {
+      const input = `spaces/${props.dataSpaceId}/works`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -38,8 +38,8 @@
       <RouterLink :to="{ name: 'SpaceWorkCreate' }">+ Create Work</RouterLink>
     </header>
 
-    <ul role="list" v-if="works !== null">
-      <li v-for="work in works" :key="'work' + work.id" :data-work-type="work.type">
+    <ul role="list" v-if="dataWorks !== null">
+      <li v-for="work in dataWorks" :key="'work' + work.id" :data-work-type="work.type">
         <article>
           <h2 v-if="work.type === 'Website'">
             <a :href="work.url" target="_blank">{{ work.name }}</a>

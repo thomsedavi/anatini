@@ -102,6 +102,86 @@ namespace Anatini.Server.Works
             return Ok(await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
         });
 
+        [HttpGet]
+        public async Task<IActionResult> GetWorks(string spaceHandle, [FromQuery] WorksQuery query) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        {
+            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+
+            var worksQuery = Context.Works.Where(work => work.SpaceId == space.Id);
+
+            worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtNz.HasValue || work.PublishedAtNz.Value < nzNow);
+
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userWork => userWork.SourceUserId == sourceUserId));
+
+                worksQuery = worksQuery.Where(work => (work.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+
+                if (query.Bookmarked == "only")
+                {
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasBookmarked));
+                }
+                else if (query.Bookmarked == "hide")
+                {
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasBookmarked));
+                }
+
+                if (query.Starred == "only")
+                {
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasStarred));
+                }
+                else if (query.Starred == "hide")
+                {
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasStarred));
+                }
+
+                if (query.Dismissed == "only")
+                {
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasDismissed));
+                }
+                else if (query.Dismissed == "hide")
+                {
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasDismissed));
+                }
+
+                if (query.Collected == "only")
+                {
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasCollected));
+                }
+                else if (query.Collected == "hide")
+                {
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasCollected));
+                }
+
+                if (query.Followed == "only")
+                {
+                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.HasFollowed));
+                }
+                else if (query.Followed == "hide")
+                {
+                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.HasFollowed));
+                }
+            }
+            else
+            {
+                worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
+            }
+
+            if (query.LastName != null && query.LastWorkId.HasValue)
+            {
+                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id > query.LastWorkId.Value));
+            }
+
+            var works = await worksQuery.OrderBy(work => work.Name).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+
+            if (works == null)
+            {
+                return Problem();
+            }
+
+            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService))));
+        });
+
         [Authorize]
         [HttpPost("{workHandle}/bookmark")]
         public async Task<IActionResult> PostWorkBookmark(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work) =>
