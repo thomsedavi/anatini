@@ -30,7 +30,7 @@ import UserEventCreateView from './components/users/user/events/event/UserEventC
 import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 
 import SpaceView from './components/spaces/space/SpaceView.vue';
-import SpaceCreateView from './components/SpaceCreateView.vue';
+import SpaceCreateView from './components/spaces/space/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
 import SpaceEditPostCreateView from './components/spaceEdit/SpaceEditPostCreateView.vue';
 import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
@@ -221,17 +221,17 @@ const routes: RouteRecordRaw[] = [
         name: 'SpaceWorks'
       },
       {
-        path: 'spaces/create',
+        path: 'works/create',
         component: SpaceWorkCreateView,
         name: 'SpaceWorkCreate'
       },
       {
-        path: 'spaces/:spaceId/edit',
+        path: 'works/:workId/edit',
         component: SpaceWorkEditView,
         name: 'SpaceWorkEdit'
       },
       {
-        path: 'spaces/:spaceId',
+        path: 'works/:workId',
         component: SpaceWorkView,
         name: 'SpaceWork'
       },
