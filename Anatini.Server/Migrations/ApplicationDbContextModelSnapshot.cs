@@ -708,7 +708,7 @@ namespace Anatini.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Header")
-                        .HasDatabaseName("ix_published_works_name")
+                        .HasDatabaseName("ix_published_works_header")
                         .HasFilter("type = 2 AND status = 1");
 
                     b.HasIndex("PublishedAtNz")

@@ -658,7 +658,7 @@ namespace Anatini.Server.Migrations
                 filter: "published_at_nz IS NOT NULL AND status = 1");
 
             migrationBuilder.CreateIndex(
-                name: "ix_published_works_name",
+                name: "ix_published_works_header",
                 table: "contents",
                 column: "header",
                 filter: "type = 2 AND status = 1");
