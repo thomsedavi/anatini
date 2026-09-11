@@ -21,25 +21,18 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEventSeries(string userHandle, [FromForm] CreateEvent createEvent) => await UsingUserAsync(userHandle, async (user) =>
         {
-            string? article = null;
-
-            if (createEvent.Article != null)
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createEvent.Article);
+            
+            if (validationResult.ErrorMessage != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createEvent.Article);
-
-                if (validationResult.ErrorMessage != null)
-                {
-                    return BadRequest(new { error = validationResult.ErrorMessage });
-                }
-                else if (validationResult.SanitizedHtml == null)
-                {
-                    return BadRequest(new { error = "Unknown error" });
-                }
-
-                article = validationResult.SanitizedHtml;
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
             }
 
-            var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, article);
+            var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, validationResult.SanitizedHtml);
 
             Context.AddEventInstances(eventSeries, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 

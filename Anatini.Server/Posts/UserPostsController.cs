@@ -25,25 +25,18 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost([FromForm] CreatePost createPost) => await UsingAccountAsync(async (user) =>
         {
-            string? article = null;
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
 
-            if (createPost.Article != null)
+            if (validationResult.ErrorMessage != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
-
-                if (validationResult.ErrorMessage != null)
-                {
-                    return BadRequest(new { error = validationResult.ErrorMessage });
-                }
-                else if (validationResult.SanitizedHtml == null)
-                {
-                    return BadRequest(new { error = "Unknown error" });
-                }
-
-                article = validationResult.SanitizedHtml;
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddUserPostAsync(createPost.Name, article, createPost.Url, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
+            var post = Context.AddUserPostAsync(createPost.Header, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 

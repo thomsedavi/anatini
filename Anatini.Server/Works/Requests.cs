@@ -9,7 +9,7 @@ namespace Anatini.Server.Works
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }
 
-        public string? Article { get; set; }
+        public required string Article { get; set; }
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
@@ -17,11 +17,8 @@ namespace Anatini.Server.Works
         [Display(Name = "Published At (NZ)")]
         public DateTime? PublishedAtNz { get; set; }
 
-        [Link(nullable: true)]
-        public required string Url { get; set; }
-
         [MaxLength(256)]
-        public required string Name { get; set; }
+        public required string Header { get; set; }
 
         [Display(Name = "Is Draft")]
         public bool? IsDraft { get; set; }
@@ -29,15 +26,12 @@ namespace Anatini.Server.Works
 
     public class UpdateWork
     {
-        [Link(nullable: true)]
-        public string? Url { get; set; }
-
         public string? Article { get; set; }
     }
 
     public class WorksQuery
     {
-        public string? LastName { get; set; }
+        public string? LastHeader { get; set; }
         public Guid? LastWorkId { get; set; }
         public int? PageSize { get; set; }
         public string? Bookmarked { get; set; }

@@ -25,25 +25,18 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostWork(string userHandle, [FromForm] CreateWork createWork) => await UsingUserAsync(userHandle, async (user) =>
         {
-            string? article = null;
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Article);
 
-            if (createWork.Article != null)
+            if (validationResult.ErrorMessage != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Article);
-
-                if (validationResult.ErrorMessage != null)
-                {
-                    return BadRequest(new { error = validationResult.ErrorMessage });
-                }
-                else if (validationResult.SanitizedHtml == null)
-                {
-                    return BadRequest(new { error = "Unknown error" });
-                }
-
-                article = validationResult.SanitizedHtml;
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
             }
 
-            var work = Context.AddUserWorkAsync(createWork.Name, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle), article, createWork.Url);
+            var work = Context.AddUserWorkAsync(createWork.Header, validationResult.SanitizedHtml, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
 
             await Context.SaveChangesAsync();
 
@@ -77,11 +70,6 @@ namespace Anatini.Server.Works
                 }
 
                 work.Article = validationResult.SanitizedHtml;
-            }
-
-            if (updateWork.Url != null)
-            {
-                work.Url = updateWork.Url;
             }
 
             work.UpdatedAtUtc = DateTime.UtcNow;
@@ -167,12 +155,12 @@ namespace Anatini.Server.Works
                 worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
             }
 
-            if (query.LastName != null && query.LastWorkId.HasValue)
+            if (query.LastHeader != null && query.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id > query.LastWorkId.Value));
+                worksQuery = worksQuery.Where(work => string.Compare(work.Header, query.LastHeader) > 0 || (work.Header == query.LastHeader && work.Id > query.LastWorkId.Value));
             }
 
-            var works = await worksQuery.OrderBy(work => work.Name).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var works = await worksQuery.OrderBy(work => work.Header).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (works == null)
             {

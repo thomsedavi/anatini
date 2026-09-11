@@ -6,9 +6,8 @@
         public required string Handle { get; set; }
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }
-        public required string Name { get; set; }
-        public string? Article { get; set; }
-        public string? Url { get; set; }
+        public required string Header { get; set; }
+        public required string Article { get; set; }
         public bool? HasBookmarked { get; set; }
     }
 }

@@ -64,25 +64,18 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            string? article = null;
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
 
-            if (createPost.Article != null)
+            if (validationResult.ErrorMessage != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
-
-                if (validationResult.ErrorMessage != null)
-                {
-                    return BadRequest(new { error = validationResult.ErrorMessage });
-                }
-                else if (validationResult.SanitizedHtml == null)
-                {
-                    return BadRequest(new { error = "Unknown error" });
-                }
-
-                article = validationResult.SanitizedHtml;
+                return BadRequest(new { error = validationResult.ErrorMessage });
+            }
+            else if (validationResult.SanitizedHtml == null)
+            {
+                return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddSpacePostAsync(createPost.Name, article, createPost.Url, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
+            var post = Context.AddSpacePostAsync(createPost.Header, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
 
             await Context.SaveChangesAsync();
 

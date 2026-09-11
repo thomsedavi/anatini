@@ -630,6 +630,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Article")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
                         .HasColumnOrder(9);
@@ -639,17 +640,17 @@ namespace Anatini.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(12);
+                        .HasColumnOrder(11);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(13);
+                        .HasColumnOrder(12);
 
                     b.Property<int?>("CurrentVersionNumber")
                         .HasColumnType("integer")
                         .HasColumnName("current_version_number")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(10);
 
                     b.Property<string>("Handle")
                         .IsRequired()
@@ -658,10 +659,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Header")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("name")
+                        .HasColumnName("header")
                         .HasColumnOrder(8);
 
                     b.Property<DateTime?>("PublishedAtNz")
@@ -675,7 +676,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("tsvector")
                         .HasColumnName("search_vector")
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
-                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name", "Article" });
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Header", "Article" });
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
@@ -695,13 +696,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(14);
-
-                    b.Property<string>("Url")
-                        .HasMaxLength(2047)
-                        .HasColumnType("character varying(2047)")
-                        .HasColumnName("url")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(13);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
@@ -715,7 +710,7 @@ namespace Anatini.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Header")
                         .HasDatabaseName("ix_published_works_name")
                         .HasFilter("type = 2 AND status = 1");
 
@@ -860,28 +855,22 @@ namespace Anatini.Server.Migrations
                     b.Property<TimeSpan?>("OverrideDuration")
                         .HasColumnType("interval")
                         .HasColumnName("override_duration")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("OverrideEndsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("override_ends_at_nz")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(7);
 
-                    b.Property<string>("OverrideName")
+                    b.Property<string>("OverrideHeader")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("override_name")
+                        .HasColumnName("override_header")
                         .HasColumnOrder(3);
 
                     b.Property<DateTime?>("OverrideStartsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("override_starts_at_nz")
-                        .HasColumnOrder(6);
-
-                    b.Property<string>("OverrideUrl")
-                        .HasMaxLength(2047)
-                        .HasColumnType("character varying(2047)")
-                        .HasColumnName("override_url")
                         .HasColumnOrder(5);
 
                     b.HasKey("EventSeriesId", "TargetStartsAtNz")
@@ -899,6 +888,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(0);
 
                     b.Property<string>("Article")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("article")
                         .HasColumnOrder(8);
@@ -906,7 +896,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("EndsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("ends_at_nz")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(10);
 
                     b.Property<Guid>("EventSeriesId")
                         .HasColumnType("uuid")
@@ -920,11 +910,11 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Header")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("name")
+                        .HasColumnName("header")
                         .HasColumnOrder(7);
 
                     b.Property<Guid?>("SpaceId")
@@ -935,18 +925,12 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("StartsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("starts_at_nz")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(9);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status")
                         .HasColumnOrder(5);
-
-                    b.Property<string>("Url")
-                        .HasMaxLength(2047)
-                        .HasColumnType("character varying(2047)")
-                        .HasColumnName("url")
-                        .HasColumnOrder(9);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")

@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class WorkContextExtensions
     {
-        public static Work AddUserWorkAsync(this ApplicationDbContext context, string name, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, string? article = null, string? url = null)
+        public static Work AddUserWorkAsync(this ApplicationDbContext context, string header, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null)
         {
             var workId = Guid.CreateVersion7();
 
@@ -14,9 +14,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 UserId = userId,
                 Type = ContentType.Work,
                 Handle = handle ?? workId.ToString(),
-                Name = name,
+                Header = header,
                 Article = article,
-                Url = url,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
@@ -29,7 +28,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return work;
         }
 
-        public static Work AddSpaceWorkAsync(this ApplicationDbContext context, string name, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, string? article = null, string? url = null)
+        public static Work AddSpaceWorkAsync(this ApplicationDbContext context, string header, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null)
         {
             var workId = Guid.CreateVersion7();
 
@@ -39,9 +38,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 SpaceId = spaceId,
                 Type = ContentType.Work,
                 Handle = handle ?? workId.ToString(),
-                Name = name,
+                Header = header,
                 Article = article,
-                Url = url,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),

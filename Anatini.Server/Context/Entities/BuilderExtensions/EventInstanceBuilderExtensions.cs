@@ -18,11 +18,10 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventInstanceBuilder.Property(eventInstance => eventInstance.Handle)!.Has(maxLength: 255, order: 4);
             eventInstanceBuilder.Property(eventInstance => eventInstance.Status).Has(order: 5);
             eventInstanceBuilder.Property(eventInstance => eventInstance.Visibility).Has(order: 6);
-            eventInstanceBuilder.Property(eventInstance => eventInstance.Name)!.Has(maxLength: 255, order: 7);
-            eventInstanceBuilder.Property(eventInstance => eventInstance.Article).Has(order: 8);
-            eventInstanceBuilder.Property(eventInstance => eventInstance.Url).Has(maxLength: 2047, order: 9);
-            eventInstanceBuilder.Property(eventInstance => eventInstance.StartsAtNz).Has(order: 10);
-            eventInstanceBuilder.Property(eventInstance => eventInstance.EndsAtNz).Has(order: 11);
+            eventInstanceBuilder.Property(eventInstance => eventInstance.Header)!.Has(maxLength: 255, order: 7);
+            eventInstanceBuilder.Property(eventInstance => eventInstance.Article)!.Has(order: 8);
+            eventInstanceBuilder.Property(eventInstance => eventInstance.StartsAtNz).Has(order: 9);
+            eventInstanceBuilder.Property(eventInstance => eventInstance.EndsAtNz).Has(order: 10);
 
             eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.Series, eventSeries => eventSeries.Instances, eventInstance => eventInstance.EventSeriesId, DeleteBehavior.Cascade);
             eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.User, user => user.EventInstances, eventInstance => eventInstance.UserId, DeleteBehavior.Restrict, required: false);

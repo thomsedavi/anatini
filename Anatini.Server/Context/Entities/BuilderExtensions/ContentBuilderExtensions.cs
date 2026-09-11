@@ -20,13 +20,12 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             contentBuilder.Property(content => content.Status).Has(order: 5);
             contentBuilder.Property(content => content.PublishedAtNz).Has(order: 6);
             contentBuilder.Property(content => content.Visibility).Has(order: 7);
-            contentBuilder.Property(content => content.Name).Has(maxLength: 255, order: 8);
-            contentBuilder.Property(content => content.Article).Has(order: 9);
-            contentBuilder.Property(content => content.Url).Has(maxLength: 2047, order: 10);
-            contentBuilder.Property(content => content.CurrentVersionNumber).Has(order: 11);
-            contentBuilder.Property(content => content.ConcurrencyStamp)!.Has(order: 12).IsConcurrencyToken();
-            contentBuilder.Property(content => content.CreatedAtUtc).Has(order: 13);
-            contentBuilder.Property(content => content.UpdatedAtUtc).Has(order: 14);
+            contentBuilder.Property(content => content.Header).Has(maxLength: 255, order: 8);
+            contentBuilder.Property(content => content.Article)!.Has(order: 9);
+            contentBuilder.Property(content => content.CurrentVersionNumber).Has(order: 10);
+            contentBuilder.Property(content => content.ConcurrencyStamp)!.Has(order: 11).IsConcurrencyToken();
+            contentBuilder.Property(content => content.CreatedAtUtc).Has(order: 12);
+            contentBuilder.Property(content => content.UpdatedAtUtc).Has(order: 13);
 
             contentBuilder.HasOneWithMany(content => content.User, user => user.Contents, content => content.UserId, DeleteBehavior.Restrict, required: false);
             contentBuilder.HasOneWithMany(content => content.Space, space => space.Contents, content => content.SpaceId, DeleteBehavior.Restrict, required: false);
@@ -43,9 +42,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             contentBuilder.HasIndex(content => new { content.UserId, content.Type, content.Handle }).IsUnique().HasFilter($"{contentUserId} IS NOT NULL");
             contentBuilder.HasIndex(content => new { content.SpaceId, content.Type, content.Handle }).IsUnique().HasFilter($"{contentSpaceId} IS NOT NULL");
             contentBuilder.HasIndex(content => content.PublishedAtNz).HasFilter($"{contentPublishedAtNz} IS NOT NULL AND {contentStatus} = {publishedStatus}").HasDatabaseName("ix_published_contents_date_nz");
-            contentBuilder.HasIndex(content => content.Name).HasFilter($"{contentType} = {workType} AND {contentStatus} = {publishedStatus}").HasDatabaseName("ix_published_works_name");
+            contentBuilder.HasIndex(content => content.Header).HasFilter($"{contentType} = {workType} AND {contentStatus} = {publishedStatus}").HasDatabaseName("ix_published_works_header");
 
-            contentBuilder.HasGeneratedTsVectorColumn(content => content.SearchVector, "english", content => new { content.Name, content.Article }).HasIndex(content => content.SearchVector).HasMethod("GIN");
+            contentBuilder.HasGeneratedTsVectorColumn(content => content.SearchVector, "english", content => new { content.Header, content.Article }).HasIndex(content => content.SearchVector).HasMethod("GIN");
         }
     }
 }

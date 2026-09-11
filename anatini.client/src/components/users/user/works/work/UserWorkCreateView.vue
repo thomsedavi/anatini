@@ -7,7 +7,7 @@
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
-  import { tidy } from '@/common/utils';
+  import { formatArticle, tidy } from '@/common/utils';
 
   const router = useRouter();
 
@@ -79,6 +79,10 @@
 
     if (tidy(inputHandle.value) !== '') {
       body.append('handle', tidy(inputHandle.value));
+    }
+
+    if (tidy(inputArticle.value) !== '') {
+      body.append('article', formatArticle(inputArticle.value));
     }
 
     const init = { method: "POST", body: body };

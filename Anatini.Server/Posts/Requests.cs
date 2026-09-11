@@ -9,7 +9,7 @@ namespace Anatini.Server.Posts
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }
 
-        public string? Article { get; set; }
+        public required string Article { get; set; }
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }
@@ -17,11 +17,8 @@ namespace Anatini.Server.Posts
         [Display(Name = "Published At (NZ)")]
         public DateTime? PublishedAtNz { get; set; }
 
-        [Link(nullable: true)]
-        public string? Url { get; set; }
-
         [MaxLength(256)]
-        public string? Name { get; set; }
+        public string? Header { get; set; }
     }
 
     public class UpdatePost
