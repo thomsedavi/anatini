@@ -3,7 +3,7 @@
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
-  import { formatArticle, tidy } from '@/common/utils';
+  import { formatParagraphs, tidy } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
@@ -59,7 +59,7 @@
 
     const body = new FormData();
 
-    body.append('article', formatArticle(inputArticle.value));
+    body.append('article', formatParagraphs(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
     if (tidy(inputPostHandle.value) !== '') {

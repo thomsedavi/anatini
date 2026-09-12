@@ -138,14 +138,9 @@ function replaceAsterisks(text: string, replacementTags: {asteriskCount: number,
   return replaceAsterisks(result, replacementTags.slice(1));
 }
 
-// The below but wrapped in an article
-export function formatArticle(elementContent: string): string {
-  return `<article>${formatParagraph(elementContent)}</article>`;
-}
-
 // input: multi line string, e.g. "Line one\nLine two\n\nLine three with *em*"
 // output: multi line formatted html, e.g. "<p>Line one<br>Line two</p><p>Line three with <em>em</em></p>"
-export function formatParagraph(elementContent: string): string {
+export function formatParagraphs(elementContent: string): string {
   let result = '';
 
   const lines = elementContent.split('\n');

@@ -42,7 +42,7 @@
   function postHtml(post: Post): string {
     return `
       ${getHeader(post)}
-      ${post.article.substring(9, post.article.length - 10)}
+      ${post.article}
       <footer>
         <menu>
           <li>

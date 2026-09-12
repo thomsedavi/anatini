@@ -42,7 +42,7 @@
     } else if (post.value.error !== undefined) {
       return `<h1>${ post.value.error.body }</h1>`;
     } else if (post.value.data !== undefined) {
-      return post.value.data.article;
+      return `<article>${post.value.data.article}</article>`;
     } else {
       return '<h1>Unknown Error</h1>';
     }

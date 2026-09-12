@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -39,7 +39,7 @@
         response?.json()
           .then((value: Post) => {
             post.value = { data: value };
-            inputArticle.value = parseFromArticleString(value.article);
+            inputArticle.value = parseFromArticleString(`<article>${value.article}</article>`);
             inputVisibility.value = value.visibility;
             inputPostPublishedAtNz.value = formatDateTimeNz(value.publishedAtNz);
           })
@@ -61,7 +61,7 @@
   function noChange(): boolean {
     if (post.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== post.value.data.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== post.value.data.article) {
       return false;
     } else if (inputVisibility.value !== post.value.data.visibility) {
       return false;
@@ -107,8 +107,8 @@
 
     const body = new FormData();
 
-    if (formatArticle(inputArticle.value) !== post.value.data.article) {
-      body.append('article', formatArticle(inputArticle.value));
+    if (formatParagraphs(inputArticle.value) !== post.value.data.article) {
+      body.append('article', formatParagraphs(inputArticle.value));
     }
 
     if (inputVisibility.value !== post.value.data.visibility) {

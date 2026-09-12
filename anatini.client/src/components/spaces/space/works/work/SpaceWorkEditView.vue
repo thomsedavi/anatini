@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import type { APIResponse, InputError, Status, StatusActions, Work } from '@/common/types';
-  import { formatArticle, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -48,7 +48,7 @@
   function noChange(): boolean {
     if (work.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatArticle(inputArticle.value) !== work.value.data.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== work.value.data.article) {
       return false;
     } else if (tidy(inputUrl.value) !== work.value.data.url) {
       return false;
@@ -93,8 +93,8 @@
       body.append('url', tidiedUrl);
     }
 
-    if (formatArticle(inputArticle.value) !== work.value.data.article) {
-      body.append('article', formatArticle(inputArticle.value));
+    if (formatParagraphs(inputArticle.value) !== work.value.data.article) {
+      body.append('article', formatParagraphs(inputArticle.value));
     }
 
     const init = { method: "PATCH", body: body };

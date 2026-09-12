@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Image, InputError, Status, StatusActions } from '@/common/types';
-  import { formatArticle, parseFromArticleString, tidy } from '@/common/utils';
+  import { formatParagraphs, parseFromArticleString, tidy } from '@/common/utils';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import SubmitButton from '@/common/SubmitButton.vue';
@@ -75,7 +75,7 @@
     emit('update-errors', []);
 
     const tidiedName = tidy(inputUserName.value);
-    const formattedAbout = tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value);
+    const formattedAbout = tidy(inputUserAbout.value) === '' ? '' : formatParagraphs(inputUserAbout.value);
 
     if (tidiedName === '') {
       emit('update-errors', [{ id: 'name-user', message: 'Name is required' }]);
@@ -144,7 +144,7 @@
   };
 
   function noChangeDisplay(): boolean {
-    return props.dataName === tidy(inputUserName.value) && (props.dataAbout ?? '') === (tidy(inputUserAbout.value) === '' ? '' : formatArticle(inputUserAbout.value)) && fileUserIcon.value === null;
+    return props.dataName === tidy(inputUserName.value) && (props.dataAbout ?? '') === (tidy(inputUserAbout.value) === '' ? '' : formatParagraphs(inputUserAbout.value)) && fileUserIcon.value === null;
   }
 
   function getError(id: string): string | undefined {

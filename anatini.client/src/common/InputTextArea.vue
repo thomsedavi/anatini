@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { formatArticle, formatParagraph, tidy } from './utils';
+  import { formatParagraphs, tidy } from './utils';
 
   const model = defineModel<string>();
 
@@ -31,11 +31,11 @@
     :id="`counter-${id}`"
     :aria-live="maxLength - tidy(model ?? '').length < 20 ? 'assertive' : 'polite'"
     aria-atomic="true">
-    Characters remaining: {{ maxLength - (isArticle ? formatArticle(model ?? '') : tidy(model ?? '')).length }}
+    Characters remaining: {{ maxLength - (isArticle ? formatParagraphs(model ?? '') : tidy(model ?? '')).length }}
   </output>
   <section v-if="isArticle" aria-label="Preview">
     <output :id="`preview-${id}`">
-      <article v-html="tidy(model ?? '') !== '' ? formatParagraph(model ?? '') : '<p><em>Preview goes here</em></p>'"></article>
+      <article v-html="tidy(model ?? '') !== '' ? formatParagraphs(model ?? '') : '<p><em>Preview goes here</em></p>'"></article>
     </output>
   </section>
 </template>
