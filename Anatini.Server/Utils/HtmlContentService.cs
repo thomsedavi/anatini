@@ -15,7 +15,7 @@ namespace Anatini.Server.Utils
         public static HtmlValidationResult ValidateAndNormalizeHtml(string input)
         {
             var parser = new HtmlParser();
-            var document = parser.ParseDocument(input);
+            var document = parser.ParseDocument($"<article>{input}</article>");
 
             if (document.Body == null)
             {
@@ -30,7 +30,7 @@ namespace Anatini.Server.Utils
             var sanitizer = new HtmlSanitizer();
             sanitizer.AllowedTags.Clear();
 
-            var allowed = new HashSet<string> { "article", "p", "em", "strong", "br" };
+            var allowed = new HashSet<string> { "article", "p", "em", "strong", "br", "a" };
             foreach (var tag in allowed) sanitizer.AllowedTags.Add(tag);
 
             sanitizer.AllowedAttributes.Clear();
@@ -61,7 +61,7 @@ namespace Anatini.Server.Utils
 
                 foreach (var nested in child.Children)
                 {
-                    if (!nested.TagName.Equals("em", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("strong", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("br", StringComparison.CurrentCultureIgnoreCase))
+                    if (!nested.TagName.Equals("em", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("strong", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("br", StringComparison.CurrentCultureIgnoreCase) && !nested.TagName.Equals("a", StringComparison.CurrentCultureIgnoreCase))
                     {
                         return new HtmlValidationResult
                         {
@@ -73,7 +73,7 @@ namespace Anatini.Server.Utils
 
             return new HtmlValidationResult
             {
-                SanitizedHtml = sanitized
+                SanitizedHtml = sanitized[9..^10]
             };
         }
 

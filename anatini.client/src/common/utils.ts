@@ -150,9 +150,15 @@ export function formatParagraphs(elementContent: string): string {
   let paragraph: string[] = [];
 
   lines.forEach(line => {
-    const cleanedLine = tidy(line);
+    let cleanedLine = tidy(line);
 
     if (cleanedLine.length > 0) {
+      const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+      cleanedLine = cleanedLine.replace(regex, (_match: string, linkText, linkUrl) => {
+        return `<a href=${linkUrl} target="_blank">${linkText}</a>`;
+      });
+
       const replacementTags = [
         { asteriskCount: 3, openingTags: '<em><strong>', closingTags: '</strong></em>' },
         { asteriskCount: 2, openingTags: '<strong>', closingTags: '</strong>' },
