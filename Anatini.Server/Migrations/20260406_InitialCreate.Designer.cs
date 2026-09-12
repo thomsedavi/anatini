@@ -659,10 +659,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Header")
+                    b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("header")
+                        .HasColumnName("name")
                         .HasColumnOrder(8);
 
                     b.Property<DateTime?>("PublishedAtNz")
@@ -676,7 +676,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("tsvector")
                         .HasColumnName("search_vector")
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
-                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Header", "Article" });
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name", "Article" });
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
@@ -710,8 +710,8 @@ namespace Anatini.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Header")
-                        .HasDatabaseName("ix_published_works_header")
+                    b.HasIndex("Name")
+                        .HasDatabaseName("ix_published_works_name")
                         .HasFilter("type = 2 AND status = 1");
 
                     b.HasIndex("PublishedAtNz")
@@ -910,11 +910,11 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Header")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("header")
+                        .HasColumnName("name")
                         .HasColumnOrder(7);
 
                     b.Property<Guid?>("SpaceId")

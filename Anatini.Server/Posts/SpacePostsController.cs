@@ -75,7 +75,7 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddSpacePostAsync(createPost.Header, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
+            var post = Context.AddSpacePostAsync(createPost.Name, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
 
             await Context.SaveChangesAsync();
 

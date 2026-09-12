@@ -36,7 +36,7 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddUserPostAsync(createPost.Header, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
+            var post = Context.AddUserPostAsync(createPost.Name, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 

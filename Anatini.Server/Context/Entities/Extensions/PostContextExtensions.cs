@@ -5,7 +5,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class PostContextExtensions
     {
-        public static Post AddUserPostAsync(this ApplicationDbContext context, string? header, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Post AddUserPostAsync(this ApplicationDbContext context, string? name, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var postId = Guid.CreateVersion7();
         
@@ -23,7 +23,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Type = ContentType.Post,
                 Handle = handle ?? postId.ToString(),
                 PublishedAtNz = publishedatNz.Truncate(),
-                Header = header,
+                Name = name,
                 Article = article,
                 Visibility = visibility,
                 Status = status,
@@ -37,7 +37,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return post;
         }
         
-        public static Post AddSpacePostAsync(this ApplicationDbContext context, string? header, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Post AddSpacePostAsync(this ApplicationDbContext context, string? name, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var postId = Guid.CreateVersion7();
         
@@ -55,7 +55,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Type = ContentType.Post,
                 Handle = handle ?? postId.ToString(),
                 PublishedAtNz = publishedatNz.Truncate(),
-                Header = header,
+                Name = name,
                 Article = article,
                 Visibility = visibility,
                 Status = status,

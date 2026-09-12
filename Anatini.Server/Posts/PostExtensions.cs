@@ -17,7 +17,7 @@ namespace Anatini.Server.Posts
                 UserHeader = post.User != null ? await post.User.ToUserHeaderDtoAsync(blobService) : null,
                 SpaceHeader = post.Space != null ? await post.Space.ToSpaceHeaderDto(blobService) : null,
                 Handle = post.Handle,
-                Header = post.Header,
+                Name = post.Name,
                 Article = post.Article,
                 Visibility = post.Visibility.ToString(),
                 PublishedAtNz = post.PublishedAtNz ?? throw new InvalidOperationException(),

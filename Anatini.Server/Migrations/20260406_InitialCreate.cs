@@ -151,7 +151,7 @@ namespace Anatini.Server.Migrations
                     status = table.Column<int>(type: "integer", nullable: false),
                     published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    header = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     article = table.Column<string>(type: "text", nullable: false),
                     current_version_number = table.Column<int>(type: "integer", nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: false),
@@ -159,7 +159,7 @@ namespace Anatini.Server.Migrations
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
                         .Annotation("Npgsql:TsVectorConfig", "english")
-                        .Annotation("Npgsql:TsVectorProperties", new[] { "header", "article" })
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "name", "article" })
                 },
                 constraints: table =>
                 {
@@ -576,7 +576,7 @@ namespace Anatini.Server.Migrations
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    header = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     article = table.Column<string>(type: "text", nullable: false),
                     starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
@@ -658,9 +658,9 @@ namespace Anatini.Server.Migrations
                 filter: "published_at_nz IS NOT NULL AND status = 1");
 
             migrationBuilder.CreateIndex(
-                name: "ix_published_works_header",
+                name: "ix_published_works_name",
                 table: "contents",
-                column: "header",
+                column: "name",
                 filter: "type = 2 AND status = 1");
 
             migrationBuilder.CreateIndex(

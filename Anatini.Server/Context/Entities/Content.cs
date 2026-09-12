@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities
         public DateTime? PublishedAtNz { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
-        public string? Header { get; set; }
+        public string? Name { get; set; }
         public required string Article { get; set; }
         public NpgsqlTsVector SearchVector { get; set; } = null!;
         public int? CurrentVersionNumber { get; set; }
@@ -71,7 +71,7 @@ namespace Anatini.Server.Context.Entities
         public required string Handle { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
-        public required string Header { get; set; }
+        public required string Name { get; set; }
         public required string Article { get; set; }
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }

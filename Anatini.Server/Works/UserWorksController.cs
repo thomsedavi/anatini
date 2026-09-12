@@ -36,7 +36,7 @@ namespace Anatini.Server.Works
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var work = Context.AddUserWorkAsync(createWork.Header, validationResult.SanitizedHtml, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
+            var work = Context.AddUserWorkAsync(createWork.Name, validationResult.SanitizedHtml, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
 
             await Context.SaveChangesAsync();
 
@@ -155,12 +155,12 @@ namespace Anatini.Server.Works
                 worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
             }
 
-            if (query.LastHeader != null && query.LastWorkId.HasValue)
+            if (query.LastName != null && query.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(work => string.Compare(work.Header, query.LastHeader) > 0 || (work.Header == query.LastHeader && work.Id > query.LastWorkId.Value));
+                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id > query.LastWorkId.Value));
             }
 
-            var works = await worksQuery.OrderBy(work => work.Header).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var works = await worksQuery.OrderBy(work => work.Name).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (works == null)
             {

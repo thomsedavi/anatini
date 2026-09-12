@@ -7,7 +7,7 @@ namespace Anatini.Server.Events
     public class CreateEvent
     {
         [MaxLength(256)]
-        public required string Header { get; set; }
+        public required string Name { get; set; }
 
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }

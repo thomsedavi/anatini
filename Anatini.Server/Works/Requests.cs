@@ -18,7 +18,7 @@ namespace Anatini.Server.Works
         public DateTime? PublishedAtNz { get; set; }
 
         [MaxLength(256)]
-        public required string Header { get; set; }
+        public required string Name { get; set; }
 
         [Display(Name = "Is Draft")]
         public bool? IsDraft { get; set; }
@@ -31,7 +31,7 @@ namespace Anatini.Server.Works
 
     public class WorksQuery
     {
-        public string? LastHeader { get; set; }
+        public string? LastName { get; set; }
         public Guid? LastWorkId { get; set; }
         public int? PageSize { get; set; }
         public string? Bookmarked { get; set; }

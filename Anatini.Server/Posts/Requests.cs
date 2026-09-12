@@ -18,7 +18,7 @@ namespace Anatini.Server.Posts
         public DateTime? PublishedAtNz { get; set; }
 
         [MaxLength(256)]
-        public string? Header { get; set; }
+        public string? Name { get; set; }
     }
 
     public class UpdatePost

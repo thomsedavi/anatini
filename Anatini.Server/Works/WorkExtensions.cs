@@ -17,7 +17,7 @@ namespace Anatini.Server.Works
                 UserHeader = work.User != null ? await work.User.ToUserHeaderDtoAsync(blobService) : null,
                 SpaceHeader = work.Space != null ? await work.Space.ToSpaceHeaderDto(blobService) : null,
                 Handle = work.Handle,
-                Header = work.Header ?? throw new InvalidOperationException(),
+                Name = work.Name ?? throw new InvalidOperationException(),
                 Article = work.Article,
                 Visibility = work.Visibility.ToString(),
                 PublishedAtNz = work.PublishedAtNz,

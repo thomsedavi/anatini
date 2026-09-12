@@ -3,6 +3,6 @@
     public class EventOccurrenceDto
     {
         public required Guid Id { get; set; }
-        public required string Header { get; set; }
+        public required string Name { get; set; }
     }
 }
