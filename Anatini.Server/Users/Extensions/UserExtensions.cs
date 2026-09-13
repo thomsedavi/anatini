@@ -32,6 +32,7 @@ namespace Anatini.Server.Users.Extensions
         {
             return new UserHeaderDto
             {
+                Id = user.Id,
                 Name = user.Name,
                 Handle = user.Handle,
                 IconImage = await user.GetIconImageAsync(blobService)

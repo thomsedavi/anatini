@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
+  import { apiFetch } from '@/common/apiFetch';
+  import { buttonAction } from '@/common/html';
   import { store } from '@/common/store';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
   import { handleClick, parseSource, type Source } from '@/common/utils';
@@ -9,7 +10,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const props = defineProps<{
+  defineProps<{
     dataSpaceId: string,
     dataSpaceHandle: string,
     dataSpaceName: string,
@@ -38,44 +39,6 @@
     }
 
     apiFetch({ input, statusActions });
-  }
-
-  function buttonAction(label: string, pressed: string | null): void {
-    const action = label.toLowerCase();
-
-    if (pressed === 'true') {
-      const statusActions: StatusActions = {
-        204: () => {
-          if (action === "bookmark") {
-            work.value.data!.hasBookmarked = null;
-          } else if (action === "dismiss") {
-            work.value.data!.hasDismissed = null;
-          } else if (action === "star") {
-            work.value.data!.hasStarred = null;
-          }
-        }
-      }
-
-      const init: RequestInit = { method: "DELETE" };
-
-      apiFetchAuthenticated({ input: `spaces/${props.dataSpaceId}/works/${work.value.data!.id}/${action}`, statusActions, init });
-    } else {
-      const statusActions: StatusActions = {
-        201: () => {
-          if (action === "bookmark") {
-            work.value.data!.hasBookmarked = true;
-          } else if (action === "dismiss") {
-            work.value.data!.hasDismissed = true;
-          } else if (action === "star") {
-            work.value.data!.hasStarred = true;
-          }
-        }
-      }
-
-      const init: RequestInit = { method: "POST" };
-
-      apiFetchAuthenticated({ input: `spaces/${props.dataSpaceId}/works/${work.value.data!.id}/${action}`, statusActions, init });
-    }
   }
 
   function articleHtml(): string {
@@ -117,7 +80,7 @@
       </ol>
     </nav>
 
-    <article v-html="articleHtml()" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed))">
+    <article v-if="work.data !== undefined" v-html="articleHtml()" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!))">
     </article>
   </section>
 </template>

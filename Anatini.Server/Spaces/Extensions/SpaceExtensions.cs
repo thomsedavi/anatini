@@ -21,6 +21,7 @@ namespace Anatini.Server.Spaces.Extensions
         {
             return new SpaceHeaderDto
             {
+                Id = space.Id,
                 Name = space.Name,
                 Handle = space.Handle,
                 IconImage = await space.GetIconImageAsync(blobService)

@@ -2,11 +2,12 @@
   import type { Post, SearchParameter, StatusActions } from '@/common/types';
   import { formatLong } from '@/common/dateUtils';
   import { onMounted, ref } from 'vue';
-  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
+  import { apiFetch } from '@/common/apiFetch';
   import { useRouter } from 'vue-router';
   import { handleClick } from '@/common/utils';
   import { store } from '@/common/store';
   import RadioFieldset from '@/common/RadioFieldset.vue';
+  import { buttonAction } from '@/common/html';
 
   const router = useRouter();
 
@@ -132,52 +133,6 @@
       searchParameters.push({ key: 'lastPostId', value: lastPost.id });
 
       apiFetch({ input, statusActions, searchParameters });
-    }
-  }
-
-  function buttonAction(label: string, pressed: string | null, post: Post): void {
-    const action = label.toLowerCase();
-
-    if (pressed === 'true') {
-      const statusActions: StatusActions = {
-        204: () => {
-          if (action === "bookmark") {
-            post.hasBookmarked = null;
-          } else if (action === "dismiss") {
-            post.hasDismissed = null;
-          } else if (action === "star") {
-            post.hasStarred = null;
-          }
-        }
-      }
-
-      const init: RequestInit = { method: "DELETE" };
-
-      if (post.spaceHeader !== null) {
-        apiFetchAuthenticated({ input: `spaces/${post.spaceHeader.handle}/posts/${post.handle}/${action}`, statusActions, init });
-      } else if (post.userHeader !== null) {
-        apiFetchAuthenticated({ input: `users/${post.userHeader.handle}/posts/${post.handle}/${action}`, statusActions, init });
-      }
-    } else {
-      const statusActions: StatusActions = {
-        201: () => {
-          if (action === "bookmark") {
-            post.hasBookmarked = true;
-          } else if (action === "dismiss") {
-            post.hasDismissed = true;
-          } else if (action === "star") {
-            post.hasStarred = true;
-          }
-        }
-      }
-
-      const init: RequestInit = { method: "POST" };
-
-      if (post.spaceHeader !== null) {
-        apiFetchAuthenticated({ input: `spaces/${post.spaceHeader.handle}/posts/${post.handle}/${action}`, statusActions, init });
-      } else if (post.userHeader !== null) {
-        apiFetchAuthenticated({ input: `users/${post.userHeader.handle}/posts/${post.handle}/${action}`, statusActions, init });
-      }
     }
   }
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import type { Post, StatusActions } from '@/common/types';
-  import { formatLong } from '@/common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRouter } from 'vue-router';
   import { handleClick } from '@/common/utils';
+  import { getPostHtml } from '@/common/html';
 
   const router = useRouter();
 
@@ -34,24 +34,6 @@
       apiFetchAuthenticated({ input, statusActions });
     }
   });
-
-  function getHeader(post: Post): string {
-      return `<header><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
-  }
-
-  function postHtml(post: Post): string {
-    return `
-      ${getHeader(post)}
-      ${post.article}
-      <footer>
-        <menu>
-          <li>
-            <a href='/users/${props.dataUserHandle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
-          </li>
-        </menu>
-      </footer>
-    `;
-  }
 </script>
 
 <template>
@@ -63,7 +45,7 @@
 
     <ul role="list" v-if="dataPosts !== null">
       <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="postHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="getPostHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

@@ -39,6 +39,7 @@ export type User = {
 };
 
 export type UserHeader = {
+  id: string;
   name: string;
   iconImage: Image | null;
   handle: string;
@@ -70,6 +71,7 @@ export type Space = {
 };
 
 export type SpaceHeader = {
+  id: string;
   name: string;
   handle: string;
   iconImage: Image | null;
@@ -129,32 +131,28 @@ export type EventOccurrence = {
   hasBookmarked: boolean | null;
 }
 
-export type Work = {
-  id: string;
-  handle: string | null;
+export type Content = {
+  id: string;  
+  handle: string;
+  hasStarred: boolean | null;
+  hasBookmarked: boolean | null;
+  hasDismissed: boolean | null;
+  userHeader: UserHeader | null;
+  spaceHeader: SpaceHeader | null;
+}
+
+export type Work = Content & {
   type: WorkType;
   name: string;
   article: string | null;
   url: string;
   publishedAtNz: string | null;
-  userHeader: UserHeader | null;
-  spaceHeader: SpaceHeader | null;
-  hasStarred: boolean | null;
-  hasBookmarked: boolean | null;
-  hasDismissed: boolean | null;
 }
 
-export type Post = {
-  id: string;
-  userHeader: UserHeader | null;
-  spaceHeader: SpaceHeader | null;
-  handle: string | null;
+export type Post = Content & {
   article: string;
   publishedAtNz: string;
   visibility: Visibility;
-  hasStarred: boolean | null;
-  hasBookmarked: boolean | null;
-  hasDismissed: boolean | null;
 }
 
 export type IsAuthenticated = {
