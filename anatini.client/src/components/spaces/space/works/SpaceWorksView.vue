@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { getWorkHtml } from '@/common/html';
   import type { StatusActions, Work } from '@/common/types';
   import { onMounted } from 'vue';
 
@@ -39,18 +40,8 @@
     </header>
 
     <ul role="list" v-if="dataWorks !== null">
-      <li v-for="work in dataWorks" :key="'work' + work.id" :data-work-type="work.type">
-        <article>
-          <h2 v-if="work.type === 'Website'">
-            <a :href="work.url" target="_blank">{{ work.name }}</a>
-          </h2>
-          <h2 v-else>
-            <a :href="work.url" target="_blank"><cite>{{ work.name }}</cite></a>
-          </h2>
-          <p>Some description might go here?</p>
-          <footer v-if="work.type === 'Product'">
-            <a :href="work.url" target="_blank">Purchase</a>
-          </footer>
+      <li v-for="work in dataWorks" :key="'work' + work.id">
+        <article v-html="getWorkHtml(work)">
         </article>
       </li>
     </ul>

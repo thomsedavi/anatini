@@ -27,7 +27,6 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputHandle = ref<string>('');
-  const inputUrl = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
@@ -37,13 +36,8 @@
     emit('update-errors', []);
 
     const tidiedName = tidy(inputName.value);
-    const tidiedUrl = tidy(inputUrl.value);
 
     const inputErrors: InputError[] = [];
-
-    if (tidiedUrl === '') {
-      inputErrors.push({ id: 'url', message: 'Link is required' });
-    }
 
     if (tidiedName === '') {
       inputErrors.push({ id: 'name', message: 'Name is required' });
@@ -73,7 +67,6 @@
 
     const body = new FormData();
 
-    body.append('url', tidiedUrl);
     body.append('name', tidiedName);
     body.append('visibility', inputVisibility.value);
 
@@ -98,18 +91,6 @@
     </header>
 
     <form @submit.prevent="postWork" :action="`/api/spaces/${dataSpaceId}/works`" method="POST" novalidate>
-      <InputText
-        v-model="inputUrl"
-        label="Link"
-        name="url"
-        id="url"
-        type="url"
-        placeholder="https://example.com"
-        pattern="https://.*"
-        :maxlength="256"
-        help="The link to your work (e.g. a ticket booking site)."
-        :error="getError('url')" />
-
       <InputText
         v-model="inputName"
         label="Name"

@@ -7,7 +7,6 @@ export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
-export type WorkType = 'Website' | 'Product' | 'Art';
 
 export type Request = {
   input: RequestInfo | URL,
@@ -134,6 +133,7 @@ export type EventOccurrence = {
 export type Content = {
   id: string;  
   handle: string;
+  article: string;
   hasStarred: boolean | null;
   hasBookmarked: boolean | null;
   hasDismissed: boolean | null;
@@ -142,15 +142,11 @@ export type Content = {
 }
 
 export type Work = Content & {
-  type: WorkType;
   name: string;
-  article: string | null;
-  url: string;
   publishedAtNz: string | null;
 }
 
 export type Post = Content & {
-  article: string;
   publishedAtNz: string;
   visibility: Visibility;
 }

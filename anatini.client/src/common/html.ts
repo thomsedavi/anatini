@@ -1,7 +1,7 @@
 import { apiFetchAuthenticated } from "./apiFetch";
 import { formatLong } from "./dateUtils";
 import { store } from "./store";
-import type { Content, Post, StatusActions } from "./types";
+import type { Content, Post, StatusActions, Work } from "./types";
 
 export function getPostHtml(post: Post): string {
   let result = '';
@@ -21,6 +21,16 @@ export function getPostHtml(post: Post): string {
   }
 
   result += '</menu></footer>'
+
+  return result;
+}
+
+export function getWorkHtml(work: Work): string {
+  let result = '';
+
+  result += `<header><h2>${work.name}</h2></header>`;
+
+  result += work.article;
 
   return result;
 }

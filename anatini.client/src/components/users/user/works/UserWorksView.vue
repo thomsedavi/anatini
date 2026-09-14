@@ -39,18 +39,9 @@
     </header>
 
     <ul role="list" v-if="dataWorks !== null">
-      <li v-for="work in dataWorks" :key="'work' + work.id" :data-work-type="work.type">
+      <li v-for="work in dataWorks" :key="'work' + work.id">
         <article>
-          <h2 v-if="work.type === 'Website'">
-            <a :href="work.url" target="_blank">{{ work.name }}</a>
-          </h2>
-          <h2 v-else>
-            <a :href="work.url" target="_blank"><cite>{{ work.name }}</cite></a>
-          </h2>
           <p>Some description might go here?</p>
-          <footer v-if="work.type === 'Product'">
-            <a :href="work.url" target="_blank">Purchase</a>
-          </footer>
         </article>
       </li>
     </ul>

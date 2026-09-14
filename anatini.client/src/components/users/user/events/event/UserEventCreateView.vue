@@ -37,7 +37,6 @@
   const monthlyRuleOptions = ref<SelectOption[]>([{ value: '', text: 'Please select a date first', disabled: true }]);
 
   const inputEventName = ref<string>('');
-  const inputEventUrl = ref<string>('');
   const inputEventType = ref<'FixedTime' | 'AllDay' | 'Duration'>('FixedTime');
   const inputEventIsRecurring = ref<boolean>(false);
   const inputEventStartDate = ref<string>('');
@@ -239,10 +238,6 @@
       body.append('handle', tidy(inputEventHandle.value));
     }
 
-    if (tidy(inputEventUrl.value) !== '') {
-      body.append('url', tidy(inputEventUrl.value));
-    }
-
     if (inputEventIsDraft.value === true) {
       body.append('isDraft', 'true');
     }
@@ -296,18 +291,6 @@
           :required="true"
           help="The name of your event"
           :error="getError('name')" />
-
-        <InputText
-          v-model="inputEventUrl"
-          label="Link"
-          name="url"
-          id="url"
-          type="url"
-          placeholder="https://example.com"
-          pattern="https://.*"
-          :maxlength="256"
-          help="The external link to your event (e.g. a ticket booking site). For recurring events, this link will be applied to each event but can be modified per event."
-          :error="getError('url')" />
 
         <InputText
           v-model="inputEventHandle"

@@ -3,7 +3,6 @@
   import type { APIResponse, InputError, Status, StatusActions, Work } from '@/common/types';
   import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
-  import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -24,7 +23,6 @@
 
   const work = ref<APIResponse<Work>>({ fetching: true });
   const inputArticle = ref<string>('');
-  const inputUrl = ref<string>('');
 
   watch([() => route.params.spaceId, () => route.params.workId], (source: Source) => fetchWork(parseSource(source)), { immediate: true });
 
@@ -37,7 +35,6 @@
           .then((value: Work) => {
             work.value = { data: value };
             inputArticle.value = parseFromArticleString(value.article);
-            inputUrl.value = value.url;
           });
       },
     }
@@ -49,8 +46,6 @@
     if (work.value.data === undefined) {
       return true;
     } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== work.value.data.article) {
-      return false;
-    } else if (tidy(inputUrl.value) !== work.value.data.url) {
       return false;
     }
 
@@ -74,8 +69,6 @@
       return;
     }
 
-    const tidiedUrl = tidy(inputUrl.value);
-
     const input = `spaces/${route.params.spaceId}/works/${route.params.workId}`;
 
     const statusActions: StatusActions = {
@@ -88,10 +81,6 @@
     }
     
     const body = new FormData();
-
-    if (tidiedUrl !== work.value.data.url) {
-      body.append('url', tidiedUrl);
-    }
 
     if (formatParagraphs(inputArticle.value) !== work.value.data.article) {
       body.append('article', formatParagraphs(inputArticle.value));
@@ -123,18 +112,6 @@
 
     <template v-if="work.data !== undefined">
       <form @submit.prevent="patchWork" :action="`/api/spaces/${route.params.spaceId}/posts/${route.params.postId}`" method="POST" novalidate>
-        <InputText
-          v-model="inputUrl"
-          label="Link"
-          name="url"
-          id="url"
-          type="url"
-          placeholder="https://example.com"
-          pattern="https://.*"
-          :maxlength="256"
-          help="The link to your work (e.g. a ticket booking site)."
-          :error="getError('url')" />
-
         <InputTextArea
           v-model="inputArticle"
           label="Content"
