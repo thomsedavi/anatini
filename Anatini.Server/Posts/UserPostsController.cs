@@ -23,7 +23,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost([FromForm] CreatePost createPost) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> PostPost(string userHandle, [FromForm] CreatePost createPost) => await UsingUserAsync(userHandle, async (user) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
 

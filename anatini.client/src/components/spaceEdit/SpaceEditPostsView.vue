@@ -44,7 +44,7 @@
 
     <ul role="list" v-if="dataPosts !== null">
       <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="`${post.article.substring(9, post.article.length - 10)}<footer><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time><menu><li><a href='/spaces/${dataSpaceId}/edit/posts/${post.handle ?? post.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="`${post.article}<footer><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time><menu><li><a href='/spaces/${dataSpaceId}/edit/posts/${post.handle ?? post.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

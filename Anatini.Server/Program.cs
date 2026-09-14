@@ -105,6 +105,7 @@ builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<Appl
 builder.Services.AddScoped<IBlobService, BlobService>();
 builder.Services.AddScoped<IAuthorizationHandler, TrustedUserHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ReadHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, WriteUserHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, WriteSpaceHandler>();
 
 var app = builder.Build();

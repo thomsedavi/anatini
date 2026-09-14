@@ -49,7 +49,7 @@
         <header>
           <h2>${ workData.name ?? 'Loading' }</h2>
         </header>
-        ${workData.article !== null ? workData.article.substring(9, workData.article.length - 10) : ''}
+        ${workData.article}
         ${store.isAuthenticated === true ? `<footer>
           <menu>
             <li>
