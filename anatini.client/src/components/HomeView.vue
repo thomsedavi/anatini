@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { nextTick, onMounted, ref } from 'vue';
-  import type { Post, Tab } from '@/common/types';
+  import type { Post, Tab, Work } from '@/common/types';
   import TabButton from '@/common/TabButton.vue';
   import { getTabIndex } from '@/common/utils';
   import { useRoute, useRouter } from 'vue-router';
@@ -10,6 +10,7 @@
 
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
+  const works = ref<Work[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
@@ -53,6 +54,10 @@
   function handleUpdatePosts(newPosts: Post[]): void {
     posts.value = newPosts;
   }
+
+  function handleUpdateWorks(newWorks: Work[]): void {
+    works.value = newWorks;
+  }
 </script>
 
 <template>
@@ -76,7 +81,9 @@
       <component
         :is="Component"
         :data-posts="posts"
+        :data-works="works"
         @update-posts="handleUpdatePosts"
+        @update-works="handleUpdateWorks"
       />
     </RouterView>
   </main>

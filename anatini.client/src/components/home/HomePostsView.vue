@@ -48,7 +48,7 @@
       let header = `<header><h3><a href='/users/${post.userHeader.handle}' rel='author'>`;
 
       if (post.userHeader.iconImage !== null) {
-        header += `<img src='${post.userHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
+        header += `<img src='${post.userHeader.iconImage.uri}' alt='' />`;
       }
       
       header += `<span>${post.userHeader.name}</span></a></h3><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
@@ -58,7 +58,7 @@
       let header = `<header><h3><a href='/spaces/${post.spaceHeader.handle}' rel='author'>`;
 
       if (post.spaceHeader.iconImage !== null) {
-        header += `<img src='${post.spaceHeader.iconImage.uri}' alt='' aria-hidden='true' />`;
+        header += `<img src='${post.spaceHeader.iconImage.uri}' alt='' />`;
       }
       
       header += `<span>${post.spaceHeader.name}</span></a></h3><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;

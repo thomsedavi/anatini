@@ -39,7 +39,7 @@
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Posts</h2>
-      <RouterLink :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
+      <RouterLink v-if="store.isAuthenticated" :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
     </header>
 
     <ul role="list" v-if="dataPosts !== null">
