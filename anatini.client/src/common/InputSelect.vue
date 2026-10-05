@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { SelectOption } from '@/common/types';
 
-  const model = defineModel<string>();
+  const model = defineModel<string>({ required: true });
 
   defineProps<{
     label: string,

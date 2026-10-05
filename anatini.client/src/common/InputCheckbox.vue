@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const model = defineModel<boolean>();
+  const model = defineModel<boolean>({ required: true });
 
   defineProps<{
     label: string,

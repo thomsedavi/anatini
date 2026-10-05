@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { formatParagraphs, tidy } from './utils';
 
-  const model = defineModel<string>();
+  const model = defineModel<string>({ required: true });
 
   defineProps<{
     label: string,

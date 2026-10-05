@@ -3,7 +3,7 @@
   import { ref } from 'vue';
   import InputSelect from './InputSelect.vue';
 
-  const model = defineModel<Visibility>();
+  const model = defineModel<Visibility>({ required: true });
 
   const visibilityOptions = ref([
     { text: 'Public', value: 'Public' },

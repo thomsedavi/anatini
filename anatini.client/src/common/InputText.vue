@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { InputAutoCompleteAttribute, InputTypeHTMLAttribute } from 'vue';
 
-  const model = defineModel<string | number>();
+  const model = defineModel<string | number>({ required: true });
 
   defineProps<{
     label?: string,

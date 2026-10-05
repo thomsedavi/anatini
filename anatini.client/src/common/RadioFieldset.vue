@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const model = defineModel<string>();
+  const model = defineModel<string>({ required: true });
 
   defineProps<{
     legend: string,
