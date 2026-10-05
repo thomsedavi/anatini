@@ -2,11 +2,12 @@
   import { apiFetch } from '@/common/apiFetch';
   import { buttonAction, getWorkHtml } from '@/common/html';
   import { store } from '@/common/store';
-  import type { Filters, StatusActions, Work } from '@/common/types';
+  import type { StatusActions, Work } from '@/common/types';
   import { handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import FilterRadios from '@/common/FilterRadios.vue';
+  import { Filters } from '@/common/classes';
 
   const router = useRouter();
 
@@ -18,7 +19,7 @@
     'update-works': [newPosts: Work[]],
   }>();
 
-  const filters = ref<Filters>({ bookmarked: 'all', starred: 'all', dismissed: 'all', followed: 'all', baseSearchParams: [] });
+  const filters = ref<Filters>(new Filters());
   const hasMore = ref<boolean>(true);
 
   onMounted(() => {
@@ -55,25 +56,7 @@
       }
     }
 
-    filters.value.baseSearchParams = [];
-
-    if (filters.value.bookmarked !== 'all') {
-      filters.value.baseSearchParams.push({ key: 'bookmarked', value: filters.value.bookmarked });
-    }
-
-    if (filters.value.starred !== 'all') {
-      filters.value.baseSearchParams.push({ key: 'starred', value: filters.value.starred });
-    }
-
-    if (filters.value.dismissed !== 'all') {
-      filters.value.baseSearchParams.push({ key: 'dismissed', value: filters.value.dismissed });
-    }
-
-    if (filters.value.followed !== 'all') {
-      filters.value.baseSearchParams.push({ key: 'followed', value: filters.value.followed });
-    }
-
-    const searchParameters = filters.value.baseSearchParams;
+    const searchParameters = filters.value.getSearchParameters();
 
     apiFetch({ input, statusActions, searchParameters });
   }
@@ -97,7 +80,7 @@
 
       const lastWork = props.dataWorks[props.dataWorks.length - 1];
 
-      const searchParameters = [...filters.value.baseSearchParams];
+      const searchParameters = [...filters.value.currentSearchParameters];
 
       searchParameters.push({ key: 'lastName', value: lastWork.name });
       searchParameters.push({ key: 'lastWorkId', value: lastWork.id });

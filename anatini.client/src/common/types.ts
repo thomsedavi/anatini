@@ -158,11 +158,3 @@ export type IsAuthenticated = {
   userId: string | null;
   userHandle: string | null;
 }
-
-export type Filters = {
-  bookmarked: string;
-  starred: string;
-  dismissed: string;
-  followed: string;
-  baseSearchParams: SearchParameter[];
-}
