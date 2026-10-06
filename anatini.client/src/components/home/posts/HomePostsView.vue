@@ -2,12 +2,12 @@
   import { apiFetch } from '@/common/apiFetch';
   import { buttonAction, getPostHtml } from '@/common/html';
   import { store } from '@/common/store';
-  import type { Post, StatusActions } from '@/common/types';
+  import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
+  import type { Post, SearchParameter, StatusActions } from '@/common/types';
   import { handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { Filters } from '@/common/classes';
 
   const router = useRouter();
 
@@ -19,7 +19,8 @@
     'update-posts': [newPosts: Post[]],
   }>();
 
-  const filters = ref<Filters>(new Filters());
+  const filters = ref<Filters>({ ...defaultFilters });
+  const currentSearchParameters = ref<SearchParameter[]>([]);
   const hasMore = ref<boolean>(true);
 
   onMounted(() => {
@@ -55,9 +56,9 @@
       }
     }
 
-    const searchParameters = filters.value.getSearchParameters();
+    currentSearchParameters.value = getSearchParameters(filters.value);
 
-    apiFetch({ input, statusActions, searchParameters });
+    apiFetch({ input, statusActions, searchParameters: currentSearchParameters.value });
   }
 
   function getMorePosts() {
@@ -79,7 +80,7 @@
 
       const lastPost = props.dataPosts[props.dataPosts.length - 1];
 
-      const searchParameters = [...filters.value.currentSearchParameters];
+      const searchParameters = [...currentSearchParameters.value];
 
       searchParameters.push({ key: 'lastPublishedAtNz', value: lastPost.publishedAtNz });
       searchParameters.push({ key: 'lastPostId', value: lastPost.id });

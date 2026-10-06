@@ -1,6 +1,6 @@
 <script setup lang="ts">
+  import type { Filters } from '@/common/filters';
   import RadioFieldset from '@/common/RadioFieldset.vue';
-  import { Filters } from './classes';
 
   const model = defineModel<Filters>({ required: true });
 </script>

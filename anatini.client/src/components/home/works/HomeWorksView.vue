@@ -2,12 +2,12 @@
   import { apiFetch } from '@/common/apiFetch';
   import { buttonAction, getWorkHtml } from '@/common/html';
   import { store } from '@/common/store';
-  import type { StatusActions, Work } from '@/common/types';
+  import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
+  import type { SearchParameter, StatusActions, Work } from '@/common/types';
   import { handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { Filters } from '@/common/classes';
 
   const router = useRouter();
 
@@ -19,7 +19,8 @@
     'update-works': [newPosts: Work[]],
   }>();
 
-  const filters = ref<Filters>(new Filters());
+  const filters = ref<Filters>({ ...defaultFilters });
+  const currentSearchParameters = ref<SearchParameter[]>([]);
   const hasMore = ref<boolean>(true);
 
   onMounted(() => {
@@ -56,9 +57,9 @@
       }
     }
 
-    const searchParameters = filters.value.getSearchParameters();
+    currentSearchParameters.value = getSearchParameters(filters.value);
 
-    apiFetch({ input, statusActions, searchParameters });
+    apiFetch({ input, statusActions, searchParameters: currentSearchParameters.value });
   }
 
   function getMoreWorks() {
@@ -80,7 +81,7 @@
 
       const lastWork = props.dataWorks[props.dataWorks.length - 1];
 
-      const searchParameters = [...filters.value.currentSearchParameters];
+      const searchParameters = [...currentSearchParameters.value];
 
       searchParameters.push({ key: 'lastName', value: lastWork.name });
       searchParameters.push({ key: 'lastWorkId', value: lastWork.id });
