@@ -28,6 +28,8 @@ import UserPostEditView from './components/users/user/posts/post/UserPostEditVie
 // import UserEventView from './components/users/user/events/event/UserEventView.vue';
 // import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 // import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
+import UserSpacesView from './components/users/user/spaces/UserSpacesView.vue';
+import UserSpaceCreateView from './components/users/user/spaces/space/UserSpaceCreateView.vue';
 
 import SpaceView from './components/spaces/space/SpaceView.vue';
 import SpaceCreateView from './components/spaces/space/SpaceCreateView.vue';
@@ -171,6 +173,16 @@ const routes: RouteRecordRaw[] = [
         path: 'works/:workId',
         component: UserWorkView,
         name: 'UserWork'
+      },
+      {
+        path: 'spaces',
+        component: UserSpacesView,
+        name: 'UserSpaces'
+      },
+      {
+        path: 'spaces/create',
+        component: UserSpaceCreateView,
+        name: 'UserSpaceCreate'
       },
     ],
   },
