@@ -11,13 +11,13 @@ import TagsView from './components/TagsView.vue';
 
 import HomeView from './components/HomeView.vue';
 import HomePostsView from './components/home/posts/HomePostsView.vue';
-import HomeEventsView from './components/home/events/HomeEventsView.vue';
+// import HomeEventsView from './components/home/events/HomeEventsView.vue';
 import HomeWorksView from './components/home/works/HomeWorksView.vue';
 
 import UsersView from './components/users/UsersView.vue';
 import UserView from './components/users/user/UserView.vue';
 import UserPostsView from './components/users/user/posts/UserPostsView.vue';
-import UserEventsView from './components/users/user/events/UserEventsView.vue';
+// import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
 import UserWorkView from './components/users/user/works/work/UserWorkView.vue';
 import UserWorkCreateView from './components/users/user/works/work/UserWorkCreateView.vue';
@@ -25,9 +25,9 @@ import UserWorkEditView from './components/users/user/works/work/UserWorkEditVie
 import UserPostView from './components/users/user/posts/post/UserPostView.vue';
 import UserPostCreateView from './components/users/user/posts/post/UserPostCreateView.vue';
 import UserPostEditView from './components/users/user/posts/post/UserPostEditView.vue';
-import UserEventView from './components/users/user/events/event/UserEventView.vue';
-import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
-import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
+// import UserEventView from './components/users/user/events/event/UserEventView.vue';
+// import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
+// import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 
 import SpaceView from './components/spaces/space/SpaceView.vue';
 import SpaceCreateView from './components/spaces/space/SpaceCreateView.vue';
@@ -44,8 +44,8 @@ import SpacePostsView from './components/spaces/space/posts/SpacePostsView.vue';
 import SpacePostView from './components/spaces/space/posts/post/SpacePostView.vue';
 import SpacePostCreateView from './components/spaces/space/posts/post/SpacePostCreateView.vue';
 import SpacePostEditView from './components/spaces/space/posts/post/SpacePostEditView.vue';
-import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
-import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
+// import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
+// import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -59,11 +59,11 @@ const routes: RouteRecordRaw[] = [
         component: HomePostsView,
         name: 'HomePosts'
       },
-      {
-        path: 'home/events',
-        component: HomeEventsView,
-        name: 'HomeEvents'
-      },
+      // {
+      //   path: 'home/events',
+      //   component: HomeEventsView,
+      //   name: 'HomeEvents'
+      // },
       {
         path: 'home/works',
         component: HomeWorksView,
@@ -132,26 +132,26 @@ const routes: RouteRecordRaw[] = [
         component: UserPostsView,
         name: 'UserPosts'
       },
-      {
-        path: 'events/create',
-        component: UserEventCreateView,
-        name: 'UserEventCreate'
-      },
-      {
-        path: 'events/:eventId/occurrence/:occurrenceId',
-        component: UserEventOccurrenceView,
-        name: 'EventOccurrence',
-      },
-      {
-        path: 'events/:eventId',
-        component: UserEventView,
-        name: 'Event',
-      },
-      {
-        path: 'events',
-        component: UserEventsView,
-        name: 'UserEvents'
-      },
+      // {
+      //   path: 'events/create',
+      //   component: UserEventCreateView,
+      //   name: 'UserEventCreate'
+      // },
+      // {
+      //   path: 'events/:eventId/occurrence/:occurrenceId',
+      //   component: UserEventOccurrenceView,
+      //   name: 'EventOccurrence',
+      // },
+      // {
+      //   path: 'events/:eventId',
+      //   component: UserEventView,
+      //   name: 'Event',
+      // },
+      // {
+      //   path: 'events',
+      //   component: UserEventsView,
+      //   name: 'UserEvents'
+      // },
       {
         path: 'works',
         component: UserWorksView,
@@ -205,16 +205,16 @@ const routes: RouteRecordRaw[] = [
         component: SpacePostsView,
         name: 'SpacePostPosts'
       },
-      {
-        path: 'events/create',
-        component: SpaceEventCreateView,
-        name: 'SpaceEventCreate'
-      },
-      {
-        path: 'events',
-        component: SpaceEventsView,
-        name: 'SpaceEvents'
-      },
+      // {
+      //   path: 'events/create',
+      //   component: SpaceEventCreateView,
+      //   name: 'SpaceEventCreate'
+      // },
+      // {
+      //   path: 'events',
+      //   component: SpaceEventsView,
+      //   name: 'SpaceEvents'
+      // },
       {
         path: 'works',
         component: SpaceWorksView,

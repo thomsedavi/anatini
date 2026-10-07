@@ -177,7 +177,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `user/${props.dataUserId}/events`;
+    const input = `users/${props.dataUserId}/events`;
 
     const statusActions: StatusActions = {
       201: () => {

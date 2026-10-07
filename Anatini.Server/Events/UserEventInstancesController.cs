@@ -2,6 +2,7 @@
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace Anatini.Server.Events
     public class UserEventInstancesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [Authorize]
+        [DisableEndpoint]
         [HttpPost("bookmark")]
         public async Task<IActionResult> PostEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
@@ -22,6 +24,7 @@ namespace Anatini.Server.Events
         });
 
         [Authorize]
+        [DisableEndpoint]
         [HttpDelete("bookmark")]
         public async Task<IActionResult> DeleteEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {

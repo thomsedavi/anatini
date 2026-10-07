@@ -14,7 +14,7 @@
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
-    { id: 'events', text: 'Events', name: 'HomeEvents' },
+    //{ id: 'events', text: 'Events', name: 'HomeEvents' },
     { id: 'works', text: 'Works', name: 'HomeWorks' },
   ];
 

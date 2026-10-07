@@ -15,6 +15,7 @@ namespace Anatini.Server.Events
     [Route("api/users/{userHandle}/events")]
     public class UserEventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
+        [DisableEndpoint]
         [HttpPost]
         [Authorize(Policy = "IsTrusted")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -41,6 +42,7 @@ namespace Anatini.Server.Events
             return CreatedAtAction(nameof(GetEventSeries), new { eventId = eventSeries.Id });
         }, new ContextSettings { AccessRequired = true });
 
+        [DisableEndpoint]
         [HttpGet("{eventSeriesHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,6 +52,7 @@ namespace Anatini.Server.Events
             return Ok(eventSeries.ToEventSeriesDto());
         });
 
+        [DisableEndpoint]
         [HttpGet("{eventSeriesHandle}/occurrences")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,6 +85,7 @@ namespace Anatini.Server.Events
             return Ok(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDto(IsAuthenticated)));
         });
 
+        [DisableEndpoint]
         [HttpGet("{eventSeriesHandle}/occurrence/{eventInstanceHandle}")]
         public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
