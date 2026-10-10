@@ -16,14 +16,10 @@ namespace Anatini.Server.Users.Extensions
                 Name = user.Name,
                 About = user.About,
                 Handle = user.Handle,
-                IconImage = await user.GetIconImageAsync(blobService)
+                IconImage = await user.GetIconImageAsync(blobService),
+                IsTrusted = isAuthenticated ? user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.IsTrusted) : null,
+                IsFollowed = isAuthenticated ? user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.IsFollowed) : null
             };
-
-            if (isAuthenticated)
-            {
-                userDto.HasTrusted = user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.HasTrusted);
-                userDto.HasFollowed = user.ReceivedUserRelationships.Any(userRelationship => userRelationship.Label == UserUserRelationshipLabel.HasFollowed);
-            }
 
             return userDto;
         }

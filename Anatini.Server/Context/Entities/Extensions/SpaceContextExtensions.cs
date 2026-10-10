@@ -21,7 +21,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 SourceUserId = userId,
                 TargetSpaceId = spaceId,
-                Label = UserSpaceRelationshipLabel.Owner,
+                Label = UserSpaceRelationshipLabel.IsOwned,
                 CreatedAtUtc = utcNow
             };
 

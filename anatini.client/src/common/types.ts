@@ -33,8 +33,8 @@ export type User = {
   iconImage: Image | null;
   handle: string;
   about: string | null;
-  hasTrusted: boolean | null;
-  hasFollowed: boolean | null;
+  isTrusted: boolean | null;
+  isFollowed: boolean | null;
 };
 
 export type UserHeader = {
@@ -127,16 +127,16 @@ export type EventOccurrence = {
   name: string;
   article: string | null;
   url: string | null;
-  hasBookmarked: boolean | null;
+  isBookmarked: boolean | null;
 }
 
 export type Content = {
   id: string;  
   handle: string;
   article: string;
-  hasStarred: boolean | null;
-  hasBookmarked: boolean | null;
-  hasDismissed: boolean | null;
+  isStarred: boolean | null;
+  isBookmarked: boolean | null;
+  isDismissed: boolean | null;
   userHeader: UserHeader | null;
   spaceHeader: SpaceHeader | null;
 }

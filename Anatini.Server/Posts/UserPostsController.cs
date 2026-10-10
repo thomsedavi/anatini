@@ -50,7 +50,7 @@ namespace Anatini.Server.Posts
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPosts(DateTime? lastPublishedAtNz, Guid? lastPostId, int pageSize = 20) => await UsingAccountAsync(async (user) =>
+        public async Task<IActionResult> GetPosts(string userHandle, DateTime? lastPublishedAtNz, Guid? lastPostId, int pageSize = 20) => await UsingUserAsync(userHandle, async (user) =>
         {
             var postsQuery = Context.Posts.AsQueryable();
 
@@ -124,42 +124,42 @@ namespace Anatini.Server.Posts
         [HttpPost("{postHandle}/bookmark")]
         public async Task<IActionResult> PostPostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasBookmarked);
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/bookmark")]
         public async Task<IActionResult> DeletePostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasBookmarked);
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/star")]
         public async Task<IActionResult> PostPostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasStarred);
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/star")]
         public async Task<IActionResult> DeletePostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasStarred);
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/dismiss")]
         public async Task<IActionResult> PostPostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasDismissed);
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/dismiss")]
         public async Task<IActionResult> DeletePostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.HasDismissed);
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         private async Task<IActionResult> AddUserPostRelationship(ApplicationDbContext context, Guid postId, UserContentRelationshipLabel label)

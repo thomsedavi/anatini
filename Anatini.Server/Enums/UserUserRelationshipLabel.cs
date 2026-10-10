@@ -4,7 +4,7 @@
     public enum UserUserRelationshipLabel
     {
         None = 0,
-        HasTrusted = 1,
-        HasFollowed = 2
+        IsTrusted = 1,
+        IsFollowed = 2
     }
 }

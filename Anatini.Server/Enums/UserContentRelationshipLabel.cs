@@ -4,9 +4,9 @@
     public enum UserContentRelationshipLabel
     {
         None = 0,
-        HasDismissed = 1,
-        HasStarred = 2,
-        HasBookmarked = 4,
-        HasCollected = 8
+        IsDismissed = 1,
+        IsStarred = 2,
+        IsBookmarked = 4,
+        IsCollected = 8
     }
 }

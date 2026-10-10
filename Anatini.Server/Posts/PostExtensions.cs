@@ -21,10 +21,10 @@ namespace Anatini.Server.Posts
                 Article = post.Article,
                 Visibility = post.Visibility.ToString(),
                 PublishedAtNz = post.PublishedAtNz ?? throw new InvalidOperationException(),
-                HasBookmarked = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasBookmarked) : null,
-                HasDismissed = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasDismissed) : null,
-                HasStarred = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasStarred) : null,
-                HasCollected = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasCollected) : null
+                IsBookmarked = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
             };
         }
     }

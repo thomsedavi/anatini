@@ -39,9 +39,8 @@ namespace Anatini.Server
                 usersQuery = usersQuery.AsNoTracking();
             }
 
-            usersQuery = usersQuery
-                .Include(user => user.Images)
-                .Include(user => user.SpaceRelationships.Where(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.Owner)).ThenInclude(userSpaceRelationship => userSpaceRelationship.TargetSpace);
+            usersQuery = usersQuery.Include(user => user.Images);
+            usersQuery = usersQuery.Include(user => user.SpaceRelationships.Where(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned)).ThenInclude(userSpaceRelationship => userSpaceRelationship.TargetSpace);
 
             if (TryGetUserId(out Guid userId))
             {

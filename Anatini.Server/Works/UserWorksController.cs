@@ -107,47 +107,47 @@ namespace Anatini.Server.Works
 
                 if (query.Bookmarked == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasBookmarked));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasBookmarked));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasStarred));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasStarred));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasDismissed));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasDismissed));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsDismissed));
                 }
 
                 if (query.Collected == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasCollected));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsCollected));
                 }
                 else if (query.Collected == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.HasCollected));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsCollected));
                 }
 
                 if (query.Followed == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.HasFollowed));
+                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
                 else if (query.Followed == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.HasFollowed));
+                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
             }
             else
@@ -174,42 +174,42 @@ namespace Anatini.Server.Works
         [HttpPost("{workHandle}/bookmark")]
         public async Task<IActionResult> PostWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasBookmarked);
+            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/bookmark")]
         public async Task<IActionResult> DeleteWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasBookmarked);
+            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/star")]
         public async Task<IActionResult> PostWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasStarred);
+            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/star")]
         public async Task<IActionResult> DeleteWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasStarred);
+            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/dismiss")]
         public async Task<IActionResult> PostWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasDismissed);
+            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/dismiss")]
         public async Task<IActionResult> DeleteWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.HasDismissed);
+            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         private async Task<IActionResult> AddUserWorkRelationship(ApplicationDbContext context, Guid workId, UserContentRelationshipLabel label)

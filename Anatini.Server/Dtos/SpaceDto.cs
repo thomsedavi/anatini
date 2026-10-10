@@ -6,6 +6,8 @@
         public required string Name { get; set; }
         public string? About { get; set; }
         public required string Handle { get; set; }
+        public ImageDto? IconImage { get; set; }
+        public bool? IsOwned { get; set; }
     }
 
     public class SpaceHeaderDto

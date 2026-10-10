@@ -18,28 +18,28 @@ namespace Anatini.Server.Users
         [HttpPost("trust")]
         public async Task<IActionResult> PostUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasTrusted);
+            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.IsTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("trust")]
         public async Task<IActionResult> DeleteUserTrust(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasTrusted);
+            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.IsTrusted);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpPost("follow")]
         public async Task<IActionResult> PostUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasFollowed);
+            return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.IsFollowed);
         });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("follow")]
         public async Task<IActionResult> DeleteUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.HasFollowed);
+            return await DeleteUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.IsFollowed);
         });
 
         private async Task<IActionResult> AddUserUserRelationship(ApplicationDbContext context, Guid targetUserId, UserUserRelationshipLabel label)

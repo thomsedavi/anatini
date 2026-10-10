@@ -1,19 +1,22 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 
 namespace Anatini.Server.Spaces.Extensions
 {
     public static class SpaceExtensions
     {
-        public static SpaceDto ToSpaceDto(this Space space)
+        public static async Task<SpaceDto> ToSpaceDtoAsync(this Space space, bool isAuthenticated, IBlobService? blobService = null)
         {
             return new SpaceDto
             {
                 Id = space.Id,
                 Name = space.Name,
                 About = space.About,
-                Handle = space.Handle
+                Handle = space.Handle,
+                IconImage = await space.GetIconImageAsync(blobService),
+                IsOwned = isAuthenticated ? space.UserRelationships.Any(userRelationship => userRelationship.Label == UserSpaceRelationshipLabel.IsOwned) : null
             };
         }
 

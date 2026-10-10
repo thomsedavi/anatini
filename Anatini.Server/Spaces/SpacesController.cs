@@ -22,7 +22,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetSpace(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            return Ok(space.ToSpaceDto());
+            return Ok(await space.ToSpaceDtoAsync(IsAuthenticated, blobService));
         });
 
         [Authorize]
@@ -91,20 +91,20 @@ namespace Anatini.Server.Spaces
             return await Task.FromResult(Ok($"TODO Image Result for {imageHandle}"));
         });
 
-        [Authorize(Policy = "IsTrusted")]
-        [HttpPost]
-        [Consumes(MediaTypeNames.Multipart.FormData)]
-        [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountAsync(async (user) =>
-        {
-            var space = Context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
-            await Context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetSpace), new { spaceId = createSpace.Handle }, space.ToSpaceDto());
-        });
+        //[Authorize(Policy = "IsTrusted")]
+        //[HttpPost]
+        //[Consumes(MediaTypeNames.Multipart.FormData)]
+        //[Produces(MediaTypeNames.Application.Json)]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status409Conflict)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountAsync(async (user) =>
+        //{
+        //    var space = Context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
+        //    await Context.SaveChangesAsync();
+        //
+        //    return CreatedAtAction(nameof(GetSpace), new { spaceId = createSpace.Handle }, space.ToSpaceDto());
+        //});
     }
 }

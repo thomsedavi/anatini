@@ -10,9 +10,9 @@
         public DateTime PublishedAtNz { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
         public SpaceHeaderDto? SpaceHeader { get; set; }
-        public bool? HasBookmarked { get; set; }
-        public bool? HasStarred { get; set; }
-        public bool? HasDismissed { get; set; }
-        public bool? HasCollected { get; set; }
+        public bool? IsBookmarked { get; set; }
+        public bool? IsStarred { get; set; }
+        public bool? IsDismissed { get; set; }
+        public bool? IsCollected { get; set; }
     }
 }

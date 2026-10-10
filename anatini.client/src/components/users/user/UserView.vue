@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Post, Status, StatusActions, Tab, User, Work } from '@/common/types';
+  import type { APIResponse, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
@@ -17,6 +17,7 @@
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
+  const spaces = ref<Space[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserPost', 'UserPostCreate', 'UserPostEdit'] },
@@ -99,24 +100,24 @@
   }
 
   function toggleTrust(): void {
-    if (user.value.data?.hasTrusted === true) {
+    if (user.value.data?.isTrusted === true) {
       const input = `users/${route.params.userId}/trust`;
 
       const statusActions: StatusActions = {
         204: () => {
-          if (user.value.data !== undefined) user.value.data.hasTrusted = false;
+          if (user.value.data !== undefined) user.value.data.isTrusted = false;
         }
       }
 
       const init: RequestInit = { method: "DELETE" };
 
       apiFetchAuthenticated({ input, statusActions, init });
-    } else if (user.value.data?.hasTrusted === false) {
+    } else if (user.value.data?.isTrusted === false) {
       const input = `users/${route.params.userId}/trust`;
 
       const statusActions: StatusActions = {
         201: () => {
-          if (user.value.data !== undefined) user.value.data.hasTrusted = true;
+          if (user.value.data !== undefined) user.value.data.isTrusted = true;
         }
       }
 
@@ -127,24 +128,24 @@
   }
 
   function toggleFollow(): void {
-    if (user.value.data?.hasFollowed === true) {
+    if (user.value.data?.isFollowed === true) {
       const input = `users/${route.params.userId}/follow`;
 
       const statusActions: StatusActions = {
         204: () => {
-          if (user.value.data !== undefined) user.value.data.hasFollowed = false;
+          if (user.value.data !== undefined) user.value.data.isFollowed = false;
         }
       }
 
       const init: RequestInit = { method: "DELETE" };
 
       apiFetchAuthenticated({ input, statusActions, init });
-    } else if (user.value.data?.hasFollowed === false) {
+    } else if (user.value.data?.isFollowed === false) {
       const input = `users/${route.params.userId}/follow`;
 
       const statusActions: StatusActions = {
         201: () => {
-          if (user.value.data !== undefined) user.value.data.hasFollowed = true;
+          if (user.value.data !== undefined) user.value.data.isFollowed = true;
         }
       }
 
@@ -160,6 +161,10 @@
 
   function handleUpdateWorks(newWorks: Work[]): void {
     works.value = newWorks;
+  }
+
+  function handleUpdateSpaces(newSpaces: Space[]): void {
+    spaces.value = newSpaces;
   }
 
   function handleUpdateErrors(newInputErrors: InputError[]): void {
@@ -215,12 +220,12 @@
       <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
       </section>
 
-      <menu v-if="store.userId !== user.data.id && (user.data.hasTrusted !== null || user.data.hasFollowed !== null)">
-        <li v-if="user.data.hasTrusted !== null">
-          <button type="button" :aria-pressed="user.data.hasTrusted" @click="toggleTrust">{{ user.data.hasTrusted ? "Remove Trust" : "Trust" }}</button>
+      <menu v-if="store.userId !== user.data.id && (user.data.isTrusted !== null || user.data.isFollowed !== null)">
+        <li v-if="user.data.isTrusted !== null">
+          <button type="button" :aria-pressed="user.data.isTrusted" @click="toggleTrust">{{ user.data.isTrusted ? "Remove Trust" : "Trust" }}</button>
         </li>
-        <li v-if="user.data.hasFollowed !== null">
-          <button type="button" :aria-pressed="user.data.hasFollowed" @click="toggleFollow">{{ user.data.hasFollowed ? "Remove Follow" : "Follow" }}</button>
+        <li v-if="user.data.isFollowed !== null">
+          <button type="button" :aria-pressed="user.data.isFollowed" @click="toggleFollow">{{ user.data.isFollowed ? "Remove Follow" : "Follow" }}</button>
         </li>
       </menu>
     </template>
@@ -244,11 +249,13 @@
           :data-input-errors="inputErrors"
           :data-posts="posts"
           :data-works="works"
+          :data-spaces="spaces"
           :data-user-id="user.data.id"
           :data-user-handle="user.data.handle"
           :data-user-name="user.data.name"
           @update-posts="handleUpdatePosts"
           @update-works="handleUpdateWorks"
+          @update-spaces="handleUpdateSpaces"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>

@@ -21,10 +21,10 @@ namespace Anatini.Server.Works
                 Article = work.Article,
                 Visibility = work.Visibility.ToString(),
                 PublishedAtNz = work.PublishedAtNz,
-                HasBookmarked = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasBookmarked) : null,
-                HasDismissed = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasDismissed) : null,
-                HasStarred = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasStarred) : null,
-                HasCollected = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.HasCollected) : null
+                IsBookmarked = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? work.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
             };
         }
     }

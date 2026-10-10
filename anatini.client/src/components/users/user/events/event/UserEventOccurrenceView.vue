@@ -41,24 +41,24 @@
   }
 
   function toggleBookmark(): void {
-    if (eventOccurrence.value.data?.hasBookmarked === true) {
+    if (eventOccurrence.value.data?.isBookmarked === true) {
       const input = `users/${route.params.userId}/events/${route.params.eventId}/instances/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         204: () => {
-          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.hasBookmarked = false;
+          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.isBookmarked = false;
         }
       }
 
       const init: RequestInit = { method: "DELETE" };
 
       apiFetchAuthenticated({ input, statusActions, init });
-    } else if (eventOccurrence.value.data?.hasBookmarked === false) {
+    } else if (eventOccurrence.value.data?.isBookmarked === false) {
       const input = `users/${route.params.userId}/events/${route.params.eventId}/instances/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         201: () => {
-          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.hasBookmarked = true;
+          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.isBookmarked = true;
         }
       }
 
@@ -86,7 +86,7 @@
           </nav>
           <menu>
             <li>
-              <button type="button" :aria-pressed="eventOccurrence.data.hasBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
+              <button type="button" :aria-pressed="eventOccurrence.data.isBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
             </li>
           </menu>
         </footer>
