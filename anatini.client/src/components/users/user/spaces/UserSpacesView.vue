@@ -1,7 +1,12 @@
 <script setup lang="ts">
-  import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import { onMounted } from 'vue';
   import type { Space, StatusActions } from '@/common/types';
+  import { onMounted } from 'vue';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { useRouter } from 'vue-router';
+  import { handleClick } from '@/common/utils';
+  import { getSpaceHtml } from '@/common/html';
+
+  const router = useRouter();
 
   const props = defineProps<{
     dataUserId: string,
@@ -37,5 +42,14 @@
       <h2>Spaces</h2>
       <RouterLink :to="{ name: 'UserSpaceCreate' }">+ Create Space</RouterLink>
     </header>
+
+    <ul role="list" v-if="dataSpaces !== null">
+      <li v-for="space in dataSpaces" :key="'post' + space.id">
+        <article v-html="getSpaceHtml(space)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        </article>
+      </li>
+    </ul>
+
+    <p v-else>You do not have any posts</p>
   </section>
 </template>

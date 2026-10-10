@@ -1,7 +1,7 @@
 import { apiFetchAuthenticated } from "./apiFetch";
 import { formatLong } from "./dateUtils";
 import { store } from "./store";
-import type { Content, Post, StatusActions, Work } from "./types";
+import type { Content, Post, Space, StatusActions, Work } from "./types";
 
 function getFooterHtml(content: Content): string {
   let result = '';
@@ -21,6 +21,18 @@ function getFooterHtml(content: Content): string {
   return result;
 }
 
+export function getSpaceHtml(space: Space): string {
+  let result = '';
+
+  result += `<header><h3>${space.name}</h3></header>`;
+
+  if (space.about !== null) {
+    result += space.about
+  }
+
+  return result;
+}
+
 export function getPostHtml(post: Post): string {
   let result = '';
 
@@ -28,7 +40,7 @@ export function getPostHtml(post: Post): string {
 
   result += post.article;
 
- result += getFooterHtml(post);
+  result += getFooterHtml(post);
 
   return result;
 }
