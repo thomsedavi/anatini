@@ -24,7 +24,7 @@ function getFooterHtml(content: Content): string {
 export function getSpaceHtml(space: Space): string {
   let result = '';
 
-  result += `<header><h3>${space.name}</h3></header>`;
+  result += `<header><h3><a href="/spaces/${space.handle}">${space.name}</a></h3></header>`;
 
   if (space.about !== null) {
     result += space.about
@@ -51,9 +51,9 @@ export function getWorkHtml(work: Work): string {
   result += '<header>';
 
   if (work.userHeader !== null) {
-    result += `<h3><a href="/users/${work.userHeader.handle}"/work/${work.handle}>${work.name}</a></h3>`;
+    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${work.name}</a></h3>`;
   } else if (work.spaceHeader !== null) {
-    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/work/${work.handle}>${work.name}</a></h3>`;
+    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${work.name}</a></h3>`;
   }
 
   result += '<address role="presentation">';

@@ -215,7 +215,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'posts',
         component: SpacePostsView,
-        name: 'SpacePostPosts'
+        name: 'SpacePosts'
       },
       // {
       //   path: 'events/create',
