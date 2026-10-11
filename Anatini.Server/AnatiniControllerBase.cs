@@ -16,18 +16,23 @@ namespace Anatini.Server
     public class AnatiniControllerBase(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : ControllerBase
     {
         public bool IsAuthenticated => User.Identity?.IsAuthenticated ?? false;
-
-        public bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
-        public string NormalizeHandle(string handle) => handle.ToLower();
-        public string? NormalizeHandleOrNull(string? handle) => handle != null ? NormalizeHandle(handle) : null;
-        public string NormalizeName(string name) => userManager.NormalizeName(name);
-        public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
         private IActionResult CannotReadResponse() => IsAuthenticated ? Forbid() : Unauthorized();
 
         public ApplicationDbContext Context => context;
         public UserManager<ApplicationUser> UserManager => userManager;
         public IBlobService BlobService => blobService;
         private IAuthorizationService AuthorizationService => HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+
+        [NonAction]
+        public bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        [NonAction]
+        public string NormalizeHandle(string handle) => handle.ToLower();
+        [NonAction]
+        public string? NormalizeHandleOrNull(string? handle) => handle != null ? NormalizeHandle(handle) : null;
+        [NonAction]
+        public string NormalizeName(string name) => userManager.NormalizeName(name);
+        [NonAction]
+        public string NormalizeEmail(string email) => userManager.NormalizeEmail(email);
 
         [NonAction]
         public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
