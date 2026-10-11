@@ -9,8 +9,8 @@ namespace Anatini.Server.Spaces
         [MaxLength(256)]
         public required string Name { get; set; }
 
-        [Handle, MaxLength(256)]
-        public required string Handle { get; set; }
+        [Handle(nullable: true), MaxLength(256)]
+        public string? Handle { get; set; }
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }

@@ -25,8 +25,8 @@
 
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputPostHandle = ref<string>('');
-  const inputPostPublishedAtNz = ref<string>('');
+  const inputHandle = ref<string>('');
+  const inputPublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
@@ -62,12 +62,12 @@
     body.append('article', formatParagraphs(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
-    if (tidy(inputPostHandle.value) !== '') {
-      body.append('handle', tidy(inputPostHandle.value));
+    if (tidy(inputHandle.value) !== '') {
+      body.append('handle', tidy(inputHandle.value));
     }
 
-    if (inputPostPublishedAtNz.value !== '') {
-      body.append('publishedAtNz', inputPostPublishedAtNz.value);
+    if (inputPublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputPublishedAtNz.value);
     }
 
     const init = { method: "POST", body: body };
@@ -96,16 +96,16 @@
       <VisibilitySelect v-model="inputVisibility" />
 
       <InputText
-        v-model="inputPostHandle"
+        v-model="inputHandle"
         label="Handle"
         name="handle"
         id="handle"
         :maxlength="64"
-        help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
+        help="lower case with hyphens (e.g. 'my-anatini-post'), optional custom web address"
         :error="getError('handle')" />
 
       <InputText
-        v-model="inputPostPublishedAtNz"
+        v-model="inputPublishedAtNz"
         type="datetime-local"
         label="Date & Time (NZ)"
         name="publishedAtNz"

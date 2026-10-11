@@ -4,7 +4,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class SpaceContextExtensions
     {
-        public static Space AddSpace(this ApplicationDbContext context, Guid userId, string handle, string name, Visibility visibility)
+        public static Space AddSpace(this ApplicationDbContext context, Guid userId, string name, Visibility visibility, string? handle = null)
         {
             var spaceId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = Guid.CreateVersion7(),
                 SpaceId = spaceId,
-                Handle = handle,
+                Handle = handle ?? spaceId.ToString(),
                 CreatedAtUtc = utcNow
             };
 
@@ -29,7 +29,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = spaceId,
                 Name = name,
-                Handle = handle,
+                Handle = handle ?? spaceId.ToString(),
                 Visibility = visibility,
                 Handles = [spaceHandle],
                 UserRelationships = [userSpaceRelationship],

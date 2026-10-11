@@ -1,10 +1,14 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import type { InputError, Space, Status, StatusActions } from '@/common/types';
+  import type { InputError, Space, Status, StatusActions, Visibility } from '@/common/types';
   import { tidy } from '@/common/utils';
   import InputText from '@/common/InputText.vue';
   import SubmitButton from '@/common/SubmitButton.vue';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+
+  const router = useRouter();
 
   const props = defineProps<{
     dataUserId: string,
@@ -18,6 +22,8 @@
   }>();
 
   const inputName = ref<string>('');
+  const inputVisibility = ref<Visibility>('Public');
+  const inputHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
@@ -48,7 +54,7 @@
       201: (response?: Response) => {
           response?.json()
             .then((value: Space) => {
-              console.log('value', value);
+              router.push({ name: 'Space', params: { spaceId: value.handle } });
             });
       },
       400: () => {
@@ -59,6 +65,11 @@
     const body = new FormData();
 
     body.append('name', tidiedName);
+    body.append('visibility', inputVisibility.value);
+
+    if (tidy(inputHandle.value) !== '') {
+      body.append('handle', tidy(inputHandle.value));
+    }
 
     const init = { method: "POST", body: body };
 
@@ -82,6 +93,17 @@
         :required="true"
         help="The name of your space"
         :error="getError('name')" />
+
+      <VisibilitySelect v-model="inputVisibility" />
+
+      <InputText
+        v-model="inputHandle"
+        label="Handle"
+        name="handle"
+        id="handle"
+        :maxlength="64"
+        help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
+        :error="getError('handle')" />
 
       <SubmitButton
         :busy="dataStatus === 'pending'"

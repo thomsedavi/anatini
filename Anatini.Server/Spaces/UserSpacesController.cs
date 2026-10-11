@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
+using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Spaces.Extensions;
@@ -15,7 +16,24 @@ namespace Anatini.Server.Spaces
     [Route("api/users/{userHandle}/spaces")]
     public class UserSpacesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [Authorize]
+        [HttpPost]
+        [Authorize(Policy = "IsTrusted")]
+        [Consumes(MediaTypeNames.Multipart.FormData)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostSpace(string userHandle, [FromForm] CreateSpace createSpace) => await UsingUserAsync(userHandle, async (user) =>
+        {
+            var space = Context.AddSpace(user.Id, createSpace.Name, createSpace.Visibility, NormalizeHandleOrNull(createSpace.Handle));
+
+            await Context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(SpacesController.GetSpace), new { spaceHandle = space.Handle }, await space.ToSpaceDtoAsync(IsAuthenticated, BlobService));
+        }, new ContextSettings { AccessRequired = true });
+
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]

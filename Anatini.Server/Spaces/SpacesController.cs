@@ -1,10 +1,10 @@
 ﻿using System.Net.Mime;
-using Anatini.Server.Spaces.Extensions;
 using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
 using Anatini.Server.Images.Services;
+using Anatini.Server.Spaces.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -90,21 +90,5 @@ namespace Anatini.Server.Spaces
         {
             return await Task.FromResult(Ok($"TODO Image Result for {imageHandle}"));
         });
-
-        //[Authorize(Policy = "IsTrusted")]
-        //[HttpPost]
-        //[Consumes(MediaTypeNames.Multipart.FormData)]
-        //[Produces(MediaTypeNames.Application.Json)]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
-        //[ProducesResponseType(StatusCodes.Status409Conflict)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> PostSpace([FromForm] CreateSpace createSpace) => await UsingAccountAsync(async (user) =>
-        //{
-        //    var space = Context.AddSpace(user.Id, NormalizeHandle(createSpace.Handle), createSpace.Name, createSpace.Visibility);
-        //    await Context.SaveChangesAsync();
-        //
-        //    return CreatedAtAction(nameof(GetSpace), new { spaceId = createSpace.Handle }, space.ToSpaceDto());
-        //});
     }
 }
