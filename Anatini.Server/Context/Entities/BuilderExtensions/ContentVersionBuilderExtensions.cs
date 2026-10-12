@@ -13,7 +13,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
 
             contentVersionBuilder.Property(contentVersion => contentVersion.ContentId).Has(order: 0);
             contentVersionBuilder.Property(contentVersion => contentVersion.VersionNumber).Has(order: 1);
-            contentVersionBuilder.Property(contentVersion => contentVersion.Article)!.Has(order: 2);
+            contentVersionBuilder.Property(contentVersion => contentVersion.Body)!.Has(order: 2);
             contentVersionBuilder.Property(contentVersion => contentVersion.ConcurrencyStamp)!.Has(order: 3);
             contentVersionBuilder.Property(contentVersion => contentVersion.CreatedAtUtc).Has(order: 4);
             contentVersionBuilder.Property(contentVersion => contentVersion.UpdatedAtUtc).Has(order: 5);

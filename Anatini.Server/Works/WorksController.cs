@@ -78,12 +78,12 @@ namespace Anatini.Server.Works
                 worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
             }
 
-            if (query.LastName != null && query.LastWorkId.HasValue)
+            if (query.LastTitle != null && query.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id < query.LastWorkId.Value));
+                worksQuery = worksQuery.Where(work => string.Compare(work.Title, query.LastTitle) > 0 || (work.Title == query.LastTitle && work.Id < query.LastWorkId.Value));
             }
 
-            var works = await worksQuery.OrderBy(work => work.Name).ThenByDescending(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var works = await worksQuery.OrderBy(work => work.Title).ThenByDescending(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (works == null)
             {

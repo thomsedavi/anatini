@@ -11,7 +11,7 @@ namespace Anatini.Server.Events
             return new EventOccurrenceDto
             {
                 Id = eventSeries.Id,
-                Name = eventSeries.Name ?? throw new InvalidOperationException()
+                Title = eventSeries.Title ?? throw new InvalidOperationException()
             };
         }
 
@@ -23,8 +23,8 @@ namespace Anatini.Server.Events
                 Handle = eventInstance.Handle,
                 StartsAtNz = eventInstance.StartsAtNz,
                 EndsAtNz = eventInstance.EndsAtNz,
-                Name = eventInstance.Name,
-                Article = eventInstance.Article,
+                Title = eventInstance.Title,
+                Body = eventInstance.Body,
                 HasBookmarked = isAuthenticated ? eventInstance.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventInstanceRelationshipLabel.HasBookmarked) : null
             };
         }

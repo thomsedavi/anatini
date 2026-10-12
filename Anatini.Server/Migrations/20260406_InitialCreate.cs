@@ -140,6 +140,25 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "space_settings",
+                columns: table => new
+                {
+                    space_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    key = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_space_settings", x => new { x.space_id, x.key });
+                    table.ForeignKey(
+                        name: "fk_space_settings_spaces_space_id",
+                        column: x => x.space_id,
+                        principalTable: "spaces",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "contents",
                 columns: table => new
                 {
@@ -151,15 +170,15 @@ namespace Anatini.Server.Migrations
                     status = table.Column<int>(type: "integer", nullable: false),
                     published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    article = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    body = table.Column<string>(type: "text", nullable: false),
                     current_version_number = table.Column<int>(type: "integer", nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
                         .Annotation("Npgsql:TsVectorConfig", "english")
-                        .Annotation("Npgsql:TsVectorProperties", new[] { "name", "article" })
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "title", "body" })
                 },
                 constraints: table =>
                 {
@@ -443,7 +462,7 @@ namespace Anatini.Server.Migrations
                 {
                     content_id = table.Column<Guid>(type: "uuid", nullable: false),
                     version_number = table.Column<int>(type: "integer", nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false),
+                    body = table.Column<string>(type: "text", nullable: false),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: false),
                     created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -549,7 +568,7 @@ namespace Anatini.Server.Migrations
                     target_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
                     override_header = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    override_article = table.Column<string>(type: "text", nullable: true),
+                    override_body = table.Column<string>(type: "text", nullable: true),
                     override_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
                     override_ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
@@ -576,8 +595,8 @@ namespace Anatini.Server.Migrations
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     visibility = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    article = table.Column<string>(type: "text", nullable: false),
+                    title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    body = table.Column<string>(type: "text", nullable: false),
                     starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
@@ -658,9 +677,9 @@ namespace Anatini.Server.Migrations
                 filter: "published_at_nz IS NOT NULL AND status = 1");
 
             migrationBuilder.CreateIndex(
-                name: "ix_published_works_name",
+                name: "ix_published_works_title",
                 table: "contents",
-                column: "name",
+                column: "title",
                 filter: "type = 2 AND status = 1");
 
             migrationBuilder.CreateIndex(
@@ -829,6 +848,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "space_images");
+
+            migrationBuilder.DropTable(
+                name: "space_settings");
 
             migrationBuilder.DropTable(
                 name: "user_claims");

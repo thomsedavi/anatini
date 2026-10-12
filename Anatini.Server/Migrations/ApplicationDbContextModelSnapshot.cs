@@ -626,10 +626,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("Article")
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("article")
+                        .HasColumnName("body")
                         .HasColumnOrder(9);
 
                     b.Property<string>("ConcurrencyStamp")
@@ -656,12 +656,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("name")
-                        .HasColumnOrder(8);
-
                     b.Property<DateTime?>("PublishedAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("published_at_nz")
@@ -673,7 +667,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("tsvector")
                         .HasColumnName("search_vector")
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
-                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name", "Article" });
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Title", "Body" });
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
@@ -684,6 +678,12 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status")
                         .HasColumnOrder(5);
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("Type")
                         .HasColumnType("integer")
@@ -707,10 +707,6 @@ namespace Anatini.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .HasDatabaseName("ix_published_works_name")
-                        .HasFilter("type = 2 AND status = 1");
-
                     b.HasIndex("PublishedAtNz")
                         .HasDatabaseName("ix_published_contents_date_nz")
                         .HasFilter("published_at_nz IS NOT NULL AND status = 1");
@@ -719,6 +715,10 @@ namespace Anatini.Server.Migrations
                         .HasDatabaseName("ix_contents_search_vector");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
+
+                    b.HasIndex("Title")
+                        .HasDatabaseName("ix_published_works_title")
+                        .HasFilter("type = 2 AND status = 1");
 
                     b.HasIndex("SpaceId", "Type", "Handle")
                         .IsUnique()
@@ -799,10 +799,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("version_number")
                         .HasColumnOrder(1);
 
-                    b.Property<string>("Article")
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("article")
+                        .HasColumnName("body")
                         .HasColumnOrder(2);
 
                     b.Property<string>("ConcurrencyStamp")
@@ -844,9 +844,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("is_cancelled")
                         .HasColumnOrder(2);
 
-                    b.Property<string>("OverrideArticle")
+                    b.Property<string>("OverrideBody")
                         .HasColumnType("text")
-                        .HasColumnName("override_article")
+                        .HasColumnName("override_body")
                         .HasColumnOrder(4);
 
                     b.Property<TimeSpan?>("OverrideDuration")
@@ -884,10 +884,10 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("Article")
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("article")
+                        .HasColumnName("body")
                         .HasColumnOrder(8);
 
                     b.Property<DateTime>("EndsAtNz")
@@ -907,13 +907,6 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("name")
-                        .HasColumnOrder(7);
-
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
                         .HasColumnName("space_id")
@@ -928,6 +921,13 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status")
                         .HasColumnOrder(5);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title")
+                        .HasColumnOrder(7);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
@@ -1160,6 +1160,32 @@ namespace Anatini.Server.Migrations
                         .HasName("pk_space_images");
 
                     b.ToTable("space_images", (string)null);
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.SpaceSetting", b =>
+                {
+                    b.Property<Guid>("SpaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("space_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("key")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("value")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("SpaceId", "Key")
+                        .HasName("pk_space_settings");
+
+                    b.ToTable("space_settings", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
@@ -1531,6 +1557,18 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Space");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.SpaceSetting", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
+                        .WithMany("SpaceSettings")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_space_settings_spaces_space_id");
+
+                    b.Navigation("Space");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Content", null)
@@ -1626,6 +1664,8 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Logs");
+
+                    b.Navigation("SpaceSettings");
 
                     b.Navigation("UserRelationships");
                 });

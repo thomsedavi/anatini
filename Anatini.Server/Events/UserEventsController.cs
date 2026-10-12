@@ -22,7 +22,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostEventSeries(string userHandle, [FromForm] CreateEvent createEvent) => await UsingUserAsync(userHandle, async (user) =>
         {
-            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createEvent.Article);
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createEvent.Body);
             
             if (validationResult.ErrorMessage != null)
             {

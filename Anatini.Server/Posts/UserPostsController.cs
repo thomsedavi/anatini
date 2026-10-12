@@ -25,7 +25,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost(string userHandle, [FromForm] CreatePost createPost) => await UsingUserAsync(userHandle, async (user) =>
         {
-            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Body);
 
             if (validationResult.ErrorMessage != null)
             {
@@ -36,7 +36,7 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddUserPostAsync(createPost.Name, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
+            var post = Context.AddUserPostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 
@@ -81,9 +81,9 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchPost(string userHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
         {
-            if (updatePost.Article != null)
+            if (updatePost.Body != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updatePost.Article);
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updatePost.Body);
 
                 if (validationResult.ErrorMessage != null)
                 {
@@ -94,7 +94,7 @@ namespace Anatini.Server.Posts
                     return BadRequest(new { error = "Unknown error" });
                 }
 
-                post.Article = validationResult.SanitizedHtml;
+                post.Body = validationResult.SanitizedHtml;
             }
 
             if (updatePost.PublishedAtNz.HasValue)

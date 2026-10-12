@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventExceptionBuilder.Property(eventException => eventException.TargetStartsAtNz).Has(order: 1);
             eventExceptionBuilder.Property(eventException => eventException.IsCancelled).Has(order: 2);
             eventExceptionBuilder.Property(eventException => eventException.OverrideHeader).Has(maxLength: 255, order: 3);
-            eventExceptionBuilder.Property(eventException => eventException.OverrideArticle).Has(order: 4);
+            eventExceptionBuilder.Property(eventException => eventException.OverrideBody).Has(order: 4);
             eventExceptionBuilder.Property(eventException => eventException.OverrideStartsAtNz).Has(order: 5);
             eventExceptionBuilder.Property(eventException => eventException.OverrideDuration).Has(order: 6);
             eventExceptionBuilder.Property(eventException => eventException.OverrideEndsAtNz).Has(order: 7);

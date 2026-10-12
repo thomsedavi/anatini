@@ -64,7 +64,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Article);
+            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Body);
 
             if (validationResult.ErrorMessage != null)
             {
@@ -75,7 +75,7 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddSpacePostAsync(createPost.Name, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
+            var post = Context.AddSpacePostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
 
             await Context.SaveChangesAsync();
 
@@ -93,9 +93,9 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchPost(string spaceHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
         {
-            if (updatePost.Article != null)
+            if (updatePost.Body != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updatePost.Article);
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updatePost.Body);
 
                 if (validationResult.ErrorMessage != null)
                 {
@@ -106,7 +106,7 @@ namespace Anatini.Server.Posts
                     return BadRequest(new { error = "Unknown error" });
                 }
 
-                post.Article = validationResult.SanitizedHtml;
+                post.Body = validationResult.SanitizedHtml;
             }
 
             if (updatePost.PublishedAtNz.HasValue)

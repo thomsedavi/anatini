@@ -18,6 +18,16 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<SpaceImage> Images { get; set; } = [];
         public virtual ICollection<Content> Contents { get; set; } = [];
         public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
+        public virtual ICollection<SpaceSetting> SpaceSettings { get; set; } = [];
+    }
+
+    public class SpaceSetting
+    {
+        public required Guid SpaceId { get; set; }
+        public required string Key { get; set; }
+        public required string Value { get; set; }
+
+        public virtual Space Space { get; set; } = null!;
     }
 
     public class SpaceHandle

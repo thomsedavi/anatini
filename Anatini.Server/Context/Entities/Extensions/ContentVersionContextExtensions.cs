@@ -7,17 +7,17 @@ namespace Anatini.Server.Context.Entities.Extensions
     public static class ContentVersionContextExtensions
     {
         // TODO this is outdated for now but might be useful later on
-        public static Content AddContentVersion(this ApplicationDbContext context, Guid contentId, string? name, string? handle, Guid spaceId)
+        public static Content AddContentVersion(this ApplicationDbContext context, Guid contentId, string? title, string? handle, Guid spaceId)
         {
             var utcNow = DateTime.UtcNow;
         
-            var article = new XElement("article", new XElement("header", new XElement("h1", new XAttribute("tabindex", -1), name)));
+            var body = new XElement("article", new XElement("header", new XElement("h1", new XAttribute("tabindex", -1), title)));
         
             var draftVersion = new ContentVersion
             {
                 VersionNumber = 0,
                 ContentId = contentId,
-                Article = article.ToString(SaveOptions.DisableFormatting),
+                Body = body.ToString(SaveOptions.DisableFormatting),
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow
@@ -33,8 +33,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Status = Status.Draft,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 PublishedAtNz = utcNow.ConvertUtcToNz().Truncate(),
-                Name = name,
-                Article = article.ToString(SaveOptions.DisableFormatting),
+                Title = title,
+                Body = body.ToString(SaveOptions.DisableFormatting),
                 Visibility = Visibility.Public,
                 Versions = [draftVersion],
                 CreatedAtUtc = utcNow,

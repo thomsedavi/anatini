@@ -26,12 +26,12 @@ namespace Anatini.Server.Works
 
     public class UpdateWork
     {
-        public string? Article { get; set; }
+        public string? Body { get; set; }
     }
 
     public class WorksQuery
     {
-        public string? LastName { get; set; }
+        public string? LastTitle { get; set; }
         public Guid? LastWorkId { get; set; }
         public int? PageSize { get; set; }
         public string? Bookmarked { get; set; }

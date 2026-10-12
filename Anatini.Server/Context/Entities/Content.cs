@@ -13,8 +13,8 @@ namespace Anatini.Server.Context.Entities
         public DateTime? PublishedAtNz { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
-        public string? Name { get; set; }
-        public required string Article { get; set; }
+        public string? Title { get; set; }
+        public required string Body { get; set; }
         public NpgsqlTsVector SearchVector { get; set; } = null!;
         public int? CurrentVersionNumber { get; set; }
         public required string ConcurrencyStamp { get; set; }
@@ -54,7 +54,7 @@ namespace Anatini.Server.Context.Entities
         public required DateTime TargetStartsAtNz { get; set; }
         public required bool IsCancelled { get; set; }
         public string? OverrideHeader { get; set; }
-        public string? OverrideArticle { get; set; }
+        public string? OverrideBody { get; set; }
         public DateTime? OverrideStartsAtNz { get; set; }
         public TimeSpan? OverrideDuration { get; set; }
         public DateTime? OverrideEndsAtNz { get; set; }
@@ -71,8 +71,8 @@ namespace Anatini.Server.Context.Entities
         public required string Handle { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
-        public required string Name { get; set; }
-        public required string Article { get; set; }
+        public required string Title { get; set; }
+        public required string Body { get; set; }
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }
 
@@ -86,7 +86,7 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid ContentId { get; set; }
         public required int VersionNumber { get; set; }
-        public required string Article { get; set; }
+        public required string Body { get; set; }
         public required string ConcurrencyStamp { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }

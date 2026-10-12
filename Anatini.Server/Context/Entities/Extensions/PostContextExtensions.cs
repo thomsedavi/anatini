@@ -5,7 +5,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class PostContextExtensions
     {
-        public static Post AddUserPostAsync(this ApplicationDbContext context, string? name, string article, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Post AddUserPostAsync(this ApplicationDbContext context, string? title, string body, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var postId = Guid.CreateVersion7();
         
@@ -23,8 +23,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Type = ContentType.Post,
                 Handle = handle ?? postId.ToString(),
                 PublishedAtNz = publishedatNz.Truncate(),
-                Name = name,
-                Article = article,
+                Title = title,
+                Body = body,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
@@ -37,7 +37,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return post;
         }
         
-        public static Post AddSpacePostAsync(this ApplicationDbContext context, string? name, string article, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Post AddSpacePostAsync(this ApplicationDbContext context, string? title, string body, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var postId = Guid.CreateVersion7();
         
@@ -55,8 +55,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Type = ContentType.Post,
                 Handle = handle ?? postId.ToString(),
                 PublishedAtNz = publishedatNz.Truncate(),
-                Name = name,
-                Article = article,
+                Title = title,
+                Body = body,
                 Visibility = visibility,
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),

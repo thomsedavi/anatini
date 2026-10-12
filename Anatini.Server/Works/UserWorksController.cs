@@ -56,9 +56,9 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PatchWork(string userHandle, string workHandle, [FromForm] UpdateWork updateWork) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            if (updateWork.Article != null)
+            if (updateWork.Body != null)
             {
-                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateWork.Article);
+                var validationResult = HtmlContentService.ValidateAndNormalizeHtml(updateWork.Body);
 
                 if (validationResult.ErrorMessage != null)
                 {
@@ -69,7 +69,7 @@ namespace Anatini.Server.Works
                     return BadRequest(new { error = "Unknown error" });
                 }
 
-                work.Article = validationResult.SanitizedHtml;
+                work.Body = validationResult.SanitizedHtml;
             }
 
             work.UpdatedAtUtc = DateTime.UtcNow;
@@ -155,12 +155,12 @@ namespace Anatini.Server.Works
                 worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
             }
 
-            if (query.LastName != null && query.LastWorkId.HasValue)
+            if (query.LastTitle != null && query.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(work => string.Compare(work.Name, query.LastName) > 0 || (work.Name == query.LastName && work.Id > query.LastWorkId.Value));
+                worksQuery = worksQuery.Where(work => string.Compare(work.Title, query.LastTitle) > 0 || (work.Title == query.LastTitle && work.Id > query.LastWorkId.Value));
             }
 
-            var works = await worksQuery.OrderBy(work => work.Name).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var works = await worksQuery.OrderBy(work => work.Title).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
 
             if (works == null)
             {

@@ -57,6 +57,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Space>().Configure();
             modelBuilder.Entity<SpaceHandle>().Configure();
             modelBuilder.Entity<SpaceImage>().Configure();
+            modelBuilder.Entity<SpaceSetting>().Configure();
 
             modelBuilder.Entity<Content>().Configure();
             modelBuilder.Entity<ContentVersion>().Configure();
