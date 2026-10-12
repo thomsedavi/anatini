@@ -36,7 +36,7 @@
 
   const monthlyRuleOptions = ref<SelectOption[]>([{ value: '', text: 'Please select a date first', disabled: true }]);
 
-  const inputEventName = ref<string>('');
+  const inputEventTitle = ref<string>('');
   const inputEventType = ref<'FixedTime' | 'AllDay' | 'Duration'>('FixedTime');
   const inputEventIsRecurring = ref<boolean>(false);
   const inputEventStartDate = ref<string>('');
@@ -136,13 +136,13 @@
   async function postEvent() {
     emit('update-errors', []);
 
-    const tidiedName = tidy(inputEventName.value);
+    const tidiedTitle = tidy(inputEventTitle.value);
     const byDays = getByDays();
 
     const inputErrors: InputError[] = [];
 
-    if (tidiedName === '') {
-      inputErrors.push({ id: 'name', message: 'Name is required' });
+    if (tidiedTitle === '') {
+      inputErrors.push({ id: 'title', message: 'Title is required' });
     }
 
     if (inputEventStartDate.value === '') {
@@ -195,7 +195,7 @@
 
     const body = new FormData();
 
-    body.append('name', tidiedName);
+    body.append('title', tidiedTitle);
 
     let startsAtNz = `${inputEventStartDate.value}T`;
 
@@ -283,14 +283,14 @@
         <legend>Event Information</legend>
 
         <InputText
-          v-model="inputEventName"
+          v-model="inputEventTitle"
           label="Name"
-          name="name"
-          id="name"
+          name="title"
+          id="title"
           :maxlength="256"
           :required="true"
-          help="The name of your event"
-          :error="getError('name')" />
+          help="The title of your event"
+          :error="getError('title')" />
 
         <InputText
           v-model="inputEventHandle"
