@@ -23,7 +23,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputArticle = ref<string>('');
+  const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputHandle = ref<string>('');
   const inputPublishedAtNz = ref<string>('');
@@ -35,8 +35,8 @@
   async function postPost() {
     emit('update-errors', []);
 
-    if (tidy(inputArticle.value) === '') {
-      emit('update-errors', [{ id: 'article', message: 'Content is required' }]);
+    if (tidy(inputBody.value) === '') {
+      emit('update-errors', [{ id: 'body', message: 'Content is required' }]);
 
       return;
     }
@@ -59,7 +59,7 @@
 
     const body = new FormData();
 
-    body.append('article', formatParagraphs(inputArticle.value));
+    body.append('body', formatParagraphs(inputBody.value));
     body.append('visibility', inputVisibility.value);
 
     if (tidy(inputHandle.value) !== '') {
@@ -84,12 +84,12 @@
 
     <form @submit.prevent="postPost" :action="`/api/users/${dataUserId}/posts`" method="POST" novalidate>
       <InputTextArea
-        v-model="inputArticle"
+        v-model="inputBody"
         label="Content"
-        name="article"
-        id="article"
+        name="body"
+        id="body"
         :maxLength="512"
-        :error="getError('article')"
+        :error="getError('body')"
         :isArticle="true"
         help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 

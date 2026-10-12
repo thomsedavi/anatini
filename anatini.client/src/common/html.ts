@@ -38,7 +38,7 @@ export function getPostHtml(post: Post): string {
 
   result += `<header><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
 
-  result += post.article;
+  result += post.body;
 
   result += getFooterHtml(post);
 
@@ -51,9 +51,9 @@ export function getWorkHtml(work: Work): string {
   result += '<header>';
 
   if (work.userHeader !== null) {
-    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${work.name}</a></h3>`;
+    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${work.title}</a></h3>`;
   } else if (work.spaceHeader !== null) {
-    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${work.name}</a></h3>`;
+    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${work.title}</a></h3>`;
   }
 
   result += '<address role="presentation">';
@@ -82,7 +82,7 @@ export function getWorkHtml(work: Work): string {
 
   result += '</header>';
 
-  result += work.article;
+  result += work.body;
 
   result += getFooterHtml(work);
 

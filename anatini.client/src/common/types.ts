@@ -86,7 +86,7 @@ export type Tab = {
 export type DraftPost = {
   id: string;
   defaultHandle: string;
-  name: string;
+  title: string;
   updatedDateTimeUTC: string;
 }
 
@@ -100,8 +100,8 @@ export type SpaceEdit = {
 };
 
 export type PostVersion = {
-  name: string;
-  article: string;
+  title: string;
+  body: string;
   dateNZ: string;
 }
 
@@ -116,7 +116,7 @@ export type PostEdit = {
 
 export type Event = {
   id: string;
-  name: string;
+  title: string;
 }
 
 export type EventOccurrence = {
@@ -124,8 +124,8 @@ export type EventOccurrence = {
   handle: string;
   startsAtUtc: string;
   endsAtUtc: string;
-  name: string;
-  article: string | null;
+  title: string;
+  body: string | null;
   url: string | null;
   isBookmarked: boolean | null;
 }
@@ -133,7 +133,7 @@ export type EventOccurrence = {
 export type Content = {
   id: string;  
   handle: string;
-  article: string;
+  body: string;
   isStarred: boolean | null;
   isBookmarked: boolean | null;
   isDismissed: boolean | null;
@@ -142,7 +142,7 @@ export type Content = {
 }
 
 export type Work = Content & {
-  name: string;
+  title: string;
   publishedAtNz: string | null;
 }
 

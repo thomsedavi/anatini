@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Image, InputError, Status, StatusActions } from '@/common/types';
-  import { formatParagraphs, parseFromArticleString, tidy } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, tidy } from '@/common/utils';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import SubmitButton from '@/common/SubmitButton.vue';
@@ -23,7 +23,7 @@
   }>();
 
   const inputUserName = ref<string>(props.dataName);
-  const inputUserAbout = ref<string>(props.dataAbout !== null ? parseFromArticleString(props.dataAbout) : '');
+  const inputUserAbout = ref<string>(props.dataAbout !== null ? parseFromBodyString(props.dataAbout) : '');
   const fileUserIcon = ref<File | null>(null);
   const previewUrl = ref<string | null>(null);
   const uploadStatus = ref<string>('No file selected');

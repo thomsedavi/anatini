@@ -47,9 +47,9 @@
 
       return `
         <header>
-          <h2>${ workData.name ?? 'Loading' }</h2>
+          <h2>${ workData.title ?? 'Loading' }</h2>
         </header>
-        ${workData.article}
+        ${workData.body}
         ${store.isAuthenticated === true ? `<footer>
           <menu>
             <li>

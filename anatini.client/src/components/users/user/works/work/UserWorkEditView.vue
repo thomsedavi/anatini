@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import type { APIResponse, InputError, Status, StatusActions, Work } from '@/common/types';
-  import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
   import { ref, watch } from 'vue';
@@ -22,7 +22,7 @@
   }>();
 
   const work = ref<APIResponse<Work>>({ fetching: true });
-  const inputArticle = ref<string>('');
+  const inputBody = ref<string>('');
 
   watch([() => route.params.userId, () => route.params.workId], (source: Source) => fetchWork(parseSource(source)), { immediate: true });
 
@@ -34,7 +34,7 @@
         response?.json()
           .then((value: Work) => {
             work.value = { data: value };
-            inputArticle.value = parseFromArticleString(value.article);
+            inputBody.value = parseFromBodyString(value.body);
           });
       },
     }
@@ -45,7 +45,7 @@
   function noChange(): boolean {
     if (work.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== work.value.data.article) {
+    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== work.value.data.body) {
       return false;
     }
 
@@ -82,8 +82,8 @@
     
     const body = new FormData();
 
-    if (formatParagraphs(inputArticle.value) !== work.value.data.article) {
-      body.append('article', formatParagraphs(inputArticle.value));
+    if (formatParagraphs(inputBody.value) !== work.value.data.body) {
+      body.append('body', formatParagraphs(inputBody.value));
     }
 
     const init = { method: "PATCH", body: body };
@@ -113,14 +113,14 @@
     <template v-if="work.data !== undefined">
       <form @submit.prevent="patchWork" :action="`/api/users/${route.params.userId}/posts/${route.params.postId}`" method="POST" novalidate>
         <InputTextArea
-          v-model="inputArticle"
+          v-model="inputBody"
           label="Content"
-          name="article"
-          id="article"
+          name="body"
+          id="body"
           :maxLength="512"
-          :error="getError('article')"
+          :error="getError('body')"
           :isArticle="true"
-          help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
+          help="This is your work. Asterisks allow for *emphasis* and **strong text**." />
 
         <SubmitButton
           :busy="dataStatus === 'pending'"

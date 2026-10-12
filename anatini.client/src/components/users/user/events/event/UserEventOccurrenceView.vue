@@ -74,10 +74,10 @@
     <article :aria-busy="eventOccurrence.fetching === true" aria-labelledby="heading-main">
       <template v-if="eventOccurrence.data !== undefined">
         <header>
-          <h1>{{ eventOccurrence.data.name }}</h1>
+          <h1>{{ eventOccurrence.data.title }}</h1>
         </header>
 
-        <section v-if="eventOccurrence.data.article !== null" aria-label="About event occurrence" v-html="eventOccurrence.data.article">
+        <section v-if="eventOccurrence.data.body !== null" aria-label="About event occurrence" v-html="eventOccurrence.data.body">
         </section>
 
         <footer>

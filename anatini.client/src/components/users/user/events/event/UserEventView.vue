@@ -16,7 +16,7 @@
         200: (response?: Response) => {
           response?.json()
             .then((value: Event) => {
-              console.log(value.name);
+              console.log(value.title);
             });
         }
       }

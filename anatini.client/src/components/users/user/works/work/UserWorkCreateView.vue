@@ -23,8 +23,8 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const inputName = ref<string>('');
-  const inputArticle = ref<string>('');
+  const inputTitle = ref<string>('');
+  const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputHandle = ref<string>('');
 
@@ -35,12 +35,12 @@
   async function postWork() {
     emit('update-errors', []);
 
-    const tidiedName = tidy(inputName.value);
+    const tidiedTitle = tidy(inputTitle.value);
 
     const inputErrors: InputError[] = [];
 
-    if (tidiedName === '') {
-      inputErrors.push({ id: 'name', message: 'Name is required' });
+    if (tidiedTitle === '') {
+      inputErrors.push({ id: 'title', message: 'Title is required' });
     }
 
     if (inputErrors.length > 0) {
@@ -67,15 +67,15 @@
 
     const body = new FormData();
 
-    body.append('name', tidiedName);
+    body.append('title', tidiedTitle);
     body.append('visibility', inputVisibility.value);
 
     if (tidy(inputHandle.value) !== '') {
       body.append('handle', tidy(inputHandle.value));
     }
 
-    if (tidy(inputArticle.value) !== '') {
-      body.append('article', formatParagraphs(inputArticle.value));
+    if (tidy(inputBody.value) !== '') {
+      body.append('body', formatParagraphs(inputBody.value));
     }
 
     const init = { method: "POST", body: body };
@@ -92,24 +92,24 @@
 
     <form @submit.prevent="postWork" :action="`/api/users/${dataUserId}/works`" method="POST" novalidate>
       <InputText
-        v-model="inputName"
-        label="Name"
-        name="name"
-        id="name"
+        v-model="inputTitle"
+        label="Title"
+        name="title"
+        id="title"
         :maxlength="256"
         :required="true"
         help="The name of your work"
-        :error="getError('name')" />
+        :error="getError('title')" />
 
       <InputTextArea
-        v-model="inputArticle"
+        v-model="inputBody"
         label="Description"
-        name="article"
-        id="article"
+        name="body"
+        id="body"
         :maxLength="512"
-        :error="getError('article')"
+        :error="getError('body')"
         :isArticle="true"
-        help="Describe your link. Asterisks allow for *emphasis* and **strong text**." />
+        help="Describe your work. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
 

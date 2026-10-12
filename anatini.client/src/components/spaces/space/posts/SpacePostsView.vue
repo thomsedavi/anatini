@@ -42,7 +42,7 @@
   function postHtml(post: Post): string {
     return `
       ${getHeader(post)}
-      ${post.article}
+      ${post.body}
       <footer>
         <menu>
           <li>

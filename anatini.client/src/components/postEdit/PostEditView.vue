@@ -43,7 +43,7 @@
 
             eTag.value = response.headers.get("ETag");
 
-            const node = parseFromString(value.version.article);
+            const node = parseFromString(value.version.body);
 
             if (node?.nodeName === 'ARTICLE') {
               article.value = node;
@@ -101,8 +101,8 @@
     })
   }
 
-  function handleUpdateName(newName: string): void {
-    if (post.value.data !== undefined) post.value.data.version.name = newName;
+  function handleUpdateTitle(newTitle: string): void {
+    if (post.value.data !== undefined) post.value.data.version.title = newTitle;
   }
 
   function handleUpdateDateNZ(newDateNZ: string): void {
@@ -158,12 +158,12 @@
           :data-space-id="post.data.spaceId"
           :data-post-id="post.data.id"
           :data-page-status="pageStatus"
-          :data-name="post.data.version.name"
+          :data-title="post.data.version.title"
           :data-date-nz="post.data.version.dateNZ"
           :data-e-tag="eTag"
           @update-etag="handleUpdateETag"
           @update-article="handleUpdateArticle"
-          @update-name="handleUpdateName"
+          @update-title="handleUpdateTitle"
           @update-date-nz="handleUpdateDateNZ"
           @update-post-status="handleUpdatePostStatus"
         />

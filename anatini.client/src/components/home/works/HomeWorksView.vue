@@ -83,7 +83,7 @@
 
       const searchParameters = [...currentSearchParameters.value];
 
-      searchParameters.push({ key: 'lastName', value: lastWork.name });
+      searchParameters.push({ key: 'lastTitle', value: lastWork.title });
       searchParameters.push({ key: 'lastWorkId', value: lastWork.id });
 
       apiFetch({ input, statusActions, searchParameters });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, PostEdit, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
@@ -34,7 +34,7 @@
         response?.json()
           .then((value: PostEdit) => {
             post.value = { data: value};
-            inputArticle.value = parseFromArticleString(value.article);
+            inputArticle.value = parseFromBodyString(value.article);
             inputVisibility.value = value.visibility;
           })
           .catch(() => {

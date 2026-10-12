@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatParagraphs, parseFromArticleString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -25,7 +25,7 @@
   }>();
 
   const post = ref<APIResponse<Post>>({ fetching: true });
-  const inputArticle = ref<string>('');
+  const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputPostPublishedAtNz = ref<string>('');
 
@@ -39,7 +39,7 @@
         response?.json()
           .then((value: Post) => {
             post.value = { data: value };
-            inputArticle.value = parseFromArticleString(`<article>${value.article}</article>`);
+            inputBody.value = parseFromBodyString(`<article>${value.body}</article>`);
             inputVisibility.value = value.visibility;
             inputPostPublishedAtNz.value = formatDateTimeNz(value.publishedAtNz);
           })
@@ -61,7 +61,7 @@
   function noChange(): boolean {
     if (post.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== post.value.data.article) {
+    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== post.value.data.body) {
       return false;
     } else if (inputVisibility.value !== post.value.data.visibility) {
       return false;
@@ -89,7 +89,7 @@
       return;
     }
     
-    if (tidy(inputArticle.value) === '') {
+    if (tidy(inputBody.value) === '') {
       emit('update-errors', [{ id: 'article', message: 'Content is required' }]);
 
       return;
@@ -107,8 +107,8 @@
 
     const body = new FormData();
 
-    if (formatParagraphs(inputArticle.value) !== post.value.data.article) {
-      body.append('article', formatParagraphs(inputArticle.value));
+    if (formatParagraphs(inputBody.value) !== post.value.data.body) {
+      body.append('article', formatParagraphs(inputBody.value));
     }
 
     if (inputVisibility.value !== post.value.data.visibility) {
@@ -149,12 +149,12 @@
           <legend class="visuallyhidden">Edit Post</legend>
 
           <InputTextArea
-            v-model="inputArticle"
+            v-model="inputBody"
             label="Content"
-            name="article"
-            id="article"
+            name="body"
+            id="body"
             :maxLength="512"
-            :error="getError('article')"
+            :error="getError('body')"
             :isArticle="true"
             help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
 
