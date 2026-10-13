@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             spaceSettingBuilder.Property(spaceSetting => spaceSetting.Key)!.Has(maxLength: 255, order: 1);
             spaceSettingBuilder.Property(spaceSetting => spaceSetting.Value)!.Has(maxLength: 255, order: 2);
 
-            spaceSettingBuilder.HasOneWithMany(spaceSetting => spaceSetting.Space, space => space.SpaceSettings, spaceSetting => spaceSetting.SpaceId, DeleteBehavior.Cascade);
+            spaceSettingBuilder.HasOneWithMany(spaceSetting => spaceSetting.Space, space => space.Settings, spaceSetting => spaceSetting.SpaceId, DeleteBehavior.Cascade);
         }
     }
 }

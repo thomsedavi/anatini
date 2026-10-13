@@ -8,6 +8,7 @@
         public required string Handle { get; set; }
         public ImageDto? IconImage { get; set; }
         public bool? IsOwned { get; set; }
+        public required Dictionary<string, string> Settings { get; set; }
     }
 
     public class SpaceHeaderDto

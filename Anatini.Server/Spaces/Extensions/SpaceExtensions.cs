@@ -16,7 +16,8 @@ namespace Anatini.Server.Spaces.Extensions
                 About = space.About,
                 Handle = space.Handle,
                 IconImage = await space.GetIconImageAsync(blobService),
-                IsOwned = isAuthenticated ? space.UserRelationships.Any(userRelationship => userRelationship.Label == UserSpaceRelationshipLabel.IsOwned) : null
+                IsOwned = isAuthenticated ? space.UserRelationships.Any(userRelationship => userRelationship.Label == UserSpaceRelationshipLabel.IsOwned) : null,
+                Settings = space.Settings.ToDictionary(setting => setting.Key, setting => setting.Value)
             };
         }
 

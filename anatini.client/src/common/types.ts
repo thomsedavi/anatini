@@ -67,6 +67,7 @@ export type Space = {
   handle: string;
   about: string | null;
   visiblity: Visibility;
+  settings: { [key: string]: string }
 };
 
 export type SpaceHeader = {

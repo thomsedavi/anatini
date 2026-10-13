@@ -134,6 +134,7 @@ namespace Anatini.Server
             }
 
             spacesQuery = spacesQuery.Include(space => space.Images);
+            spacesQuery = spacesQuery.Include(space => space.Settings);
 
             if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {
