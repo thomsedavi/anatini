@@ -38,6 +38,33 @@ namespace Anatini.Server.Context.Entities.Extensions
             return eventSeries;
         }
 
+        public static EventSeries AddSpaceEventSeries(this ApplicationDbContext context, Guid spaceId, CreateEvent createEvent)
+        {
+            var eventSeriesId = Guid.CreateVersion7();
+            var utcNow = DateTime.UtcNow;
+
+            var eventSeries = new EventSeries
+            {
+                Id = eventSeriesId,
+                SpaceId = spaceId,
+                Status = Status.Published,
+                Type = ContentType.Event,
+                Visibility = createEvent.Visibility,
+                Title = createEvent.Title,
+                Body = "<p>Test</p>",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                StartsAtNz = createEvent.StartsAtNz,
+                EndsAtNz = createEvent.EndsAtNz,
+                CreatedAtUtc = utcNow,
+                UpdatedAtUtc = utcNow,
+                Handle = eventSeriesId.ToString()
+            };
+
+            context.Add(eventSeries);
+
+            return eventSeries;
+        }
+
         public static int AddEventInstances(this ApplicationDbContext context, EventSeries eventSeries, Status status)
         {
             if (eventSeries.RecurrenceRule == null)
@@ -51,13 +78,14 @@ namespace Anatini.Server.Context.Entities.Extensions
                     SpaceId = eventSeries.SpaceId,
                     Title = eventSeries.Title ?? throw new InvalidOperationException(),
                     StartsAtNz = eventSeries.StartsAtNz,
-                    EndsAtNz = eventSeries.StartsAtNz,
+                    EndsAtNz = eventSeries.EndsAtNz ?? throw new InvalidOperationException(),
                     Body = eventSeries.Body,
                     Status = status,
                     Visibility = eventSeries.Visibility
                 };
 
                 context.Add(eventInstance);
+
                 return 1;
             }
             else

@@ -46,8 +46,8 @@ import SpacePostsView from './components/spaces/space/posts/SpacePostsView.vue';
 import SpacePostView from './components/spaces/space/posts/post/SpacePostView.vue';
 import SpacePostCreateView from './components/spaces/space/posts/post/SpacePostCreateView.vue';
 import SpacePostEditView from './components/spaces/space/posts/post/SpacePostEditView.vue';
-// import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
-// import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
+import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
+import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -217,16 +217,16 @@ const routes: RouteRecordRaw[] = [
         component: SpacePostsView,
         name: 'SpacePosts'
       },
-      // {
-      //   path: 'events/create',
-      //   component: SpaceEventCreateView,
-      //   name: 'SpaceEventCreate'
-      // },
-      // {
-      //   path: 'events',
-      //   component: SpaceEventsView,
-      //   name: 'SpaceEvents'
-      // },
+      {
+        path: 'events/create',
+        component: SpaceEventCreateView,
+        name: 'SpaceEventCreate'
+      },
+      {
+        path: 'events',
+        component: SpaceEventsView,
+        name: 'SpaceEvents'
+      },
       {
         path: 'works',
         component: SpaceWorksView,
