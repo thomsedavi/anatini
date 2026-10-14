@@ -9,7 +9,7 @@ namespace Anatini.Server.Works
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }
 
-        public required string Article { get; set; }
+        public required string Body { get; set; }
 
         [EnumDataType(typeof(Visibility))]
         public required Visibility Visibility { get; set; }

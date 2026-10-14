@@ -38,7 +38,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return eventSeries;
         }
 
-        public static EventSeries AddSpaceEventSeries(this ApplicationDbContext context, Guid spaceId, CreateEvent createEvent)
+        public static EventSeries AddSpaceEventSeries(this ApplicationDbContext context, Guid spaceId, CreateEvent createEvent, string body)
         {
             var eventSeriesId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
@@ -51,7 +51,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Type = ContentType.Event,
                 Visibility = createEvent.Visibility,
                 Title = createEvent.Title,
-                Body = "<p>Test</p>",
+                Body = body,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 StartsAtNz = createEvent.StartsAtNz,
                 EndsAtNz = createEvent.EndsAtNz,

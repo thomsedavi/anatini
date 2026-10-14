@@ -2,9 +2,10 @@
   import { ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
-  import { tidy } from '@/common/utils';
+  import { formatParagraphs, tidy } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
+  import InputTextArea from '@/common/InputTextArea.vue';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const props = defineProps<{
@@ -15,22 +16,23 @@
   }>();
 
   const inputTitle = ref<string>('');
-  const inputEventType = ref<'FixedTime' | 'AllDay'>('FixedTime');
-  const inputEventStartDate = ref<string>('');
-  const inputEventStartTime = ref<string>('');
-  const inputEventEndDate = ref<string>('');
-  const inputEventEndTime = ref<string>('');
-  const isEventEndDateDirty = ref<boolean>(false);
-  const inputEventVisibility = ref<Visibility>('Public');
+  const inputBody = ref<string>('');
+  const inputType = ref<'FixedTime' | 'AllDay'>('FixedTime');
+  const inputStartDate = ref<string>('');
+  const inputStartTime = ref<string>('');
+  const inputEndDate = ref<string>('');
+  const inputEndTime = ref<string>('');
+  const isEndDateDirty = ref<boolean>(false);
+  const inputVisibility = ref<Visibility>('Public');
 
-  watch(inputEventStartDate, (date) => {
-    if (!isEventEndDateDirty.value) {
-      inputEventEndDate.value = date;
+  watch(inputStartDate, (date) => {
+    if (!isEndDateDirty.value) {
+      inputEndDate.value = date;
     }
   });
 
   function onEventEndDateInput(): void {
-    isEventEndDateDirty.value = true;
+    isEndDateDirty.value = true;
   }
 
   const emit = defineEmits<{
@@ -53,15 +55,19 @@
       inputErrors.push({ id: 'title', message: 'Title is required' });
     }
 
-    if (inputEventEndDate.value === '') {
+    if (tidy(inputBody.value) === '') {
+      inputErrors.push({ id: 'body', message: 'Content is required' });
+    }
+
+    if (inputEndDate.value === '') {
       inputErrors.push({ id: 'endDate', message: 'End date is required' });
     }
 
-    if (inputEventType.value !== 'AllDay' && inputEventStartTime.value === '') {
+    if (inputType.value !== 'AllDay' && inputStartTime.value === '') {
       inputErrors.push({ id: 'startTime', message: 'Start time is required' });
     }
 
-    if (inputEventType.value === 'FixedTime' && inputEventEndTime.value === '') {
+    if (inputType.value === 'FixedTime' && inputEndTime.value === '') {
       inputErrors.push({ id: 'endTime', message: 'End time is required' });
     }
 
@@ -81,22 +87,23 @@
     const body = new FormData();
 
     body.append('title', tidiedTitle);
+    body.append('body', formatParagraphs(inputBody.value));
 
-        let startsAtNz = `${inputEventStartDate.value}T`;
+    let startsAtNz = `${inputStartDate.value}T`;
 
-    if (inputEventType.value === 'AllDay') {
+    if (inputType.value === 'AllDay') {
       startsAtNz += '00:00:00';
     }
     else {
-      startsAtNz += `${inputEventStartTime.value}:00`;
+      startsAtNz += `${inputStartTime.value}:00`;
     }
 
     body.append('startsAtNz', startsAtNz);
 
-    let endsAtNz = `${inputEventEndDate.value}T`;
+    let endsAtNz = `${inputEndDate.value}T`;
 
-    if (inputEventType.value === 'AllDay') {
-      const [y, m, d] = inputEventEndDate.value.split('-').map(Number);
+    if (inputType.value === 'AllDay') {
+      const [y, m, d] = inputEndDate.value.split('-').map(Number);
       const date = new Date(Date.UTC(y, m - 1, d));
 
       date.setUTCDate(date.getUTCDate() + 1);
@@ -106,12 +113,12 @@
       endsAtNz = `${result}T00:00:00`;
     }
     else {
-      endsAtNz = `${inputEventEndDate.value}T${inputEventEndTime.value}:00`;
+      endsAtNz = `${inputEndDate.value}T${inputEndTime.value}:00`;
     }
 
     body.append('endsAtNz', endsAtNz);
 
-    body.append('visibility', inputEventVisibility.value);
+    body.append('visibility', inputVisibility.value);
 
     const init = { method: "POST", body: body };
 
@@ -136,16 +143,26 @@
         help="The title of your work"
         :error="getError('title')" />
 
-      <VisibilitySelect v-model="inputEventVisibility" />
+      <InputTextArea
+        v-model="inputBody"
+        label="Content"
+        name="body"
+        id="body"
+        :maxLength="512"
+        :error="getError('body')"
+        :isArticle="true"
+        help="This is your event. Asterisks allow for *emphasis* and **strong text**." />
 
-      <input type="radio" id="fixed-time" value="FixedTime" v-model="inputEventType" />
+      <VisibilitySelect v-model="inputVisibility" />
+
+      <input type="radio" id="fixed-time" value="FixedTime" v-model="inputType" />
       <label for="fixed-time">Fixed From/To Time</label>
 
-      <input type="radio" id="all-day" value="AllDay" v-model="inputEventType" />
+      <input type="radio" id="all-day" value="AllDay" v-model="inputType" />
       <label for="all-day">All Day</label>
 
       <InputText
-        v-model="inputEventStartDate"
+        v-model="inputStartDate"
         type="date"
         label="Start Date"
         name="start-date"
@@ -157,18 +174,18 @@
         :error="getError('startDate')" />
 
       <InputText
-        v-model="inputEventStartTime"
+        v-model="inputStartTime"
         type="time"
         label="Start Time"
         name="start-time"
         id="start-time"
-        :required="inputEventType !== 'AllDay'"
-        :disabled="inputEventType === 'AllDay'"
-        :hidden="inputEventType === 'AllDay'"
+        :required="inputType !== 'AllDay'"
+        :disabled="inputType === 'AllDay'"
+        :hidden="inputType === 'AllDay'"
         :error="getError('startTime')" />
 
       <InputText
-        v-model="inputEventEndDate"
+        v-model="inputEndDate"
         type="date"
         label="End Date"
         name="end-date"
@@ -178,14 +195,14 @@
         :error="getError('endDate')" />
 
       <InputText
-        v-model="inputEventEndTime"
+        v-model="inputEndTime"
         type="time"
         label="End Time"
         name="end-time"
         id="end-time"
-        :required="inputEventType === 'FixedTime'"
-        :disabled="inputEventType !== 'FixedTime'"
-        :hidden="inputEventType !== 'FixedTime'"
+        :required="inputType === 'FixedTime'"
+        :disabled="inputType !== 'FixedTime'"
+        :hidden="inputType !== 'FixedTime'"
         :error="getError('endTime')" />
 
       <SubmitButton

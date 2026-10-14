@@ -25,7 +25,7 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostWork(string spaceHandle, [FromForm] CreateWork createWork) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-           var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Article);
+           var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Body);
 
            if (validationResult.ErrorMessage != null)
            {

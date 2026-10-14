@@ -43,6 +43,10 @@
       inputErrors.push({ id: 'title', message: 'Title is required' });
     }
 
+    if (tidy(inputBody.value) === '') {
+      inputErrors.push({ id: 'body', message: 'Content is required' });
+    }
+
     if (inputErrors.length > 0) {
       emit('update-errors', inputErrors);
 
@@ -68,14 +72,11 @@
     const body = new FormData();
 
     body.append('title', tidiedTitle);
+    body.append('body', formatParagraphs(inputBody.value));
     body.append('visibility', inputVisibility.value);
 
     if (tidy(inputHandle.value) !== '') {
       body.append('handle', tidy(inputHandle.value));
-    }
-
-    if (tidy(inputBody.value) !== '') {
-      body.append('body', formatParagraphs(inputBody.value));
     }
 
     const init = { method: "POST", body: body };
