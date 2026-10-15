@@ -120,17 +120,6 @@ export type Event = {
   title: string;
 }
 
-export type EventOccurrence = {
-  id: string;
-  handle: string;
-  startsAtUtc: string;
-  endsAtUtc: string;
-  title: string;
-  body: string | null;
-  url: string | null;
-  isBookmarked: boolean | null;
-}
-
 export type Content = {
   id: string;  
   handle: string;
@@ -142,12 +131,19 @@ export type Content = {
   spaceHeader: SpaceHeader | null;
 }
 
+export type EventOccurrence = Content & {
+  title: string;
+  startsAtNz: string;
+  endsAtNz: string;
+}
+
 export type Work = Content & {
   title: string;
   publishedAtNz: string | null;
 }
 
 export type Post = Content & {
+  title: string | null;
   publishedAtNz: string;
   visibility: Visibility;
 }

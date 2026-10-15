@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { nextTick, onMounted, ref } from 'vue';
-  import type { Post, Tab, Work } from '@/common/types';
+  import type { EventOccurrence, Post, Tab, Work } from '@/common/types';
   import TabButton from '@/common/TabButton.vue';
   import { getTabIndex } from '@/common/utils';
   import { useRoute, useRouter } from 'vue-router';
@@ -11,11 +11,12 @@
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
+  const eventOccurrences = ref<EventOccurrence[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
-    //{ id: 'events', text: 'Events', name: 'HomeEvents' },
     { id: 'works', text: 'Works', name: 'HomeWorks' },
+    { id: 'events', text: 'Events', name: 'HomeEvents' },
   ];
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
@@ -58,6 +59,10 @@
   function handleUpdateWorks(newWorks: Work[]): void {
     works.value = newWorks;
   }
+
+  function handleUpdateEventOccurrences(newEventOccurrences: EventOccurrence[]): void {
+    eventOccurrences.value = newEventOccurrences;
+  }
 </script>
 
 <template>
@@ -82,8 +87,10 @@
         :is="Component"
         :data-posts="posts"
         :data-works="works"
+        :data-event-occurrences="eventOccurrences"
         @update-posts="handleUpdatePosts"
         @update-works="handleUpdateWorks"
+        @update-event-occurrences="handleUpdateEventOccurrences"
       />
     </RouterView>
   </main>

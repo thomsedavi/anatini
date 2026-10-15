@@ -18,7 +18,7 @@ namespace Anatini.Server.Works
         public DateTime? PublishedAtNz { get; set; }
 
         [MaxLength(256)]
-        public required string Name { get; set; }
+        public required string Title { get; set; }
 
         [Display(Name = "Is Draft")]
         public bool? IsDraft { get; set; }

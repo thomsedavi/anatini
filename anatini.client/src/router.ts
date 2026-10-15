@@ -9,9 +9,9 @@ import AccountSpacesView from './components/account/AccountSpacesView.vue';
 import SignUpView from './components/SignUpView.vue';
 import TagsView from './components/TagsView.vue';
 
-import HomeView from './components/HomeView.vue';
+import HomeView from './components/home/HomeView.vue';
 import HomePostsView from './components/home/posts/HomePostsView.vue';
-// import HomeEventsView from './components/home/events/HomeEventsView.vue';
+import HomeEventsView from './components/home/events/HomeEventsView.vue';
 import HomeWorksView from './components/home/works/HomeWorksView.vue';
 
 import UsersView from './components/users/UsersView.vue';
@@ -61,11 +61,11 @@ const routes: RouteRecordRaw[] = [
         component: HomePostsView,
         name: 'HomePosts'
       },
-      // {
-      //   path: 'home/events',
-      //   component: HomeEventsView,
-      //   name: 'HomeEvents'
-      // },
+      {
+        path: 'home/events',
+        component: HomeEventsView,
+        name: 'HomeEvents'
+      },
       {
         path: 'home/works',
         component: HomeWorksView,
