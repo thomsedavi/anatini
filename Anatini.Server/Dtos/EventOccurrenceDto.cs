@@ -3,6 +3,16 @@
     public class EventOccurrenceDto
     {
         public required Guid Id { get; set; }
+        public required string Handle { get; set; }
+        public required DateTime StartsAtNz { get; set; }
+        public required DateTime EndsAtNz { get; set; }
         public required string Title { get; set; }
+        public required string Body { get; set; }
+        public UserHeaderDto? UserHeader { get; set; }
+        public SpaceHeaderDto? SpaceHeader { get; set; }
+        public bool? IsBookmarked { get; set; }
+        public bool? IsStarred { get; set; }
+        public bool? IsDismissed { get; set; }
+        public bool? IsCollected { get; set; }
     }
 }

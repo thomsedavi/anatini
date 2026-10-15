@@ -74,6 +74,10 @@ export default defineConfig({
             '^/api/works': {
                 target,
                 secure: false
+            },
+            '^/api/event-occurrences': {
+                target,
+                secure: false
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '57850'),

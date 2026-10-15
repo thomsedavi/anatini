@@ -49,7 +49,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventSeries(string userHandle, string eventSeriesHandle) => await UsingUserContentAsync<EventSeries>(userHandle, eventSeriesHandle, async (eventSeries) =>
         {
-            return Ok(eventSeries.ToEventSeriesDto());
+            return Ok(eventSeries.ToEventDto());
         });
 
         [DisableEndpoint]
@@ -82,14 +82,14 @@ namespace Anatini.Server.Events
                 return Problem();
             }
 
-            return Ok(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDto(IsAuthenticated)));
+            return Ok(await Task.WhenAll(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDtoAsync(IsAuthenticated))));
         });
 
         [DisableEndpoint]
         [HttpGet("{eventSeriesHandle}/occurrence/{eventInstanceHandle}")]
         public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return Ok(eventInstance.ToEventInstanceDto(IsAuthenticated));
+            return Ok(await eventInstance.ToEventInstanceDtoAsync(IsAuthenticated));
         });
     }
 }

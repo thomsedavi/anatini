@@ -127,6 +127,7 @@ export type Content = {
   isStarred: boolean | null;
   isBookmarked: boolean | null;
   isDismissed: boolean | null;
+  isCollected: boolean | null;
   userHeader: UserHeader | null;
   spaceHeader: SpaceHeader | null;
 }

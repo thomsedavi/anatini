@@ -4,8 +4,9 @@
     public enum UserEventInstanceRelationshipLabel
     {
         None = 0,
-        HasDismissed = 1,
-        HasStarred = 2,
-        HasBookmarked = 4
+        IsDismissed = 1,
+        IsStarred = 2,
+        IsBookmarked = 4,
+        IsCollected = 8
     }
 }

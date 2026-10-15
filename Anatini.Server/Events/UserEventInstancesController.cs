@@ -20,7 +20,7 @@ namespace Anatini.Server.Events
         [HttpPost("bookmark")]
         public async Task<IActionResult> PostEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.HasBookmarked);
+            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
@@ -28,7 +28,7 @@ namespace Anatini.Server.Events
         [HttpDelete("bookmark")]
         public async Task<IActionResult> DeleteEventInstanceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
         {
-            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.HasBookmarked);
+            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
         });
 
         private async Task<IActionResult> AddUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)

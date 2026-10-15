@@ -5,9 +5,9 @@
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
         public required DateTime StartsAtNz { get; set; }
-        public required DateTime EndsAtNz { get; set; }
+        public DateTime? EndsAtNz { get; set; }
         public required string Title { get; set; }
         public required string Body { get; set; }
-        public bool? HasBookmarked { get; set; }
+        public bool? IsBookmarked { get; set; }
     }
 }
