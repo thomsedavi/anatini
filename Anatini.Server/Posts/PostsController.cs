@@ -28,7 +28,7 @@ namespace Anatini.Server.Posts
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                postsQuery = postsQuery.Include(post => post.UserRelationships.Where(userPost => userPost.SourceUserId == sourceUserId));
+                postsQuery = postsQuery.Include(post => post.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
 
                 postsQuery = postsQuery.Where(post => (post.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 

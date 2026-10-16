@@ -101,7 +101,7 @@ namespace Anatini.Server.Works
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userWork => userWork.SourceUserId == sourceUserId));
+                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
 
                 worksQuery = worksQuery.Where(work => (work.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 

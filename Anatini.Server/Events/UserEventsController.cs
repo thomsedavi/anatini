@@ -49,7 +49,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventSeries(string userHandle, string eventSeriesHandle) => await UsingUserContentAsync<EventSeries>(userHandle, eventSeriesHandle, async (eventSeries) =>
         {
-            return Ok(eventSeries.ToEventDto());
+            return Ok(eventSeries.ToEventDto(IsAuthenticated));
         });
 
         [DisableEndpoint]

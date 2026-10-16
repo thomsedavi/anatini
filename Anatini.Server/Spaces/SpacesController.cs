@@ -22,7 +22,7 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetSpace(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            return Ok(await space.ToSpaceDtoAsync(IsAuthenticated, blobService));
+            return Ok(await space.ToSpaceDtoAsync(IsAuthenticated, BlobService));
         });
 
         [Authorize]
