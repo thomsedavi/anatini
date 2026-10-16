@@ -63,7 +63,9 @@
   }
 
   function getMoreWorks() {
-    if (props.dataWorks !== null) {
+    const lastWork = props.dataWorks?.[props.dataWorks.length - 1];
+
+    if (lastWork !== undefined) {
       const input = 'works';
 
       const statusActions: StatusActions = {
@@ -78,8 +80,6 @@
             });
         }
       }
-
-      const lastWork = props.dataWorks[props.dataWorks.length - 1];
 
       const searchParameters = [...currentSearchParameters.value];
 

@@ -62,7 +62,9 @@
   }
 
   function getMorePosts() {
-    if (props.dataPosts !== null) {
+    const lastPost = props.dataPosts?.[props.dataPosts.length - 1];
+
+    if (lastPost !== undefined) {
       const input = 'posts';
 
       const statusActions: StatusActions = {
@@ -77,8 +79,6 @@
             });
         }
       }
-
-      const lastPost = props.dataPosts[props.dataPosts.length - 1];
 
       const searchParameters = [...currentSearchParameters.value];
 

@@ -220,7 +220,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userWorkRelationship => userWorkRelationship.SourceUserId == sourceUserId));
+                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))

@@ -105,11 +105,11 @@ export function markdownToHtml(line: string): string {
 // input: single line with markdown, e.g. "I am writing *em* and **strong**", along with replacement tags e.g. {1 (asterisks), <em>, </em>}
 // output: single line with html replaced for specific asterisk count, e.g. "I am writing <em>em</em> and **strong**"
 function replaceAsterisks(text: string, replacementTags: {asteriskCount: number, openingTags: string, closingTags: string}[]): string {
-  if (replacementTags.length === 0) {
+  const replacementTag = replacementTags[0];
+
+  if (replacementTag === undefined) {
     return text;
   }
-
-  const replacementTag = replacementTags[0];
 
   const regExp = new RegExp(`${'\\\*'.repeat(replacementTag.asteriskCount)}(?!\\\*)`, 'g');
 
@@ -210,15 +210,25 @@ export function getTabIndex(key: string, index: number, length: number): number 
   }
 }
 
-type Param = () => string | string[];
+type ParamFunction = () => string | string[] | undefined;
 
-export type Source = Param[];
+export type ParamFunctions = ParamFunction[];
 
-export function parseSource(source: Source): string[] {
+export function parseParams(paramFunctions: ParamFunctions): string[] {
   const params: string[] = [];
 
-  source.forEach((param: Param) => {
-    params.push(typeof param === 'string' ? param : param()[0]);
+  paramFunctions.forEach((paramFunction: ParamFunction) => {
+    const paramResult = paramFunction();
+
+    if (typeof paramResult === 'string') {
+      params.push(paramResult);
+    } else if (paramResult !== undefined) {
+      const param = paramResult[0];
+
+      if (param !== undefined) {
+        params.push(param);
+      }
+    }
   });
 
   return params;

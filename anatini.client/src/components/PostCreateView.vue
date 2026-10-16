@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, SpaceEdit, InputError, Status, StatusActions } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
-  import { parseSource, tidy, type Source } from '@/common/utils';
+  import { parseParams, tidy, type ParamFunctions } from '@/common/utils';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
   import InputText from '@/common/InputText.vue';
@@ -17,7 +17,7 @@
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
-  watch([() => route.params.spaceId], (source: Source) => fetchSpace(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId], (paramFunctions: ParamFunctions) => fetchSpace(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchSpace(params: string[]) {
     const input = `spaces/${params[0]}/edit`;

@@ -28,7 +28,7 @@ export async function apiFetchAll(requests: Request[]): Promise<void> {
 
   if (responses.every(response => response.ok)) {
     responses.forEach((response: Response, index: number) => {
-      const statusAction = requests[index].statusActions[response.status];
+      const statusAction = requests[index]?.statusActions[response.status];
 
       if (statusAction !== undefined) {
         statusAction(response);
@@ -107,9 +107,11 @@ function getCookieValue(name: string): string | null {
   const escapedName = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   const match = document.cookie.match(new RegExp(`(?:^|; )${escapedName}=([^;]*)`));
 
-  if (match === null) {
+  const encodedURIComponent = match?.[1];
+
+  if (encodedURIComponent === undefined) {
     return null;
   }
 
-  return decodeURIComponent(match[1]);
+  return decodeURIComponent(encodedURIComponent);
 }
