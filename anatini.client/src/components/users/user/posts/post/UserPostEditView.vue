@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseParams, tidy, type ParamFunctions } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -29,7 +29,7 @@
   const inputVisibility = ref<Visibility>('Public');
   const inputPostPublishedAtNz = ref<string>('');
 
-  watch([() => route.params.userId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.postId], (paramFunctions: ParamFunctions) => fetchPost(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const input = `users/${params[0]}/posts/${params[1]}`;

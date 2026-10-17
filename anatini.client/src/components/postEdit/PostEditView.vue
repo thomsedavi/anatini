@@ -2,7 +2,7 @@
   import type { PostEdit, StatusActions, Tab, APIResponse } from '@/common/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getTabIndex, parseFromString, parseSource, type Source } from '@/common/utils';
+  import { getTabIndex, parseFromString, parseParams, type ParamFunctions } from '@/common/utils';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import TabButton from '@/common/TabButton.vue';
 
@@ -29,7 +29,7 @@
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
   });
 
-  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (paramFunctions: ParamFunctions) => fetchPost(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
@@ -75,30 +75,37 @@
   }
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
+    event.preventDefault();
+    
     const newIndex = getTabIndex(event.key, index, tabs.length);
 
-    if (newIndex === undefined) {
-      return;
+    if (newIndex !== undefined) {
+      const tab = tabs[newIndex];
+
+      if (tab !== undefined) {
+        tabIndex.value = newIndex;
+
+        router.push({ name: tab.name });
+      
+        nextTick(() => {
+          tabRefs.value[newIndex]?.focus();
+        });
+      }
     }
-
-    event.preventDefault();
-    tabIndex.value = newIndex;
-
-    router.push({ name: tabs[newIndex].name });
-    
-    nextTick(() => {
-      tabRefs.value[newIndex].focus();
-    })
   }
 
   function handleClick(index: number): void {
-    tabIndex.value = index;
+    const tab = tabs[index];
 
-    router.push({ name: tabs[index].name });
-    
-    nextTick(() => {
-      tabRefs.value[index].focus();
-    })
+    if (tab !== undefined) {
+      tabIndex.value = index;
+
+      router.push({ name: tab.name });
+      
+      nextTick(() => {
+        tabRefs.value[index]?.focus();
+      });
+    }
   }
 
   function handleUpdateTitle(newTitle: string): void {

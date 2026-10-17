@@ -104,7 +104,7 @@
 
     if (inputType.value === 'AllDay') {
       const [y, m, d] = inputEndDate.value.split('-').map(Number);
-      const date = new Date(Date.UTC(y, m - 1, d));
+      const date = new Date(Date.UTC(y!, m! - 1, d));
 
       date.setUTCDate(date.getUTCDate() + 1);
 

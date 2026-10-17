@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { APIResponse, InputError, PostEdit, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
-  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseParams, tidy, type ParamFunctions } from '@/common/utils';
   import { useRoute } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
@@ -24,7 +24,7 @@
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
 
-  watch([() => route.params.spaceId, () => route.params.postId], (source: Source) => fetchPost(parseSource(source)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (paramFunctions: ParamFunctions) => fetchPost(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const input = `spaces/${params[0]}/posts/${params[1]}/edit`;

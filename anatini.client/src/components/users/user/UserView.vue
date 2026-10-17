@@ -3,7 +3,7 @@
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
-  import { getTabIndex, parseSource, type Source } from '@/common/utils';
+  import { getTabIndex, parseParams, type ParamFunctions } from '@/common/utils';
   import TabButton from '@/common/TabButton.vue';
   import { store } from '@/common/store';
 
@@ -28,7 +28,7 @@
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
-  watch([() => route.params.userId], (source: Source) => fetchUser(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId], (paramFunctions: ParamFunctions) => fetchUser(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchUser(params: string[]) {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
@@ -61,30 +61,37 @@
   }
 
   function handleKeyDown(event: KeyboardEvent, index: number): void {
+    event.preventDefault();
+    
     const newIndex = getTabIndex(event.key, index, tabs.length);
 
-    if (newIndex === undefined) {
-      return;
+    if (newIndex !== undefined) {
+      const tab = tabs[newIndex];
+
+      if (tab !== undefined) {
+        tabIndex.value = newIndex;
+
+        router.push({ name: tab.name });
+      
+        nextTick(() => {
+          tabRefs.value[newIndex]?.focus();
+        });
+      }
     }
-
-    event.preventDefault();
-    tabIndex.value = newIndex;
-
-    router.push({ name: tabs[newIndex].name });
-    
-    nextTick(() => {
-      tabRefs.value[newIndex].focus();
-    })
   }
 
   function handleClick(index: number): void {
-    tabIndex.value = index;
+    const tab = tabs[index];
 
-    router.push({ name: tabs[index].name });
-    
-    nextTick(() => {
-      tabRefs.value[index].focus();
-    })
+    if (tab !== undefined) {
+      tabIndex.value = index;
+
+      router.push({ name: tab.name });
+      
+      nextTick(() => {
+        tabRefs.value[index]?.focus();
+      });
+    }
   }
 
   function getHeading(): string {
