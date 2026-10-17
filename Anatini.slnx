@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="anatini.client/anatini.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Anatini.Server/Anatini.Server.csproj" />
+</Solution>

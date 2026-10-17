@@ -24,9 +24,9 @@ namespace Anatini.Server.Authorization
             {
                 context.Fail();
                 return;
-            };
+            }
 
-            var hasReceivedTrust = await dbContext.UserUserRelationships.AnyAsync(userTrust => userTrust.TargetUserId == targetUserId && userTrust.Label == UserUserRelationshipLabel.HasTrusted);
+            var hasReceivedTrust = await dbContext.UserUserRelationships.AnyAsync(userTrust => userTrust.TargetUserId == targetUserId && userTrust.Label == UserUserRelationshipLabel.IsTrusted);
 
             if (hasReceivedTrust)
             {

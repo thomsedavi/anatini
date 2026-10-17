@@ -9,7 +9,7 @@ export async function apiFetch({ input, statusActions, init, searchParameters, o
 
   await fetch(`/api/${input}${getParameters(searchParameters)}`, requestInit).then((response: Response) => {
     const statusAction = statusActions[response.status];
-    
+
     if (statusAction !== undefined) {
       statusAction(response);
     } else {
@@ -57,7 +57,7 @@ function getParameters(searchParameters?: SearchParameter[]): string {
     parameters += '?';
     parameters += searchParameters.map(searchParameter => `${searchParameter.key}=${searchParameter.value}`).join('&');
   }
-  
+
   return parameters;
 }
 

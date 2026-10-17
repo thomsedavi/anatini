@@ -4,7 +4,7 @@ The following tools were used to generate this project:
 - create-vite
 
 The following steps were used to generate this project:
-- Create vue project with create-vite: `npm init --yes vue@latest anatini.client -- --eslint  --typescript `.
+- Create vue project with create-vite: `npm init --yes vue@latest "anatini.client" -- --eslint  --typescript `.
 - Update `vite.config.ts` to set up proxying and certs.
 - Add `@type/node` for `vite.config.js` typing.
 - Update `HelloWorld` component to fetch and display weather information.

@@ -101,13 +101,13 @@
     <header id="main-header">
       <nav id="main-nav" aria-label="Main">
         <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
-          <button 
-            type="button" 
-            :aria-expanded="isShowing.includes('main')" 
-            aria-controls="main-dropdown"
-            @click.stop="toggleShow('main')"
-            aria-label="Open main menu"
-          >
+        <button 
+          type="button" 
+          :aria-expanded="isShowing.includes('main')" 
+          aria-controls="main-dropdown"
+          @click.stop="toggleShow('main')"
+          aria-label="Open main menu"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>

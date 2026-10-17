@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import type { APIResponse, InputError, Status, StatusActions, Work } from '@/common/types';
-  import { formatParagraphs, parseFromBodyString, parseSource, tidy, type Source } from '@/common/utils';
+  import { formatParagraphs, parseFromBodyString, parseParams, tidy, type ParamFunctions } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
   import { ref, watch } from 'vue';
@@ -24,7 +24,7 @@
   const work = ref<APIResponse<Work>>({ fetching: true });
   const inputBody = ref<string>('');
 
-  watch([() => route.params.userId, () => route.params.workId], (source: Source) => fetchWork(parseSource(source)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.workId], (paramFunctions: ParamFunctions) => fetchWork(parseParams(paramFunctions)), { immediate: true });
 
   async function fetchWork(params: string[]) {
     const input = `users/${params[0]}/works/${params[1]}`;

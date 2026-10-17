@@ -121,7 +121,7 @@ export type Event = {
 }
 
 export type Content = {
-  id: string;  
+  id: string;
   handle: string;
   body: string;
   isStarred: boolean | null;
