@@ -210,28 +210,20 @@ export function getTabIndex(key: string, index: number, length: number): number 
   }
 }
 
-type ParamFunction = () => string | string[] | undefined;
+type Param = string | string[] | undefined;
 
-export type ParamFunctions = ParamFunction[];
+export type Params = Param[];
 
-export function parseParams(paramFunctions: ParamFunctions): string[] {
-  const params: string[] = [];
+export function parseParams(params: Params): string[] {
+  const paramsResult: string[] = [];
 
-  paramFunctions.forEach((paramFunction: ParamFunction) => {
-    const paramResult = paramFunction();
-
-    if (typeof paramResult === 'string') {
-      params.push(paramResult);
-    } else if (paramResult !== undefined) {
-      const param = paramResult[0];
-
-      if (param !== undefined) {
-        params.push(param);
-      }
+  params.forEach((param: Param) => {
+    if (typeof param === 'string') {
+      paramsResult.push(param);
     }
   });
 
-  return params;
+  return paramsResult;
 }
 
 /*

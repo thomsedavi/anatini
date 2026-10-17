@@ -3,7 +3,7 @@
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
-  import { getTabIndex, parseParams, type ParamFunctions } from '@/common/utils';
+  import { getTabIndex, parseParams, type Params } from '@/common/utils';
   import TabButton from '@/common/TabButton.vue';
 
   const route = useRoute();
@@ -28,7 +28,7 @@
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
   });
 
-  watch([() => route.params.spaceId], (paramFunctions: ParamFunctions) => fetchSpace(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.spaceId], (params: Params) => fetchSpace(parseParams(params)), { immediate: true });
 
   async function fetchSpace(params: string[]) {
     const input = `spaces/${params[0]}/edit`;

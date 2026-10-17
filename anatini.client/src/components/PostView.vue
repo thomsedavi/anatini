@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { Post, StatusActions, APIResponse } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
-  import { parseParams, type ParamFunctions } from '@/common/utils';
+  import { parseParams, type Params } from '@/common/utils';
   import { useRoute } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
 
@@ -9,7 +9,7 @@
 
   const post = ref<APIResponse<Post>>({ fetching: true });
 
-  watch([() => route.params.spaceId, () => route.params.postId], (paramFunctions: ParamFunctions) => fetchPost(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
 
   async function fetchPost(params: string[]) {
     const input = `spaces/${params[0]}/posts/${params[1]}`;

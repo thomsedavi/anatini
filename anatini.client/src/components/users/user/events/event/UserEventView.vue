@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { parseParams, type ParamFunctions } from '@/common/utils';
+  import { parseParams, type Params } from '@/common/utils';
   import { apiFetchAll } from '@/common/apiFetch';
   import type { Event, EventOccurrence, Request } from '@/common/types';
 
   const route = useRoute();
 
-  watch([() => route.params.userId, () => route.params.eventId], (paramFunctions: ParamFunctions) => fetchEvent(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.eventId], (params: Params) => fetchEvent(parseParams(params)), { immediate: true });
 
   async function fetchEvent(params: string[]) {
     const userEventRequest: Request = {

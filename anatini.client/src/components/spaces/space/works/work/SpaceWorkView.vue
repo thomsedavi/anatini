@@ -3,7 +3,7 @@
   import { buttonAction } from '@/common/html';
   import { store } from '@/common/store';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
-  import { handleClick, parseParams, type ParamFunctions } from '@/common/utils';
+  import { handleClick, parseParams, type Params } from '@/common/utils';
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -18,7 +18,7 @@
 
   const work = ref<APIResponse<Work>>({ fetching: true });
 
-  watch([() => route.params.spaceId, () => route.params.workId], (paramFunctions: ParamFunctions) => fetchWork(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.workId], (params: Params) => fetchWork(parseParams(params)), { immediate: true });
 
   async function fetchWork(params: string[]) {
     const input = `spaces/${params[0]}/works/${params[1]}`;

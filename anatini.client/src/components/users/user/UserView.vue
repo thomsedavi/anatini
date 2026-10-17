@@ -3,7 +3,7 @@
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
-  import { getTabIndex, parseParams, type ParamFunctions } from '@/common/utils';
+  import { getTabIndex, parseParams, type Params } from '@/common/utils';
   import TabButton from '@/common/TabButton.vue';
   import { store } from '@/common/store';
 
@@ -28,7 +28,7 @@
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
-  watch([() => route.params.userId], (paramFunctions: ParamFunctions) => fetchUser(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.userId], (params: Params) => fetchUser(parseParams(params)), { immediate: true });
 
   async function fetchUser(params: string[]) {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));

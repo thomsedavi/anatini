@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { parseParams, type ParamFunctions } from '@/common/utils';
+  import { parseParams, type Params } from '@/common/utils';
   import { apiFetchAll, apiFetchAuthenticated } from '@/common/apiFetch';
   import type { APIResponse, EventOccurrence, Request, StatusActions, User } from '@/common/types';
 
@@ -10,7 +10,7 @@
   const user = ref<APIResponse<User>>({ fetching: true });
   const eventOccurrence = ref<APIResponse<EventOccurrence>>({ fetching: true });
 
-  watch([() => route.params.userId, () => route.params.eventId, () => route.params.occurrenceId], (paramFunctions: ParamFunctions) => fetchEventOccurrence(parseParams(paramFunctions)), { immediate: true });
+  watch([() => route.params.userId, () => route.params.eventId, () => route.params.occurrenceId], (params: Params) => fetchEventOccurrence(parseParams(params)), { immediate: true });
 
   async function fetchEventOccurrence(params: string[]) {
     const userRequest: Request = {
