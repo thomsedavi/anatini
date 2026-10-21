@@ -693,6 +693,11 @@ namespace Anatini.Server.Migrations
                 column: "space_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_event_instances_starts_at_nz_ends_at_nz",
+                table: "event_instances",
+                columns: new[] { "starts_at_nz", "ends_at_nz" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_event_instances_user_id",
                 table: "event_instances",
                 column: "user_id");

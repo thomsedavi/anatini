@@ -21,7 +21,7 @@ namespace Anatini.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -954,6 +954,9 @@ namespace Anatini.Server.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_event_instances_user_id");
 
+                    b.HasIndex("StartsAtNz", "EndsAtNz")
+                        .HasDatabaseName("ix_event_instances_starts_at_nz_ends_at_nz");
+
                     b.ToTable("event_instances", null, t =>
                         {
                             t.HasCheckConstraint("ck_event_instances_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
@@ -1563,7 +1566,7 @@ namespace Anatini.Server.Migrations
             modelBuilder.Entity("Anatini.Server.Context.Entities.SpaceSetting", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
-                        .WithMany("SpaceSettings")
+                        .WithMany("Settings")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -1668,7 +1671,7 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Logs");
 
-                    b.Navigation("SpaceSettings");
+                    b.Navigation("Settings");
 
                     b.Navigation("UserRelationships");
                 });
