@@ -598,7 +598,10 @@ namespace Anatini.Server.Migrations
                     title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     body = table.Column<string>(type: "text", nullable: false),
                     starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
+                        .Annotation("Npgsql:TsVectorConfig", "english")
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "title", "body" })
                 },
                 constraints: table =>
                 {
@@ -686,6 +689,12 @@ namespace Anatini.Server.Migrations
                 name: "ix_event_instances_event_series_id",
                 table: "event_instances",
                 column: "event_series_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_instances_search_vector",
+                table: "event_instances",
+                column: "search_vector")
+                .Annotation("Npgsql:IndexMethod", "GIN");
 
             migrationBuilder.CreateIndex(
                 name: "ix_event_instances_space_id",

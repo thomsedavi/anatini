@@ -28,6 +28,8 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventInstanceBuilder.HasOneWithMany(eventInstance => eventInstance.Space, space => space.EventInstances, eventInstance => eventInstance.SpaceId, DeleteBehavior.Restrict, required: false);
 
             eventInstanceBuilder.HasIndex(eventInstance => new { eventInstance.StartsAtNz, eventInstance.EndsAtNz });
+
+            eventInstanceBuilder.HasGeneratedTsVectorColumn(eventInstance => eventInstance.SearchVector, "english", eventInstance => new { eventInstance.Title, eventInstance.Body }).HasIndex(eventInstance => eventInstance.SearchVector).HasMethod("GIN");
         }
     }
 }

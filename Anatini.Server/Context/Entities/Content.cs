@@ -73,6 +73,7 @@ namespace Anatini.Server.Context.Entities
         public required Visibility Visibility { get; set; }
         public required string Title { get; set; }
         public required string Body { get; set; }
+        public NpgsqlTsVector SearchVector { get; set; } = null!;
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }
 

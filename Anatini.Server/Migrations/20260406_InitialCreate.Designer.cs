@@ -910,6 +910,14 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
 
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_vector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Title", "Body" });
+
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
                         .HasColumnName("space_id")
@@ -947,6 +955,11 @@ namespace Anatini.Server.Migrations
 
                     b.HasIndex("EventSeriesId")
                         .HasDatabaseName("ix_event_instances_event_series_id");
+
+                    b.HasIndex("SearchVector")
+                        .HasDatabaseName("ix_event_instances_search_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("SpaceId")
                         .HasDatabaseName("ix_event_instances_space_id");
