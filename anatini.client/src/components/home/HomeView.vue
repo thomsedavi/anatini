@@ -11,7 +11,7 @@
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
-  const eventOccurrences = ref<EventOccurrence[] | null>(null);
+  const eventOccurrenceGroups = ref<{ date: string, eventOccurrences: EventOccurrence[] }[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'HomePosts' },
@@ -67,8 +67,8 @@
     works.value = newWorks;
   }
 
-  function handleUpdateEventOccurrences(newEventOccurrences: EventOccurrence[]): void {
-    eventOccurrences.value = newEventOccurrences;
+  function handleUpdateEventOccurrenceGroups(newEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[]): void {
+    eventOccurrenceGroups.value = newEventOccurrenceGroups;
   }
 </script>
 
@@ -94,10 +94,10 @@
         :is="Component"
         :data-posts="posts"
         :data-works="works"
-        :data-event-occurrences="eventOccurrences"
+        :data-event-occurrence-groups="eventOccurrenceGroups"
         @update-posts="handleUpdatePosts"
         @update-works="handleUpdateWorks"
-        @update-event-occurrences="handleUpdateEventOccurrences"
+        @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"
       />
     </RouterView>
   </main>

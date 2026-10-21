@@ -3,6 +3,7 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Middleware;
+using Anatini.Server.Utils;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,9 @@ builder.Services.AddAntiforgery(setupAction =>
 builder.Services.AddControllersWithViews(configure =>
 {
     configure.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+})
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new ShortDateTimeConverter()));
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {

@@ -1,12 +1,12 @@
 import { apiFetchAuthenticated } from "./apiFetch";
-import { formatLong } from "./dateUtils";
+import { formatDate, formatDateTime, formatTime, getDaysDifference } from "./dateUtils";
 import { store } from "./store";
-import type { Content, Post, Space, StatusActions, Work } from "./types";
+import type { Content, EventOccurrence, Post, Space, StatusActions, Work } from "./types";
 
 function getFooterHtml(content: Content): string {
   let result = '';
 
-  result += '<footer><menu>'
+  result += '<footer><menu aria-label="Actions">'
 
   if (content.userHeader !== null && store.userId !== null && content.userHeader.id === store.userId) {
     result += `<li><a href='/users/${content.userHeader.handle}/posts/${content.handle}/edit'>Edit</a></li>`
@@ -33,10 +33,43 @@ export function getSpaceHtml(space: Space): string {
   return result;
 }
 
+export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string {
+  let result = '';
+
+  result += `<header><h4>${eventOccurrence.title}</h4><p>`;
+
+  const startsAtNzTime = formatTime(eventOccurrence.startsAtNz);
+  const endsAtNzTime = formatTime(eventOccurrence.endsAtNz);
+
+  if (startsAtNzTime !== '12:00 am' && endsAtNzTime !== '12:00 am') {
+    result += `<time datetime="${eventOccurrence.startsAtNz}">${startsAtNzTime}</time>`;
+    result += ` - `;
+    result += `<time datetime="${eventOccurrence.endsAtNz}">${endsAtNzTime}</time>`;
+  } else {
+    const daysDifference = getDaysDifference(eventOccurrence.startsAtNz, eventOccurrence.endsAtNz);
+
+    if (daysDifference === 1) {
+      result += `<time dateTime="${eventOccurrence.startsAtNz.slice(0, 10)}">All Day</time>`;
+    } else {
+      result += `<time datetime="${eventOccurrence.startsAtNz.slice(0, 10)}">${formatDate(eventOccurrence.startsAtNz)}</time>`;
+      result += ` - `;
+      result += `<time datetime="${eventOccurrence.endsAtNz.slice(0, 10)}">${formatDate(eventOccurrence.endsAtNz)}</time>`;
+    }
+  }
+
+  result += `</p></header>`;
+
+  result += eventOccurrence.body;
+
+  result += getFooterHtml(eventOccurrence);
+
+  return result;
+}
+
 export function getPostHtml(post: Post): string {
   let result = '';
 
-  result += `<header><time datetime='${post.publishedAtNz}'>${formatLong(post.publishedAtNz)}</time></header>`;
+  result += `<header><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time></header>`;
 
   result += post.body;
 
@@ -77,7 +110,7 @@ export function getWorkHtml(work: Work): string {
   result += '</address>';
 
   if (work.publishedAtNz !== null) {
-    result += `<p>Published: <time ${work.publishedAtNz}>${formatLong(work.publishedAtNz)}</time></p>`;
+    result += `<p>Published: <time ${work.publishedAtNz}>${formatDateTime(work.publishedAtNz)}</time></p>`;
   }
 
   result += '</header>';
