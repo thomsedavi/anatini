@@ -301,3 +301,11 @@ export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction
     }
   }
 }
+
+export function escapeHtml(value: string | null): string | null {
+  if (value === null) {
+    return null;
+  }
+
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}

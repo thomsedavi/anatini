@@ -2,6 +2,7 @@ import { apiFetchAuthenticated } from "./apiFetch";
 import { formatDate, formatDateTime, formatTime, getDaysDifference } from "./dateUtils";
 import { store } from "./store";
 import type { Content, EventOccurrence, Post, Space, StatusActions, Work } from "./types";
+import { escapeHtml } from "./utils";
 
 function getFooterHtml(content: Content): string {
   let result = '';
@@ -36,7 +37,7 @@ export function getSpaceHtml(space: Space): string {
 export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string {
   let result = '';
 
-  result += `<header><h4>${eventOccurrence.title}</h4><p>`;
+  result += `<header><h4>${escapeHtml(eventOccurrence.title)}</h4><p>`;
 
   const startsAtNzTime = formatTime(eventOccurrence.startsAtNz);
   const endsAtNzTime = formatTime(eventOccurrence.endsAtNz);
@@ -84,9 +85,9 @@ export function getWorkHtml(work: Work): string {
   result += '<header>';
 
   if (work.userHeader !== null) {
-    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${work.title}</a></h3>`;
+    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
   } else if (work.spaceHeader !== null) {
-    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${work.title}</a></h3>`;
+    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
   }
 
   result += '<address role="presentation">';

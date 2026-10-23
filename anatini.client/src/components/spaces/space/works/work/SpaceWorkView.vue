@@ -3,7 +3,7 @@
   import { buttonAction } from '@/common/html';
   import { store } from '@/common/store';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
-  import { handleClick, parseParams, type Params } from '@/common/utils';
+  import { escapeHtml, handleClick, parseParams, type Params } from '@/common/utils';
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -47,7 +47,7 @@
 
       return `
         <header>
-          <h2>${ workData.title ?? 'Loading' }</h2>
+          <h2>${ escapeHtml(workData.title ?? 'Loading') }</h2>
         </header>
         ${workData.body}
         ${store.isAuthenticated === true ? `<footer>
