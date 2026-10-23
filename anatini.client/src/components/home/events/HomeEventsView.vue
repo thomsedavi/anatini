@@ -2,8 +2,8 @@
   import { onMounted } from 'vue';
   import { apiFetch } from '@/common/apiFetch';
   import type { EventOccurrence, StatusActions } from '@/common/types';
-  import { getEventOccurrenceHtml } from '@/common/html';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
+  import { getEventOccurrenceHtml } from '@/common/html';
 
   const props = defineProps<{
     dataEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[] | null,

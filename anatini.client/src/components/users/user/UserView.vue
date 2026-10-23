@@ -22,7 +22,7 @@
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserPost', 'UserPostCreate', 'UserPostEdit'] },
     { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWork', 'UserWorkCreate'] },
-    //{ id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
+    { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
     { id: 'spaces', text: 'Spaces', name: 'UserSpaces', childNames: ['UserSpace', 'UserSpaceCreate'] },
   ];
 

@@ -15,7 +15,6 @@ namespace Anatini.Server.Events
     [Route("api/users/{userHandle}/events")]
     public class UserEventsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
-        [DisableEndpoint]
         [HttpPost]
         [Authorize(Policy = "IsTrusted")]
         [ProducesResponseType(StatusCodes.Status201Created)]

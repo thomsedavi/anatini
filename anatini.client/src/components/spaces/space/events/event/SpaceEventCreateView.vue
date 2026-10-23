@@ -10,7 +10,6 @@
 
   const props = defineProps<{
     dataSpaceId: string,
-    dataSpaceHandle: string,
     dataStatus: Status,
     dataInputErrors: InputError[],
   }>();

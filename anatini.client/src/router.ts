@@ -17,7 +17,7 @@ import HomeWorksView from './components/home/works/HomeWorksView.vue';
 import UsersView from './components/users/UsersView.vue';
 import UserView from './components/users/user/UserView.vue';
 import UserPostsView from './components/users/user/posts/UserPostsView.vue';
-// import UserEventsView from './components/users/user/events/UserEventsView.vue';
+import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
 import UserWorkView from './components/users/user/works/work/UserWorkView.vue';
 import UserWorkCreateView from './components/users/user/works/work/UserWorkCreateView.vue';
@@ -26,7 +26,7 @@ import UserPostView from './components/users/user/posts/post/UserPostView.vue';
 import UserPostCreateView from './components/users/user/posts/post/UserPostCreateView.vue';
 import UserPostEditView from './components/users/user/posts/post/UserPostEditView.vue';
 // import UserEventView from './components/users/user/events/event/UserEventView.vue';
-// import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
+import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 // import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 import UserSpacesView from './components/users/user/spaces/UserSpacesView.vue';
 import UserSpaceCreateView from './components/users/user/spaces/space/UserSpaceCreateView.vue';
@@ -134,11 +134,11 @@ const routes: RouteRecordRaw[] = [
         component: UserPostsView,
         name: 'UserPosts'
       },
-      // {
-      //   path: 'events/create',
-      //   component: UserEventCreateView,
-      //   name: 'UserEventCreate'
-      // },
+      {
+        path: 'events/create',
+        component: UserEventCreateView,
+        name: 'UserEventCreate'
+      },
       // {
       //   path: 'events/:eventId/occurrence/:occurrenceId',
       //   component: UserEventOccurrenceView,
