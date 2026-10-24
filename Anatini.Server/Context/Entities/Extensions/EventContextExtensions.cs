@@ -11,6 +11,8 @@ namespace Anatini.Server.Context.Entities.Extensions
             var eventSeriesId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
 
+            var recurrenceRule = new RecurrenceRule(createEvent.RecurrenceRule);
+
             var eventSeries = new EventSeries
             {
                 Id = eventSeriesId,
@@ -23,6 +25,9 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 StartsAtNz = createEvent.StartsAtNz,
                 EndsAtNz = createEvent.EndsAtNz,
+                Duration = createEvent.Duration,
+                RecurrenceRule = createEvent.RecurrenceRule,
+                ExpiresAtNz = recurrenceRule.ExpiresAtNz(createEvent.StartsAtNz, createEvent.EndsAtNz, createEvent.Duration),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
                 Handle = createEvent.Handle ?? eventSeriesId.ToString()
@@ -38,6 +43,8 @@ namespace Anatini.Server.Context.Entities.Extensions
             var eventSeriesId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
 
+            var recurrenceRule = new RecurrenceRule(createEvent.RecurrenceRule);
+
             var eventSeries = new EventSeries
             {
                 Id = eventSeriesId,
@@ -50,6 +57,9 @@ namespace Anatini.Server.Context.Entities.Extensions
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 StartsAtNz = createEvent.StartsAtNz,
                 EndsAtNz = createEvent.EndsAtNz,
+                Duration = createEvent.Duration,
+                RecurrenceRule = createEvent.RecurrenceRule,
+                ExpiresAtNz = recurrenceRule.ExpiresAtNz(createEvent.StartsAtNz, createEvent.EndsAtNz, createEvent.Duration),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
                 Handle = eventSeriesId.ToString()
