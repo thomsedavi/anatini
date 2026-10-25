@@ -1,4 +1,5 @@
-﻿using Anatini.Server.Context;
+﻿using System.Net.Mime;
+using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
@@ -14,11 +15,16 @@ namespace Anatini.Server.Events
     public class EventOccurrencesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IBlobService blobService) : AnatiniControllerBase(context, userManager, blobService)
     {
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventOccurrences()
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
             var eventInstancesQuery = Context.EventInstances.AsQueryable();
+
+            eventInstancesQuery = eventInstancesQuery.AsNoTracking();
 
             eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.User).ThenInclude(user => user!.Images);
             eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.Space).ThenInclude(space => space!.Images);
