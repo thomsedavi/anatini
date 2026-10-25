@@ -149,11 +149,11 @@ const routes: RouteRecordRaw[] = [
       //   component: UserEventView,
       //   name: 'Event',
       // },
-      // {
-      //   path: 'events',
-      //   component: UserEventsView,
-      //   name: 'UserEvents'
-      // },
+      {
+        path: 'events',
+        component: UserEventsView,
+        name: 'UserEvents'
+      },
       {
         path: 'works',
         component: UserWorksView,

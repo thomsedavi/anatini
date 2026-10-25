@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
+  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
@@ -17,6 +17,7 @@
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
+  const eventOccurrenceGroups = ref<{ date: string, eventOccurrences: EventOccurrence[] }[] | null>(null);
   const spaces = ref<Space[] | null>(null);
 
   const tabs: Tab[] = [
@@ -170,6 +171,10 @@
     works.value = newWorks;
   }
 
+  function handleUpdateEventOccurrenceGroups(newEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[]): void {
+    eventOccurrenceGroups.value = newEventOccurrenceGroups;
+  }
+
   function handleUpdateSpaces(newSpaces: Space[]): void {
     spaces.value = newSpaces;
   }
@@ -256,12 +261,14 @@
           :data-input-errors="inputErrors"
           :data-posts="posts"
           :data-works="works"
+          :data-event-occurrence-groups="eventOccurrenceGroups"
           :data-spaces="spaces"
           :data-user-id="user.data.id"
           :data-user-handle="user.data.handle"
           :data-user-name="user.data.name"
           @update-posts="handleUpdatePosts"
           @update-works="handleUpdateWorks"
+          @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"
           @update-spaces="handleUpdateSpaces"
           @update-errors="handleUpdateErrors"
         />

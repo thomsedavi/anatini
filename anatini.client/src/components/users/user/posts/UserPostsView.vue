@@ -10,7 +10,6 @@
 
   const props = defineProps<{
     dataUserId: string,
-    dataUserHandle: string,
     dataPosts: Post[] | null,
   }>();
 

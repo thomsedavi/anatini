@@ -119,7 +119,7 @@
           :selected="tabIndex === index"
           @click="() => handleClick(index)"
           @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
-          :text="tab.text"
+          :text="space.data.settings[`${tab.id}-name`] ?? tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
       </ul>

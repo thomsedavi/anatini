@@ -5,7 +5,6 @@
 
   const props = defineProps<{
     dataUserId: string,
-    dataUserHandle: string,
     dataWorks: Work[] | null,
   }>();
 
