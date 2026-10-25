@@ -26,6 +26,8 @@ namespace Anatini.Server.Events
 
             eventInstancesQuery = eventInstancesQuery.AsNoTracking();
 
+            eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.User).ThenInclude(user => user!.Images);
+
             eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.UserId == user.Id);
 
             if (TryGetUserId(out Guid sourceUserId))
