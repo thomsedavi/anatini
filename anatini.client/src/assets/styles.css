@@ -60,7 +60,7 @@ body {
 
 /* --- Header & Navigation --- */
 header {
-  background-color: var(--color-surface);
+  background-color: transparent;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -72,6 +72,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   position: relative;
+  background-color: var(--color-surface); /* Navbar background set to white */
 }
 
 nav a {
@@ -114,6 +115,7 @@ nav ul {
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
+  z-index: 50;
 }
 
 nav ul[hidden] {
@@ -131,13 +133,23 @@ nav ul li a:hover {
   color: var(--color-primary);
 }
 
-/* --- Main Layout & Sign-In Form --- */
+/* Active page link styling */
+nav ul li a[aria-current="page"] {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* --- Main Layout & Forms --- */
 main {
   max-width: 440px;
   width: 100%;
   margin: 3rem auto;
   padding: 0 1.5rem;
   flex: 1;
+}
+
+main:focus {
+  outline: none;
 }
 
 main > header h1 {
@@ -161,11 +173,14 @@ form {
   gap: 1.25rem;
 }
 
+/* --- Fieldsets & Inputs (Stacked by default) --- */
 fieldset {
   border: none;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 0;
+  margin: 0;
 }
 
 legend {
@@ -182,7 +197,8 @@ label {
 }
 
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="text"] {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--color-border);
@@ -195,27 +211,11 @@ input[type="password"] {
 }
 
 input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="text"]:focus {
   outline: none;
   border-color: var(--color-focus);
   box-shadow: 0 0 0 3px rgb(105 135 165 / 0.15);
-}
-
-/* Remember Me Checkbox Alignment */
-fieldset {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-}
-
-fieldset legend {
-  grid-column: 1 / -1;
-}
-
-fieldset label:not([for]) {
-  grid-column: 2;
-  cursor: pointer;
 }
 
 input[type="checkbox"] {
@@ -225,15 +225,44 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-fieldset small {
+/* --- Fieldset with Checkbox Layout Correction --- */
+fieldset:has(input[type="checkbox"]) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.75rem;
+  align-items: start;
+}
+
+fieldset:has(input[type="checkbox"]) legend {
+  grid-column: 1 / -1;
+}
+
+/* Force email/password labels and inputs to span full width */
+fieldset:has(input[type="checkbox"]) > label:not(:has(+ input[type="checkbox"]), input[type="checkbox"] + label),
+fieldset:has(input[type="checkbox"]) > input[type="email"],
+fieldset:has(input[type="checkbox"]) > input[type="password"],
+fieldset:has(input[type="checkbox"]) > input[type="text"] {
+  grid-column: 1 / -1;
+}
+
+/* Position the checkbox and its associated text in columns */
+fieldset:has(input[type="checkbox"]) > input[type="checkbox"] {
+  grid-column: 1;
+  margin-top: 0.2rem;
+}
+
+fieldset:has(input[type="checkbox"]) > input[type="checkbox"] + label {
+  grid-column: 2;
+  cursor: pointer;
+}
+
+fieldset:has(input[type="checkbox"]) > input[type="checkbox"] + label + small {
   grid-column: 2;
   color: var(--color-text-muted);
   font-size: 0.75rem;
-  margin-top: -0.25rem;
-  margin-bottom: 0.5rem;
 }
 
-/* Submit Button */
+/* --- Buttons --- */
 button[type="submit"] {
   background-color: var(--color-primary);
   color: white;
@@ -253,6 +282,29 @@ button[type="submit"]:hover {
 }
 
 button[type="submit"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(105 135 165 / 0.4);
+}
+
+/* Secondary Action Button (e.g., "I Have A Code") */
+form button[type="button"] {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+}
+
+form button[type="button"]:hover {
+  background-color: var(--color-bg);
+}
+
+form button[type="button"]:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgb(105 135 165 / 0.4);
 }
