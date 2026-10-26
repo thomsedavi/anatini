@@ -9,7 +9,7 @@
 
 <template>
   <fieldset>
-    <legend class="visuallyhidden">{{ legend }}</legend>
+    <legend class="visually-hidden">{{ legend }}</legend>
 
     <ul role="list">
       <li v-for="radio in radios" :key="`radio-${radio.name}-${radio.value}`">

@@ -139,7 +139,7 @@
     </header>
 
     <section v-if="space === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the space information is fetched.</p>
+      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the space information is fetched.</p>
                 
       <progress max="100">Fetching space...</progress>
     </section>
@@ -163,7 +163,7 @@
       <section>
         <form @submit.prevent="postPost" :action="`/api/spaces/${space.data.id}/posts`" method="POST" novalidate>
           <fieldset>
-            <legend class="visuallyhidden">Create Post</legend>
+            <legend class="visually-hidden">Create Post</legend>
 
             <InputText
               v-model="inputPostName"
@@ -191,7 +191,7 @@
         </form>
       </section>
 
-      <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
+      <p role="status" class="visually-hidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
     </template>
   </main>
 </template>

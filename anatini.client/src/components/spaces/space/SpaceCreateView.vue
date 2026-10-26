@@ -94,7 +94,7 @@
     <section>
       <form @submit.prevent="postSpace" action="/api/spaces" method="POST" novalidate>
         <fieldset>
-          <legend class="visuallyhidden">Create Space</legend>
+          <legend class="visually-hidden">Create Space</legend>
 
           <InputText
             v-model="inputSpaceName"
@@ -124,6 +124,6 @@
       </form>
     </section>
 
-    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
+    <p role="status" class="visually-hidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
   </main>
 </template>

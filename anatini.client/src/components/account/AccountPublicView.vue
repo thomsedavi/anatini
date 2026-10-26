@@ -160,7 +160,7 @@
 
     <form @submit.prevent="patchAccountDisplay" action="/api/account" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Display Details</legend>
+        <legend class="visually-hidden">Display Details</legend>
 
         <InputText
           v-model="inputUserName"

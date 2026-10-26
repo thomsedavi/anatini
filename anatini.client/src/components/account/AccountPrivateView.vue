@@ -73,7 +73,7 @@
 
     <form @submit.prevent="patchAccountPrivacy" action="/api/account" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Privacy</legend>
+        <legend class="visually-hidden">Privacy</legend>
 
         <VisibilitySelect v-model="inputVisibility" />
       </fieldset>

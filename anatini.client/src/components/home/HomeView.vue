@@ -74,7 +74,7 @@
 
 <template>
   <main id="main" tabindex="-1">
-    <header class="visuallyhidden">
+    <header class="visually-hidden">
       <h1>Post Feed</h1>
     </header>
 

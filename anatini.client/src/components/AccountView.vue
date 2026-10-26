@@ -194,6 +194,6 @@
       </RouterView>
     </template>
 
-    <p role="status" aria-live="polite" class="visuallyhidden" aria-atomic="true">TODO</p>
+    <p role="status" aria-live="polite" class="visually-hidden" aria-atomic="true">TODO</p>
   </main>
 </template>

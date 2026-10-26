@@ -148,7 +148,7 @@
     <section>
       <form @submit.prevent="signup" action="/api/authentication/signup" method="POST">
         <fieldset>
-          <legend class="visuallyhidden">Complete Signup</legend>
+          <legend class="visually-hidden">Complete Signup</legend>
 
           <InputText
             type="email"

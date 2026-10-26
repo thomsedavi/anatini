@@ -155,6 +155,6 @@
       </form>
     </section>
 
-    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
+    <p role="status" class="visually-hidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>
 </template>

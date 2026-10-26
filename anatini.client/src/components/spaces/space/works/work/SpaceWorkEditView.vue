@@ -99,7 +99,7 @@
     </header>
 
     <template v-if="work === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the work information is fetched.</p>
+      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the work information is fetched.</p>
                 
       <progress max="100">Fetching work...</progress>
     </template>

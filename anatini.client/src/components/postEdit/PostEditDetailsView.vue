@@ -81,7 +81,7 @@
 
     <form @submit.prevent="patchPostDetail" :action="`/api/spaces/${dataSpaceId}/posts/${dataPostId}`" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Post Details</legend>
+        <legend class="visually-hidden">Post Details</legend>
 
         <template v-if="inputName !== null">
           <InputText

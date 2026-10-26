@@ -166,7 +166,7 @@
         label="Start Date"
         name="start-date"
         id="start-date"
-        helpclass="visuallyhidden"
+        helpclass="visually-hidden"
         help="Selecting a date will update the recurring rule options."
         controls="input-monthly"
         :required="true"

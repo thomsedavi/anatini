@@ -186,6 +186,6 @@
       </RouterView>
     </template>
 
-    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
+    <p role="status" class="visually-hidden" aria-live="polite">{{ status === 'success' ? 'Created!' : undefined }}</p>
   </main>
 </template>

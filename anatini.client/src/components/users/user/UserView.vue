@@ -217,7 +217,7 @@
     </header>
 
     <section v-if="user.fetching === true">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the user information is fetched.</p>
+      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the user information is fetched.</p>
               
       <progress max="100">Fetching user...</progress>
     </section>

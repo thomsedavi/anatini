@@ -115,7 +115,7 @@
     </header>
 
     <template v-if="post === null">
-      <p role="status" class="visuallyhidden" aria-live="polite">Please wait while the post information is fetched.</p>
+      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the post information is fetched.</p>
                 
       <progress max="100">Fetching post...</progress>
     </template>
@@ -129,7 +129,7 @@
     <template v-if="post.data !== undefined">
       <form @submit.prevent="patchPost" :action="`/api/spaces/${route.params.spaceId}/posts/${route.params.postId}`" method="POST" novalidate>
         <fieldset>
-          <legend class="visuallyhidden">Edit Post</legend>
+          <legend class="visually-hidden">Edit Post</legend>
 
           <InputTextArea
             v-model="inputArticle"

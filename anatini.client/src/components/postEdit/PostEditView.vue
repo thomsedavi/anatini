@@ -177,6 +177,6 @@
       </RouterView>
     </template>
 
-    <p role="status" class="visuallyhidden">{{ pageStatus }}</p>
+    <p role="status" class="visually-hidden">{{ pageStatus }}</p>
   </main>
 </template>

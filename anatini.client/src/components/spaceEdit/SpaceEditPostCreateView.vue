@@ -74,7 +74,7 @@
 
     <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/posts`" method="POST" novalidate>
       <fieldset>
-        <legend class="visuallyhidden">Create Post</legend>
+        <legend class="visually-hidden">Create Post</legend>
 
         <InputTextArea
           v-model="inputArticle"

@@ -88,7 +88,7 @@
     <section>
       <form @submit.prevent="email" action="/api/authentication/email" method="POST">
         <fieldset>
-          <legend class="visuallyhidden">Email Address</legend>
+          <legend class="visually-hidden">Email Address</legend>
 
           <InputText
             type="email"
@@ -110,6 +110,6 @@
       </form>
     </section>
 
-    <p role="status" class="visuallyhidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
+    <p role="status" class="visually-hidden" aria-live="polite">{{ status === 'pending' ? 'Busy...' : undefined }}</p>
   </main>
 </template>
