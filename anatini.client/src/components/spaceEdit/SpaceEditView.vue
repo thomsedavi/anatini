@@ -133,7 +133,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" :aria-busy="space === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="space === null">
     <header>
       <h1 id="heading-main">{{ getHeading() }}</h1>
     </header>

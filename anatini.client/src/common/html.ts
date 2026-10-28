@@ -7,7 +7,7 @@ import { escapeHtml } from "./utils";
 function getFooterHtml(content: Content, contentType: string): string {
   let result = '';
 
-  result += '<footer><menu aria-label="Actions">'
+  result += `<footer><menu role='toolbar' aria-label='Actions'>`
 
   if (content.userHeader !== null && store.userId !== null && content.userHeader.id === store.userId) {
     result += `<li><a href='/users/${content.userHeader.handle}/${contentType}/${content.handle}/edit'>Edit</a></li>`

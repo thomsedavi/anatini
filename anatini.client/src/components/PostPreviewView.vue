@@ -51,5 +51,5 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" v-html="getMainHtml()"></main>
+  <main role="main" id="main" tabindex="-1" v-html="getMainHtml()"></main>
 </template>

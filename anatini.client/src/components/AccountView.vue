@@ -139,7 +139,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1" :aria-busy="user === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="user === null">
     <header>
       <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
     </header>

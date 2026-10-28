@@ -53,7 +53,7 @@
 
     <p v-if="dataPost.status === 'Published'">Republish to update with any changes.</p>
 
-    <menu>
+    <menu role="toolbar">
       <li>
         <button type="button" @click="() => setStatus('Published')" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">{{ dataPost.status === 'Published' ? 'Republish' : 'Publish' }}</button>
       </li>

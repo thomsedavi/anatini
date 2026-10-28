@@ -97,7 +97,7 @@
       <RouterLink v-if="store.isAuthenticated" :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
     </header>
 
-    <search v-if="store.isAuthenticated">
+    <search role="search" v-if="store.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 

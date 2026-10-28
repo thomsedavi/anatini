@@ -73,7 +73,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
+  <main role="main" id="main" tabindex="-1">
     <header class="visually-hidden">
       <h1>Post Feed</h1>
     </header>

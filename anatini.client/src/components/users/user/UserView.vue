@@ -191,7 +191,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
+  <main role="main" id="main" tabindex="-1">
     <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
       <h2 id="heading-errors">There was a problem updating your account</h2>
       <ul role="list">
@@ -232,7 +232,7 @@
       <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
       </section>
 
-      <menu v-if="store.userId !== user.data.id && (user.data.isTrusted !== null || user.data.isFollowed !== null)">
+      <menu role="toolbar" v-if="store.userId !== user.data.id && (user.data.isTrusted !== null || user.data.isFollowed !== null)">
         <li v-if="user.data.isTrusted !== null">
           <button type="button" :aria-pressed="user.data.isTrusted" @click="toggleTrust">{{ user.data.isTrusted ? "Remove Trust" : "Trust" }}</button>
         </li>

@@ -111,7 +111,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
+  <main role="main" id="main" tabindex="-1">
     <template v-if="space.data !== undefined">
       <ul role="tablist" aria-label="Space Content">
         <TabButton v-for="(tab, index) in tabs"

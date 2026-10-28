@@ -44,7 +44,7 @@
       ${getHeader(post)}
       ${post.body}
       <footer>
-        <menu>
+        <menu role='toolbar'>
           <li>
             <a href='/spaces/${props.dataSpaceHandle}/posts/${post.handle ?? post.id}/edit'>Edit</a>
           </li>

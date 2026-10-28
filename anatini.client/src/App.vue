@@ -98,7 +98,7 @@
   <template v-if="store.isAuthenticated !== null">
     <a href="#main" id="skip">Skip to main content</a>
 
-    <header id="main-header">
+    <header role="banner">
       <nav id="main-nav" aria-label="Main">
         <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
         <button 

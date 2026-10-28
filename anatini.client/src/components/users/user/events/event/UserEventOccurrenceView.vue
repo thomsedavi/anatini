@@ -70,7 +70,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
+  <main role="main" id="main" tabindex="-1">
     <article :aria-busy="eventOccurrence.fetching === true" aria-labelledby="heading-main">
       <template v-if="eventOccurrence.data !== undefined">
         <header>
@@ -84,7 +84,7 @@
           <nav>
 
           </nav>
-          <menu>
+          <menu role="toolbar">
             <li>
               <button type="button" :aria-pressed="eventOccurrence.data.isBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
             </li>

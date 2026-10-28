@@ -98,7 +98,7 @@
       <RouterLink v-if="store.isAuthenticated" :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">+ Create Work</RouterLink>
     </header>
 
-    <search v-if="store.isAuthenticated">
+    <search role="search" v-if="store.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 

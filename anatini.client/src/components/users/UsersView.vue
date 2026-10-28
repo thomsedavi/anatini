@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main id="main" tabindex="-1">
+  <main role="main" id="main" tabindex="-1">
     <h2>UsersView</h2>
   </main>
 </template>
