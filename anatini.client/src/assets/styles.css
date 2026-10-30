@@ -520,12 +520,12 @@ section[role="tabpanel"] {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 2.25rem;
-                height: 2.25rem;
+                width: 1.75rem;
+                height: 1.75rem;
                 border-radius: 6px;
-                border: 1px solid var(--border-color, #cbd5e1);
+                border: none;
                 background: transparent;
-                color: var(--text-main, #334155);
+                color: var(--text-muted, #64748b);
                 cursor: pointer;
                 transition: background 0.2s, border-color 0.2s;
 
