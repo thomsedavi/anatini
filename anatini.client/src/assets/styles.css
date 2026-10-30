@@ -5,11 +5,18 @@
 *,
 *::before,
 *::after {
-
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+  > a {
 
+    &:focus {
+
+    }
+  }
 }
 
 .visually-hidden {
@@ -22,22 +29,41 @@ body {
   width: 1px;
 }
 
-#skip {
-
-}
-
-#skip:focus {
-
-}
-
 header[role="banner"] {
+  > nav {
+    > a {
 
-}
+    }
 
-nav[role="navigation"] {
+    > button {
 
-}
+      &:hover {
 
-nav[role="navigation"] a[href="/"] {
+      }
+    }
 
+    > ul {
+
+      &[hidden] {
+
+      }
+
+      > li {
+
+        > a {
+
+        }
+
+        > ul {
+
+          > li {
+
+            > a {
+
+            }
+          }
+        }
+      }
+    }
+  }
 }
