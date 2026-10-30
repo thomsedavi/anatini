@@ -87,9 +87,9 @@ export function getWorkHtml(work: Work): string {
   result += '<header>';
 
   if (work.userHeader !== null) {
-    result += `<h3><a href="/users/${work.userHeader.handle}"/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
+    result += `<h3><a href="/users/${work.userHeader.handle}/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
   } else if (work.spaceHeader !== null) {
-    result += `<h3><a href="/spaces/${work.spaceHeader.handle}"/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
+    result += `<h3><a href="/spaces/${work.spaceHeader.handle}/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
   }
 
   result += '<address role="presentation">';
@@ -113,7 +113,13 @@ export function getWorkHtml(work: Work): string {
   result += '</address>';
 
   if (work.publishedAtNz !== null) {
-    result += `<time ${work.publishedAtNz}>${formatDateTime(work.publishedAtNz)}</time>`;
+    const publishedAtNzTime = formatTime(work.publishedAtNz);
+
+    if (publishedAtNzTime === '12:00 am') {
+      result += `<time ${work.publishedAtNz.slice(0, 10)}>${formatDate(work.publishedAtNz)}</time>`;
+    } else {
+      result += `<time ${work.publishedAtNz}>${publishedAtNzTime}</time>`;
+    }
   }
 
   result += '</header>';
