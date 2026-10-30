@@ -9,13 +9,16 @@ namespace Anatini.Server.Works
 {
     public static class WorkExtensions
     {
-        public static async Task<WorkDto> ToWorkDtoAsync(this Content work, bool isAuthenticated, IBlobService? blobService = null)
+        public static async Task<WorkDto> ToWorkDtoAsync(this Content work, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
         {
+            user ??= work.User;
+            space ??= work.Space;
+
             return new WorkDto
             {
                 Id = work.Id,
-                UserHeader = work.User != null ? await work.User.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = work.Space != null ? await work.Space.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
+                SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
                 Handle = work.Handle,
                 Title = work.Title ?? throw new InvalidOperationException(),
                 Body = work.Body,

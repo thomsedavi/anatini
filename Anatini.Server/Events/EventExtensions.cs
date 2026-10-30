@@ -23,13 +23,16 @@ namespace Anatini.Server.Events
             };
         }
 
-        public static async Task<EventOccurrenceDto> ToEventInstanceDtoAsync(this EventInstance eventInstance, bool isAuthenticated, IBlobService? blobService = null)
+        public static async Task<EventOccurrenceDto> ToEventInstanceDtoAsync(this EventInstance eventInstance, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
         {
+            user ??= eventInstance.User;
+            space ??= eventInstance.Space;
+
             return new EventOccurrenceDto
             {
                 Id = eventInstance.Id,
-                UserHeader = eventInstance.User != null ? await eventInstance.User.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = eventInstance.Space != null ? await eventInstance.Space.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
+                SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
                 Handle = eventInstance.Handle,
                 StartsAtNz = eventInstance.StartsAtNz,
                 EndsAtNz = eventInstance.EndsAtNz,

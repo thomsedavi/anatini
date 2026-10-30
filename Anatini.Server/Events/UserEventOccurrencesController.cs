@@ -50,7 +50,7 @@ namespace Anatini.Server.Events
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDtoAsync(IsAuthenticated, BlobService, user: user))));
         });
     }
 }

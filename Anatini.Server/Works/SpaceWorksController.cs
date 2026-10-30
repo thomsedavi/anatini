@@ -42,7 +42,7 @@ namespace Anatini.Server.Works
 
             work.Space = space;
 
-            return CreatedAtAction(nameof(GetWork), new { spaceHandle = space.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
+            return CreatedAtAction(nameof(GetWork), new { spaceHandle = space.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(IsAuthenticated, BlobService, space: space));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -167,7 +167,7 @@ namespace Anatini.Server.Works
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService, space: space))));
         });
 
         [Authorize]
