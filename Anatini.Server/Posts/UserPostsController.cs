@@ -42,7 +42,7 @@ namespace Anatini.Server.Posts
 
             post.User = user;
 
-            return CreatedAtAction(nameof(GetPost), new { userHandle = user.Handle, postHandle = post.Handle }, await post.ToPostDtoAsync(IsAuthenticated, BlobService));
+            return CreatedAtAction(nameof(GetPost), new { userHandle = user.Handle, postHandle = post.Handle }, await post.ToPostDtoAsync(IsAuthenticated, BlobService, user: user));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -70,7 +70,7 @@ namespace Anatini.Server.Posts
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService, user: user))));
         });
 
         [Authorize]

@@ -9,13 +9,16 @@ namespace Anatini.Server.Posts
 {
     public static class PostExtensions
     {
-        public static async Task<PostDto> ToPostDtoAsync(this Post post, bool isAuthenticated, IBlobService? blobService = null)
+        public static async Task<PostDto> ToPostDtoAsync(this Post post, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
         {
+            user ??= post.User;
+            space ??= post.Space;
+
             return new PostDto
             {
                 Id = post.Id,
-                UserHeader = post.User != null ? await post.User.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = post.Space != null ? await post.Space.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
+                SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
                 Handle = post.Handle,
                 Title = post.Title,
                 Body = post.Body,

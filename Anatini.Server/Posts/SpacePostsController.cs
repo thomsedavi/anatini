@@ -46,7 +46,7 @@ namespace Anatini.Server.Posts
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService, space: space))));
         });
 
         [Authorize]
@@ -79,7 +79,7 @@ namespace Anatini.Server.Posts
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = post.Id }, await post.ToPostDtoAsync(IsAuthenticated, BlobService));
+            return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = post.Id }, await post.ToPostDtoAsync(IsAuthenticated, BlobService, space: space));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
