@@ -476,6 +476,22 @@ fieldset[role="radiogroup"] {
 }
 
 section[role="tabpanel"] {
+  > nav {
+    > ol {
+      > li {
+        > a {
+
+        }
+      }
+    }
+  }
+
+  > article {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
   > ul,
   > section > ul {
     list-style: none;
@@ -492,56 +508,58 @@ section[role="tabpanel"] {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
+      }
+    }
+  }
 
-        > header {
-          > time {
-            font-size: 0.875rem;
-            color: var(--text-muted, #64748b);
-          }
-        }
+  article {
+    > header {
+      > time {
+        font-size: 0.875rem;
+        color: var(--text-muted, #64748b);
+      }
+    }
 
-        > p {
-          color: var(--text-main, #1e293b);
-          line-height: 1.5;
-        }
+    > p {
+      color: var(--text-main, #1e293b);
+      line-height: 1.5;
+    }
 
-        > footer {
-          margin-top: 0.5srem;
+    > footer {
+      margin-top: 0.5srem;
 
-          > menu {
-            list-style: none;
-            display: flex;
-            gap: 0.5rem;
+      > menu {
+        list-style: none;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        > li {
+          > button,
+          > a {
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted, #64748b);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
 
-            > li {
-              > button,
-              > a {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 1.75rem;
-                height: 1.75rem;
-                border-radius: 6px;
-                border: none;
-                background: transparent;
-                color: var(--text-muted, #64748b);
-                cursor: pointer;
-                transition: background 0.2s, border-color 0.2s;
+            &:hover {
+              background: var(--hover-bg, #f1f5f9);
+            }
+          }
 
-                &:hover {
-                  background: var(--hover-bg, #f1f5f9);
-                }
-              }
+          > a {
+            border-color: var(--accent-color, #3b82f6);
+            color: var(--accent-color, #3b82f6);
 
-              > a {
-                border-color: var(--accent-color, #3b82f6);
-                color: var(--accent-color, #3b82f6);
-
-                &:hover {
-                  background: var(--accent-hover-bg, #eff6ff);
-                }
-              }
+            &:hover {
+              background: var(--accent-hover-bg, #eff6ff);
             }
           }
         }
