@@ -39,7 +39,7 @@ export function getSpaceHtml(space: Space): string {
 export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string {
   let result = '';
 
-  result += `<header><h4>${escapeHtml(eventOccurrence.title)}</h4>`;
+  result += `<header><h4>${escapeHtml(eventOccurrence.title)}</h4><p>`;
 
   const startsAtNzTime = formatTime(eventOccurrence.startsAtNz);
   const endsAtNzTime = formatTime(eventOccurrence.endsAtNz);
@@ -60,7 +60,7 @@ export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string
     }
   }
 
-  result += `</header>`;
+  result += `</p></header>`;
 
   result += eventOccurrence.body;
 
@@ -72,7 +72,7 @@ export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string
 export function getPostHtml(post: Post): string {
   let result = '';
 
-  result += `<header><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time></header>`;
+  result += `<header><p><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time></p></header>`;
 
   result += post.body;
 
@@ -110,9 +110,11 @@ export function getWorkHtml(work: Work): string {
     result += `</a>`;
   }
 
-  result += '</address>';
+  result += '</address><p>';
 
   if (work.publishedAtNz !== null) {
+    result += 'Published: ';
+
     const publishedAtNzTime = formatTime(work.publishedAtNz);
 
     if (publishedAtNzTime === '12:00 am') {
@@ -122,7 +124,7 @@ export function getWorkHtml(work: Work): string {
     }
   }
 
-  result += '</header>';
+  result += '</p></header>';
 
   result += work.body;
 
