@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <fieldset>
+  <fieldset role="radiogroup">
     <legend class="visually-hidden">{{ legend }}</legend>
 
     <ul role="list">

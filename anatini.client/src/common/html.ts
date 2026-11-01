@@ -81,7 +81,23 @@ export function getPostHtml(post: Post): string {
   return result;
 }
 
-export function getWorkHtml(work: Work): string {
+export function getWorkTime(publishedAtNz: string): string {
+  let result = '<p>Published: ';
+
+  const publishedAtNzTime = formatTime(publishedAtNz);
+
+  if (publishedAtNzTime === '12:00 am') {
+    result += `<time datetime="${publishedAtNz.slice(0, 10)}">${formatDate(publishedAtNz)}</time>`;
+  } else {
+    result += `<time datetime="${publishedAtNz}">${publishedAtNzTime}</time>`;
+  }
+
+  result += '</p>';
+
+  return result;
+}
+
+export function getWorkHtml(work: Work, showOwner: boolean): string {
   let result = '';
 
   result += '<header>';
@@ -94,37 +110,31 @@ export function getWorkHtml(work: Work): string {
 
   result += '<address role="presentation">';
 
-  if (work.userHeader !== null) {
-    result += `<a rel="author" href="/users/${work.userHeader.handle}">`;
-    if (work.userHeader.iconImage !== null) {
-      result += `<img src="${work.userHeader.iconImage.uri}" alt="">`;
+  if (showOwner) {
+    if (work.userHeader !== null) {
+      result += `<a rel="author" href="/users/${work.userHeader.handle}">`;
+      if (work.userHeader.iconImage !== null) {
+        result += `<img src="${work.userHeader.iconImage.uri}" alt="">`;
+      }
+      result += work.userHeader.name;
+      result += `</a>`;
+    } else if (work.spaceHeader !== null) {
+      result += `<a rel="author" href="/spaces/${work.spaceHeader.handle}">`;
+      if (work.spaceHeader.iconImage !== null) {
+        result += `<img src="${work.spaceHeader.iconImage.uri}" alt="">`;
+      }
+      result += work.spaceHeader.name;
+      result += `</a>`;
     }
-    result += work.userHeader.name;
-    result += `</a>`;
-  } else if (work.spaceHeader !== null) {
-    result += `<a rel="author" href="/spaces/${work.spaceHeader.handle}">`;
-    if (work.spaceHeader.iconImage !== null) {
-      result += `<img src="${work.spaceHeader.iconImage.uri}" alt="">`;
-    }
-    result += work.spaceHeader.name;
-    result += `</a>`;
   }
 
-  result += '</address><p>';
+  result += '</address>';
 
   if (work.publishedAtNz !== null) {
-    result += 'Published: ';
-
-    const publishedAtNzTime = formatTime(work.publishedAtNz);
-
-    if (publishedAtNzTime === '12:00 am') {
-      result += `<time ${work.publishedAtNz.slice(0, 10)}>${formatDate(work.publishedAtNz)}</time>`;
-    } else {
-      result += `<time ${work.publishedAtNz}>${publishedAtNzTime}</time>`;
-    }
+    result += getWorkTime(work.publishedAtNz);
   }
 
-  result += '</p></header>';
+  result += '</header>';
 
   result += work.body;
 

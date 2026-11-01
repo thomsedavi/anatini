@@ -113,7 +113,7 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article v-html="getWorkHtml(work)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work))">
+        <article v-html="getWorkHtml(work, true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work))">
         </article>
       </li>
     </ul>

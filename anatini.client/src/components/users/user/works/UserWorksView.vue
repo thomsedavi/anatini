@@ -1,7 +1,12 @@
 <script setup lang="ts">
-  import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import type { StatusActions, Work } from '@/common/types';
   import { onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import { getWorkHtml } from '@/common/html';
+  import type { StatusActions, Work } from '@/common/types';
+  import { handleClick } from '@/common/utils';
+
+  const router = useRouter();
 
   const props = defineProps<{
     dataUserId: string,
@@ -39,12 +44,11 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article>
-          <p>Some description might go here?</p>
+        <article v-html="getWorkHtml(work, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>
 
-    <p v-else>You do not have any posts</p>
+    <p v-else>You do not have any works</p>
   </section>
 </template>

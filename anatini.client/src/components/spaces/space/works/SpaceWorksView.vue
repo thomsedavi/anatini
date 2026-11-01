@@ -41,7 +41,7 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article v-html="getWorkHtml(work)">
+        <article v-html="getWorkHtml(work, false)">
         </article>
       </li>
     </ul>

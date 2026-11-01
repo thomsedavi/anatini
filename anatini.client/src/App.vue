@@ -99,7 +99,7 @@
     <a href="#main" id="skip">Skip to main content</a>
 
     <header role="banner">
-      <nav id="main-nav" aria-label="Main">
+      <nav role="navigation" aria-label="Main">
         <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
         <button 
           type="button" 

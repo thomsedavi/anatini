@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import type { Post, StatusActions } from '@/common/types';
   import { onMounted } from 'vue';
-  import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRouter } from 'vue-router';
-  import { handleClick } from '@/common/utils';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { getPostHtml } from '@/common/html';
+  import type { Post, StatusActions } from '@/common/types';
+  import { handleClick } from '@/common/utils';
 
   const router = useRouter();
 

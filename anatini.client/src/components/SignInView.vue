@@ -119,34 +119,30 @@
 
     <section>
       <form @submit.prevent="signIn" action="/api/authentication/sign-in" method="POST" novalidate :aria-busy="status === 'pending' ? true : undefined">
-        <fieldset>
-          <legend>Credentials</legend>
+        <InputText
+          type="email"
+          v-model="inputEmail"
+          label="Email"
+          name="email"
+          id="email"
+          :error="getError('email')"
+          autocomplete="email" />
 
-          <InputText
-            type="email"
-            v-model="inputEmail"
-            label="Email"
-            name="email"
-            id="email"
-            :error="getError('email')"
-            autocomplete="email" />
+        <InputText
+          type="password"
+          v-model="inputPassword"
+          label="Password"
+          name="password"
+          id="password"
+          :error="getError('password')"
+          autocomplete="current-password" />
 
-          <InputText
-            type="password"
-            v-model="inputPassword"
-            label="Password"
-            name="password"
-            id="password"
-            :error="getError('password')"
-            autocomplete="current-password" />
-
-          <InputCheckbox
-            v-model="inputIsPersistent"
-            label="Remember Me"
-            name="is-persistent"
-            id="is-persistent"
-            help="Remember you" />
-        </fieldset>
+        <InputCheckbox
+          v-model="inputIsPersistent"
+          label="Remember Me"
+          name="is-persistent"
+          id="is-persistent"
+          help="Remember you" />
 
         <SubmitButton
           :busy="status === 'pending'"
