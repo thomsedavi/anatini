@@ -302,6 +302,60 @@ namespace Anatini.Server
             return CannotReadResponse();
         }, settings);
 
+        [NonAction]
+        public async Task<IActionResult> UsingSpaceEventInstanceAsync(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle, Func<EventInstance, Task<IActionResult>> eventInstanceFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        {
+            EventInstance? eventInstanceResult;
+
+            var eventInstancesQuery = context.EventInstances.AsQueryable();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                eventInstancesQuery = eventInstancesQuery.AsNoTracking();
+            }
+
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userEventInstance => userEventInstance.SourceUserId == sourceUserId));
+            }
+
+            if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
+            {
+                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
+
+                var eventSeries = await context.EventSeries.FirstOrDefaultAsync(eventSeries => eventSeries.SpaceId == space.Id && eventSeries.Handle == normalizedEventSeriesHandle);
+
+                if (eventSeries == null)
+                {
+                    return NotFound();
+                }
+
+                eventSeriesId = eventSeries.Id;
+            }
+
+            if (Guid.TryParse(eventInstanceHandle, out Guid eventInstanceId))
+            {
+                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.SpaceId == space.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
+            }
+            else
+            {
+                var normalizedEventInstanceHandle = NormalizeHandle(eventInstanceHandle);
+
+                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.SpaceId == space.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
+            }
+
+            if (eventInstanceResult == null)
+            {
+                return NotFound();
+            }
+
+            if (await CanReadAsync(eventInstanceResult.Visibility))
+            {
+                return await eventInstanceFunction(eventInstanceResult);
+            }
+
+            return CannotReadResponse();
+        }, settings);
 
         [NonAction]
         public bool ImageValidationError(CreateImage createImage, out ActionResult? result)

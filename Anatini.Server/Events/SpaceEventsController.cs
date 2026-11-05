@@ -7,6 +7,8 @@ using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Anatini.Server.Events
 {
@@ -48,5 +50,97 @@ namespace Anatini.Server.Events
         {
             return Ok(eventSeries.ToEventDto(IsAuthenticated));
         });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
+        public async Task<IActionResult> PostEventOccurrenceBookmark(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
+        public async Task<IActionResult> DeleteEventOccurrenceBookmark(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
+        public async Task<IActionResult> PostEventOccurrenceStar(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
+        public async Task<IActionResult> DeleteEventOccurrenceStar(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
+        public async Task<IActionResult> PostEventOccurrenceDismiss(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
+        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingSpaceEventInstanceAsync(spaceHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteSpaceEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+        });
+
+        private async Task<IActionResult> AddSpaceEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userEventInstanceRelationship = new ApplicationUserEventInstanceRelationship
+                {
+                    SourceUserId = sourceUserId,
+                    TargetEventInstanceId = eventInstanceId,
+                    Label = label,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                context.Add(userEventInstanceRelationship);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                }
+
+                return Created();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        private async Task<IActionResult> DeleteSpaceEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userEventInstanceRelationship = await context.UserEventInstanceRelationships.FirstOrDefaultAsync(userEventInstanceRelationship => userEventInstanceRelationship.TargetEventInstanceId == eventInstanceId && userEventInstanceRelationship.SourceUserId == sourceUserId && userEventInstanceRelationship.Label == label);
+
+                if (userEventInstanceRelationship != null)
+                {
+                    context.Remove(userEventInstanceRelationship);
+                    await context.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
     }
 }
