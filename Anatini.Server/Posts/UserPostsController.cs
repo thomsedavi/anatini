@@ -79,7 +79,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string userHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PatchPost(string userHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             if (updatePost.Body != null)
             {
@@ -122,42 +122,42 @@ namespace Anatini.Server.Posts
 
         [Authorize]
         [HttpPost("{postHandle}/bookmark")]
-        public async Task<IActionResult> PostPostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/bookmark")]
-        public async Task<IActionResult> DeletePostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/star")]
-        public async Task<IActionResult> PostPostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/star")]
-        public async Task<IActionResult> DeletePostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/dismiss")]
-        public async Task<IActionResult> PostPostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/dismiss")]
-        public async Task<IActionResult> DeletePostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Content>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
             return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });

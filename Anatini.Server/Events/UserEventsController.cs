@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Anatini.Server.Events
 {
@@ -90,5 +91,97 @@ namespace Anatini.Server.Events
         {
             return Ok(await eventInstance.ToEventInstanceDtoAsync(IsAuthenticated));
         });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
+        public async Task<IActionResult> PostEventOccurrenceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
+        public async Task<IActionResult> DeleteEventOccurrenceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
+        public async Task<IActionResult> PostEventOccurrenceStar(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
+        public async Task<IActionResult> DeleteEventOccurrenceStar(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
+        public async Task<IActionResult> PostEventOccurrenceDismiss(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
+        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        {
+            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+        });
+
+        private async Task<IActionResult> AddUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userEventInstanceRelationship = new ApplicationUserEventInstanceRelationship
+                {
+                    SourceUserId = sourceUserId,
+                    TargetEventInstanceId = eventInstanceId,
+                    Label = label,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                context.Add(userEventInstanceRelationship);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                }
+
+                return Created();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        private async Task<IActionResult> DeleteUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userEventInstanceRelationship = await context.UserEventInstanceRelationships.FirstOrDefaultAsync(userEventInstanceRelationship => userEventInstanceRelationship.TargetEventInstanceId == eventInstanceId && userEventInstanceRelationship.SourceUserId == sourceUserId && userEventInstanceRelationship.Label == label);
+
+                if (userEventInstanceRelationship != null)
+                {
+                    context.Remove(userEventInstanceRelationship);
+                    await context.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
     }
 }
