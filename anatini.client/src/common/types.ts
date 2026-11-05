@@ -44,6 +44,11 @@ export type UserHeader = {
   handle: string;
 };
 
+export type EventHeader = {
+  id: string;
+  handle: string;
+}
+
 export type UserEdit = {
   id: string;
   name: string;
@@ -136,6 +141,7 @@ export type EventOccurrence = Content & {
   title: string;
   startsAtNz: string;
   endsAtNz: string;
+  eventHeader: EventHeader;
 }
 
 export type Work = Content & {

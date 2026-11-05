@@ -4,7 +4,7 @@
   import { store } from '@/common/store';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import type { Post, SearchParameter, StatusActions } from '@/common/types';
-  import { handleClick } from '@/common/utils';
+  import { getPostAddress, handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import FilterRadios from '@/common/FilterRadios.vue';
@@ -112,7 +112,7 @@
 
     <ul role="list" v-if="dataPosts !== null">
       <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="getPostHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, post))">
+        <article v-html="getPostHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, post, getPostAddress(post, 'id')))">
         </article>
       </li>
     </ul>

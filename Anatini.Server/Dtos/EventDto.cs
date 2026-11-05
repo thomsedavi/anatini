@@ -10,4 +10,10 @@
         public required string Body { get; set; }
         public bool? IsBookmarked { get; set; }
     }
+
+    public class EventHeaderDto
+    {
+        public required Guid Id { get; set; }
+        public required string Handle { get; set; }
+    }
 }

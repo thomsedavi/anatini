@@ -143,49 +143,40 @@ export function getWorkHtml(work: Work, showOwner: boolean): string {
   return result;
 }
 
-export function buttonAction(label: string, pressed: string | null, content: Content): void {
-    const action = label.toLowerCase();
+export function buttonAction(label: string, pressed: string | null, content: Content, address: string): void {
+  const action = label.toLowerCase();
 
-    if (pressed === 'true') {
-      const statusActions: StatusActions = {
-        204: () => {
-          if (action === "bookmark") {
-            content.isBookmarked = null;
-          } else if (action === "dismiss") {
-            content.isDismissed = null;
-          } else if (action === "star") {
-            content.isStarred = null;
-          }
+  if (pressed === 'true') {
+    const statusActions: StatusActions = {
+      204: () => {
+        if (action === "bookmark") {
+          content.isBookmarked = null;
+        } else if (action === "dismiss") {
+          content.isDismissed = null;
+        } else if (action === "star") {
+          content.isStarred = null;
         }
-      }
-
-      const init: RequestInit = { method: "DELETE" };
-
-      if (content.spaceHeader !== null) {
-        apiFetchAuthenticated({ input: `spaces/${content.spaceHeader.handle}/posts/${content.handle}/${action}`, statusActions, init });
-      } else if (content.userHeader !== null) {
-        apiFetchAuthenticated({ input: `users/${content.userHeader.handle}/posts/${content.handle}/${action}`, statusActions, init });
-      }
-    } else {
-      const statusActions: StatusActions = {
-        201: () => {
-          if (action === "bookmark") {
-            content.isBookmarked = true;
-          } else if (action === "dismiss") {
-            content.isDismissed = true;
-          } else if (action === "star") {
-            content.isStarred = true;
-          }
-        }
-      }
-
-      const init: RequestInit = { method: "POST" };
-
-      if (content.spaceHeader !== null) {
-        apiFetchAuthenticated({ input: `spaces/${content.spaceHeader.handle}/posts/${content.handle}/${action}`, statusActions, init });
-      } else if (content.userHeader !== null) {
-        apiFetchAuthenticated({ input: `users/${content.userHeader.handle}/posts/${content.handle}/${action}`, statusActions, init });
       }
     }
+
+    const init: RequestInit = { method: "DELETE" };
+
+    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
+  } else {
+    const statusActions: StatusActions = {
+      201: () => {
+        if (action === "bookmark") {
+          content.isBookmarked = true;
+        } else if (action === "dismiss") {
+          content.isDismissed = true;
+        } else if (action === "star") {
+          content.isStarred = true;
+        }
+      }
+    }
+
+    const init: RequestInit = { method: "POST" };
+
+    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
   }
-  
+}

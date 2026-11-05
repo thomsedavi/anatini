@@ -31,6 +31,11 @@ namespace Anatini.Server.Events
             return new EventOccurrenceDto
             {
                 Id = eventInstance.Id,
+                EventHeader = new EventHeaderDto
+                {
+                    Id = eventInstance.Series.Id,
+                    Handle = eventInstance.Series.Handle
+                },
                 UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
                 SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
                 Handle = eventInstance.Handle,

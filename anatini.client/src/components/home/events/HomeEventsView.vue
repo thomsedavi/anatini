@@ -1,9 +1,13 @@
 <script setup lang="ts">
   import { onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import type { EventOccurrence, StatusActions } from '@/common/types';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
-  import { getEventOccurrenceHtml } from '@/common/html';
+  import { buttonAction, getEventOccurrenceHtml } from '@/common/html';
+  import type { EventOccurrence, StatusActions } from '@/common/types';
+  import { getEventOccurrenceAddress, handleClick } from '@/common/utils';
+
+  const router = useRouter();
 
   const props = defineProps<{
     dataEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[] | null,
@@ -63,7 +67,7 @@
 
         <ul :aria-label="`Events starting ${formatDate(eventOccurrenceGroup.date)}`">
           <li v-for="eventOccurrence in eventOccurrenceGroup.eventOccurrences" :key="'eventOccurrence' + eventOccurrence.id">
-            <article v-html="getEventOccurrenceHtml(eventOccurrence)">
+            <article v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, 'id')))">
             </article>
           </li>
         </ul>

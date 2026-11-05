@@ -4,7 +4,7 @@
   import { store } from '@/common/store';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import type { SearchParameter, StatusActions, Work } from '@/common/types';
-  import { handleClick } from '@/common/utils';
+  import { getWorkAddress, handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import FilterRadios from '@/common/FilterRadios.vue';
@@ -113,7 +113,7 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article v-html="getWorkHtml(work, true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work))">
+        <article v-html="getWorkHtml(work, true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work, getWorkAddress(work, 'id')))">
         </article>
       </li>
     </ul>

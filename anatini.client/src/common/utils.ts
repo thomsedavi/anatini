@@ -1,4 +1,5 @@
 import type { Router } from "vue-router";
+import type { EventOccurrence, Post, Work } from "./types";
 
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
@@ -308,4 +309,56 @@ export function escapeHtml(value: string | null): string | null {
   }
 
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+export function getPostAddress(post: Post, basis: 'name' | 'id'): string {
+  const postKey = basis === 'id' ? post.id : post.handle;
+
+  if (post.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? post.spaceHeader.id : post.spaceHeader.handle;
+
+    return `spaces/${spaceKey}/posts/${postKey}`;
+  } else if (post.userHeader !== null) {
+    const userKey = basis === 'id' ? post.userHeader.id : post.userHeader.handle;
+
+    return `users/${userKey}/posts/${postKey}`;
+  } else {
+    // return id based address by default
+    return `posts/${post.id}`;
+  }
+}
+
+export function getWorkAddress(work: Work, basis: 'name' | 'id'): string {
+  const workKey = basis === 'id' ? work.id : work.handle;
+
+  if (work.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? work.spaceHeader.id : work.spaceHeader.handle;
+
+    return `spaces/${spaceKey}/works/${workKey}`;
+  } else if (work.userHeader !== null) {
+    const userKey = basis === 'id' ? work.userHeader.id : work.userHeader.handle;
+
+    return `users/${userKey}/works/${workKey}`;
+  } else {
+    // return id based address by default
+    return `works/${work.id}`;
+  }
+}
+
+export function getEventOccurrenceAddress(eventOccurrence: EventOccurrence, basis: 'name' | 'id'): string {
+  const eventKey = basis === 'id' ? eventOccurrence.eventHeader.id : eventOccurrence.eventHeader.handle;
+  const eventOccurrenceKey = basis === 'id' ? eventOccurrence.id : eventOccurrence.handle;
+
+  if (eventOccurrence.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? eventOccurrence.spaceHeader.id : eventOccurrence.spaceHeader.handle;
+
+    return `spaces/${spaceKey}/events/${eventKey}/occurrence/${eventOccurrenceKey}`;
+  } else if (eventOccurrence.userHeader !== null) {
+    const userKey = basis === 'id' ? eventOccurrence.userHeader.id : eventOccurrence.userHeader.handle;
+
+    return `users/${userKey}/events/${eventKey}/occurrence/${eventOccurrenceKey}`;
+  } else {
+    // return id based address by default
+    return `events/${eventOccurrence.eventHeader.id}/occurrence/${eventOccurrence.id}`;
+  }
 }

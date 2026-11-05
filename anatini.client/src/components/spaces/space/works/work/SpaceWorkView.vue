@@ -3,7 +3,7 @@
   import { buttonAction } from '@/common/html';
   import { store } from '@/common/store';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
-  import { escapeHtml, handleClick, parseParams, type Params } from '@/common/utils';
+  import { escapeHtml, getWorkAddress, handleClick, parseParams, type Params } from '@/common/utils';
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
@@ -80,7 +80,7 @@
       </ol>
     </nav>
 
-    <article v-if="work.data !== undefined" v-html="articleHtml()" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!))">
+    <article v-if="work.data !== undefined" v-html="articleHtml()" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
     </article>
   </section>
 </template>

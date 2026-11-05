@@ -8,6 +8,7 @@
         public required DateTime EndsAtNz { get; set; }
         public required string Title { get; set; }
         public required string Body { get; set; }
+        public required EventHeaderDto EventHeader { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
         public SpaceHeaderDto? SpaceHeader { get; set; }
         public bool? IsBookmarked { get; set; }
