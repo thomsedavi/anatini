@@ -248,110 +248,110 @@ namespace Anatini.Server
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserEventInstanceAsync(string userHandle, string eventSeriesHandle, string eventInstanceHandle, Func<EventInstance, Task<IActionResult>> eventInstanceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserEventOccurrenceAsync(string userHandle, string eventHandle, string eventOccurrenceHandle, Func<EventOccurrence, Task<IActionResult>> eventOccurrenceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
-            EventInstance? eventInstanceResult;
+            EventOccurrence? eventOccurrenceResult;
 
-            var eventInstancesQuery = context.EventInstances.AsQueryable();
+            var eventOccurrencesQuery = context.EventOccurrences.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                eventInstancesQuery = eventInstancesQuery.AsNoTracking();
+                eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
             }
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userEventInstance => userEventInstance.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userEventOccurrence => userEventOccurrence.SourceUserId == sourceUserId));
             }
 
-            if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
+            if (!Guid.TryParse(eventHandle, out Guid eventId))
             {
-                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
+                var normalizedEventHandle = NormalizeHandle(eventHandle);
 
-                var eventSeries = await context.EventSeries.FirstOrDefaultAsync(eventSeries => eventSeries.UserId == user.Id && eventSeries.Handle == normalizedEventSeriesHandle);
+                var @event = await context.Events.FirstOrDefaultAsync(@event => @event.UserId == user.Id && @event.Handle == normalizedEventHandle);
 
-                if (eventSeries == null)
+                if (@event == null)
                 {
                     return NotFound();
                 }
 
-                eventSeriesId = eventSeries.Id;
+                eventId = @event.Id;
             }
 
-            if (Guid.TryParse(eventInstanceHandle, out Guid eventInstanceId))
+            if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.EventId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
-                var normalizedEventInstanceHandle = NormalizeHandle(eventInstanceHandle);
+                var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.UserId == user.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.EventId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
-            if (eventInstanceResult == null)
+            if (eventOccurrenceResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(eventInstanceResult.Visibility))
+            if (await CanReadAsync(eventOccurrenceResult.Visibility))
             {
-                return await eventInstanceFunction(eventInstanceResult);
+                return await eventOccurrenceFunction(eventOccurrenceResult);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceEventInstanceAsync(string spaceHandle, string eventSeriesHandle, string eventInstanceHandle, Func<EventInstance, Task<IActionResult>> eventInstanceFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceEventOccurrenceAsync(string spaceHandle, string eventHandle, string eventOccurrenceHandle, Func<EventOccurrence, Task<IActionResult>> eventOccurrenceFunction, ContextSettings? settings = null) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
-            EventInstance? eventInstanceResult;
+            EventOccurrence? eventOccurrenceResult;
 
-            var eventInstancesQuery = context.EventInstances.AsQueryable();
+            var eventOccurrencesQuery = context.EventOccurrences.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                eventInstancesQuery = eventInstancesQuery.AsNoTracking();
+                eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
             }
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userEventInstance => userEventInstance.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userEventOccurrence => userEventOccurrence.SourceUserId == sourceUserId));
             }
 
-            if (!Guid.TryParse(eventSeriesHandle, out Guid eventSeriesId))
+            if (!Guid.TryParse(eventHandle, out Guid eventId))
             {
-                var normalizedEventSeriesHandle = NormalizeHandle(eventSeriesHandle);
+                var normalizedEventHandle = NormalizeHandle(eventHandle);
 
-                var eventSeries = await context.EventSeries.FirstOrDefaultAsync(eventSeries => eventSeries.SpaceId == space.Id && eventSeries.Handle == normalizedEventSeriesHandle);
+                var events = await context.Events.FirstOrDefaultAsync(@event => @event.SpaceId == space.Id && @event.Handle == normalizedEventHandle);
 
-                if (eventSeries == null)
+                if (events == null)
                 {
                     return NotFound();
                 }
 
-                eventSeriesId = eventSeries.Id;
+                eventId = events.Id;
             }
 
-            if (Guid.TryParse(eventInstanceHandle, out Guid eventInstanceId))
+            if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.SpaceId == space.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Id == eventInstanceId);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.EventId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
-                var normalizedEventInstanceHandle = NormalizeHandle(eventInstanceHandle);
+                var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventInstanceResult = await eventInstancesQuery.FirstOrDefaultAsync(eventInstance => eventInstance.SpaceId == space.Id && eventInstance.EventSeriesId == eventSeriesId && eventInstance.Handle == normalizedEventInstanceHandle);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.EventId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
-            if (eventInstanceResult == null)
+            if (eventOccurrenceResult == null)
             {
                 return NotFound();
             }
 
-            if (await CanReadAsync(eventInstanceResult.Visibility))
+            if (await CanReadAsync(eventOccurrenceResult.Visibility))
             {
-                return await eventInstanceFunction(eventInstanceResult);
+                return await eventOccurrenceFunction(eventOccurrenceResult);
             }
 
             return CannotReadResponse();

@@ -36,7 +36,7 @@ namespace Anatini.Server.Context.Entities
     {
     }
 
-    public class EventSeries : Content
+    public class Event : Content
     {
         public required DateTime StartsAtNz { get; set; }
         public DateTime? EndsAtNz { get; set; }
@@ -45,12 +45,12 @@ namespace Anatini.Server.Context.Entities
         public DateTime? ExpiresAtNz { get; set; }
 
         public virtual ICollection<EventException> Exceptions { get; set; } = [];
-        public virtual ICollection<EventInstance> Instances { get; set; } = [];
+        public virtual ICollection<EventOccurrence> Occurrences { get; set; } = [];
     }
 
     public class EventException
     {
-        public required Guid EventSeriesId { get; set; }
+        public required Guid EventId { get; set; }
         public required DateTime TargetStartsAtNz { get; set; }
         public required bool IsCancelled { get; set; }
         public string? OverrideHeader { get; set; }
@@ -59,13 +59,13 @@ namespace Anatini.Server.Context.Entities
         public TimeSpan? OverrideDuration { get; set; }
         public DateTime? OverrideEndsAtNz { get; set; }
 
-        public virtual EventSeries Series { get; set; } = null!;
+        public virtual Event Event { get; set; } = null!;
     }
 
-    public class EventInstance
+    public class EventOccurrence
     {
         public required Guid Id { get; set; }
-        public required Guid EventSeriesId { get; set; }
+        public required Guid EventId { get; set; }
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
@@ -77,10 +77,10 @@ namespace Anatini.Server.Context.Entities
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }
 
-        public virtual EventSeries Series { get; set; } = null!;
+        public virtual Event Event { get; set; } = null!;
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
-        public virtual ICollection<ApplicationUserEventInstanceRelationship> UserRelationships { get; set; } = [];
+        public virtual ICollection<ApplicationUserEventOccurrenceRelationship> UserRelationships { get; set; } = [];
     }
 
     public class ContentVersion

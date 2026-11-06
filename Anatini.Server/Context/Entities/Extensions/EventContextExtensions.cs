@@ -6,14 +6,14 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class EventContextExtensions
     {
-        public static EventSeries AddUserEventSeries(this ApplicationDbContext context, Guid userId, CreateEvent createEvent, Status status, string body)
+        public static Event AddUserEvent(this ApplicationDbContext context, Guid userId, CreateEvent createEvent, Status status, string body)
         {
-            var eventSeriesId = Guid.CreateVersion7();
+            var eventId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
 
-            var eventSeries = new EventSeries
+            var @event = new Event
             {
-                Id = eventSeriesId,
+                Id = eventId,
                 UserId = userId,
                 Status = status,
                 Type = ContentType.Event,
@@ -25,22 +25,22 @@ namespace Anatini.Server.Context.Entities.Extensions
                 EndsAtNz = createEvent.EndsAtNz,
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
-                Handle = createEvent.Handle ?? eventSeriesId.ToString()
+                Handle = createEvent.Handle ?? eventId.ToString()
             };
 
-            context.Add(eventSeries);
+            context.Add(@event);
 
-            return eventSeries;
+            return @event;
         }
 
-        public static EventSeries AddSpaceEventSeries(this ApplicationDbContext context, Guid spaceId, CreateEvent createEvent, Status status, string body)
+        public static Event AddSpaceEvent(this ApplicationDbContext context, Guid spaceId, CreateEvent createEvent, Status status, string body)
         {
-            var eventSeriesId = Guid.CreateVersion7();
+            var eventId = Guid.CreateVersion7();
             var utcNow = DateTime.UtcNow;
 
-            var eventSeries = new EventSeries
+            var @event = new Event
             {
-                Id = eventSeriesId,
+                Id = eventId,
                 SpaceId = spaceId,
                 Status = Status.Published,
                 Type = ContentType.Event,
@@ -52,66 +52,66 @@ namespace Anatini.Server.Context.Entities.Extensions
                 EndsAtNz = createEvent.EndsAtNz,
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
-                Handle = eventSeriesId.ToString()
+                Handle = eventId.ToString()
             };
 
-            context.Add(eventSeries);
+            context.Add(@event);
 
-            return eventSeries;
+            return @event;
         }
 
-        public static int AddEventInstances(this ApplicationDbContext context, EventSeries eventSeries, Status status)
+        public static int AddEventOccurrence(this ApplicationDbContext context, Event @event, Status status)
         {
-            if (eventSeries.RecurrenceRule == null)
+            if (@event.RecurrenceRule == null)
             {
-                var eventInstance = new EventInstance
+                var eventOccurrence = new EventOccurrence
                 {
                     Id = Guid.CreateVersion7(),
-                    Handle = eventSeries.StartsAtNz.GetDate(),
-                    EventSeriesId = eventSeries.Id,
-                    UserId = eventSeries.UserId,
-                    SpaceId = eventSeries.SpaceId,
-                    Title = eventSeries.Title ?? throw new InvalidOperationException(),
-                    StartsAtNz = eventSeries.StartsAtNz,
-                    EndsAtNz = eventSeries.EndsAtNz ?? throw new InvalidOperationException(),
-                    Body = eventSeries.Body,
+                    Handle = @event.StartsAtNz.GetDate(),
+                    EventId = @event.Id,
+                    UserId = @event.UserId,
+                    SpaceId = @event.SpaceId,
+                    Title = @event.Title ?? throw new InvalidOperationException(),
+                    StartsAtNz = @event.StartsAtNz,
+                    EndsAtNz = @event.EndsAtNz ?? throw new InvalidOperationException(),
+                    Body = @event.Body,
                     Status = status,
-                    Visibility = eventSeries.Visibility
+                    Visibility = @event.Visibility
                 };
 
-                context.Add(eventInstance);
+                context.Add(eventOccurrence);
 
                 return 1;
             }
             else
             {
-                var eventInstanceCount = 0;
-                var recurrenceRule = new RecurrenceRule(eventSeries.RecurrenceRule);
+                var eventOccurrenceCount = 0;
+                var recurrenceRule = new RecurrenceRule(@event.RecurrenceRule);
 
-                var instancesNz = recurrenceRule.GetInstancesNz(eventSeries.StartsAtNz, eventSeries.EndsAtNz, eventSeries.Duration);
+                var occurrencesNz = recurrenceRule.GetOccurrenceNz(@event.StartsAtNz, @event.EndsAtNz, @event.Duration);
 
-                foreach (var instanceNz in instancesNz)
+                foreach (var occurrenceNz in occurrencesNz)
                 {
-                    var eventInstance = new EventInstance
+                    var eventOccurrence = new EventOccurrence
                     {
                         Id = Guid.CreateVersion7(),
-                        Handle = instanceNz.Item1.GetDate(),
-                        EventSeriesId = eventSeries.Id,
-                        UserId = eventSeries.UserId,
-                        SpaceId = eventSeries.SpaceId,
-                        Title = eventSeries.Title ?? throw new InvalidOperationException(),
-                        StartsAtNz = instanceNz.Item1,
-                        EndsAtNz = instanceNz.Item2,
-                        Body = eventSeries.Body,
+                        Handle = occurrenceNz.Item1.GetDate(),
+                        EventId = @event.Id,
+                        UserId = @event.UserId,
+                        SpaceId = @event.SpaceId,
+                        Title = @event.Title ?? throw new InvalidOperationException(),
+                        StartsAtNz = occurrenceNz.Item1,
+                        EndsAtNz = occurrenceNz.Item2,
+                        Body = @event.Body,
                         Status = status,
-                        Visibility = eventSeries.Visibility
+                        Visibility = @event.Visibility
                     };
 
-                    context.Add(eventInstance);
-                    eventInstanceCount++;
+                    context.Add(eventOccurrence);
+                    eventOccurrenceCount++;
                 }
 
-                return eventInstanceCount;
+                return eventOccurrenceCount;
             }
         }
     }

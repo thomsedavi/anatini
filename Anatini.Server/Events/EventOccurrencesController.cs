@@ -22,34 +22,34 @@ namespace Anatini.Server.Events
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
-            var eventInstancesQuery = Context.EventInstances.AsQueryable();
+            var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
-            eventInstancesQuery = eventInstancesQuery.AsNoTracking();
+            eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
 
-            eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.User).ThenInclude(user => user!.Images);
-            eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.Space).ThenInclude(space => space!.Images);
+            eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images);
+            eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventInstancesQuery = eventInstancesQuery.Include(eventInstance => eventInstance.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
 
-                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => (eventInstance.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
             }
             else
             {
-                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.Visibility == Visibility.Public);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
             }
 
-            eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.StartsAtNz >= nzNow);
+            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtNz >= nzNow);
 
-            var eventInstances = await eventInstancesQuery.OrderBy(eventInstance => eventInstance.StartsAtNz).ThenBy(eventInstance => eventInstance.Id).Take(10).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtNz).ThenBy(eventOccurrence => eventOccurrence.Id).Take(10).ToListAsync();
 
-            if (eventInstances == null)
+            if (eventOccurrences == null)
             {
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated, BlobService))));
         }
     }
 }

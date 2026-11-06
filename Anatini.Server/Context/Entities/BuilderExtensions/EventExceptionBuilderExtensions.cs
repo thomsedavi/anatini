@@ -9,9 +9,9 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             eventExceptionBuilder.ToTable("event_exceptions");
 
-            eventExceptionBuilder.HasKey(eventException => new { eventException.EventSeriesId, eventException.TargetStartsAtNz });
+            eventExceptionBuilder.HasKey(eventException => new { eventException.EventId, eventException.TargetStartsAtNz });
 
-            eventExceptionBuilder.Property(eventException => eventException.EventSeriesId).Has(order: 0);
+            eventExceptionBuilder.Property(eventException => eventException.EventId).Has(order: 0);
             eventExceptionBuilder.Property(eventException => eventException.TargetStartsAtNz).Has(order: 1);
             eventExceptionBuilder.Property(eventException => eventException.IsCancelled).Has(order: 2);
             eventExceptionBuilder.Property(eventException => eventException.OverrideHeader).Has(maxLength: 255, order: 3);
@@ -20,7 +20,7 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventExceptionBuilder.Property(eventException => eventException.OverrideDuration).Has(order: 6);
             eventExceptionBuilder.Property(eventException => eventException.OverrideEndsAtNz).Has(order: 7);
 
-            eventExceptionBuilder.HasOneWithMany(eventException => eventException.Series, eventSeries => eventSeries.Exceptions, eventException => eventException.EventSeriesId, DeleteBehavior.Cascade);
+            eventExceptionBuilder.HasOneWithMany(eventException => eventException.Event, @event => @event.Exceptions, eventException => eventException.EventId, DeleteBehavior.Cascade);
         }
     }
 }

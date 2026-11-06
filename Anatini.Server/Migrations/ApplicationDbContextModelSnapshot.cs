@@ -355,16 +355,16 @@ namespace Anatini.Server.Migrations
                     b.ToTable("user_emails", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventInstanceRelationship", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventOccurrenceRelationship", b =>
                 {
                     b.Property<Guid>("SourceUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("source_user_id")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid>("TargetEventInstanceId")
+                    b.Property<Guid>("TargetEventOccurrenceId")
                         .HasColumnType("uuid")
-                        .HasColumnName("target_event_instance_id")
+                        .HasColumnName("target_event_occurrence_id")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Label")
@@ -377,13 +377,13 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("created_at_utc")
                         .HasColumnOrder(3);
 
-                    b.HasKey("SourceUserId", "TargetEventInstanceId", "Label")
-                        .HasName("pk_user_event_instance_relationships");
+                    b.HasKey("SourceUserId", "TargetEventOccurrenceId", "Label")
+                        .HasName("pk_user_event_occurrence_relationships");
 
-                    b.HasIndex("TargetEventInstanceId", "Label", "SourceUserId")
-                        .HasDatabaseName("ix_user_event_instance_relationships_target_event_instance_id_");
+                    b.HasIndex("TargetEventOccurrenceId", "Label", "SourceUserId")
+                        .HasDatabaseName("ix_user_event_occurrence_relationships_target_event_occurrence");
 
-                    b.ToTable("user_event_instance_relationships", (string)null);
+                    b.ToTable("user_event_occurrence_relationships", (string)null);
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserHandle", b =>
@@ -829,9 +829,9 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
-                    b.Property<Guid>("EventSeriesId")
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uuid")
-                        .HasColumnName("event_series_id")
+                        .HasColumnName("event_id")
                         .HasColumnOrder(0);
 
                     b.Property<DateTime>("TargetStartsAtNz")
@@ -870,13 +870,13 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("override_starts_at_nz")
                         .HasColumnOrder(5);
 
-                    b.HasKey("EventSeriesId", "TargetStartsAtNz")
+                    b.HasKey("EventId", "TargetStartsAtNz")
                         .HasName("pk_event_exceptions");
 
                     b.ToTable("event_exceptions", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventOccurrence", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -895,9 +895,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("ends_at_nz")
                         .HasColumnOrder(10);
 
-                    b.Property<Guid>("EventSeriesId")
+                    b.Property<Guid>("EventId")
                         .HasColumnType("uuid")
-                        .HasColumnName("event_series_id")
+                        .HasColumnName("event_id")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Handle")
@@ -948,28 +948,28 @@ namespace Anatini.Server.Migrations
                         .HasColumnOrder(6);
 
                     b.HasKey("Id")
-                        .HasName("pk_event_instances");
+                        .HasName("pk_event_occurrences");
 
-                    b.HasIndex("EventSeriesId")
-                        .HasDatabaseName("ix_event_instances_event_series_id");
+                    b.HasIndex("EventId")
+                        .HasDatabaseName("ix_event_occurrences_event_id");
 
                     b.HasIndex("SearchVector")
-                        .HasDatabaseName("ix_event_instances_search_vector");
+                        .HasDatabaseName("ix_event_occurrences_search_vector");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("SpaceId")
-                        .HasDatabaseName("ix_event_instances_space_id");
+                        .HasDatabaseName("ix_event_occurrences_space_id");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_event_instances_user_id");
+                        .HasDatabaseName("ix_event_occurrences_user_id");
 
                     b.HasIndex("StartsAtNz", "EndsAtNz")
-                        .HasDatabaseName("ix_event_instances_starts_at_nz_ends_at_nz");
+                        .HasDatabaseName("ix_event_occurrences_starts_at_nz_ends_at_nz");
 
-                    b.ToTable("event_instances", null, t =>
+                    b.ToTable("event_occurrences", null, t =>
                         {
-                            t.HasCheckConstraint("ck_event_instances_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_event_occurrences_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
                         });
                 });
 
@@ -1204,7 +1204,7 @@ namespace Anatini.Server.Migrations
                     b.ToTable("space_settings", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Event", b =>
                 {
                     b.HasBaseType("Anatini.Server.Context.Entities.Content");
 
@@ -1233,7 +1233,7 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("starts_at_nz")
                         .HasColumnOrder(1);
 
-                    b.ToTable("event_series", null, t =>
+                    b.ToTable("events", null, t =>
                         {
                             t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
                         });
@@ -1315,25 +1315,25 @@ namespace Anatini.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventInstanceRelationship", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserEventOccurrenceRelationship", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "SourceUser")
-                        .WithMany("EventInstanceRelationships")
+                        .WithMany("EventOccurrenceRelationships")
                         .HasForeignKey("SourceUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_event_instance_relationships_users_source_user_id");
+                        .HasConstraintName("fk_user_event_occurrence_relationships_users_source_user_id");
 
-                    b.HasOne("Anatini.Server.Context.Entities.EventInstance", "TargetEventInstance")
+                    b.HasOne("Anatini.Server.Context.Entities.EventOccurrence", "TargetEventOccurrence")
                         .WithMany("UserRelationships")
-                        .HasForeignKey("TargetEventInstanceId")
+                        .HasForeignKey("TargetEventOccurrenceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_user_event_instance_relationships_event_instances_target_ev");
+                        .HasConstraintName("fk_user_event_occurrence_relationships_event_occurrences_targe");
 
                     b.Navigation("SourceUser");
 
-                    b.Navigation("TargetEventInstance");
+                    b.Navigation("TargetEventOccurrence");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationUserHandle", b =>
@@ -1492,38 +1492,38 @@ namespace Anatini.Server.Migrations
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
-                    b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
+                    b.HasOne("Anatini.Server.Context.Entities.Event", "Event")
                         .WithMany("Exceptions")
-                        .HasForeignKey("EventSeriesId")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_event_exceptions_event_series_event_series_id");
+                        .HasConstraintName("fk_event_exceptions_events_event_id");
 
-                    b.Navigation("Series");
+                    b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventOccurrence", b =>
                 {
-                    b.HasOne("Anatini.Server.Context.Entities.EventSeries", "Series")
-                        .WithMany("Instances")
-                        .HasForeignKey("EventSeriesId")
+                    b.HasOne("Anatini.Server.Context.Entities.Event", "Event")
+                        .WithMany("Occurrences")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_event_instances_event_series_event_series_id");
+                        .HasConstraintName("fk_event_occurrences_events_event_id");
 
                     b.HasOne("Anatini.Server.Context.Entities.Space", "Space")
-                        .WithMany("EventInstances")
+                        .WithMany("EventOccurrences")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_event_instances_spaces_space_id");
+                        .HasConstraintName("fk_event_occurrences_spaces_space_id");
 
                     b.HasOne("Anatini.Server.Context.Entities.ApplicationUser", "User")
-                        .WithMany("EventInstances")
+                        .WithMany("EventOccurrences")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_event_instances_users_user_id");
+                        .HasConstraintName("fk_event_occurrences_users_user_id");
 
-                    b.Navigation("Series");
+                    b.Navigation("Event");
 
                     b.Navigation("Space");
 
@@ -1585,14 +1585,14 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Space");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Event", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Content", null)
                         .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.EventSeries", "Id")
+                        .HasForeignKey("Anatini.Server.Context.Entities.Event", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_event_series_contents_id");
+                        .HasConstraintName("fk_events_contents_id");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
@@ -1632,9 +1632,9 @@ namespace Anatini.Server.Migrations
 
                     b.Navigation("Emails");
 
-                    b.Navigation("EventInstanceRelationships");
+                    b.Navigation("EventOccurrenceRelationships");
 
-                    b.Navigation("EventInstances");
+                    b.Navigation("EventOccurrences");
 
                     b.Navigation("GivenUserRelationships");
 
@@ -1664,7 +1664,7 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Versions");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventInstance", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.EventOccurrence", b =>
                 {
                     b.Navigation("UserRelationships");
                 });
@@ -1673,7 +1673,7 @@ namespace Anatini.Server.Migrations
                 {
                     b.Navigation("Contents");
 
-                    b.Navigation("EventInstances");
+                    b.Navigation("EventOccurrences");
 
                     b.Navigation("Handles");
 
@@ -1686,11 +1686,11 @@ namespace Anatini.Server.Migrations
                     b.Navigation("UserRelationships");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.EventSeries", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Event", b =>
                 {
                     b.Navigation("Exceptions");
 
-                    b.Navigation("Instances");
+                    b.Navigation("Occurrences");
                 });
 #pragma warning restore 612, 618
         }

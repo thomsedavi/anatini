@@ -42,7 +42,7 @@
 
   function toggleBookmark(): void {
     if (eventOccurrence.value.data?.isBookmarked === true) {
-      const input = `users/${route.params.userId}/events/${route.params.eventId}/instances/${route.params.occurrenceId}/bookmark`;
+      const input = `users/${route.params.userId}/events/${route.params.eventId}/occurrences/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         204: () => {
@@ -54,7 +54,7 @@
 
       apiFetchAuthenticated({ input, statusActions, init });
     } else if (eventOccurrence.value.data?.isBookmarked === false) {
-      const input = `users/${route.params.userId}/events/${route.params.eventId}/instances/${route.params.occurrenceId}/bookmark`;
+      const input = `users/${route.params.userId}/events/${route.params.eventId}/occurrence/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         201: () => {

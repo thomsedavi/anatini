@@ -25,8 +25,8 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<ApplicationUserUserRelationship> ReceivedUserRelationships { get; set; } = [];
         public virtual ICollection<ApplicationUserSpaceRelationship> SpaceRelationships { get; set; } = [];
         public virtual ICollection<ApplicationUserContentRelationship> ContentRelationships { get; set; } = [];
-        public virtual ICollection<ApplicationUserEventInstanceRelationship> EventInstanceRelationships { get; set; } = [];
-        public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
+        public virtual ICollection<ApplicationUserEventOccurrenceRelationship> EventOccurrenceRelationships { get; set; } = [];
+        public virtual ICollection<EventOccurrence> EventOccurrences { get; set; } = [];
     }
 
     public class ApplicationUserEmail
@@ -86,15 +86,15 @@ namespace Anatini.Server.Context.Entities
         public virtual Content TargetContent { get; set; } = null!;
     }
 
-    public class ApplicationUserEventInstanceRelationship
+    public class ApplicationUserEventOccurrenceRelationship
     {
         public required Guid SourceUserId { get; set; }
-        public required Guid TargetEventInstanceId { get; set; }
-        public required UserEventInstanceRelationshipLabel Label { get; set; }
+        public required Guid TargetEventOccurrenceId { get; set; }
+        public required UserEventOccurrenceRelationshipLabel Label { get; set; }
         public required DateTime CreatedAtUtc { get; set; }
 
         public virtual ApplicationUser SourceUser { get; set; } = null!;
-        public virtual EventInstance TargetEventInstance { get; set; } = null!;
+        public virtual EventOccurrence TargetEventOccurrence { get; set; } = null!;
     }
 
     public class ApplicationUserImage

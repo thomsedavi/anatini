@@ -25,7 +25,7 @@ namespace Anatini.Server.Utils
 
         public string? ErrorMessage => errorMessage;
 
-        public IEnumerable<(DateTime, DateTime)> GetInstancesNz(DateTime start, DateTime? end, TimeSpan? duration)
+        public IEnumerable<(DateTime, DateTime)> GetOccurrenceNz(DateTime start, DateTime? end, TimeSpan? duration)
         {
             var result = new List<(DateTime, DateTime)>();
 

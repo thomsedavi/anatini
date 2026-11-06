@@ -9,44 +9,44 @@ namespace Anatini.Server.Events
 {
     public static class EventExtensions
     {
-        public static EventDto ToEventDto(this EventSeries eventSeries, bool isAuthenticated)
+        public static EventDto ToEventDto(this Event @event, bool isAuthenticated)
         {
             return new EventDto
             {
-                Id = eventSeries.Id,
-                Handle = eventSeries.Handle,
-                StartsAtNz = eventSeries.StartsAtNz,
-                EndsAtNz = eventSeries.EndsAtNz,
-                Title = eventSeries.Title ?? throw new InvalidOperationException(),
-                Body = eventSeries.Body,
-                IsBookmarked = isAuthenticated ? eventSeries.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null
+                Id = @event.Id,
+                Handle = @event.Handle,
+                StartsAtNz = @event.StartsAtNz,
+                EndsAtNz = @event.EndsAtNz,
+                Title = @event.Title ?? throw new InvalidOperationException(),
+                Body = @event.Body,
+                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null
             };
         }
 
-        public static async Task<EventOccurrenceDto> ToEventInstanceDtoAsync(this EventInstance eventInstance, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
+        public static async Task<EventOccurrenceDto> ToEventOccurrenceDtoAsync(this EventOccurrence eventOccurrence, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
         {
-            user ??= eventInstance.User;
-            space ??= eventInstance.Space;
+            user ??= eventOccurrence.User;
+            space ??= eventOccurrence.Space;
 
             return new EventOccurrenceDto
             {
-                Id = eventInstance.Id,
+                Id = eventOccurrence.Id,
                 EventHeader = new EventHeaderDto
                 {
-                    Id = eventInstance.Series.Id,
-                    Handle = eventInstance.Series.Handle
+                    Id = eventOccurrence.Event.Id,
+                    Handle = eventOccurrence.Event.Handle
                 },
                 UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
                 SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
-                Handle = eventInstance.Handle,
-                StartsAtNz = eventInstance.StartsAtNz,
-                EndsAtNz = eventInstance.EndsAtNz,
-                Title = eventInstance.Title,
-                Body = eventInstance.Body,
-                IsBookmarked = isAuthenticated ? eventInstance.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventInstanceRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? eventInstance.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventInstanceRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? eventInstance.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventInstanceRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? eventInstance.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventInstanceRelationshipLabel.IsCollected) : null
+                Handle = eventOccurrence.Handle,
+                StartsAtNz = eventOccurrence.StartsAtNz,
+                EndsAtNz = eventOccurrence.EndsAtNz,
+                Title = eventOccurrence.Title,
+                Body = eventOccurrence.Body,
+                IsBookmarked = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsCollected) : null
             };
         }
     }

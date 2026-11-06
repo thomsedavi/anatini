@@ -1,7 +1,7 @@
 ﻿namespace Anatini.Server.Enums
 {
     [Flags]
-    public enum UserEventInstanceRelationshipLabel
+    public enum UserEventOccurrenceRelationshipLabel
     {
         None = 0,
         IsDismissed = 1,

@@ -17,7 +17,7 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<SpaceHandle> Handles { get; set; } = [];
         public virtual ICollection<SpaceImage> Images { get; set; } = [];
         public virtual ICollection<Content> Contents { get; set; } = [];
-        public virtual ICollection<EventInstance> EventInstances { get; set; } = [];
+        public virtual ICollection<EventOccurrence> EventOccurrences { get; set; } = [];
         public virtual ICollection<SpaceSetting> Settings { get; set; } = [];
     }
 

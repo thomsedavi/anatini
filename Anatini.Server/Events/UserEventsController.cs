@@ -20,7 +20,7 @@ namespace Anatini.Server.Events
         [Authorize(Policy = "IsTrusted")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostEventSeries(string userHandle, [FromForm] CreateEvent createEvent) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> PostEvent(string userHandle, [FromForm] CreateEvent createEvent) => await UsingUserAsync(userHandle, async (user) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createEvent.Body);
             
@@ -33,120 +33,120 @@ namespace Anatini.Server.Events
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var eventSeries = Context.AddUserEventSeries(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, validationResult.SanitizedHtml);
+            var @event = Context.AddUserEvent(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, validationResult.SanitizedHtml);
 
-            Context.AddEventInstances(eventSeries, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
+            Context.AddEventOccurrence(@event, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEventSeries), new { eventId = eventSeries.Id });
+            return CreatedAtAction(nameof(GetEvent), new { eventId = @event.Id });
         }, new ContextSettings { AccessRequired = true });
 
         [DisableEndpoint]
-        [HttpGet("{eventSeriesHandle}")]
+        [HttpGet("{eventHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventSeries(string userHandle, string eventSeriesHandle) => await UsingUserContentAsync<EventSeries>(userHandle, eventSeriesHandle, async (eventSeries) =>
+        public async Task<IActionResult> GetEvent(string userHandle, string eventHandle) => await UsingUserContentAsync<Event>(userHandle, eventHandle, async (@event) =>
         {
-            return Ok(eventSeries.ToEventDto(IsAuthenticated));
+            return Ok(@event.ToEventDto(IsAuthenticated));
         });
 
         [DisableEndpoint]
-        [HttpGet("{eventSeriesHandle}/occurrences")]
+        [HttpGet("{eventHandle}/occurrences")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventOccurrences(string userHandle, string eventSeriesHandle, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserContentAsync<EventSeries>(userHandle, eventSeriesHandle, async (eventSeries) =>
+        public async Task<IActionResult> GetEventOccurrences(string userHandle, string eventHandle, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserContentAsync<Event>(userHandle, eventHandle, async (@event) =>
         {
-            var eventInstancesQuery = Context.EventInstances.Where(eventInstance => eventInstance.EventSeriesId == eventSeries.Id);
+            var eventOccurrencesQuery = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.EventId == @event.Id);
 
             if (IsAuthenticated)
             {
-                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => (eventInstance.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
             }
             else
             {
-                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.Visibility == Visibility.Public);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
             }
 
             if (lastStartsAtUtc.HasValue)
             {
-                eventInstancesQuery = eventInstancesQuery.Where(eventInstance => eventInstance.StartsAtNz < lastStartsAtUtc.Value);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtNz < lastStartsAtUtc.Value);
             }
 
-            var eventInstances = await eventInstancesQuery.OrderBy(eventInstance => eventInstance.StartsAtNz).Take(pageSize).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtNz).Take(pageSize).ToListAsync();
 
-            if (eventInstances == null)
+            if (eventOccurrences == null)
             {
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventInstances.Select(eventInstance => eventInstance.ToEventInstanceDtoAsync(IsAuthenticated))));
+            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated))));
         });
 
         [DisableEndpoint]
-        [HttpGet("{eventSeriesHandle}/occurrence/{eventInstanceHandle}")]
-        public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpGet("{eventHandle}/occurrence/{eventOccurrenceHandle}")]
+        public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return Ok(await eventInstance.ToEventInstanceDtoAsync(IsAuthenticated));
+            return Ok(await eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated));
         });
 
         [Authorize]
-        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
-        public async Task<IActionResult> PostEventOccurrenceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/bookmark")]
+        public async Task<IActionResult> PostEventOccurrenceBookmark(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+            return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
-        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/bookmark")]
-        public async Task<IActionResult> DeleteEventOccurrenceBookmark(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/bookmark")]
+        public async Task<IActionResult> DeleteEventOccurrenceBookmark(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsBookmarked);
+            return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
-        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
-        public async Task<IActionResult> PostEventOccurrenceStar(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/star")]
+        public async Task<IActionResult> PostEventOccurrenceStar(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+            return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsStarred);
         });
 
         [Authorize]
-        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/star")]
-        public async Task<IActionResult> DeleteEventOccurrenceStar(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/star")]
+        public async Task<IActionResult> DeleteEventOccurrenceStar(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsStarred);
+            return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsStarred);
         });
 
         [Authorize]
-        [HttpPost("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
-        public async Task<IActionResult> PostEventOccurrenceDismiss(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/dismiss")]
+        public async Task<IActionResult> PostEventOccurrenceDismiss(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+            return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
-        [HttpDelete("{eventSeriesHandle}/occurrence/{eventInstanceHandle}/dismiss")]
-        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string userHandle, string eventSeriesHandle, string eventInstanceHandle) => await UsingUserEventInstanceAsync(userHandle, eventSeriesHandle, eventInstanceHandle, async (eventInstance) =>
+        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/dismiss")]
+        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteUserEventInstanceRelationship(Context, eventInstance.Id, UserEventInstanceRelationshipLabel.IsDismissed);
+            return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsDismissed);
         });
 
-        private async Task<IActionResult> AddUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        private async Task<IActionResult> AddUserEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserEventOccurrenceRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventInstanceRelationship = new ApplicationUserEventInstanceRelationship
+                var userEventOccurrenceRelationship = new ApplicationUserEventOccurrenceRelationship
                 {
                     SourceUserId = sourceUserId,
-                    TargetEventInstanceId = eventInstanceId,
+                    TargetEventOccurrenceId = eventOccurrenceId,
                     Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
 
-                context.Add(userEventInstanceRelationship);
+                context.Add(userEventOccurrenceRelationship);
 
                 try
                 {
@@ -164,15 +164,15 @@ namespace Anatini.Server.Events
             }
         }
 
-        private async Task<IActionResult> DeleteUserEventInstanceRelationship(ApplicationDbContext context, Guid eventInstanceId, UserEventInstanceRelationshipLabel label)
+        private async Task<IActionResult> DeleteUserEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserEventOccurrenceRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventInstanceRelationship = await context.UserEventInstanceRelationships.FirstOrDefaultAsync(userEventInstanceRelationship => userEventInstanceRelationship.TargetEventInstanceId == eventInstanceId && userEventInstanceRelationship.SourceUserId == sourceUserId && userEventInstanceRelationship.Label == label);
+                var userEventOccurrenceRelationship = await context.UserEventOccurrenceRelationships.FirstOrDefaultAsync(userEventOccurrenceRelationship => userEventOccurrenceRelationship.TargetEventOccurrenceId == eventOccurrenceId && userEventOccurrenceRelationship.SourceUserId == sourceUserId && userEventOccurrenceRelationship.Label == label);
 
-                if (userEventInstanceRelationship != null)
+                if (userEventOccurrenceRelationship != null)
                 {
-                    context.Remove(userEventInstanceRelationship);
+                    context.Remove(userEventOccurrenceRelationship);
                     await context.SaveChangesAsync();
                 }
 

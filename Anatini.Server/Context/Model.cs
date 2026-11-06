@@ -16,7 +16,7 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserUserRelationship> UserUserRelationships { get; set; }
         public DbSet<ApplicationUserSpaceRelationship> UserSpaceRelationships { get; set; }
         public DbSet<ApplicationUserContentRelationship> UserContentRelationships { get; set; }
-        public DbSet<ApplicationUserEventInstanceRelationship> UserEventInstanceRelationships { get; set; }
+        public DbSet<ApplicationUserEventOccurrenceRelationship> UserEventOccurrenceRelationships { get; set; }
 
         public DbSet<Space> Spaces { get; set; }
         public DbSet<SpaceHandle> SpaceHandles { get; set; }
@@ -26,9 +26,9 @@ namespace Anatini.Server.Context
         public DbSet<ContentVersion> ContentVersions { get; set; }
         public DbSet<ContentImage> ContentImages { get; set; }
 
-        public DbSet<EventSeries> EventSeries { get; set; }
+        public DbSet<Event> Events { get; set; }
         public DbSet<EventException> EventExceptions { get; set; }
-        public DbSet<EventInstance> EventInstances { get; set; }
+        public DbSet<EventOccurrence> EventOccurrences { get; set; }
 
         public DbSet<Post> Posts { get; set; }
 
@@ -49,7 +49,7 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserUserRelationship>().Configure();
             modelBuilder.Entity<ApplicationUserSpaceRelationship>().Configure();
             modelBuilder.Entity<ApplicationUserContentRelationship>().Configure();
-            modelBuilder.Entity<ApplicationUserEventInstanceRelationship>().Configure();
+            modelBuilder.Entity<ApplicationUserEventOccurrenceRelationship>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -65,10 +65,10 @@ namespace Anatini.Server.Context
 
             modelBuilder.Entity<Work>().Configure();
             modelBuilder.Entity<Post>().Configure();
-            modelBuilder.Entity<EventSeries>().Configure();
+            modelBuilder.Entity<Event>().Configure();
 
             modelBuilder.Entity<EventException>().Configure();
-            modelBuilder.Entity<EventInstance>().Configure();
+            modelBuilder.Entity<EventOccurrence>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }
