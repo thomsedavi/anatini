@@ -17,11 +17,12 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.SpaceId).Has(order: 3);
             eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Handle)!.Has(maxLength: 255, order: 4);
             eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Status).Has(order: 5);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Visibility).Has(order: 6);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Title)!.Has(maxLength: 255, order: 7);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Body)!.Has(order: 8);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.StartsAtNz).Has(order: 9);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EndsAtNz).Has(order: 10);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.PublishedAtNz).Has(order: 6);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Visibility).Has(order: 7);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Title)!.Has(maxLength: 255, order: 8);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Body)!.Has(order: 9);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.StartsAtNz).Has(order: 10);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EndsAtNz).Has(order: 11);
 
             eventOccurrenceBuilder.HasOneWithMany(eventOccurrence => eventOccurrence.Event, @event => @event.Occurrences, eventOccurrence => eventOccurrence.EventId, DeleteBehavior.Cascade);
             eventOccurrenceBuilder.HasOneWithMany(eventOccurrence => eventOccurrence.User, user => user.EventOccurrences, eventOccurrence => eventOccurrence.UserId, DeleteBehavior.Restrict, required: false);

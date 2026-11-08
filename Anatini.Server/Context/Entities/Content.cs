@@ -69,6 +69,7 @@ namespace Anatini.Server.Context.Entities
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required string Handle { get; set; }
+        public DateTime? PublishedAtNz { get; set; }
         public required Status Status { get; set; }
         public required Visibility Visibility { get; set; }
         public required string Title { get; set; }

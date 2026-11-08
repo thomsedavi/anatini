@@ -24,7 +24,7 @@ namespace Anatini.Server.Events
 
             var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
-            eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
+            eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking().Where(eventOccurrence => eventOccurrence.PublishedAtNz < nzNow);
 
             eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images);
             eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);

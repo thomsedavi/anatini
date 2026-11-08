@@ -891,12 +891,12 @@ namespace Anatini.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("body")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<DateTime>("EndsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("ends_at_nz")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(11);
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uuid")
@@ -909,6 +909,11 @@ namespace Anatini.Server.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
                         .HasColumnOrder(4);
+
+                    b.Property<DateTime?>("PublishedAtNz")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("published_at_nz")
+                        .HasColumnOrder(6);
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
@@ -926,7 +931,7 @@ namespace Anatini.Server.Migrations
                     b.Property<DateTime>("StartsAtNz")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("starts_at_nz")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -938,7 +943,7 @@ namespace Anatini.Server.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("title")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
@@ -948,7 +953,7 @@ namespace Anatini.Server.Migrations
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id")
                         .HasName("pk_event_occurrences");

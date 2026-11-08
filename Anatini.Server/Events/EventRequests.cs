@@ -30,5 +30,8 @@ namespace Anatini.Server.Events
 
         [RecurrenceRule]
         public string? RecurrenceRule { get; set; }
+
+        [Display(Name = "Published At (NZ)")]
+        public DateTime? PublishedAtNz { get; set; }
     }
 }

@@ -594,6 +594,7 @@ namespace Anatini.Server.Migrations
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
+                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     visibility = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     body = table.Column<string>(type: "text", nullable: false),

@@ -87,19 +87,15 @@
 
     <section>
       <form @submit.prevent="email" action="/api/authentication/email" method="POST">
-        <fieldset>
-          <legend class="visually-hidden">Email Address</legend>
-
-          <InputText
-            type="email"
-            v-model="inputEmail"
-            label="Email"
-            name="email"
-            id="email"
-            :error="getError('email')"
-            autocomplete="email"
-            :required="true" />
-        </fieldset>
+        <InputText
+          type="email"
+          v-model="inputEmail"
+          label="Email"
+          name="email"
+          id="email"
+          :error="getError('email')"
+          autocomplete="email"
+          :required="true" />
 
         <SubmitButton
           :busy="status === 'pending'"

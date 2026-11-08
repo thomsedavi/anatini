@@ -110,7 +110,7 @@
         label="Date & Time (NZ)"
         name="publishedAtNz"
         id="publishedAtNz"
-        help="Leave blank to publish immediately. Posts set in the future will not be visible until that scheduled time."
+        help="Leave blank to publish immediately. Posts published in the future will not be visible until the scheduled time."
         :error="getError('publishedAtNz')" />
 
       <SubmitButton

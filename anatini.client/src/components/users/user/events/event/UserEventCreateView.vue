@@ -23,6 +23,7 @@
   const inputEndTime = ref<string>('');
   const isEndDateDirty = ref<boolean>(false);
   const inputVisibility = ref<Visibility>('Public');
+  const inputPublishedAtNz = ref<string>('');
 
   watch(inputStartDate, (date) => {
     if (!isEndDateDirty.value) {
@@ -119,6 +120,10 @@
 
     body.append('visibility', inputVisibility.value);
 
+    if (inputPublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputPublishedAtNz.value);
+    }
+
     const init = { method: "POST", body: body };
 
     apiFetchAuthenticated({ input, statusActions, init });
@@ -203,6 +208,15 @@
         :disabled="inputType !== 'FixedTime'"
         :hidden="inputType !== 'FixedTime'"
         :error="getError('endTime')" />
+
+      <InputText
+        v-model="inputPublishedAtNz"
+        type="datetime-local"
+        label="Date & Time (NZ)"
+        name="publishedAtNz"
+        id="publishedAtNz"
+        help="Leave blank to publish immediately. Events published in the future will not be visible until the scheduled time."
+        :error="getError('publishedAtNz')" />
 
       <SubmitButton
         :busy="dataStatus === 'pending'"

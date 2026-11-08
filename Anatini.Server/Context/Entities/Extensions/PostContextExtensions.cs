@@ -15,7 +15,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 publishedatNz = publishedAtNZ.Value;
             }
-        
+
             var post = new Post
             {
                 Id = postId,

@@ -25,7 +25,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 EndsAtNz = createEvent.EndsAtNz,
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
-                Handle = createEvent.Handle ?? eventId.ToString()
+                Handle = createEvent.Handle ?? eventId.ToString(),
+                PublishedAtNz = createEvent.PublishedAtNz?.Truncate()
             };
 
             context.Add(@event);
@@ -76,7 +77,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                     EndsAtNz = @event.EndsAtNz ?? throw new InvalidOperationException(),
                     Body = @event.Body,
                     Status = status,
-                    Visibility = @event.Visibility
+                    Visibility = @event.Visibility,
+                    PublishedAtNz = @event.PublishedAtNz
                 };
 
                 context.Add(eventOccurrence);

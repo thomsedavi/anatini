@@ -147,67 +147,63 @@
 
     <section>
       <form @submit.prevent="signup" action="/api/authentication/signup" method="POST">
-        <fieldset>
-          <legend class="visually-hidden">Complete Signup</legend>
+        <InputText
+          type="email"
+          v-model="inputEmail"
+          label="Email"
+          name="email"
+          id="email"
+          :error="getError('email')"
+          autocomplete="email"
+          :readonly="dataEmail !== undefined"
+          :required="true" />
 
-          <InputText
-            type="email"
-            v-model="inputEmail"
-            label="Email"
-            name="email"
-            id="email"
-            :error="getError('email')"
-            autocomplete="email"
-            :readonly="dataEmail !== undefined"
-            :required="true" />
+        <InputText
+          v-model="inputName"
+          label="Name"
+          name="name"
+          id="name"
+          autocomplete="name"
+          :error="getError('name')"
+          :required="true" />
 
-          <InputText
-            v-model="inputName"
-            label="Name"
-            name="name"
-            id="name"
-            autocomplete="name"
-            :error="getError('name')"
-            :required="true" />
+        <InputText
+          v-model="inputHandle"
+          label="Handle"
+          name="handle"
+          id="handle"
+          autocomplete="username"
+          :error="getError('handle')"
+          :required="true"
+          help="lower case characters, number, and hyphens" />
 
-          <InputText
-            v-model="inputHandle"
-            label="Handle"
-            name="handle"
-            id="handle"
-            autocomplete="username"
-            :error="getError('handle')"
-            :required="true"
-            help="lower case characters, number, and hyphens" />
+        <InputText
+          v-model="inputPassword"
+          label="Password"
+          name="password"
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          :error="getError('password')"
+          :required="true" />
 
-          <InputText
-            v-model="inputPassword"
-            label="Password"
-            name="password"
-            id="password"
-            type="password"
-            autocomplete="new-password"
-            :error="getError('password')"
-            :required="true" />
+        <InputText
+          v-model="inputConfirmationCode"
+          label="Confirmation Code"
+          name="confirmationCode"
+          id="confirmationCode"
+          autocomplete="one-time-code"
+          :error="getError('confirmationCode')"
+          :required="true" />
 
-          <InputText
-            v-model="inputConfirmationCode"
-            label="Confirmation Code"
-            name="confirmationCode"
-            id="confirmationCode"
-            autocomplete="one-time-code"
-            :error="getError('confirmationCode')"
-            :required="true" />
+        <VisibilitySelect v-model="inputVisibility" />
 
-          <VisibilitySelect v-model="inputVisibility" />
-
-          <InputCheckbox
-            v-model="inputIsPersistent"
-            label="Remember Me"
-            name="is-persistent"
-            id="is-persistent"
-            help="Remember you" />
-        </fieldset>
+        <InputCheckbox
+          v-model="inputIsPersistent"
+          label="Remember Me"
+          name="is-persistent"
+          id="is-persistent"
+          help="Remember you" />
 
         <SubmitButton
           :busy="status === 'pending'"
