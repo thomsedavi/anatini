@@ -4,6 +4,7 @@
   import { apiFetch } from '@/common/apiFetch';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
   import { buttonAction, getEventOccurrenceHtml } from '@/common/html';
+  import { store } from '@/common/store';
   import type { EventOccurrence, StatusActions } from '@/common/types';
   import { getEventOccurrenceAddress, handleClick } from '@/common/utils';
 
@@ -57,6 +58,23 @@
   <section id="panel-events" role="tabpanel" aria-labelledby="tab-events">
     <header>
       <h2>Events</h2>
+
+      <template v-if="store.isAuthenticated">
+        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Event creation options">
+          <button popovertarget="create-event-menu">
+            + Create Event
+          </button>
+          <ul popover="auto" id="create-event-menu">
+            <li>
+              <RouterLink :to="{ name: 'UserEventCreate', params: { userId: store.userHandle } }">Personal Event</RouterLink>
+            </li>
+            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+              <RouterLink :to="{ name: 'SpaceEventCreate', params: { spaceId: space.handle } }">{{space.name}} Event</RouterLink>
+            </li>
+          </ul>
+        </nav>
+        <RouterLink v-else :to="{ name: 'UserEventCreate', params: { userId: store.userHandle } }">+ Create Event</RouterLink>
+      </template>
     </header>
 
     <template v-if="dataEventOccurrenceGroups">

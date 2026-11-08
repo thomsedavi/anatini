@@ -182,8 +182,12 @@ h1 {
 
 h2 {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #111827;
+}
+
+button {
+  cursor: pointer;
 }
 
 ul[role="tablist"] {
@@ -200,9 +204,7 @@ button[role="tab"] {
   font-size: 1rem;
   font-weight: 500;
   color: #64748b;
-  cursor: pointer;
   position: relative;
-  transition: color 0.2s ease;
 
   &:hover {
     color: #0f172a;
@@ -245,7 +247,6 @@ section {
       border-radius: 4px;
       font-size: 1rem;
       font-weight: 600;
-      cursor: pointer;
     }
 
     > button[type="submit"] {
@@ -379,8 +380,6 @@ search {
         font-size: 0.875rem;
         border: none;
         border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
 
         &:hover {
           background-color: #1d4ed8;
@@ -395,8 +394,6 @@ search {
         font-size: 0.875rem;
         border: 1px solid #d1d5db;
         border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
 
         &:hover {
           background-color: #e5e7eb;
@@ -463,6 +460,51 @@ section[role="tabpanel"] {
     > a {
       font-weight: 500;
       font-size: 0.875rem;
+    }
+
+    > nav {
+      > button {
+        background-color: #0066cc;
+        color: #ffffff;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border-radius: 6px;
+
+        &:hover {
+          background-color: #0052a3;
+        }
+      }
+
+      > ul {
+        margin: auto;
+        max-width: 90vw;
+        padding: 0.5rem;
+        background: #ffffff;
+        border: none;
+        border-radius: 8px;
+        list-style: none;
+
+        &::backdrop {
+          background-color: rgba(0, 0, 0, 0.05);
+          backdrop-filter: blur(0.5px);
+        }
+
+        > li {
+          > a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #333333;
+            font-size: 0.95rem;
+
+            &:hover {
+              background-color: #f5f5f5;
+              color: #0066cc;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -549,8 +591,6 @@ section[role="tabpanel"] {
             border: none;
             background: transparent;
             color: var(--text-muted, #64748b);
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
 
             &:hover {
               background: var(--hover-bg, #f1f5f9);

@@ -94,7 +94,23 @@
   <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
     <header>
       <h2>Posts</h2>
-      <RouterLink v-if="store.isAuthenticated" :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
+
+      <template v-if="store.isAuthenticated">
+        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Post creation options">
+          <button popovertarget="create-post-menu">
+            + Create Post
+          </button>
+          <ul popover="auto" id="create-post-menu">
+            <li>
+              <RouterLink :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">Personal Post</RouterLink>
+            </li>
+            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+              <RouterLink :to="{ name: 'SpacePostCreate', params: { spaceId: space.handle } }">{{space.name}} Post</RouterLink>
+            </li>
+          </ul>
+        </nav>
+        <RouterLink v-else :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
+      </template>
     </header>
 
     <search role="search" v-if="store.isAuthenticated">

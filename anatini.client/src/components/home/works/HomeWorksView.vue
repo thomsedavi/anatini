@@ -16,7 +16,7 @@
   }>();
 
   const emit = defineEmits<{
-    'update-works': [newPosts: Work[]],
+    'update-works': [newWorks: Work[]],
   }>();
 
   const filters = ref<Filters>({ ...defaultFilters });
@@ -94,15 +94,31 @@
 <template>
   <section id="panel-works" role="tabpanel" aria-labelledby="tab-works">
     <header>
-      <h2>Posts</h2>
-      <RouterLink v-if="store.isAuthenticated" :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">+ Create Work</RouterLink>
+      <h2>Work</h2>
+
+      <template v-if="store.isAuthenticated">
+        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Work creation options">
+          <button popovertarget="create-work-menu">
+            + Create Work
+          </button>
+          <ul popover="auto" id="create-work-menu">
+            <li>
+              <RouterLink :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">Personal Work</RouterLink>
+            </li>
+            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+              <RouterLink :to="{ name: 'SpaceWorkCreate', params: { spaceId: space.handle } }">{{space.name}} Work</RouterLink>
+            </li>
+          </ul>
+        </nav>
+        <RouterLink v-else :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">+ Create Work</RouterLink>
+      </template>
     </header>
 
     <search role="search" v-if="store.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 
-        <form @submit.prevent="getWorks" action="/api/posts" method="GET" novalidate>
+        <form @submit.prevent="getWorks" action="/api/works" method="GET" novalidate>
           <FilterRadios v-model="filters" />
 
           <button type="submit">Apply Filters</button>
