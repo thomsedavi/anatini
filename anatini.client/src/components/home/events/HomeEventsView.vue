@@ -1,11 +1,13 @@
 <script setup lang="ts">
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
+  import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
+  import FilterRadios from '@/common/FilterRadios.vue';
   import { buttonAction, getEventOccurrenceHtml } from '@/common/html';
   import { store } from '@/common/store';
-  import type { EventOccurrence, StatusActions } from '@/common/types';
+  import type { EventOccurrence, SearchParameter, StatusActions } from '@/common/types';
   import { getEventOccurrenceAddress, handleClick } from '@/common/utils';
 
   const router = useRouter();
@@ -18,8 +20,12 @@
     'update-event-occurrence-groups': [newEvents: { date: string, eventOccurrences: EventOccurrence[] }[]],
   }>();
 
-  function addEventOccurrences(eventOccurrences: EventOccurrence[]): { date: string, eventOccurrences: EventOccurrence[] }[] {
-    const eventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[] = [...props.dataEventOccurrenceGroups ?? []];
+  const filters = ref<Filters>({ ...defaultFilters });
+  const currentSearchParameters = ref<SearchParameter[]>([]);
+  const hasMore = ref<boolean>(true);
+
+  function addEventOccurrences(existingEventOccurrences: { date: string, eventOccurrences: EventOccurrence[] }[], eventOccurrences: EventOccurrence[]): { date: string, eventOccurrences: EventOccurrence[] }[] {
+    const eventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[] = [...existingEventOccurrences];
 
     eventOccurrences.forEach(eventOccurrence => {
       const eventOccurrenceDate = eventOccurrence.startsAtNz.slice(0, 10);
@@ -44,7 +50,7 @@
         200: (response?: Response) => {
           response?.json()
             .then((value: EventOccurrence[]) => {
-              emit('update-event-occurrence-groups', addEventOccurrences(value));
+              emit('update-event-occurrence-groups', addEventOccurrences(props.dataEventOccurrenceGroups ?? [], value));
             });
         }
       }
@@ -52,6 +58,27 @@
       apiFetch({ input, statusActions });
     }
   });
+
+  function getEventOccurrences() {
+    const input = 'event-occurrences';
+
+    const statusActions: StatusActions = {
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: EventOccurrence[]) => {
+            if (value.length < 10) {
+              hasMore.value = false;
+            }
+
+            emit('update-event-occurrence-groups', addEventOccurrences([], value));
+          });
+      }
+    }
+
+    currentSearchParameters.value = getSearchParameters(filters.value);
+
+    apiFetch({ input, statusActions, searchParameters: currentSearchParameters.value });
+  }
 </script>
 
 <template>
@@ -76,6 +103,19 @@
         <RouterLink v-else :to="{ name: 'UserEventCreate', params: { userId: store.userHandle } }">+ Create Event</RouterLink>
       </template>
     </header>
+
+    <search role="search" v-if="store.isAuthenticated">
+      <details>
+        <summary>Filter Options</summary>
+
+        <form @submit.prevent="getEventOccurrences" action="/api/event-occurrences" method="GET" novalidate>
+          <FilterRadios v-model="filters" />
+
+          <button type="submit">Apply Filters</button>
+          <button type="reset">Clear Filters</button>
+        </form>
+      </details>
+    </search>
 
     <template v-if="dataEventOccurrenceGroups">
       <section v-for="eventOccurrenceGroup in dataEventOccurrenceGroups" :key="'eventOccurrenceGroup' + eventOccurrenceGroup.date" :aria-labelledby="eventOccurrenceGroup.date">

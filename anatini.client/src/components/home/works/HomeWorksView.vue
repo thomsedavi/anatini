@@ -1,13 +1,13 @@
 <script setup lang="ts">
-  import { apiFetch } from '@/common/apiFetch';
-  import { buttonAction, getWorkHtml } from '@/common/html';
-  import { store } from '@/common/store';
-  import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
-  import type { SearchParameter, StatusActions, Work } from '@/common/types';
-  import { getWorkAddress, handleClick } from '@/common/utils';
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import { apiFetch } from '@/common/apiFetch';
+  import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
+  import { buttonAction, getWorkHtml } from '@/common/html';
+  import { store } from '@/common/store';
+  import type { SearchParameter, StatusActions, Work } from '@/common/types';
+  import { getWorkAddress, handleClick } from '@/common/utils';
 
   const router = useRouter();
 
@@ -40,7 +40,6 @@
     }
   });
 
-  
   function getWorks() {
     const input = 'works';
 
