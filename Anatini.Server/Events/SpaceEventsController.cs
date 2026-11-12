@@ -35,7 +35,7 @@ namespace Anatini.Server.Events
 
             var @event = Context.AddSpaceEvent(space.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, validationResult.SanitizedHtml);
 
-            Context.AddEventOccurrence(@event, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
+            Context.AddEventOccurrences(@event, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
 
             await Context.SaveChangesAsync();
 
@@ -55,52 +55,52 @@ namespace Anatini.Server.Events
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> PostEventOccurrenceBookmark(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsBookmarked);
+            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> DeleteEventOccurrenceBookmark(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsBookmarked);
+            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> PostEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsStarred);
+            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> DeleteEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsStarred);
+            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> PostEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsDismissed);
+            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> DeleteEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserEventOccurrenceRelationshipLabel.IsDismissed);
+            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
-        private async Task<IActionResult> AddSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserEventOccurrenceRelationshipLabel label)
+        private async Task<IActionResult> AddSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserContentRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventOccurrenceRelationship = new ApplicationUserEventOccurrenceRelationship
+                var userEventOccurrenceRelationship = new ApplicationUserContentRelationship
                 {
                     SourceUserId = sourceUserId,
-                    TargetEventOccurrenceId = eventOccurrenceId,
+                    TargetContentId = eventOccurrenceId,
                     Label = label,
                     CreatedAtUtc = DateTime.UtcNow
                 };
@@ -123,11 +123,11 @@ namespace Anatini.Server.Events
             }
         }
 
-        private async Task<IActionResult> DeleteSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserEventOccurrenceRelationshipLabel label)
+        private async Task<IActionResult> DeleteSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserContentRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
-                var userEventOccurrenceRelationship = await context.UserEventOccurrenceRelationships.FirstOrDefaultAsync(userEventOccurrenceRelationship => userEventOccurrenceRelationship.TargetEventOccurrenceId == eventOccurrenceId && userEventOccurrenceRelationship.SourceUserId == sourceUserId && userEventOccurrenceRelationship.Label == label);
+                var userEventOccurrenceRelationship = await context.UserContentRelationships.FirstOrDefaultAsync(userEventOccurrenceRelationship => userEventOccurrenceRelationship.TargetContentId == eventOccurrenceId && userEventOccurrenceRelationship.SourceUserId == sourceUserId && userEventOccurrenceRelationship.Label == label);
 
                 if (userEventOccurrenceRelationship != null)
                 {

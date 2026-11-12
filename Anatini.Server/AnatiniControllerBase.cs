@@ -220,7 +220,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
+                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))
@@ -261,7 +261,7 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userEventOccurrence => userEventOccurrence.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))
@@ -316,21 +316,21 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userEventOccurrence => userEventOccurrence.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))
             {
                 var normalizedEventHandle = NormalizeHandle(eventHandle);
 
-                var events = await context.Events.FirstOrDefaultAsync(@event => @event.SpaceId == space.Id && @event.Handle == normalizedEventHandle);
+                var @event = await context.Events.FirstOrDefaultAsync(@event => @event.SpaceId == space.Id && @event.Handle == normalizedEventHandle);
 
-                if (events == null)
+                if (@event == null)
                 {
                     return NotFound();
                 }
 
-                eventId = events.Id;
+                eventId = @event.Id;
             }
 
             if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))

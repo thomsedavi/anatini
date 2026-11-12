@@ -16,7 +16,6 @@ namespace Anatini.Server.Context
         public DbSet<ApplicationUserUserRelationship> UserUserRelationships { get; set; }
         public DbSet<ApplicationUserSpaceRelationship> UserSpaceRelationships { get; set; }
         public DbSet<ApplicationUserContentRelationship> UserContentRelationships { get; set; }
-        public DbSet<ApplicationUserEventOccurrenceRelationship> UserEventOccurrenceRelationships { get; set; }
 
         public DbSet<Space> Spaces { get; set; }
         public DbSet<SpaceHandle> SpaceHandles { get; set; }
@@ -49,7 +48,6 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<ApplicationUserUserRelationship>().Configure();
             modelBuilder.Entity<ApplicationUserSpaceRelationship>().Configure();
             modelBuilder.Entity<ApplicationUserContentRelationship>().Configure();
-            modelBuilder.Entity<ApplicationUserEventOccurrenceRelationship>().Configure();
 
             modelBuilder.Entity<ApplicationRoleClaim>().Configure();
             modelBuilder.Entity<ApplicationRole>().Configure();
@@ -66,9 +64,9 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<Work>().Configure();
             modelBuilder.Entity<Post>().Configure();
             modelBuilder.Entity<Event>().Configure();
+            modelBuilder.Entity<EventOccurrence>().Configure();
 
             modelBuilder.Entity<EventException>().Configure();
-            modelBuilder.Entity<EventOccurrence>().Configure();
 
             modelBuilder.Entity<Log>().Configure();
         }

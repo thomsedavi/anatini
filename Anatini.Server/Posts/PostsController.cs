@@ -28,53 +28,53 @@ namespace Anatini.Server.Posts
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                postsQuery = postsQuery.Include(post => post.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
+                postsQuery = postsQuery.Include(post => post.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
                 postsQuery = postsQuery.Where(post => (post.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
                 if (query.Bookmarked == "only")
                 {
-                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsBookmarked));
+                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsBookmarked));
+                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsStarred));
+                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsStarred));
+                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsDismissed));
+                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsDismissed));
+                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
 
                 if (query.Collected == "only")
                 {
-                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsCollected));
+                    postsQuery = postsQuery.Where(post => post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
                 }
                 else if (query.Collected == "hide")
                 {
-                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userPost => userPost.SourceUserId == sourceUserId && userPost.Label == UserContentRelationshipLabel.IsCollected));
+                    postsQuery = postsQuery.Where(post => !post.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
                 }
 
                 if (query.Followed == "only")
                 {
-                    postsQuery = postsQuery.Where(post => post.User != null && post.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                    postsQuery = postsQuery.Where(post => post.User != null && post.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
                 else if (query.Followed == "hide")
                 {
-                    postsQuery = postsQuery.Where(post => post.User != null && !post.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                    postsQuery = postsQuery.Where(post => post.User != null && !post.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
             }
             else

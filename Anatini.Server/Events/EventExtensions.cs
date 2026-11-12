@@ -19,7 +19,7 @@ namespace Anatini.Server.Events
                 EndsAtNz = @event.EndsAtNz,
                 Title = @event.Title ?? throw new InvalidOperationException(),
                 Body = @event.Body,
-                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null
+                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null
             };
         }
 
@@ -41,12 +41,12 @@ namespace Anatini.Server.Events
                 Handle = eventOccurrence.Handle,
                 StartsAtNz = eventOccurrence.StartsAtNz,
                 EndsAtNz = eventOccurrence.EndsAtNz,
-                Title = eventOccurrence.Title,
+                Title = eventOccurrence.Title ?? throw new InvalidOperationException(),
                 Body = eventOccurrence.Body,
-                IsBookmarked = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? eventOccurrence.UserRelationships.Any(userRelationship => userRelationship.Label == UserEventOccurrenceRelationshipLabel.IsCollected) : null
+                IsBookmarked = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
             };
         }
     }

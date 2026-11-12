@@ -5,6 +5,7 @@
         None = 0,
         Post = 1,
         Work = 2,
-        Event = 4
+        Event = 4,
+        EventOccurrence = 8
     }
 }

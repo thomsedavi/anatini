@@ -24,10 +24,10 @@ namespace Anatini.Server.Posts
                 Body = post.Body,
                 Visibility = post.Visibility.ToString(),
                 PublishedAtNz = post.PublishedAtNz ?? throw new InvalidOperationException(),
-                IsBookmarked = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? post.UserRelationships.Any(userRelationship => userRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
+                IsBookmarked = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
             };
         }
     }

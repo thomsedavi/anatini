@@ -48,6 +48,15 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<EventOccurrence> Occurrences { get; set; } = [];
     }
 
+    public class EventOccurrence : Content
+    {
+        public required Guid EventId { get; set; }
+        public required DateTime StartsAtNz { get; set; }
+        public required DateTime EndsAtNz { get; set; }
+
+        public virtual Event Event { get; set; } = null!;
+    }
+
     public class EventException
     {
         public required Guid EventId { get; set; }
@@ -60,28 +69,6 @@ namespace Anatini.Server.Context.Entities
         public DateTime? OverrideEndsAtNz { get; set; }
 
         public virtual Event Event { get; set; } = null!;
-    }
-
-    public class EventOccurrence
-    {
-        public required Guid Id { get; set; }
-        public required Guid EventId { get; set; }
-        public Guid? UserId { get; set; }
-        public Guid? SpaceId { get; set; }
-        public required string Handle { get; set; }
-        public DateTime? PublishedAtNz { get; set; }
-        public required Status Status { get; set; }
-        public required Visibility Visibility { get; set; }
-        public required string Title { get; set; }
-        public required string Body { get; set; }
-        public NpgsqlTsVector SearchVector { get; set; } = null!;
-        public required DateTime StartsAtNz { get; set; }
-        public required DateTime EndsAtNz { get; set; }
-
-        public virtual Event Event { get; set; } = null!;
-        public virtual ApplicationUser? User { get; set; }
-        public virtual Space? Space { get; set; }
-        public virtual ICollection<ApplicationUserEventOccurrenceRelationship> UserRelationships { get; set; } = [];
     }
 
     public class ContentVersion

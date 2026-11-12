@@ -101,53 +101,53 @@ namespace Anatini.Server.Works
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
+                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
                 worksQuery = worksQuery.Where(work => (work.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
                 if (query.Bookmarked == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsBookmarked));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
                 else if (query.Bookmarked == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsBookmarked));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
                 }
 
                 if (query.Starred == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsStarred));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
                 }
                 else if (query.Starred == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsStarred));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
                 }
 
                 if (query.Dismissed == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsDismissed));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
                 else if (query.Dismissed == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsDismissed));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
 
                 if (query.Collected == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsCollected));
+                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
                 }
                 else if (query.Collected == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userWork => userWork.SourceUserId == sourceUserId && userWork.Label == UserContentRelationshipLabel.IsCollected));
+                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
                 }
 
                 if (query.Followed == "only")
                 {
-                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
                 else if (query.Followed == "hide")
                 {
-                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userRelationship => userRelationship.SourceUserId == sourceUserId && userRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserUserRelationshipLabel.IsFollowed));
                 }
             }
             else

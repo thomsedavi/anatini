@@ -590,68 +590,24 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     event_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    space_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
-                    title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    body = table.Column<string>(type: "text", nullable: false),
                     starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
-                        .Annotation("Npgsql:TsVectorConfig", "english")
-                        .Annotation("Npgsql:TsVectorProperties", new[] { "title", "body" })
+                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_event_occurrences", x => x.id);
-                    table.CheckConstraint("ck_event_occurrences_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.PrimaryKey("PK_event_occurrences", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_event_occurrences_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_event_occurrences_events_event_id",
                         column: x => x.event_id,
                         principalTable: "events",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_event_occurrences_spaces_space_id",
-                        column: x => x.space_id,
-                        principalTable: "spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_event_occurrences_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_event_occurrence_relationships",
-                columns: table => new
-                {
-                    source_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_event_occurrence_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    label = table.Column<int>(type: "integer", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_user_event_occurrence_relationships", x => new { x.source_user_id, x.target_event_occurrence_id, x.label });
-                    table.ForeignKey(
-                        name: "fk_user_event_occurrence_relationships_event_occurrences_targe",
-                        column: x => x.target_event_occurrence_id,
-                        principalTable: "event_occurrences",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_user_event_occurrence_relationships_users_source_user_id",
-                        column: x => x.source_user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -692,25 +648,9 @@ namespace Anatini.Server.Migrations
                 column: "event_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_event_occurrences_search_vector",
-                table: "event_occurrences",
-                column: "search_vector")
-                .Annotation("Npgsql:IndexMethod", "GIN");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_event_occurrences_space_id",
-                table: "event_occurrences",
-                column: "space_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_event_occurrences_starts_at_nz_ends_at_nz",
                 table: "event_occurrences",
                 columns: new[] { "starts_at_nz", "ends_at_nz" });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_event_occurrences_user_id",
-                table: "event_occurrences",
-                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_logs_created_at_utc",
@@ -783,11 +723,6 @@ namespace Anatini.Server.Migrations
                 filter: "user_id IS NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_event_occurrence_relationships_target_event_occurrence",
-                table: "user_event_occurrence_relationships",
-                columns: new[] { "target_event_occurrence_id", "label", "source_user_id" });
-
-            migrationBuilder.CreateIndex(
                 name: "ix_user_handles_handle",
                 table: "user_handles",
                 column: "handle",
@@ -850,6 +785,9 @@ namespace Anatini.Server.Migrations
                 name: "event_exceptions");
 
             migrationBuilder.DropTable(
+                name: "event_occurrences");
+
+            migrationBuilder.DropTable(
                 name: "logs");
 
             migrationBuilder.DropTable(
@@ -877,9 +815,6 @@ namespace Anatini.Server.Migrations
                 name: "user_emails");
 
             migrationBuilder.DropTable(
-                name: "user_event_occurrence_relationships");
-
-            migrationBuilder.DropTable(
                 name: "user_handles");
 
             migrationBuilder.DropTable(
@@ -904,13 +839,10 @@ namespace Anatini.Server.Migrations
                 name: "works");
 
             migrationBuilder.DropTable(
-                name: "event_occurrences");
+                name: "events");
 
             migrationBuilder.DropTable(
                 name: "roles");
-
-            migrationBuilder.DropTable(
-                name: "events");
 
             migrationBuilder.DropTable(
                 name: "contents");

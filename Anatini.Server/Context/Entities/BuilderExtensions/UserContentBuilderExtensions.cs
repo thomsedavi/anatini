@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Anatini.Server.Context.Entities.BuilderExtensions
 {
-    public static class UserContentItemBuilderExtensions
+    public static class UserContentBuilderExtensions
     {
         public static void Configure(this EntityTypeBuilder<ApplicationUserContentRelationship> userContentBuilder)
         {

@@ -32,7 +32,7 @@ namespace Anatini.Server.Events
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userRelationship => userRelationship.SourceUserId == sourceUserId));
+                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
                 eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
             }

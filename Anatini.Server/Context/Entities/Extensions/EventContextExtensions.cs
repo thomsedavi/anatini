@@ -43,7 +43,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             {
                 Id = eventId,
                 SpaceId = spaceId,
-                Status = Status.Published,
+                Status = status,
                 Type = ContentType.Event,
                 Visibility = createEvent.Visibility,
                 Title = createEvent.Title,
@@ -61,8 +61,10 @@ namespace Anatini.Server.Context.Entities.Extensions
             return @event;
         }
 
-        public static int AddEventOccurrence(this ApplicationDbContext context, Event @event, Status status)
+        public static int AddEventOccurrences(this ApplicationDbContext context, Event @event, Status status)
         {
+            var utcNow = DateTime.UtcNow;
+
             if (@event.RecurrenceRule == null)
             {
                 var eventOccurrence = new EventOccurrence
@@ -70,14 +72,18 @@ namespace Anatini.Server.Context.Entities.Extensions
                     Id = Guid.CreateVersion7(),
                     Handle = @event.StartsAtNz.GetDate(),
                     EventId = @event.Id,
+                    Type = ContentType.EventOccurrence,
                     UserId = @event.UserId,
                     SpaceId = @event.SpaceId,
                     Title = @event.Title ?? throw new InvalidOperationException(),
                     StartsAtNz = @event.StartsAtNz,
                     EndsAtNz = @event.EndsAtNz ?? throw new InvalidOperationException(),
                     Body = @event.Body,
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
                     Status = status,
                     Visibility = @event.Visibility,
+                    CreatedAtUtc = utcNow,
+                    UpdatedAtUtc = utcNow,
                     PublishedAtNz = @event.PublishedAtNz
                 };
 
@@ -98,6 +104,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                     {
                         Id = Guid.CreateVersion7(),
                         Handle = occurrenceNz.Item1.GetDate(),
+                        Type = ContentType.EventOccurrence,
                         EventId = @event.Id,
                         UserId = @event.UserId,
                         SpaceId = @event.SpaceId,
@@ -105,7 +112,10 @@ namespace Anatini.Server.Context.Entities.Extensions
                         StartsAtNz = occurrenceNz.Item1,
                         EndsAtNz = occurrenceNz.Item2,
                         Body = @event.Body,
+                        ConcurrencyStamp = Guid.NewGuid().ToString(),
                         Status = status,
+                        CreatedAtUtc = utcNow,
+                        UpdatedAtUtc = utcNow,
                         Visibility = @event.Visibility
                     };
 
