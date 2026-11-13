@@ -22,9 +22,11 @@ namespace Anatini.Server.Posts
 
             var postsQuery = Context.Posts.AsQueryable();
 
-            postsQuery = postsQuery.AsNoTracking().Where(post => post.PublishedAtNz < nzNow);
-            postsQuery = postsQuery.Include(post => post.User).ThenInclude(user => user!.Images);
-            postsQuery = postsQuery.Include(post => post.Space).ThenInclude(space => space!.Images);
+            postsQuery = postsQuery
+                .AsNoTracking()
+                .Where(post => post.PublishedAtNz < nzNow)
+                .Include(post => post.User).ThenInclude(user => user!.Images)
+                .Include(post => post.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
