@@ -9,6 +9,9 @@
         public required string Title { get; set; }
         public required string Body { get; set; }
         public bool? IsBookmarked { get; set; }
+        public bool? IsStarred { get; set; }
+        public bool? IsDismissed { get; set; }
+        public bool? IsCollected { get; set; }
     }
 
     public class EventHeaderDto

@@ -19,7 +19,10 @@ namespace Anatini.Server.Events
                 EndsAtNz = @event.EndsAtNz,
                 Title = @event.Title ?? throw new InvalidOperationException(),
                 Body = @event.Body,
-                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null
+                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
+                IsDismissed = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
+                IsStarred = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
+                IsCollected = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
             };
         }
 

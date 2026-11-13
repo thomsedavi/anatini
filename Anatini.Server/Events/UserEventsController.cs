@@ -42,7 +42,6 @@ namespace Anatini.Server.Events
             return CreatedAtAction(nameof(GetEvent), new {userHandle = user.Handle, eventHandle = @event.Handle }, @event.ToEventDto(IsAuthenticated));
         }, new ContextSettings { AccessRequired = true });
 
-        [DisableEndpoint]
         [HttpGet("{eventHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +51,6 @@ namespace Anatini.Server.Events
             return Ok(@event.ToEventDto(IsAuthenticated));
         });
 
-        [DisableEndpoint]
         [HttpGet("{eventHandle}/occurrences")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
