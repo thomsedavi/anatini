@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Anatini.Server.Posts
 {
@@ -103,13 +104,6 @@ namespace Anatini.Server.Posts
         });
 
         [Authorize]
-        [HttpPost("{postId}/bookmark")]
-        public async Task<IActionResult> PostPostBookmark(string spaceHandle, string postId) => await UsingSpaceContentAsync<Post>(spaceHandle, postId, async (post) =>
-        {
-            return Ok();
-        });
-
-        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -183,5 +177,98 @@ namespace Anatini.Server.Posts
         {
             return Ok(await post.ToPostDtoAsync(IsAuthenticated, BlobService));
         });
+
+
+        [Authorize]
+        [HttpPost("{postHandle}/bookmark")]
+        public async Task<IActionResult> PostPostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpDelete("{postHandle}/bookmark")]
+        public async Task<IActionResult> DeletePostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpPost("{postHandle}/star")]
+        public async Task<IActionResult> PostPostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpDelete("{postHandle}/star")]
+        public async Task<IActionResult> DeletePostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpPost("{postHandle}/dismiss")]
+        public async Task<IActionResult> PostPostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await AddUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
+        });
+
+        [Authorize]
+        [HttpDelete("{postHandle}/dismiss")]
+        public async Task<IActionResult> DeletePostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        {
+            return await DeleteUserPostRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
+        });
+
+        private async Task<IActionResult> AddUserPostRelationship(ApplicationDbContext context, Guid postId, UserContentRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userPostRelationship = new ApplicationUserContentRelationship
+                {
+                    SourceUserId = sourceUserId,
+                    TargetContentId = postId,
+                    Label = label,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                context.Add(userPostRelationship);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                }
+
+                return Created();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        private async Task<IActionResult> DeleteUserPostRelationship(ApplicationDbContext context, Guid postId, UserContentRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userPostRelationship = await context.UserContentRelationships.FirstOrDefaultAsync(userPostRelationship => userPostRelationship.TargetContentId == postId && userPostRelationship.SourceUserId == sourceUserId && userPostRelationship.Label == label);
+
+                if (userPostRelationship != null)
+                {
+                    context.Remove(userPostRelationship);
+                    await context.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
     }
 }

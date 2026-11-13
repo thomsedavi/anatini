@@ -24,10 +24,11 @@ namespace Anatini.Server.Events
 
             var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
-            eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking().Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow);
-
-            eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images);
-            eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);
+            eventOccurrencesQuery = eventOccurrencesQuery
+                .AsNoTracking()
+                .Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow)
+                .Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images)
+                .Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
