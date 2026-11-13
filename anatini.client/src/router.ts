@@ -25,7 +25,7 @@ import UserWorkEditView from './components/users/user/works/work/UserWorkEditVie
 import UserPostView from './components/users/user/posts/post/UserPostView.vue';
 import UserPostCreateView from './components/users/user/posts/post/UserPostCreateView.vue';
 import UserPostEditView from './components/users/user/posts/post/UserPostEditView.vue';
-// import UserEventView from './components/users/user/events/event/UserEventView.vue';
+import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 // import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 import UserSpacesView from './components/users/user/spaces/UserSpacesView.vue';
@@ -47,6 +47,7 @@ import SpacePostView from './components/spaces/space/posts/post/SpacePostView.vu
 import SpacePostCreateView from './components/spaces/space/posts/post/SpacePostCreateView.vue';
 import SpacePostEditView from './components/spaces/space/posts/post/SpacePostEditView.vue';
 import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
+import SpaceEventView from './components/spaces/space/events/event/SpaceEventView.vue';
 import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
@@ -144,11 +145,11 @@ const routes: RouteRecordRaw[] = [
       //   component: UserEventOccurrenceView,
       //   name: 'EventOccurrence',
       // },
-      // {
-      //   path: 'events/:eventId',
-      //   component: UserEventView,
-      //   name: 'Event',
-      // },
+      {
+        path: 'events/:eventId',
+        component: UserEventView,
+        name: 'UserEvent',
+      },
       {
         path: 'events',
         component: UserEventsView,
@@ -221,6 +222,11 @@ const routes: RouteRecordRaw[] = [
         path: 'events/create',
         component: SpaceEventCreateView,
         name: 'SpaceEventCreate'
+      },
+      {
+        path: 'events/:eventId',
+        component: SpaceEventView,
+        name: 'SpaceEvent'
       },
       {
         path: 'events',

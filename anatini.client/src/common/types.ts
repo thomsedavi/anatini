@@ -120,11 +120,6 @@ export type PostEdit = {
   status: 'Draft' | 'Published';
 }
 
-export type Event = {
-  id: string;
-  title: string;
-}
-
 export type Content = {
   id: string;
   handle: string;
@@ -135,6 +130,10 @@ export type Content = {
   isCollected: boolean | null;
   userHeader: UserHeader | null;
   spaceHeader: SpaceHeader | null;
+}
+
+export type Event = Content & {
+  title: string;
 }
 
 export type EventOccurrence = Content & {
