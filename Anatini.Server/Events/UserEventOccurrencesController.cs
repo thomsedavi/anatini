@@ -18,23 +18,67 @@ namespace Anatini.Server.Events
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventOccurrences(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> GetEventOccurrences(string userHandle, [FromQuery] EventOccurrencesQuery query) => await UsingUserAsync(userHandle, async (user) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
             var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
-            eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
-
-            eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images);
-
-            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserId == user.Id);
+            eventOccurrencesQuery = eventOccurrencesQuery
+                .AsNoTracking()
+                .Where(eventOccurrence => eventOccurrence.UserId == user.Id)
+                .Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
                 eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
                 eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+
+                if (query.Bookmarked == "only")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
+                }
+                else if (query.Bookmarked == "hide")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => !eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
+                }
+
+                if (query.Starred == "only")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+                }
+                else if (query.Starred == "hide")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => !eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+                }
+
+                if (query.Dismissed == "only")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+                }
+                else if (query.Dismissed == "hide")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => !eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+                }
+
+                if (query.Collected == "only")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
+                }
+                else if (query.Collected == "hide")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => !eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
+                }
+
+                if (query.Followed == "only")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.User != null && eventOccurrence.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                }
+                else if (query.Followed == "hide")
+                {
+                    eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.User != null && !eventOccurrence.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+                }
             }
             else
             {
