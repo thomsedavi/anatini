@@ -1,15 +1,19 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
+  import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import type { Event, InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { formatParagraphs, tidy } from '@/common/utils';
   import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
+  const router = useRouter();
+
   const props = defineProps<{
     dataSpaceId: string,
+    dataSpaceHandle: string,
     dataStatus: Status,
     dataInputErrors: InputError[],
   }>();
@@ -81,6 +85,12 @@
     const input = `spaces/${props.dataSpaceId}/events`;
 
     const statusActions: StatusActions = {
+      201: (response?: Response) => {
+          response?.json()
+            .then((value: Event) => {
+              router.push({ name: 'SpaceEvent', params: { spaceId: props.dataSpaceHandle, eventId: value.handle } });
+            });
+      }
     }
 
     const body = new FormData();

@@ -75,7 +75,7 @@
       200: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'UserWork', params: { userId: props.dataUserHandle, workId: value.handle ?? value.id } });
+              router.push({ name: 'UserWork', params: { userId: props.dataUserHandle, workId: value.handle } });
             });
       }
     }

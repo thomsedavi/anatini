@@ -75,7 +75,7 @@
       200: (response?: Response) => {
           response?.json()
             .then((value: Work) => {
-              router.push({ name: 'SpaceWork', params: { spaceId: props.dataSpaceHandle, workId: value.handle ?? value.id } });
+              router.push({ name: 'SpaceWork', params: { spaceId: props.dataSpaceHandle, workId: value.handle } });
             });
       }
     }

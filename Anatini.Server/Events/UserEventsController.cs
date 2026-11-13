@@ -39,7 +39,7 @@ namespace Anatini.Server.Events
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvent), new { eventId = @event.Id });
+            return CreatedAtAction(nameof(GetEvent), new {userHandle = user.Handle, eventHandle = @event.Handle }, @event.ToEventDto(IsAuthenticated));
         }, new ContextSettings { AccessRequired = true });
 
         [DisableEndpoint]

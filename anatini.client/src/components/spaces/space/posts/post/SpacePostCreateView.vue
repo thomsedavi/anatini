@@ -49,7 +49,7 @@
       201: (response?: Response) => {
           response?.json()
             .then((value: Post) => {
-              router.push({ name: 'SpacePost', params: { spaceId: props.dataSpaceHandle, postId: value.handle ?? value.id } });
+              router.push({ name: 'SpacePost', params: { spaceId: props.dataSpaceHandle, postId: value.handle } });
             });
       },
       400: () => {
