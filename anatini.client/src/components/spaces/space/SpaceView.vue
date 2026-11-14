@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, Post, Space, Status, StatusActions, Tab, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import { getTabIndex, parseParams, type Params } from '@/common/utils';
   import TabButton from '@/common/TabButton.vue';
+  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, Work } from '@/common/types';
+  import { getTabIndex, parseParams, type Params } from '@/common/utils';
   
   const route = useRoute();
   const router = useRouter();
@@ -16,6 +16,7 @@
   const tabIndex = ref<number>(-1);
   const posts = ref<Post[] | null>(null);
   const works = ref<Work[] | null>(null);
+  const eventOccurrenceGroups = ref<{ date: string, eventOccurrences: EventOccurrence[] }[] | null>(null);
 
   const tabs: Tab[] = [
     { id: 'posts', text: 'Posts', name: 'SpacePosts', childNames: ['SpacePost', 'SpacePostCreate', 'SpacePostEdit'] },
@@ -99,6 +100,10 @@
     works.value = newWorks;
   }
 
+  function handleUpdateEventOccurrenceGroups(newEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[]): void {
+    eventOccurrenceGroups.value = newEventOccurrenceGroups;
+  }
+
   function handleUpdateErrors(newInputErrors: InputError[]): void {
     inputErrors.value = newInputErrors;
 
@@ -131,11 +136,13 @@
           :data-input-errors="inputErrors"
           :data-posts="posts"
           :data-works="works"
+          :data-event-occurrence-groups="eventOccurrenceGroups"
           :data-space-id="space.data.id"
           :data-space-handle="space.data.handle"
           :data-space-name="space.data.name"
           @update-posts="handleUpdatePosts"
           @update-works="handleUpdateWorks"
+          @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>

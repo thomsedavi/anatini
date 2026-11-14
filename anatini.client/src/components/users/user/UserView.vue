@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
-  import { getTabIndex, parseParams, type Params } from '@/common/utils';
-  import TabButton from '@/common/TabButton.vue';
   import { store } from '@/common/store';
+  import TabButton from '@/common/TabButton.vue';
+  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
+  import { getTabIndex, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();

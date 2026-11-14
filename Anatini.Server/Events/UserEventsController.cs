@@ -83,50 +83,49 @@ namespace Anatini.Server.Events
             return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated))));
         });
 
-        [DisableEndpoint]
-        [HttpGet("{eventHandle}/occurrence/{eventOccurrenceHandle}")]
+        [HttpGet("{eventHandle}/occurrences/{eventOccurrenceHandle}")]
         public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return Ok(await eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated));
         });
 
         [Authorize]
-        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/bookmark")]
+        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> PostEventOccurrenceBookmark(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
-        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/bookmark")]
+        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> DeleteEventOccurrenceBookmark(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
-        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/star")]
+        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> PostEventOccurrenceStar(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
-        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/star")]
+        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> DeleteEventOccurrenceStar(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
-        [HttpPost("{eventHandle}/occurrence/{eventOccurrenceHandle}/dismiss")]
+        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> PostEventOccurrenceDismiss(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await AddUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
-        [HttpDelete("{eventHandle}/occurrence/{eventOccurrenceHandle}/dismiss")]
+        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> DeleteEventOccurrenceDismiss(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
             return await DeleteUserEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);

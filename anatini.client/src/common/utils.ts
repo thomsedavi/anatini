@@ -352,11 +352,11 @@ export function getEventOccurrenceAddress(eventOccurrence: EventOccurrence, basi
   if (eventOccurrence.spaceHeader !== null) {
     const spaceKey = basis === 'id' ? eventOccurrence.spaceHeader.id : eventOccurrence.spaceHeader.handle;
 
-    return `spaces/${spaceKey}/events/${eventKey}/occurrence/${eventOccurrenceKey}`;
+    return `spaces/${spaceKey}/events/${eventKey}/occurrences/${eventOccurrenceKey}`;
   } else if (eventOccurrence.userHeader !== null) {
     const userKey = basis === 'id' ? eventOccurrence.userHeader.id : eventOccurrence.userHeader.handle;
 
-    return `users/${userKey}/events/${eventKey}/occurrence/${eventOccurrenceKey}`;
+    return `users/${userKey}/events/${eventKey}/occurrences/${eventOccurrenceKey}`;
   } else {
     // return id based address by default
     return `events/${eventOccurrence.eventHeader.id}/occurrence/${eventOccurrence.id}`;
