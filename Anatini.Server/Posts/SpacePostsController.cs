@@ -21,7 +21,7 @@ namespace Anatini.Server.Posts
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPosts(string spaceHandle, [FromQuery] PostsQuery query) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> GetPosts(string spaceHandle, [FromQuery] PostsQuery query) => await UsingSpaceAsync(spaceHandle, async (postSpace) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
@@ -29,7 +29,7 @@ namespace Anatini.Server.Posts
 
             postsQuery = postsQuery
                 .AsNoTracking()
-                .Where(post => post.SpaceId == space.Id)
+                .Where(post => post.SpaceId == postSpace.Id)
                 .Where(post => post.PublishedAtNz < nzNow);
 
             if (TryGetUserId(out Guid sourceUserId))
@@ -100,7 +100,7 @@ namespace Anatini.Server.Posts
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService, space: space))));
+            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(UserIdOrNull, BlobService, postSpace: postSpace))));
         });
 
         [Authorize]
@@ -109,7 +109,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> PostPost(string spaceHandle, [FromForm] CreatePost createPost) => await UsingSpaceAsync(spaceHandle, async (postSpace) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Body);
 
@@ -122,11 +122,11 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddSpacePostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, space.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
+            var post = Context.AddSpacePostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, postSpace.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle));
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPost), new { spaceId = space.Id, postId = post.Id }, await post.ToPostDtoAsync(IsAuthenticated, BlobService, space: space));
+            return CreatedAtAction(nameof(GetPost), new { spaceId = postSpace.Id, postId = post.Id }, await post.ToPostDtoAsync(UserIdOrNull, BlobService, postSpace: postSpace));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -165,7 +165,7 @@ namespace Anatini.Server.Posts
 
             await Context.SaveChangesAsync();
 
-            return Ok(await post.ToPostDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [HttpGet("{postHandle}")]
@@ -175,7 +175,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPost(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
         {
-            return Ok(await post.ToPostDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
         });
 
 

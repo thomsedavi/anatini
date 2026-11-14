@@ -39,7 +39,7 @@ namespace Anatini.Server.Events
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvent), new {userHandle = user.Handle, eventHandle = @event.Handle }, @event.ToEventDto(IsAuthenticated));
+            return CreatedAtAction(nameof(GetEvent), new {userHandle = user.Handle, eventHandle = @event.Handle }, @event.ToEventDto(UserIdOrNull));
         }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{eventHandle}")]
@@ -48,7 +48,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvent(string userHandle, string eventHandle) => await UsingUserContentAsync<Event>(userHandle, eventHandle, async (@event) =>
         {
-            return Ok(@event.ToEventDto(IsAuthenticated));
+            return Ok(@event.ToEventDto(UserIdOrNull));
         });
 
         [HttpGet("{eventHandle}/occurrences")]
@@ -80,13 +80,13 @@ namespace Anatini.Server.Events
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated))));
+            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(UserIdOrNull))));
         });
 
         [HttpGet("{eventHandle}/occurrences/{eventOccurrenceHandle}")]
         public async Task<IActionResult> GetEventOccurrence(string userHandle, string eventHandle, string eventOccurrenceHandle) => await UsingUserEventOccurrenceAsync(userHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return Ok(await eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated));
+            return Ok(await eventOccurrence.ToEventOccurrenceDtoAsync(UserIdOrNull));
         });
 
         [Authorize]

@@ -128,6 +128,7 @@ export type Content = {
   isBookmarked: boolean | null;
   isDismissed: boolean | null;
   isCollected: boolean | null;
+  isOwned: boolean | null;
   userHeader: UserHeader | null;
   spaceHeader: SpaceHeader | null;
 }

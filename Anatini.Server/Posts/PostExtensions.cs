@@ -1,33 +1,36 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
-using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Spaces.Extensions;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Posts
 {
     public static class PostExtensions
     {
-        public static async Task<PostDto> ToPostDtoAsync(this Post post, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
+        public static async Task<PostDto> ToPostDtoAsync(this Post post, Guid? userId, IBlobService? blobService = null, ApplicationUser? postUser = null, Space? postSpace = null)
         {
-            user ??= post.User;
-            space ??= post.Space;
+            postUser ??= post.User;
+            postSpace ??= post.Space;
+
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(post, userId, postUser, postSpace);
 
             return new PostDto
             {
                 Id = post.Id,
-                UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = postUser != null ? await postUser.ToUserHeaderDtoAsync(blobService) : null,
+                SpaceHeader = postSpace != null ? await postSpace.ToSpaceHeaderDto(blobService) : null,
                 Handle = post.Handle,
                 Title = post.Title,
                 Body = post.Body,
                 Visibility = post.Visibility.ToString(),
                 PublishedAtNz = post.PublishedAtNz ?? throw new InvalidOperationException(),
-                IsBookmarked = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? post.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
+                IsBookmarked = isBookmarked,
+                IsDismissed = isDismissed,
+                IsStarred = isStarred,
+                IsCollected = isCollected,
+                IsOwned = isOwned
             };
         }
     }

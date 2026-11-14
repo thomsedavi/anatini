@@ -23,7 +23,7 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostWork(string spaceHandle, [FromForm] CreateWork createWork) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> PostWork(string spaceHandle, [FromForm] CreateWork createWork) => await UsingSpaceAsync(spaceHandle, async (workSpace) =>
         {
            var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Body);
 
@@ -36,13 +36,13 @@ namespace Anatini.Server.Works
                return BadRequest(new { error = "Unknown error" });
            }
 
-            var work = Context.AddSpaceWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, space.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
+            var work = Context.AddSpaceWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, workSpace.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
 
             await Context.SaveChangesAsync();
 
-            work.Space = space;
+            work.Space = workSpace;
 
-            return CreatedAtAction(nameof(GetWork), new { spaceHandle = space.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(IsAuthenticated, BlobService, space: space));
+            return CreatedAtAction(nameof(GetWork), new { spaceHandle = workSpace.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(UserIdOrNull, BlobService, workSpace: workSpace));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -76,7 +76,7 @@ namespace Anatini.Server.Works
 
             await Context.SaveChangesAsync();
 
-            return Ok(await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [Authorize]
@@ -87,15 +87,15 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetWork(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work) =>
         {
-            return Ok(await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
         });
 
         [HttpGet]
-        public async Task<IActionResult> GetWorks(string spaceHandle, [FromQuery] WorksQuery query) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> GetWorks(string spaceHandle, [FromQuery] WorksQuery query) => await UsingSpaceAsync(spaceHandle, async (workSpace) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
-            var worksQuery = Context.Works.Where(work => work.SpaceId == space.Id);
+            var worksQuery = Context.Works.Where(work => work.SpaceId == workSpace.Id);
 
             worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtNz.HasValue || work.PublishedAtNz.Value < nzNow);
 
@@ -167,7 +167,7 @@ namespace Anatini.Server.Works
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService, space: space))));
+            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(UserIdOrNull, BlobService, workSpace: workSpace))));
         });
 
         [Authorize]

@@ -23,7 +23,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostPost(string userHandle, [FromForm] CreatePost createPost) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> PostPost(string userHandle, [FromForm] CreatePost createPost) => await UsingUserAsync(userHandle, async (postUser) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createPost.Body);
 
@@ -36,13 +36,13 @@ namespace Anatini.Server.Posts
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var post = Context.AddUserPostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, user.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
+            var post = Context.AddUserPostAsync(createPost.Title, validationResult.SanitizedHtml, createPost.Visibility, postUser.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createPost.Handle), createPost.PublishedAtNz);
 
             await Context.SaveChangesAsync();
 
-            post.User = user;
+            post.User = postUser;
 
-            return CreatedAtAction(nameof(GetPost), new { userHandle = user.Handle, postHandle = post.Handle }, await post.ToPostDtoAsync(IsAuthenticated, BlobService, user: user));
+            return CreatedAtAction(nameof(GetPost), new { userHandle = postUser.Handle, postHandle = post.Handle }, await post.ToPostDtoAsync(UserIdOrNull, BlobService, postUser: postUser));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -50,7 +50,7 @@ namespace Anatini.Server.Posts
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPosts(string userHandle, [FromQuery] PostsQuery query) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> GetPosts(string userHandle, [FromQuery] PostsQuery query) => await UsingUserAsync(userHandle, async (postUser) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
@@ -58,7 +58,7 @@ namespace Anatini.Server.Posts
 
             postsQuery = postsQuery
                 .AsNoTracking()
-                .Where(post => post.UserId == user.Id)
+                .Where(post => post.UserId == postUser.Id)
                 .Where(post => post.PublishedAtNz < nzNow);
 
             if (TryGetUserId(out Guid sourceUserId))
@@ -129,7 +129,7 @@ namespace Anatini.Server.Posts
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService, user: user))));
+            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(UserIdOrNull, BlobService, postUser: postUser))));
         });
 
         [Authorize]
@@ -176,7 +176,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPost(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
         {
-            return Ok(await post.ToPostDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
         });
 
         [Authorize]

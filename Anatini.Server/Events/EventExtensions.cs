@@ -1,16 +1,21 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
-using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Spaces.Extensions;
 using Anatini.Server.Users.Extensions;
+using Anatini.Server.Utils;
 
 namespace Anatini.Server.Events
 {
     public static class EventExtensions
     {
-        public static EventDto ToEventDto(this Event @event, bool isAuthenticated)
+        public static EventDto ToEventDto(this Event @event, Guid? userId, ApplicationUser? eventUser = null, Space? eventSpace = null)
         {
+            eventUser ??= @event.User;
+            eventSpace ??= @event.Space;
+
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(@event, userId, eventUser, eventSpace);
+
             return new EventDto
             {
                 Id = @event.Id,
@@ -19,17 +24,20 @@ namespace Anatini.Server.Events
                 EndsAtNz = @event.EndsAtNz,
                 Title = @event.Title ?? throw new InvalidOperationException(),
                 Body = @event.Body,
-                IsBookmarked = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? @event.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
+                IsBookmarked = isBookmarked,
+                IsDismissed = isDismissed,
+                IsStarred = isStarred,
+                IsCollected = isCollected,
+                IsOwned = isOwned
             };
         }
 
-        public static async Task<EventOccurrenceDto> ToEventOccurrenceDtoAsync(this EventOccurrence eventOccurrence, bool isAuthenticated, IBlobService? blobService = null, ApplicationUser? user = null, Space? space = null)
+        public static async Task<EventOccurrenceDto> ToEventOccurrenceDtoAsync(this EventOccurrence eventOccurrence, Guid? userId, IBlobService? blobService = null, ApplicationUser? eventOccurrenceUser = null, Space? eventOccurrenceSpace = null)
         {
-            user ??= eventOccurrence.User;
-            space ??= eventOccurrence.Space;
+            eventOccurrenceUser ??= eventOccurrence.User;
+            eventOccurrenceSpace ??= eventOccurrence.Space;
+
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(eventOccurrence, userId, eventOccurrenceUser, eventOccurrenceSpace);
 
             return new EventOccurrenceDto
             {
@@ -39,17 +47,18 @@ namespace Anatini.Server.Events
                     Id = eventOccurrence.Event.Id,
                     Handle = eventOccurrence.Event.Handle
                 },
-                UserHeader = user != null ? await user.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = space != null ? await space.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = eventOccurrenceUser != null ? await eventOccurrenceUser.ToUserHeaderDtoAsync(blobService) : null,
+                SpaceHeader = eventOccurrenceSpace != null ? await eventOccurrenceSpace.ToSpaceHeaderDto(blobService) : null,
                 Handle = eventOccurrence.Handle,
                 StartsAtNz = eventOccurrence.StartsAtNz,
                 EndsAtNz = eventOccurrence.EndsAtNz,
                 Title = eventOccurrence.Title ?? throw new InvalidOperationException(),
                 Body = eventOccurrence.Body,
-                IsBookmarked = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked) : null,
-                IsDismissed = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed) : null,
-                IsStarred = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred) : null,
-                IsCollected = isAuthenticated ? eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected) : null
+                IsBookmarked = isBookmarked,
+                IsDismissed = isDismissed,
+                IsStarred = isStarred,
+                IsCollected = isCollected,
+                IsOwned = isOwned
             };
         }
     }

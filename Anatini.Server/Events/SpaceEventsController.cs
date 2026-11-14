@@ -39,7 +39,7 @@ namespace Anatini.Server.Events
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvent), new {spaceHandle = space.Handle, eventHandle = @event.Handle }, @event.ToEventDto(IsAuthenticated));
+            return CreatedAtAction(nameof(GetEvent), new {spaceHandle = space.Handle, eventHandle = @event.Handle }, @event.ToEventDto(UserIdOrNull));
         }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{eventHandle}")]
@@ -48,7 +48,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEvent(string spaceHandle, string eventHandle) => await UsingSpaceContentAsync<Event>(spaceHandle, eventHandle, async (@event) =>
         {
-            return Ok(@event.ToEventDto(IsAuthenticated));
+            return Ok(@event.ToEventDto(UserIdOrNull));
         });
 
         [Authorize]

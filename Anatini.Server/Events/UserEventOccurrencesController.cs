@@ -18,7 +18,7 @@ namespace Anatini.Server.Events
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEventOccurrences(string userHandle, [FromQuery] EventOccurrencesQuery query) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> GetEventOccurrences(string userHandle, [FromQuery] EventOccurrencesQuery query) => await UsingUserAsync(userHandle, async (eventOccurrenceUser) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
@@ -26,7 +26,7 @@ namespace Anatini.Server.Events
 
             eventOccurrencesQuery = eventOccurrencesQuery
                 .AsNoTracking()
-                .Where(eventOccurrence => eventOccurrence.UserId == user.Id)
+                .Where(eventOccurrence => eventOccurrence.UserId == eventOccurrenceUser.Id)
                 .Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow);
 
             if (TryGetUserId(out Guid sourceUserId))
@@ -94,7 +94,7 @@ namespace Anatini.Server.Events
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated, BlobService, user: user))));
+            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(UserIdOrNull, BlobService, eventOccurrenceUser: eventOccurrenceUser))));
         });
     }
 }

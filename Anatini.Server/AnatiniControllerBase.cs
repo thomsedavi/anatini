@@ -22,6 +22,7 @@ namespace Anatini.Server
         public UserManager<ApplicationUser> UserManager => userManager;
         public IBlobService BlobService => blobService;
         private IAuthorizationService AuthorizationService => HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+        public Guid? UserIdOrNull => TryGetUserId(out Guid userId) ? userId : null;
 
         [NonAction]
         public bool TryGetUserId(out Guid userId) => Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);

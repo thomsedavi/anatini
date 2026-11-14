@@ -23,7 +23,7 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PostWork(string userHandle, [FromForm] CreateWork createWork) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> PostWork(string userHandle, [FromForm] CreateWork createWork) => await UsingUserAsync(userHandle, async (workUser) =>
         {
             var validationResult = HtmlContentService.ValidateAndNormalizeHtml(createWork.Body);
 
@@ -36,13 +36,13 @@ namespace Anatini.Server.Works
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var work = Context.AddUserWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, user.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
+            var work = Context.AddUserWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, workUser.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
 
             await Context.SaveChangesAsync();
 
-            work.User = user;
+            work.User = workUser;
 
-            return CreatedAtAction(nameof(GetWork), new { userHandle = user.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(IsAuthenticated, BlobService, user: user));
+            return CreatedAtAction(nameof(GetWork), new { userHandle = workUser.Handle, workHandle = work.Handle }, await work.ToWorkDtoAsync(UserIdOrNull, BlobService, workUser: workUser));
         }, new ContextSettings { AccessRequired = true });
 
         [Authorize]
@@ -76,7 +76,7 @@ namespace Anatini.Server.Works
 
             await Context.SaveChangesAsync();
 
-            return Ok(await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [Authorize]
@@ -87,15 +87,15 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetWork(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return Ok(await work.ToWorkDtoAsync(IsAuthenticated, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
         });
 
         [HttpGet]
-        public async Task<IActionResult> GetWorks(string userHandle, [FromQuery] WorksQuery query) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> GetWorks(string userHandle, [FromQuery] WorksQuery query) => await UsingUserAsync(userHandle, async (workUser) =>
         {
             var nzNow = DateTime.UtcNow.ConvertUtcToNz();
 
-            var worksQuery = Context.Works.Where(work => work.UserId == user.Id);
+            var worksQuery = Context.Works.Where(work => work.UserId == workUser.Id);
 
             worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtNz.HasValue || work.PublishedAtNz.Value < nzNow);
 
@@ -167,7 +167,7 @@ namespace Anatini.Server.Works
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService, user: user))));
+            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(UserIdOrNull, BlobService, workUser: workUser))));
         });
 
         [Authorize]

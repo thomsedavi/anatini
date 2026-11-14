@@ -30,7 +30,9 @@ namespace Anatini.Server.Posts
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                postsQuery = postsQuery.Include(post => post.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                postsQuery = postsQuery
+                    .Include(post => post.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId))
+                    .Include(post => post.Space).ThenInclude(space => space!.UserRelationships.Where(userSpaceRelationship => userSpaceRelationship.SourceUserId == sourceUserId));
 
                 postsQuery = postsQuery.Where(post => (post.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
@@ -96,7 +98,7 @@ namespace Anatini.Server.Posts
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(posts.Select(post => post.ToPostDtoAsync(UserIdOrNull, BlobService))));
         }
     }
 }

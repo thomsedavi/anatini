@@ -95,7 +95,7 @@ namespace Anatini.Server.Events
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(UserIdOrNull, BlobService))));
         }
     }
 }

@@ -90,7 +90,7 @@ namespace Anatini.Server.Works
                 return Problem();
             }
 
-            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(IsAuthenticated, BlobService))));
+            return Ok(await Task.WhenAll(works.Select(work => work.ToWorkDtoAsync(UserIdOrNull, BlobService))));
         }
     }
 }
