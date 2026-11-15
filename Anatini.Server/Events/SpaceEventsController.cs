@@ -7,8 +7,6 @@ using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Anatini.Server.Events
 {
@@ -55,92 +53,42 @@ namespace Anatini.Server.Events
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> PostEventOccurrenceBookmark(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await AddContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/bookmark")]
         public async Task<IActionResult> DeleteEventOccurrenceBookmark(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await DeleteContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> PostEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
         public async Task<IActionResult> DeleteEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> PostEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
         public async Task<IActionResult> DeleteEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteSpaceEventOccurrenceRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(Context, eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
-
-        private async Task<IActionResult> AddSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserContentRelationshipLabel label)
-        {
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                var userEventOccurrenceRelationship = new ApplicationUserContentRelationship
-                {
-                    SourceUserId = sourceUserId,
-                    TargetContentId = eventOccurrenceId,
-                    Label = label,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-
-                context.Add(userEventOccurrenceRelationship);
-
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
-                {
-                }
-
-                return Created();
-            }
-            else
-            {
-                return Problem();
-            }
-        }
-
-        private async Task<IActionResult> DeleteSpaceEventOccurrenceRelationship(ApplicationDbContext context, Guid eventOccurrenceId, UserContentRelationshipLabel label)
-        {
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                var userEventOccurrenceRelationship = await context.UserContentRelationships.FirstOrDefaultAsync(userEventOccurrenceRelationship => userEventOccurrenceRelationship.TargetContentId == eventOccurrenceId && userEventOccurrenceRelationship.SourceUserId == sourceUserId && userEventOccurrenceRelationship.Label == label);
-
-                if (userEventOccurrenceRelationship != null)
-                {
-                    context.Remove(userEventOccurrenceRelationship);
-                    await context.SaveChangesAsync();
-                }
-
-                return NoContent();
-            }
-            else
-            {
-                return Problem();
-            }
-        }
     }
 }

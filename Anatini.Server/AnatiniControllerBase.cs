@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using UnreachableException = System.Diagnostics.UnreachableException;
 
 namespace Anatini.Server
@@ -166,6 +167,50 @@ namespace Anatini.Server
             if (await CanReadAsync(spaceResult.Visibility))
             {
                 return await spaceFunction(spaceResult);
+            }
+
+            return CannotReadResponse();
+        }
+
+        [NonAction]
+        public async Task<IActionResult> UsingContentAsync<T>(Guid contentId, Func<T, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content
+        {
+            T? contentResult;
+
+            var contentsQuery = context.Contents.OfType<T>();
+
+            if (settings?.AsNoTracking ?? true)
+            {
+                contentsQuery = contentsQuery.AsNoTracking();
+            }
+
+            contentsQuery = contentsQuery.Include(content => content.User);
+            contentsQuery = contentsQuery.Include(content => content.Space);
+
+            contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.Id == contentId);
+
+            if (contentResult == null)
+            {
+                return NotFound();
+            }
+
+            if (settings?.AccessRequired ?? false)
+            {
+                if (contentResult.User != null && await CanWriteUserAsync(contentResult.User))
+                {
+                    return await contentFunction(contentResult);
+                }
+                else if (contentResult.Space != null && await CanWriteSpaceAsync(contentResult.Space))
+                {
+                    return await contentFunction(contentResult);
+                }
+
+                return CannotReadResponse();
+            }
+
+            if (await CanReadAsync(contentResult.Visibility))
+            {
+                return await contentFunction(contentResult);
             }
 
             return CannotReadResponse();
@@ -426,6 +471,58 @@ namespace Anatini.Server
         {
             var authorizationResult = await AuthorizationService.AuthorizeAsync(User, space, "CanWriteSpace");
             return authorizationResult.Succeeded;
+        }
+
+        [NonAction]
+        public async Task<IActionResult> AddContentRelationship(ApplicationDbContext context, Guid contentId, UserContentRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userContentRelationship = new ApplicationUserContentRelationship
+                {
+                    SourceUserId = sourceUserId,
+                    TargetContentId = contentId,
+                    Label = label,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                context.Add(userContentRelationship);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                }
+
+                return Created();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        [NonAction]
+        public async Task<IActionResult> DeleteContentRelationship(ApplicationDbContext context, Guid contentId, UserContentRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userContentRelationship = await context.UserContentRelationships.FirstOrDefaultAsync(userContentRelationship => userContentRelationship.TargetContentId == contentId && userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == label);
+
+                if (userContentRelationship != null)
+                {
+                    context.Remove(userContentRelationship);
+                    await context.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return Problem();
+            }
         }
     }
 

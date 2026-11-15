@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Anatini.Server.Works
 {
@@ -174,92 +173,42 @@ namespace Anatini.Server.Works
         [HttpPost("{workHandle}/bookmark")]
         public async Task<IActionResult> PostWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/bookmark")]
         public async Task<IActionResult> DeleteWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/star")]
         public async Task<IActionResult> PostWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/star")]
         public async Task<IActionResult> DeleteWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/dismiss")]
         public async Task<IActionResult> PostWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await AddUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/dismiss")]
         public async Task<IActionResult> DeleteWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
         {
-            return await DeleteUserWorkRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });
-
-        private async Task<IActionResult> AddUserWorkRelationship(ApplicationDbContext context, Guid workId, UserContentRelationshipLabel label)
-        {
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                var userWorkRelationship = new ApplicationUserContentRelationship
-                {
-                    SourceUserId = sourceUserId,
-                    TargetContentId = workId,
-                    Label = label,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-
-                context.Add(userWorkRelationship);
-
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
-                {
-                }
-
-                return Created();
-            }
-            else
-            {
-                return Problem();
-            }
-        }
-
-        private async Task<IActionResult> DeleteUserWorkRelationship(ApplicationDbContext context, Guid workId, UserContentRelationshipLabel label)
-        {
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                var userWorkRelationship = await context.UserContentRelationships.FirstOrDefaultAsync(userWorkRelationship => userWorkRelationship.TargetContentId == workId && userWorkRelationship.SourceUserId == sourceUserId && userWorkRelationship.Label == label);
-
-                if (userWorkRelationship != null)
-                {
-                    context.Remove(userWorkRelationship);
-                    await context.SaveChangesAsync();
-                }
-
-                return NoContent();
-            }
-            else
-            {
-                return Problem();
-            }
-        }
     }
 }
