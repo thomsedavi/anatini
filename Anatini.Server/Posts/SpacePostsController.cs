@@ -137,7 +137,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string spaceHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PatchPost(string spaceHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, postSpace) =>
         {
             if (updatePost.Body != null)
             {
@@ -164,7 +164,7 @@ namespace Anatini.Server.Posts
 
             await Context.SaveChangesAsync();
 
-            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService, postSpace: postSpace));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [HttpGet("{postHandle}")]
@@ -172,50 +172,50 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> GetPost(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, postSpace) =>
         {
-            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService, postSpace: postSpace));
         });
 
 
         [Authorize]
         [HttpPost("{postHandle}/bookmark")]
-        public async Task<IActionResult> PostPostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/bookmark")]
-        public async Task<IActionResult> DeletePostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostBookmark(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/star")]
-        public async Task<IActionResult> PostPostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/star")]
-        public async Task<IActionResult> DeletePostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostStar(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/dismiss")]
-        public async Task<IActionResult> PostPostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/dismiss")]
-        public async Task<IActionResult> DeletePostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostDismiss(string spaceHandle, string postHandle) => await UsingSpaceContentAsync<Post>(spaceHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });

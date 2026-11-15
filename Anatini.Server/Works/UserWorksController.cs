@@ -53,7 +53,7 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchWork(string userHandle, string workHandle, [FromForm] UpdateWork updateWork) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> PatchWork(string userHandle, string workHandle, [FromForm] UpdateWork updateWork) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, workUser) =>
         {
             if (updateWork.Body != null)
             {
@@ -75,7 +75,7 @@ namespace Anatini.Server.Works
 
             await Context.SaveChangesAsync();
 
-            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService, workUser: workUser));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
         [Authorize]
@@ -84,9 +84,9 @@ namespace Anatini.Server.Works
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetWork(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> GetWork(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, workUser) =>
         {
-            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService));
+            return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService, workUser: workUser));
         });
 
         [HttpGet]
@@ -171,42 +171,42 @@ namespace Anatini.Server.Works
 
         [Authorize]
         [HttpPost("{workHandle}/bookmark")]
-        public async Task<IActionResult> PostWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> PostWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/bookmark")]
-        public async Task<IActionResult> DeleteWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> DeleteWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/star")]
-        public async Task<IActionResult> PostWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> PostWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/star")]
-        public async Task<IActionResult> DeleteWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> DeleteWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/dismiss")]
-        public async Task<IActionResult> PostWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> PostWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/dismiss")]
-        public async Task<IActionResult> DeleteWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work) =>
+        public async Task<IActionResult> DeleteWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (_, work) =>
         {
             return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
         });

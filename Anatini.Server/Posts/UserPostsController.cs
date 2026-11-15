@@ -137,7 +137,7 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPost(string userHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PatchPost(string userHandle, string postHandle, [FromForm] UpdatePost updatePost) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             if (updatePost.Body != null)
             {
@@ -173,49 +173,49 @@ namespace Anatini.Server.Posts
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPost(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> GetPost(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, postUser) =>
         {
-            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService));
+            return Ok(await post.ToPostDtoAsync(UserIdOrNull, BlobService, postUser: postUser));
         });
 
         [Authorize]
         [HttpPost("{postHandle}/bookmark")]
-        public async Task<IActionResult> PostPostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/bookmark")]
-        public async Task<IActionResult> DeletePostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostBookmark(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/star")]
-        public async Task<IActionResult> PostPostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/star")]
-        public async Task<IActionResult> DeletePostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostStar(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{postHandle}/dismiss")]
-        public async Task<IActionResult> PostPostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> PostPostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await AddContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{postHandle}/dismiss")]
-        public async Task<IActionResult> DeletePostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post) =>
+        public async Task<IActionResult> DeletePostDismiss(string userHandle, string postHandle) => await UsingUserContentAsync<Post>(userHandle, postHandle, async (post, _) =>
         {
             return await DeleteContentRelationship(Context, post.Id, UserContentRelationshipLabel.IsDismissed);
         });

@@ -217,7 +217,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> UsingSpaceContentAsync<T>(string spaceHandle, string contentHandle, Func<T, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingSpaceAsync(spaceHandle, async (space) =>
+        public async Task<IActionResult> UsingSpaceContentAsync<T>(string spaceHandle, string contentHandle, Func<T, Space, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             T? contentResult;
 
@@ -246,14 +246,14 @@ namespace Anatini.Server
 
             if (await CanReadAsync(contentResult.Visibility))
             {
-                return await contentFunction(contentResult);
+                return await contentFunction(contentResult, space);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserContentAsync<T>(string userHandle, string contentHandle, Func<T, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserContentAsync<T>(string userHandle, string contentHandle, Func<T, ApplicationUser, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingUserAsync(userHandle, async (user) =>
         {
             T? contentResult;
 
@@ -287,14 +287,14 @@ namespace Anatini.Server
 
             if (await CanReadAsync(contentResult.Visibility))
             {
-                return await contentFunction(contentResult);
+                return await contentFunction(contentResult, user);
             }
 
             return CannotReadResponse();
         }, settings);
 
         [NonAction]
-        public async Task<IActionResult> UsingUserEventOccurrenceAsync(string userHandle, string eventHandle, string eventOccurrenceHandle, Func<EventOccurrence, Task<IActionResult>> eventOccurrenceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
+        public async Task<IActionResult> UsingUserEventOccurrenceAsync(string userHandle, string eventHandle, string eventOccurrenceHandle, Func<EventOccurrence, ApplicationUser, Task<IActionResult>> eventOccurrenceFunction, ContextSettings? settings = null) => await UsingUserAsync(userHandle, async (user) =>
         {
             EventOccurrence? eventOccurrenceResult;
 
@@ -342,7 +342,7 @@ namespace Anatini.Server
 
             if (await CanReadAsync(eventOccurrenceResult.Visibility))
             {
-                return await eventOccurrenceFunction(eventOccurrenceResult);
+                return await eventOccurrenceFunction(eventOccurrenceResult, user);
             }
 
             return CannotReadResponse();

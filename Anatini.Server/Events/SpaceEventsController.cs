@@ -37,16 +37,16 @@ namespace Anatini.Server.Events
 
             await Context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvent), new {spaceHandle = space.Handle, eventHandle = @event.Handle }, @event.ToEventDto(UserIdOrNull));
+            return CreatedAtAction(nameof(GetEvent), new {spaceHandle = space.Handle, eventHandle = @event.Handle }, @event.ToEventDto(UserIdOrNull, eventSpace: space));
         }, new ContextSettings { AccessRequired = true });
 
         [HttpGet("{eventHandle}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEvent(string spaceHandle, string eventHandle) => await UsingSpaceContentAsync<Event>(spaceHandle, eventHandle, async (@event) =>
+        public async Task<IActionResult> GetEvent(string spaceHandle, string eventHandle) => await UsingSpaceContentAsync<Event>(spaceHandle, eventHandle, async (@event, eventSpace) =>
         {
-            return Ok(@event.ToEventDto(UserIdOrNull));
+            return Ok(@event.ToEventDto(UserIdOrNull, eventSpace: eventSpace));
         });
 
         [Authorize]
