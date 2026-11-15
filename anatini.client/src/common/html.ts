@@ -102,20 +102,32 @@ export function getWorkTime(publishedAtNz: string): string {
   return result;
 }
 
-export function getWorkHtml(work: Work, showOwner: boolean): string {
+export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3', headingIsLink: boolean): string {
+  const hasOwnerHeader = work.userHeader !== null || work.spaceHeader !== null;
+
   let result = '';
 
   result += '<header>';
 
+  result += `<${heading}>`;
+
   if (work.userHeader !== null) {
-    result += `<h3><a href="/users/${work.userHeader.handle}/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
+    if (headingIsLink) result += `<a href="/users/${work.userHeader.handle}/works/${work.handle}">`;
   } else if (work.spaceHeader !== null) {
-    result += `<h3><a href="/spaces/${work.spaceHeader.handle}/works/${work.handle}">${escapeHtml(work.title)}</a></h3>`;
+    if (headingIsLink) result += `<a href="/spaces/${work.spaceHeader.handle}/works/${work.handle}">`;
   }
 
-  result += '<address role="presentation">';
+  result += escapeHtml(work.title);
+  
+  if (hasOwnerHeader && headingIsLink) {
+    result += '</a>';
+  }
+
+  result += `</${heading}>`;
 
   if (showOwner) {
+    result += '<address role="presentation">';
+
     if (work.userHeader !== null) {
       result += `<a rel="author" href="/users/${work.userHeader.handle}">`;
       if (work.userHeader.iconImage !== null) {
@@ -131,9 +143,9 @@ export function getWorkHtml(work: Work, showOwner: boolean): string {
       result += work.spaceHeader.name;
       result += `</a>`;
     }
-  }
 
-  result += '</address>';
+    result += '</address>';
+  }
 
   if (work.publishedAtNz !== null) {
     result += getWorkTime(work.publishedAtNz);
