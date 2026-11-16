@@ -44,8 +44,8 @@ namespace Anatini.Server.Events
                 Id = eventOccurrence.Id,
                 EventHeader = new EventHeaderDto
                 {
-                    Id = eventOccurrence.Event.Id,
-                    Handle = eventOccurrence.Event.Handle
+                    Id = eventOccurrence.Parent?.Id ?? throw new InvalidOperationException(),
+                    Handle = eventOccurrence.Parent.Handle
                 },
                 UserHeader = eventOccurrenceUser != null ? await eventOccurrenceUser.ToUserHeaderDtoAsync(blobService) : null,
                 SpaceHeader = eventOccurrenceSpace != null ? await eventOccurrenceSpace.ToSpaceHeaderDto(blobService) : null,

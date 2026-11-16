@@ -71,7 +71,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 {
                     Id = Guid.CreateVersion7(),
                     Handle = @event.StartsAtNz.GetDate(),
-                    EventId = @event.Id,
+                    ParentId = @event.Id,
                     Type = ContentType.EventOccurrence,
                     UserId = @event.UserId,
                     SpaceId = @event.SpaceId,
@@ -105,7 +105,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                         Id = Guid.CreateVersion7(),
                         Handle = occurrenceNz.Item1.GetDate(),
                         Type = ContentType.EventOccurrence,
-                        EventId = @event.Id,
+                        ParentId = @event.Id,
                         UserId = @event.UserId,
                         SpaceId = @event.SpaceId,
                         Title = @event.Title ?? throw new InvalidOperationException(),

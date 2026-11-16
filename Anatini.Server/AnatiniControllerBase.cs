@@ -326,13 +326,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.EventId == eventId && eventOccurrence.Id == eventOccurrenceId);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
                 var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.EventId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
             if (eventOccurrenceResult == null)
@@ -381,13 +381,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.EventId == eventId && eventOccurrence.Id == eventOccurrenceId);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
                 var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.EventId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
+                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
             if (eventOccurrenceResult == null)

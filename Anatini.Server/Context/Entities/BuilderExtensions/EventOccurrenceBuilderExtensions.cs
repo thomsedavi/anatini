@@ -10,15 +10,12 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventOccurrenceBuilder.ToTable("event_occurrences");
 
             eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.Id).Has(order: 0);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EventId).Has(order: 1);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.StartsAtNz).Has(order: 2);
-            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EndsAtNz).Has(order: 3);
-
-            eventOccurrenceBuilder.HasOneWithMany(eventOccurrence => eventOccurrence.Event, @event => @event.Occurrences, eventOccurrence => eventOccurrence.EventId, DeleteBehavior.Cascade);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.StartsAtNz).Has(order: 1);
+            eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EndsAtNz).Has(order: 2);
 
             eventOccurrenceBuilder.HasIndex(eventOccurrence => new { eventOccurrence.StartsAtNz, eventOccurrence.EndsAtNz });
 
-            eventOccurrenceBuilder.Navigation(eventOccurrence => eventOccurrence.Event).AutoInclude();
+            eventOccurrenceBuilder.Navigation(eventOccurrence => eventOccurrence.Parent).AutoInclude();
         }
     }
 }

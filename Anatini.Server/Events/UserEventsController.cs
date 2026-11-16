@@ -56,7 +56,7 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventOccurrences(string userHandle, string eventHandle, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserContentAsync<Event>(userHandle, eventHandle, async (@event, eventOccurrenceUser) =>
         {
-            var eventOccurrencesQuery = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.EventId == @event.Id);
+            var eventOccurrencesQuery = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.ParentId == @event.Id);
 
             if (IsAuthenticated)
             {

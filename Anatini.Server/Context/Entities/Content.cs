@@ -6,6 +6,7 @@ namespace Anatini.Server.Context.Entities
     public class Content
     {
         public required Guid Id { get; set; }
+        public Guid? ParentId { get; set; }
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required ContentType Type { get; set; }
@@ -21,8 +22,10 @@ namespace Anatini.Server.Context.Entities
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
+        public virtual Content? Parent { get; set; }
         public virtual ApplicationUser? User { get; set; }
         public virtual Space? Space { get; set; }
+        public virtual ICollection<Content> Children { get; set; } = [];
         public virtual ICollection<ContentImage> Images { get; set; } = [];
         public virtual ICollection<ApplicationUserContentRelationship> UserRelationships { get; set; } = [];
         public virtual ICollection<ContentVersion> Versions { get; set; } = [];
@@ -45,16 +48,12 @@ namespace Anatini.Server.Context.Entities
         public DateTime? ExpiresAtNz { get; set; }
 
         public virtual ICollection<EventException> Exceptions { get; set; } = [];
-        public virtual ICollection<EventOccurrence> Occurrences { get; set; } = [];
     }
 
     public class EventOccurrence : Content
     {
-        public required Guid EventId { get; set; }
         public required DateTime StartsAtNz { get; set; }
         public required DateTime EndsAtNz { get; set; }
-
-        public virtual Event Event { get; set; } = null!;
     }
 
     public class EventException
