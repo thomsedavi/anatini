@@ -43,7 +43,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${props.dataSpaceId}/posts`;
+    const input = `spaces/${props.dataSpaceId}/notes`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
@@ -82,7 +82,7 @@
       <h2>Create Post</h2>
     </header>
 
-    <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/posts`" method="POST" novalidate>
+    <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
       <InputTextArea
         v-model="inputBody"
         label="Content"

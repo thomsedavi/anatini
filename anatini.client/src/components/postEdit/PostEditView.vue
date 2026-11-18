@@ -32,7 +32,7 @@
   watch([() => route.params.spaceId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
 
   async function fetchPost(params: string[]) {
-    const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
+    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {

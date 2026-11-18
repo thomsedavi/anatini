@@ -14,7 +14,7 @@
   async function fetchPost(params: string[]) {
     post.value = { fetching: true };
 
-    const input = `spaces/${params[0]}/posts/${params[1]}/preview`;
+    const input = `spaces/${params[0]}/notes/${params[1]}/preview`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {

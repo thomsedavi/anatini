@@ -48,7 +48,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-    const input = `spaces/${props.dataSpaceId}/posts/${props.dataPostId}`;
+    const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
 
     const statusActions: StatusActions = {
       204: (response?: Response) => {
@@ -79,7 +79,7 @@
       <h2>Details</h2>
     </header>
 
-    <form @submit.prevent="patchPostDetail" :action="`/api/spaces/${dataSpaceId}/posts/${dataPostId}`" method="POST" novalidate>
+    <form @submit.prevent="patchPostDetail" :action="`/api/spaces/${dataSpaceId}/notes/${dataPostId}`" method="POST" novalidate>
       <fieldset>
         <legend class="visually-hidden">Post Details</legend>
 

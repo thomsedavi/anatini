@@ -27,7 +27,7 @@
   watch([() => route.params.spaceId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
 
   async function fetchPost(params: string[]) {
-    const input = `spaces/${params[0]}/posts/${params[1]}/edit`;
+    const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -83,7 +83,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${route.params.spaceId}/posts/${route.params.postId}`;
+    const input = `spaces/${route.params.spaceId}/notes/${route.params.postId}`;
 
     const statusActions: StatusActions = {
       200: () => {
@@ -127,7 +127,7 @@
     </template>
 
     <template v-if="post.data !== undefined">
-      <form @submit.prevent="patchPost" :action="`/api/spaces/${route.params.spaceId}/posts/${route.params.postId}`" method="POST" novalidate>
+      <form @submit.prevent="patchPost" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.postId}`" method="POST" novalidate>
         <fieldset>
           <legend class="visually-hidden">Edit Post</legend>
 

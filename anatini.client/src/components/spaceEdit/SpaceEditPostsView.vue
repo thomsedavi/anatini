@@ -19,7 +19,7 @@
 
   onMounted(() => {
     if (props.dataPosts === null) {
-      const input = `spaces/${props.dataSpaceId}/posts`;
+      const input = `spaces/${props.dataSpaceId}/notes`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -44,7 +44,7 @@
 
     <ul role="list" v-if="dataPosts !== null">
       <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="`${post.body}<footer><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time><menu role='toolbar'><li><a href='/spaces/${dataSpaceId}/edit/posts/${post.handle ?? post.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article v-html="`${post.body}<footer><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time><menu role='toolbar'><li><a href='/spaces/${dataSpaceId}/edit/notes/${post.handle ?? post.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

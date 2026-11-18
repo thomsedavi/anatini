@@ -117,7 +117,7 @@
       <details>
         <summary>Filter Options</summary>
 
-        <form @submit.prevent="getPosts" action="/api/posts" method="GET" novalidate>
+        <form @submit.prevent="getPosts" action="/api/notes" method="GET" novalidate>
           <FilterRadios v-model="filters" />
 
           <button type="submit">Apply Filters</button>

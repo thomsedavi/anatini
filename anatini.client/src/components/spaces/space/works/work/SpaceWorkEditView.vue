@@ -111,7 +111,7 @@
     </template>
 
     <template v-if="work.data !== undefined">
-      <form @submit.prevent="patchWork" :action="`/api/spaces/${route.params.spaceId}/posts/${route.params.postId}`" method="POST" novalidate>
+      <form @submit.prevent="patchWork" :action="`/api/spaces/${route.params.spaceId}/works/${route.params.postId}`" method="POST" novalidate>
         <InputTextArea
           v-model="inputBody"
           label="Content"

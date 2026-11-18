@@ -29,7 +29,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-    const input = `spaces/${props.dataSpaceId}/posts/${props.dataPostId}`;
+    const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
 
     const statusActions: StatusActions = {
         204: (response?: Response) => {

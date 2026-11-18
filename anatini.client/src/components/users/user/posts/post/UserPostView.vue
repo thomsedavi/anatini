@@ -12,7 +12,7 @@
   watch([() => route.params.userId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
 
   async function fetchPost(params: string[]) {
-    const input = `users/${params[0]}/posts/${params[1]}`;
+    const input = `users/${params[0]}/notes/${params[1]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {

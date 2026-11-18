@@ -26,7 +26,7 @@
 
   onMounted(() => {
     if (props.dataPosts === null) {
-      const input = `spaces/${props.dataSpaceId}/posts`;
+      const input = `spaces/${props.dataSpaceId}/notes`;
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -42,7 +42,7 @@
   });
 
   function getPosts() {
-    const input = `spaces/${props.dataSpaceId}/posts`;
+    const input = `spaces/${props.dataSpaceId}/notes`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -74,7 +74,7 @@
       <details>
         <summary>Filter Options</summary>
 
-        <form @submit.prevent="getPosts" :action="`/api/spaces/${dataSpaceId}/posts`" method="GET" novalidate>
+        <form @submit.prevent="getPosts" :action="`/api/spaces/${dataSpaceId}/notes`" method="GET" novalidate>
           <FilterRadios v-model="filters" />
 
           <button type="submit">Apply Filters</button>
