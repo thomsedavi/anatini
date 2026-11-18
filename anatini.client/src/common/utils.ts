@@ -317,11 +317,11 @@ export function getPostAddress(post: Post, basis: 'name' | 'id'): string {
   if (post.spaceHeader !== null) {
     const spaceKey = basis === 'id' ? post.spaceHeader.id : post.spaceHeader.handle;
 
-    return `spaces/${spaceKey}/posts/${postKey}`;
+    return `spaces/${spaceKey}/notes/${postKey}`;
   } else if (post.userHeader !== null) {
     const userKey = basis === 'id' ? post.userHeader.id : post.userHeader.handle;
 
-    return `users/${userKey}/posts/${postKey}`;
+    return `users/${userKey}/notes/${postKey}`;
   } else {
     // return id based address by default
     return `posts/${post.id}`;

@@ -25,7 +25,7 @@
 
   onMounted(() => {
     if (props.dataPosts === null) {
-      const input = 'posts';
+      const input = 'notes';
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
@@ -41,7 +41,7 @@
   });
 
   function getPosts() {
-    const input = 'posts';
+    const input = 'notes';
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
@@ -65,7 +65,7 @@
     const lastPost = props.dataPosts?.[props.dataPosts.length - 1];
 
     if (lastPost !== undefined) {
-      const input = 'posts';
+      const input = 'notes';
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {

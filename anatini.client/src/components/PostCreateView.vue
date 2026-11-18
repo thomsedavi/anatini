@@ -81,7 +81,7 @@
 
     status.value = 'pending';
 
-    const input = `spaces/${space.value.data.id}/posts`;
+    const input = `spaces/${space.value.data.id}/notes`;
 
     const statusActions: StatusActions = {
       201: () => {
