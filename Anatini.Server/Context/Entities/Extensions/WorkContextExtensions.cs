@@ -20,7 +20,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow
+                UpdatedAtUtc = utcNow,
+                TimeZoneId = "Pacific/Auckland"
             };
 
             context.Add(work);
@@ -44,7 +45,8 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Status = status,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAtUtc = utcNow,
-                UpdatedAtUtc = utcNow
+                UpdatedAtUtc = utcNow,
+                TimeZoneId = "Pacific/Auckland"
             };
 
             context.Add(work);

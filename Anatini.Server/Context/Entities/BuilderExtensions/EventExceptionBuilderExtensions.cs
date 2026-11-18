@@ -9,16 +9,16 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
         {
             eventExceptionBuilder.ToTable("event_exceptions");
 
-            eventExceptionBuilder.HasKey(eventException => new { eventException.EventId, eventException.TargetStartsAtNz });
+            eventExceptionBuilder.HasKey(eventException => new { eventException.EventId, eventException.TargetStartsAtUtc });
 
             eventExceptionBuilder.Property(eventException => eventException.EventId).Has(order: 0);
-            eventExceptionBuilder.Property(eventException => eventException.TargetStartsAtNz).Has(order: 1);
+            eventExceptionBuilder.Property(eventException => eventException.TargetStartsAtUtc).Has(order: 1);
             eventExceptionBuilder.Property(eventException => eventException.IsCancelled).Has(order: 2);
             eventExceptionBuilder.Property(eventException => eventException.OverrideHeader).Has(maxLength: 255, order: 3);
             eventExceptionBuilder.Property(eventException => eventException.OverrideBody).Has(order: 4);
-            eventExceptionBuilder.Property(eventException => eventException.OverrideStartsAtNz).Has(order: 5);
+            eventExceptionBuilder.Property(eventException => eventException.OverrideStartsAtUtc).Has(order: 5);
             eventExceptionBuilder.Property(eventException => eventException.OverrideDuration).Has(order: 6);
-            eventExceptionBuilder.Property(eventException => eventException.OverrideEndsAtNz).Has(order: 7);
+            eventExceptionBuilder.Property(eventException => eventException.OverrideEndsAtUtc).Has(order: 7);
 
             eventExceptionBuilder.HasOneWithMany(eventException => eventException.Event, @event => @event.Exceptions, eventException => eventException.EventId, DeleteBehavior.Cascade);
         }

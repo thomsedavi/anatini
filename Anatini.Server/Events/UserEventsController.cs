@@ -69,10 +69,10 @@ namespace Anatini.Server.Events
 
             if (lastStartsAtUtc.HasValue)
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtNz < lastStartsAtUtc.Value);
+                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtUtc < lastStartsAtUtc.Value);
             }
 
-            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtNz).Take(pageSize).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtUtc).Take(pageSize).ToListAsync();
 
             if (eventOccurrences == null)
             {

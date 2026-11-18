@@ -20,14 +20,14 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventOccurrences(string spaceHandle, [FromQuery] EventOccurrencesQuery query) => await UsingSpaceAsync(spaceHandle, async (eventOccurrenceSpace) =>
         {
-            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+            var utcNow = DateTime.UtcNow;
 
             var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
             eventOccurrencesQuery = eventOccurrencesQuery
                 .AsNoTracking()
                 .Where(eventOccurrence => eventOccurrence.SpaceId == eventOccurrenceSpace.Id)
-                .Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow);
+                .Where(eventOccurrence => !eventOccurrence.PublishedAtUtc.HasValue || eventOccurrence.PublishedAtUtc.Value < utcNow);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -85,9 +85,9 @@ namespace Anatini.Server.Events
                 eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
             }
 
-            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtNz >= nzNow);
+            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtUtc >= utcNow);
 
-            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtNz).ThenBy(eventOccurrence => eventOccurrence.Id).Take(10).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtUtc).ThenBy(eventOccurrence => eventOccurrence.Id).Take(10).ToListAsync();
 
             if (eventOccurrences == null)
             {

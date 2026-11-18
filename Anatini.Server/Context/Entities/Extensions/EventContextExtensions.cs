@@ -21,12 +21,13 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Title = createEvent.Title,
                 Body = body,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
-                StartsAtNz = createEvent.StartsAtNz,
-                EndsAtNz = createEvent.EndsAtNz,
+                StartsAtUtc = createEvent.StartsAtNz.ConvertNzToUtc(),
+                EndsAtUtc = createEvent.EndsAtNz?.ConvertNzToUtc(),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
                 Handle = createEvent.Handle ?? eventId.ToString(),
-                PublishedAtNz = createEvent.PublishedAtNz?.Truncate()
+                PublishedAtUtc = createEvent.PublishedAtNz?.ConvertNzToUtc().Truncate(),
+                TimeZoneId = "Pacific/Auckland"
             };
 
             context.Add(@event);
@@ -49,11 +50,12 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Title = createEvent.Title,
                 Body = body,
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
-                StartsAtNz = createEvent.StartsAtNz,
-                EndsAtNz = createEvent.EndsAtNz,
+                StartsAtUtc = createEvent.StartsAtNz.ConvertNzToUtc(),
+                EndsAtUtc = createEvent.EndsAtNz?.ConvertNzToUtc(),
                 CreatedAtUtc = utcNow,
                 UpdatedAtUtc = utcNow,
-                Handle = eventId.ToString()
+                Handle = eventId.ToString(),
+                TimeZoneId = "Pacific/Auckland"
             };
 
             context.Add(@event);
@@ -70,21 +72,22 @@ namespace Anatini.Server.Context.Entities.Extensions
                 var eventOccurrence = new EventOccurrence
                 {
                     Id = Guid.CreateVersion7(),
-                    Handle = @event.StartsAtNz.GetDate(),
+                    Handle = @event.StartsAtUtc.ConvertUtcToNz().GetDate(),
                     ParentId = @event.Id,
                     Type = ContentType.EventOccurrence,
                     UserId = @event.UserId,
                     SpaceId = @event.SpaceId,
                     Title = @event.Title ?? throw new InvalidOperationException(),
-                    StartsAtNz = @event.StartsAtNz,
-                    EndsAtNz = @event.EndsAtNz ?? throw new InvalidOperationException(),
+                    StartsAtUtc = @event.StartsAtUtc,
+                    EndsAtUtc = @event.EndsAtUtc ?? throw new InvalidOperationException(),
                     Body = @event.Body,
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     Status = status,
                     Visibility = @event.Visibility,
                     CreatedAtUtc = utcNow,
                     UpdatedAtUtc = utcNow,
-                    PublishedAtNz = @event.PublishedAtNz
+                    PublishedAtUtc = @event.PublishedAtUtc,
+                    TimeZoneId = "Pacific/Auckland"
                 };
 
                 context.Add(eventOccurrence);
@@ -96,7 +99,7 @@ namespace Anatini.Server.Context.Entities.Extensions
                 var eventOccurrenceCount = 0;
                 var recurrenceRule = new RecurrenceRule(@event.RecurrenceRule);
 
-                var occurrencesNz = recurrenceRule.GetOccurrenceNz(@event.StartsAtNz, @event.EndsAtNz, @event.Duration);
+                var occurrencesNz = recurrenceRule.GetOccurrence(@event.TimeZoneId, @event.StartsAtUtc.ConvertUtcToNz(), @event.EndsAtUtc?.ConvertUtcToNz(), @event.Duration);
 
                 foreach (var occurrenceNz in occurrencesNz)
                 {
@@ -109,14 +112,15 @@ namespace Anatini.Server.Context.Entities.Extensions
                         UserId = @event.UserId,
                         SpaceId = @event.SpaceId,
                         Title = @event.Title ?? throw new InvalidOperationException(),
-                        StartsAtNz = occurrenceNz.Item1,
-                        EndsAtNz = occurrenceNz.Item2,
+                        StartsAtUtc = occurrenceNz.Item1.ConvertNzToUtc(),
+                        EndsAtUtc = occurrenceNz.Item2.ConvertNzToUtc(),
                         Body = @event.Body,
                         ConcurrencyStamp = Guid.NewGuid().ToString(),
                         Status = status,
                         CreatedAtUtc = utcNow,
                         UpdatedAtUtc = utcNow,
-                        Visibility = @event.Visibility
+                        Visibility = @event.Visibility,
+                        TimeZoneId = @event.TimeZoneId
                     };
 
                     context.Add(eventOccurrence);

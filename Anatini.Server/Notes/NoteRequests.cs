@@ -2,9 +2,9 @@
 using Anatini.Server.Enums;
 using Anatini.Server.Utils;
 
-namespace Anatini.Server.Posts
+namespace Anatini.Server.Notes
 {
-    public class CreatePost
+    public class CreateNote
     {
         [Handle(nullable: true), MaxLength(256)]
         public string? Handle { get; set; }
@@ -21,7 +21,7 @@ namespace Anatini.Server.Posts
         public string? Title { get; set; }
     }
 
-    public class UpdatePost
+    public class UpdateNote
     {
         public string? Body { get; set; }
 
@@ -29,10 +29,10 @@ namespace Anatini.Server.Posts
         public DateTime? PublishedAtNz { get; set; }
     }
 
-    public class PostsQuery
+    public class NotesQuery
     {
         public DateTime? LastPublishedAtNz { get; set; }
-        public Guid? LastPostId { get; set; }
+        public Guid? LastNoteId { get; set; }
         public int? PageSize { get; set; }
         public string? Bookmarked { get; set; }
         public string? Starred { get; set; }

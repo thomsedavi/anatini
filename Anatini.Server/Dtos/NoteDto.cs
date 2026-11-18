@@ -1,6 +1,6 @@
 ﻿namespace Anatini.Server.Dtos
 {
-    public class PostDto : ContentDto
+    public class NoteDto : ContentDto
     {
         public string? Title { get; set; }
         public required string Visibility { get; set; }

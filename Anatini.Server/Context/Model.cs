@@ -22,16 +22,17 @@ namespace Anatini.Server.Context
         public DbSet<SpaceImage> SpaceImages { get; set; }
 
         public DbSet<Content> Contents { get; set; }
-        public DbSet<ContentVersion> ContentVersions { get; set; }
         public DbSet<ContentImage> ContentImages { get; set; }
 
+        public DbSet<Note> Notes { get; set; }
+        public DbSet<Article> Articles { get; set; }
+        public DbSet<ArticleVersion> ArticleVersions { get; set; }
+        public DbSet<Work> Works { get; set; }
+        public DbSet<WorkVersion> WorkVersions { get; set; }
         public DbSet<Event> Events { get; set; }
-        public DbSet<EventException> EventExceptions { get; set; }
         public DbSet<EventOccurrence> EventOccurrences { get; set; }
 
-        public DbSet<Post> Posts { get; set; }
-
-        public DbSet<Work> Works { get; set; }
+        public DbSet<EventException> EventExceptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,11 +59,13 @@ namespace Anatini.Server.Context
             modelBuilder.Entity<SpaceSetting>().Configure();
 
             modelBuilder.Entity<Content>().Configure();
-            modelBuilder.Entity<ContentVersion>().Configure();
             modelBuilder.Entity<ContentImage>().Configure();
 
+            modelBuilder.Entity<Note>().Configure();
+            modelBuilder.Entity<Article>().Configure();
+            modelBuilder.Entity<ArticleVersion>().Configure();
             modelBuilder.Entity<Work>().Configure();
-            modelBuilder.Entity<Post>().Configure();
+            modelBuilder.Entity<WorkVersion>().Configure();
             modelBuilder.Entity<Event>().Configure();
             modelBuilder.Entity<EventOccurrence>().Configure();
 

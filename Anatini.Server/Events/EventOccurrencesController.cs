@@ -3,7 +3,6 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +19,13 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventOccurrences([FromQuery] EventOccurrencesQuery query)
         {
-            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+            var utcNow = DateTime.UtcNow;
 
             var eventOccurrencesQuery = Context.EventOccurrences.AsQueryable();
 
             eventOccurrencesQuery = eventOccurrencesQuery
                 .AsNoTracking()
-                .Where(eventOccurrence => !eventOccurrence.PublishedAtNz.HasValue || eventOccurrence.PublishedAtNz.Value < nzNow)
+                .Where(eventOccurrence => !eventOccurrence.PublishedAtUtc.HasValue || eventOccurrence.PublishedAtUtc.Value < utcNow)
                 .Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images)
                 .Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);
 
@@ -86,9 +85,9 @@ namespace Anatini.Server.Events
                 eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
             }
 
-            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtNz >= nzNow);
+            eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtUtc >= utcNow);
 
-            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtNz).ThenBy(eventOccurrence => eventOccurrence.Id).Take(10).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtUtc).ThenBy(eventOccurrence => eventOccurrence.Id).Take(10).ToListAsync();
 
             if (eventOccurrences == null)
             {

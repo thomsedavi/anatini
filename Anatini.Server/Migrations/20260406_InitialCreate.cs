@@ -164,27 +164,32 @@ namespace Anatini.Server.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     parent_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    active_child_id = table.Column<Guid>(type: "uuid", nullable: true),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     space_id = table.Column<Guid>(type: "uuid", nullable: true),
                     type = table.Column<int>(type: "integer", nullable: false),
                     handle = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    published_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    visibility = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     body = table.Column<string>(type: "text", nullable: false),
-                    current_version_number = table.Column<int>(type: "integer", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    visibility = table.Column<int>(type: "integer", nullable: false),
+                    published_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    time_zone_id = table.Column<string>(type: "text", nullable: false),
+                    version = table.Column<int>(type: "integer", nullable: true),
                     concurrency_stamp = table.Column<string>(type: "text", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     search_vector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false)
                         .Annotation("Npgsql:TsVectorConfig", "english")
-                        .Annotation("Npgsql:TsVectorProperties", new[] { "title", "body" })
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "title", "body" }),
+                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_contents", x => x.id);
-                    table.CheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.CheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+                    table.CheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                    table.CheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+                    table.CheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                     table.ForeignKey(
                         name: "fk_contents_contents_parent_id",
                         column: x => x.parent_id,
@@ -441,6 +446,40 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "article_versions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_article_versions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_article_versions_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "articles",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_articles", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_articles_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "content_images",
                 columns: table => new
                 {
@@ -464,34 +503,12 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "content_versions",
-                columns: table => new
-                {
-                    content_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    version_number = table.Column<int>(type: "integer", nullable: false),
-                    body = table.Column<string>(type: "text", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "text", nullable: false),
-                    created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_content_versions", x => new { x.content_id, x.version_number });
-                    table.ForeignKey(
-                        name: "fk_content_versions_contents_content_id",
-                        column: x => x.content_id,
-                        principalTable: "contents",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "event_occurrences",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -509,11 +526,11 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     duration = table.Column<TimeSpan>(type: "interval", nullable: true),
                     recurrence_rule = table.Column<string>(type: "text", nullable: true),
-                    expires_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -527,16 +544,16 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "posts",
+                name: "notes",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_posts", x => x.id);
+                    table.PrimaryKey("PK_notes", x => x.id);
                     table.ForeignKey(
-                        name: "fk_posts_contents_id",
+                        name: "fk_notes_contents_id",
                         column: x => x.id,
                         principalTable: "contents",
                         principalColumn: "id",
@@ -570,6 +587,23 @@ namespace Anatini.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "work_versions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_work_versions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_work_versions_contents_id",
+                        column: x => x.id,
+                        principalTable: "contents",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "works",
                 columns: table => new
                 {
@@ -591,17 +625,17 @@ namespace Anatini.Server.Migrations
                 columns: table => new
                 {
                     event_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    target_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    target_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     is_cancelled = table.Column<bool>(type: "boolean", nullable: false),
                     override_header = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     override_body = table.Column<string>(type: "text", nullable: true),
-                    override_starts_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    override_starts_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     override_duration = table.Column<TimeSpan>(type: "interval", nullable: true),
-                    override_ends_at_nz = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    override_ends_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_id, x.target_starts_at_nz });
+                    table.PrimaryKey("pk_event_exceptions", x => new { x.event_id, x.target_starts_at_utc });
                     table.ForeignKey(
                         name: "fk_event_exceptions_events_event_id",
                         column: x => x.event_id,
@@ -609,6 +643,34 @@ namespace Anatini.Server.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_article_versions_space_id_parent_id_handle",
+                table: "contents",
+                columns: new[] { "space_id", "parent_id", "handle" },
+                unique: true,
+                filter: "type = 4 AND space_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_article_versions_user_id_parent_id_handle",
+                table: "contents",
+                columns: new[] { "user_id", "parent_id", "handle" },
+                unique: true,
+                filter: "type = 4 AND user_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_articles_space_id_handle",
+                table: "contents",
+                columns: new[] { "space_id", "handle" },
+                unique: true,
+                filter: "type = 2 AND space_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_articles_user_id_handle",
+                table: "contents",
+                columns: new[] { "user_id", "handle" },
+                unique: true,
+                filter: "type = 2 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_contents_parent_id",
@@ -626,73 +688,87 @@ namespace Anatini.Server.Migrations
                 table: "contents",
                 columns: new[] { "space_id", "parent_id", "handle" },
                 unique: true,
-                filter: "type = 8 AND space_id IS NOT NULL");
+                filter: "type = 64 AND space_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_event_occurrences_user_id_parent_id_handle",
                 table: "contents",
                 columns: new[] { "user_id", "parent_id", "handle" },
                 unique: true,
-                filter: "type = 8 AND user_id IS NOT NULL");
+                filter: "type = 64 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_events_space_id_handle",
                 table: "contents",
                 columns: new[] { "space_id", "handle" },
                 unique: true,
-                filter: "type = 4 AND space_id IS NOT NULL");
+                filter: "type = 32 AND space_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_events_user_id_handle",
                 table: "contents",
                 columns: new[] { "user_id", "handle" },
                 unique: true,
-                filter: "type = 4 AND user_id IS NOT NULL");
+                filter: "type = 32 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_posts_space_id_handle",
+                name: "ix_notes_space_id_handle",
                 table: "contents",
                 columns: new[] { "space_id", "handle" },
                 unique: true,
                 filter: "type = 1 AND space_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_posts_user_id_handle",
+                name: "ix_notes_user_id_handle",
                 table: "contents",
                 columns: new[] { "user_id", "handle" },
                 unique: true,
                 filter: "type = 1 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_published_contents_date_nz",
+                name: "ix_published_contents_date_utc",
                 table: "contents",
-                column: "published_at_nz",
-                filter: "published_at_nz IS NOT NULL AND status = 1");
+                column: "published_at_utc",
+                filter: "published_at_utc IS NOT NULL AND status = 1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_published_works_title",
                 table: "contents",
                 column: "title",
-                filter: "type = 2 AND status = 1");
+                filter: "type = 8 AND status = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_work_versions_space_id_parent_id_handle",
+                table: "contents",
+                columns: new[] { "space_id", "parent_id", "handle" },
+                unique: true,
+                filter: "type = 16 AND space_id IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_work_versions_user_id_parent_id_handle",
+                table: "contents",
+                columns: new[] { "user_id", "parent_id", "handle" },
+                unique: true,
+                filter: "type = 16 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_works_space_id_handle",
                 table: "contents",
                 columns: new[] { "space_id", "handle" },
                 unique: true,
-                filter: "type = 2 AND space_id IS NOT NULL");
+                filter: "type = 8 AND space_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_works_user_id_handle",
                 table: "contents",
                 columns: new[] { "user_id", "handle" },
                 unique: true,
-                filter: "type = 2 AND user_id IS NOT NULL");
+                filter: "type = 8 AND user_id IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "ix_event_occurrences_starts_at_nz_ends_at_nz",
+                name: "ix_event_occurrences_starts_at_utc_ends_at_utc",
                 table: "event_occurrences",
-                columns: new[] { "starts_at_nz", "ends_at_nz" });
+                columns: new[] { "starts_at_utc", "ends_at_utc" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_logs_created_at_utc",
@@ -818,10 +894,13 @@ namespace Anatini.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "content_images");
+                name: "article_versions");
 
             migrationBuilder.DropTable(
-                name: "content_versions");
+                name: "articles");
+
+            migrationBuilder.DropTable(
+                name: "content_images");
 
             migrationBuilder.DropTable(
                 name: "event_exceptions");
@@ -833,7 +912,7 @@ namespace Anatini.Server.Migrations
                 name: "logs");
 
             migrationBuilder.DropTable(
-                name: "posts");
+                name: "notes");
 
             migrationBuilder.DropTable(
                 name: "role_claims");
@@ -876,6 +955,9 @@ namespace Anatini.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_user_relationships");
+
+            migrationBuilder.DropTable(
+                name: "work_versions");
 
             migrationBuilder.DropTable(
                 name: "works");

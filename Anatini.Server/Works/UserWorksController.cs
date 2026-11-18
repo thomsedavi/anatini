@@ -92,11 +92,11 @@ namespace Anatini.Server.Works
         [HttpGet]
         public async Task<IActionResult> GetWorks(string userHandle, [FromQuery] WorksQuery query) => await UsingUserAsync(userHandle, async (workUser) =>
         {
-            var nzNow = DateTime.UtcNow.ConvertUtcToNz();
+            var utcNow = DateTime.UtcNow;
 
             var worksQuery = Context.Works.Where(work => work.UserId == workUser.Id);
 
-            worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtNz.HasValue || work.PublishedAtNz.Value < nzNow);
+            worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtUtc.HasValue || work.PublishedAtUtc.Value < utcNow);
 
             if (TryGetUserId(out Guid sourceUserId))
             {

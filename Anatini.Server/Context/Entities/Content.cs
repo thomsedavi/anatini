@@ -7,18 +7,20 @@ namespace Anatini.Server.Context.Entities
     {
         public required Guid Id { get; set; }
         public Guid? ParentId { get; set; }
+        public Guid? ActiveChildId { get; set; }
         public Guid? UserId { get; set; }
         public Guid? SpaceId { get; set; }
         public required ContentType Type { get; set; }
         public required string Handle { get; set; }
-        public DateTime? PublishedAtNz { get; set; }
-        public required Status Status { get; set; }
-        public required Visibility Visibility { get; set; }
         public string? Title { get; set; }
         public required string Body { get; set; }
-        public NpgsqlTsVector SearchVector { get; set; } = null!;
-        public int? CurrentVersionNumber { get; set; }
+        public required Status Status { get; set; }
+        public required Visibility Visibility { get; set; }
+        public DateTime? PublishedAtUtc { get; set; }
+        public required string TimeZoneId { get; set; }
+        public int? Version { get; set; }
         public required string ConcurrencyStamp { get; set; }
+        public NpgsqlTsVector SearchVector { get; set; } = null!;
         public required DateTime CreatedAtUtc { get; set; }
         public required DateTime UpdatedAtUtc { get; set; }
 
@@ -28,10 +30,17 @@ namespace Anatini.Server.Context.Entities
         public virtual ICollection<Content> Children { get; set; } = [];
         public virtual ICollection<ContentImage> Images { get; set; } = [];
         public virtual ICollection<ApplicationUserContentRelationship> UserRelationships { get; set; } = [];
-        public virtual ICollection<ContentVersion> Versions { get; set; } = [];
     }
 
-    public class Post : Content
+    public class Note : Content
+    {
+    }
+
+    public class Article : Content
+    {
+    }
+
+    public class ArticleVersion : Content
     {
     }
 
@@ -39,47 +48,39 @@ namespace Anatini.Server.Context.Entities
     {
     }
 
+    public class WorkVersion : Content
+    {
+    }
+
     public class Event : Content
     {
-        public required DateTime StartsAtNz { get; set; }
-        public DateTime? EndsAtNz { get; set; }
+        public required DateTime StartsAtUtc { get; set; }
+        public DateTime? EndsAtUtc { get; set; }
         public TimeSpan? Duration { get; set; }
         public string? RecurrenceRule { get; set; }
-        public DateTime? ExpiresAtNz { get; set; }
+        public DateTime? ExpiresAtUtc { get; set; }
 
         public virtual ICollection<EventException> Exceptions { get; set; } = [];
     }
 
     public class EventOccurrence : Content
     {
-        public required DateTime StartsAtNz { get; set; }
-        public required DateTime EndsAtNz { get; set; }
+        public required DateTime StartsAtUtc { get; set; }
+        public required DateTime EndsAtUtc { get; set; }
     }
 
     public class EventException
     {
         public required Guid EventId { get; set; }
-        public required DateTime TargetStartsAtNz { get; set; }
+        public required DateTime TargetStartsAtUtc { get; set; }
         public required bool IsCancelled { get; set; }
         public string? OverrideHeader { get; set; }
         public string? OverrideBody { get; set; }
-        public DateTime? OverrideStartsAtNz { get; set; }
+        public DateTime? OverrideStartsAtUtc { get; set; }
         public TimeSpan? OverrideDuration { get; set; }
-        public DateTime? OverrideEndsAtNz { get; set; }
+        public DateTime? OverrideEndsAtUtc { get; set; }
 
         public virtual Event Event { get; set; } = null!;
-    }
-
-    public class ContentVersion
-    {
-        public required Guid ContentId { get; set; }
-        public required int VersionNumber { get; set; }
-        public required string Body { get; set; }
-        public required string ConcurrencyStamp { get; set; }
-        public required DateTime CreatedAtUtc { get; set; }
-        public required DateTime UpdatedAtUtc { get; set; }
-
-        public virtual Content Content { get; set; } = null!;
     }
 
     public class ContentImage

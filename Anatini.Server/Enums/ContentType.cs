@@ -3,9 +3,12 @@
     public enum ContentType
     {
         None = 0,
-        Post = 1,
-        Work = 2,
-        Event = 4,
-        EventOccurrence = 8
+        Note = 1,
+        Article = 2,
+        ArticleVersion = 4,
+        Work = 8,
+        WorkVersion = 16,
+        Event = 32,
+        EventOccurrence = 64
     }
 }

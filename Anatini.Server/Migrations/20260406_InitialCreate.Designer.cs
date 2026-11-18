@@ -598,98 +598,110 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<Guid?>("ActiveChildId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("active_child_id")
+                        .HasColumnOrder(2);
+
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("body")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(8);
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(12);
+                        .HasColumnOrder(14);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc")
-                        .HasColumnOrder(13);
-
-                    b.Property<int?>("CurrentVersionNumber")
-                        .HasColumnType("integer")
-                        .HasColumnName("current_version_number")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(16);
 
                     b.Property<string>("Handle")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("handle")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid")
                         .HasColumnName("parent_id")
                         .HasColumnOrder(1);
 
-                    b.Property<DateTime?>("PublishedAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("published_at_nz")
-                        .HasColumnOrder(7);
+                    b.Property<DateTime?>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc")
+                        .HasColumnOrder(11);
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("tsvector")
                         .HasColumnName("search_vector")
+                        .HasColumnOrder(15)
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
                         .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Title", "Body" });
 
                     b.Property<Guid?>("SpaceId")
                         .HasColumnType("uuid")
                         .HasColumnName("space_id")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(9);
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("time_zone_id")
+                        .HasColumnOrder(12);
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("title")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(7);
 
                     b.Property<int>("Type")
                         .HasColumnType("integer")
                         .HasColumnName("type")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(14);
+                        .HasColumnOrder(17);
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version")
+                        .HasColumnOrder(13);
 
                     b.Property<int>("Visibility")
                         .HasColumnType("integer")
                         .HasColumnName("visibility")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(10);
 
                     b.HasKey("Id");
 
                     b.HasIndex("ParentId")
                         .HasDatabaseName("ix_contents_parent_id");
 
-                    b.HasIndex("PublishedAtNz")
-                        .HasDatabaseName("ix_published_contents_date_nz")
-                        .HasFilter("published_at_nz IS NOT NULL AND status = 1");
+                    b.HasIndex("PublishedAtUtc")
+                        .HasDatabaseName("ix_published_contents_date_utc")
+                        .HasFilter("published_at_utc IS NOT NULL AND status = 1");
 
                     b.HasIndex("SearchVector")
                         .HasDatabaseName("ix_contents_search_vector");
@@ -698,51 +710,87 @@ namespace Anatini.Server.Migrations
 
                     b.HasIndex("Title")
                         .HasDatabaseName("ix_published_works_title")
-                        .HasFilter("type = 2 AND status = 1");
+                        .HasFilter("type = 8 AND status = 1");
+
+                    b.HasIndex(new[] { "SpaceId", "ParentId", "Handle" }, "ix_article_versions_space_id_parent_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_article_versions_space_id_parent_id_handle")
+                        .HasFilter("type = 4 AND space_id IS NOT NULL");
+
+                    b.HasIndex(new[] { "UserId", "ParentId", "Handle" }, "ix_article_versions_user_id_parent_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_article_versions_user_id_parent_id_handle")
+                        .HasFilter("type = 4 AND user_id IS NOT NULL");
+
+                    b.HasIndex(new[] { "SpaceId", "Handle" }, "ix_articles_space_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_articles_space_id_handle")
+                        .HasFilter("type = 2 AND space_id IS NOT NULL");
+
+                    b.HasIndex(new[] { "UserId", "Handle" }, "ix_articles_user_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_articles_user_id_handle")
+                        .HasFilter("type = 2 AND user_id IS NOT NULL");
 
                     b.HasIndex(new[] { "SpaceId", "ParentId", "Handle" }, "ix_event_occurrences_space_id_parent_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_event_occurrences_space_id_parent_id_handle")
-                        .HasFilter("type = 8 AND space_id IS NOT NULL");
+                        .HasFilter("type = 64 AND space_id IS NOT NULL");
 
                     b.HasIndex(new[] { "UserId", "ParentId", "Handle" }, "ix_event_occurrences_user_id_parent_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_event_occurrences_user_id_parent_id_handle")
-                        .HasFilter("type = 8 AND user_id IS NOT NULL");
+                        .HasFilter("type = 64 AND user_id IS NOT NULL");
 
                     b.HasIndex(new[] { "SpaceId", "Handle" }, "ix_events_space_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_events_space_id_handle")
-                        .HasFilter("type = 4 AND space_id IS NOT NULL");
+                        .HasFilter("type = 32 AND space_id IS NOT NULL");
 
                     b.HasIndex(new[] { "UserId", "Handle" }, "ix_events_user_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_events_user_id_handle")
-                        .HasFilter("type = 4 AND user_id IS NOT NULL");
+                        .HasFilter("type = 32 AND user_id IS NOT NULL");
 
-                    b.HasIndex(new[] { "SpaceId", "Handle" }, "ix_posts_space_id_handle")
+                    b.HasIndex(new[] { "SpaceId", "Handle" }, "ix_notes_space_id_handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_posts_space_id_handle")
+                        .HasDatabaseName("ix_notes_space_id_handle")
                         .HasFilter("type = 1 AND space_id IS NOT NULL");
 
-                    b.HasIndex(new[] { "UserId", "Handle" }, "ix_posts_user_id_handle")
+                    b.HasIndex(new[] { "UserId", "Handle" }, "ix_notes_user_id_handle")
                         .IsUnique()
-                        .HasDatabaseName("ix_posts_user_id_handle")
+                        .HasDatabaseName("ix_notes_user_id_handle")
                         .HasFilter("type = 1 AND user_id IS NOT NULL");
+
+                    b.HasIndex(new[] { "SpaceId", "ParentId", "Handle" }, "ix_work_versions_space_id_parent_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_work_versions_space_id_parent_id_handle")
+                        .HasFilter("type = 16 AND space_id IS NOT NULL");
+
+                    b.HasIndex(new[] { "UserId", "ParentId", "Handle" }, "ix_work_versions_user_id_parent_id_handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_work_versions_user_id_parent_id_handle")
+                        .HasFilter("type = 16 AND user_id IS NOT NULL");
 
                     b.HasIndex(new[] { "SpaceId", "Handle" }, "ix_works_space_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_works_space_id_handle")
-                        .HasFilter("type = 2 AND space_id IS NOT NULL");
+                        .HasFilter("type = 8 AND space_id IS NOT NULL");
 
                     b.HasIndex(new[] { "UserId", "Handle" }, "ix_works_user_id_handle")
                         .IsUnique()
                         .HasDatabaseName("ix_works_user_id_handle")
-                        .HasFilter("type = 2 AND user_id IS NOT NULL");
+                        .HasFilter("type = 8 AND user_id IS NOT NULL");
 
                     b.ToTable("contents", null, t =>
                         {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                         });
 
                     b.UseTptMappingStrategy();
@@ -797,46 +845,6 @@ namespace Anatini.Server.Migrations
                     b.ToTable("content_images", (string)null);
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentVersion", b =>
-                {
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("content_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("VersionNumber")
-                        .HasColumnType("integer")
-                        .HasColumnName("version_number")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("body")
-                        .HasColumnOrder(2);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp")
-                        .HasColumnOrder(3);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc")
-                        .HasColumnOrder(4);
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc")
-                        .HasColumnOrder(5);
-
-                    b.HasKey("ContentId", "VersionNumber")
-                        .HasName("pk_content_versions");
-
-                    b.ToTable("content_versions", (string)null);
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
                     b.Property<Guid>("EventId")
@@ -844,9 +852,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("event_id")
                         .HasColumnOrder(0);
 
-                    b.Property<DateTime>("TargetStartsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("target_starts_at_nz")
+                    b.Property<DateTime>("TargetStartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("target_starts_at_utc")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsCancelled")
@@ -864,9 +872,9 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("override_duration")
                         .HasColumnOrder(6);
 
-                    b.Property<DateTime?>("OverrideEndsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("override_ends_at_nz")
+                    b.Property<DateTime?>("OverrideEndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("override_ends_at_utc")
                         .HasColumnOrder(7);
 
                     b.Property<string>("OverrideHeader")
@@ -875,12 +883,12 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("override_header")
                         .HasColumnOrder(3);
 
-                    b.Property<DateTime?>("OverrideStartsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("override_starts_at_nz")
+                    b.Property<DateTime?>("OverrideStartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("override_starts_at_utc")
                         .HasColumnOrder(5);
 
-                    b.HasKey("EventId", "TargetStartsAtNz")
+                    b.HasKey("EventId", "TargetStartsAtUtc")
                         .HasName("pk_event_exceptions");
 
                     b.ToTable("event_exceptions", (string)null);
@@ -1117,6 +1125,38 @@ namespace Anatini.Server.Migrations
                     b.ToTable("space_settings", (string)null);
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Article", b =>
+                {
+                    b.HasBaseType("Anatini.Server.Context.Entities.Content");
+
+                    b.ToTable("articles", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ArticleVersion", b =>
+                {
+                    b.HasBaseType("Anatini.Server.Context.Entities.Content");
+
+                    b.ToTable("article_versions", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
+                        });
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.Event", b =>
                 {
                     b.HasBaseType("Anatini.Server.Context.Entities.Content");
@@ -1126,14 +1166,14 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("duration")
                         .HasColumnOrder(3);
 
-                    b.Property<DateTime?>("EndsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("ends_at_nz")
+                    b.Property<DateTime?>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at_utc")
                         .HasColumnOrder(2);
 
-                    b.Property<DateTime?>("ExpiresAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("expires_at_nz")
+                    b.Property<DateTime?>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc")
                         .HasColumnOrder(5);
 
                     b.Property<string>("RecurrenceRule")
@@ -1141,14 +1181,20 @@ namespace Anatini.Server.Migrations
                         .HasColumnName("recurrence_rule")
                         .HasColumnOrder(4);
 
-                    b.Property<DateTime>("StartsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("starts_at_nz")
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc")
                         .HasColumnOrder(1);
 
                     b.ToTable("events", null, t =>
                         {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                         });
                 });
 
@@ -1156,32 +1202,44 @@ namespace Anatini.Server.Migrations
                 {
                     b.HasBaseType("Anatini.Server.Context.Entities.Content");
 
-                    b.Property<DateTime>("EndsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("ends_at_nz")
+                    b.Property<DateTime>("EndsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at_utc")
                         .HasColumnOrder(2);
 
-                    b.Property<DateTime>("StartsAtNz")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("starts_at_nz")
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at_utc")
                         .HasColumnOrder(1);
 
-                    b.HasIndex("StartsAtNz", "EndsAtNz")
-                        .HasDatabaseName("ix_event_occurrences_starts_at_nz_ends_at_nz");
+                    b.HasIndex("StartsAtUtc", "EndsAtUtc")
+                        .HasDatabaseName("ix_event_occurrences_starts_at_utc_ends_at_utc");
 
                     b.ToTable("event_occurrences", null, t =>
                         {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                         });
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>
                 {
                     b.HasBaseType("Anatini.Server.Context.Entities.Content");
 
-                    b.ToTable("posts", null, t =>
+                    b.ToTable("notes", null, t =>
                         {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                         });
                 });
 
@@ -1191,7 +1249,29 @@ namespace Anatini.Server.Migrations
 
                     b.ToTable("works", null, t =>
                         {
-                            t.HasCheckConstraint("ck_contents_user_id_xor_space_id", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.WorkVersion", b =>
+                {
+                    b.HasBaseType("Anatini.Server.Context.Entities.Content");
+
+                    b.ToTable("work_versions", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_contents_article_versions_check", "type <> 4 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_check", "(user_id IS NULL AND space_id IS NOT NULL) OR (space_id IS NULL AND user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_contents_event_occurrences_check", "type <> 64 OR parent_id IS NOT NULL");
+
+                            t.HasCheckConstraint("ck_contents_work_versions_check", "type <> 16 OR parent_id IS NOT NULL");
                         });
                 });
 
@@ -1401,18 +1481,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Content");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.ContentVersion", b =>
-                {
-                    b.HasOne("Anatini.Server.Context.Entities.Content", "Content")
-                        .WithMany("Versions")
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_content_versions_contents_content_id");
-
-                    b.Navigation("Content");
-                });
-
             modelBuilder.Entity("Anatini.Server.Context.Entities.EventException", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Event", "Event")
@@ -1480,6 +1548,26 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Space");
                 });
 
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Article", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Content", null)
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.Article", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_articles_contents_id");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.ArticleVersion", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Content", null)
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.ArticleVersion", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_article_versions_contents_id");
+                });
+
             modelBuilder.Entity("Anatini.Server.Context.Entities.Event", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Content", null)
@@ -1500,14 +1588,14 @@ namespace Anatini.Server.Migrations
                         .HasConstraintName("fk_event_occurrences_contents_id");
                 });
 
-            modelBuilder.Entity("Anatini.Server.Context.Entities.Post", b =>
+            modelBuilder.Entity("Anatini.Server.Context.Entities.Note", b =>
                 {
                     b.HasOne("Anatini.Server.Context.Entities.Content", null)
                         .WithOne()
-                        .HasForeignKey("Anatini.Server.Context.Entities.Post", "Id")
+                        .HasForeignKey("Anatini.Server.Context.Entities.Note", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_posts_contents_id");
+                        .HasConstraintName("fk_notes_contents_id");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Work", b =>
@@ -1518,6 +1606,16 @@ namespace Anatini.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_works_contents_id");
+                });
+
+            modelBuilder.Entity("Anatini.Server.Context.Entities.WorkVersion", b =>
+                {
+                    b.HasOne("Anatini.Server.Context.Entities.Content", null)
+                        .WithOne()
+                        .HasForeignKey("Anatini.Server.Context.Entities.WorkVersion", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_work_versions_contents_id");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.ApplicationRole", b =>
@@ -1563,8 +1661,6 @@ namespace Anatini.Server.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("UserRelationships");
-
-                    b.Navigation("Versions");
                 });
 
             modelBuilder.Entity("Anatini.Server.Context.Entities.Space", b =>
