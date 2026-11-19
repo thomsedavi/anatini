@@ -8,7 +8,7 @@
   const props = defineProps<{
     dataArticle: Node | null,
     dataSpaceId: string,
-    dataPostId: string,
+    dataNoteId: string,
     dataETag: string | null,
   }>();
 
@@ -43,7 +43,7 @@
 
       const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-      const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
+      const input = `spaces/${props.dataSpaceId}/notes/${props.dataNoteId}`;
 
       const statusActions: StatusActions = {
         204: (response?: Response) => {
@@ -80,7 +80,7 @@
 
       const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-      const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
+      const input = `spaces/${props.dataSpaceId}/notes/${props.dataNoteId}`;
 
       const statusActions: StatusActions = {
         204: (response?: Response) => {

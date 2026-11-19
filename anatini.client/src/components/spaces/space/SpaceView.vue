@@ -3,7 +3,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
   import TabButton from '@/common/TabButton.vue';
-  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, Work } from '@/common/types';
+  import type { APIResponse, EventOccurrence, InputError, Note, Space, Status, StatusActions, Tab, Work } from '@/common/types';
   import { getTabIndex, parseParams, type Params } from '@/common/utils';
   
   const route = useRoute();
@@ -14,12 +14,12 @@
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
-  const posts = ref<Post[] | null>(null);
+  const notes = ref<Note[] | null>(null);
   const works = ref<Work[] | null>(null);
   const eventOccurrenceGroups = ref<{ date: string, eventOccurrences: EventOccurrence[] }[] | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'SpacePosts', childNames: ['SpacePost', 'SpacePostCreate', 'SpacePostEdit'] },
+    { id: 'notes', text: 'Notes', name: 'SpaceNotes', childNames: ['SpaceNote', 'SpaceNoteCreate', 'SpaceNoteEdit'] },
     { id: 'works', text: 'Works', name: 'SpaceWorks', childNames: ['SpaceWork', 'SpaceWorkCreate'] },
     { id: 'events', text: 'Events', name: 'SpaceEvents', childNames: ['SpaceEvent', 'SpaceEventCreate'] },
   ];
@@ -92,8 +92,8 @@
     }
   }
 
-  function handleUpdatePosts(newPosts: Post[]): void {
-    posts.value = newPosts;
+  function handleUpdateNotes(newNotes: Note[]): void {
+    notes.value = newNotes;
   }
 
   function handleUpdateWorks(newWorks: Work[]): void {
@@ -134,13 +134,13 @@
           :is="Component"
           :data-status="status"
           :data-input-errors="inputErrors"
-          :data-posts="posts"
+          :data-notes="notes"
           :data-works="works"
           :data-event-occurrence-groups="eventOccurrenceGroups"
           :data-space-id="space.data.id"
           :data-space-handle="space.data.handle"
           :data-space-name="space.data.name"
-          @update-posts="handleUpdatePosts"
+          @update-notes="handleUpdateNotes"
           @update-works="handleUpdateWorks"
           @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"
           @update-errors="handleUpdateErrors"

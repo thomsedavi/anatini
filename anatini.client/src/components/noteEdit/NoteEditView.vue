@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { PostEdit, StatusActions, Tab, APIResponse } from '@/common/types';
+  import type { NoteEdit, StatusActions, Tab, APIResponse } from '@/common/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { getTabIndex, parseFromString, parseParams, type Params } from '@/common/utils';
@@ -11,34 +11,34 @@
   const route = useRoute();
   const router = useRouter();
 
-  const post = ref<APIResponse<PostEdit>>({ fetching: true });
+  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
   const article = ref<Node | null>(null);
   const eTag = ref<string | null>(null);
   const tabIndex = ref<number>(0);
-  const pageStatus = ref<string>('Loading post...');
+  const pageStatus = ref<string>('Loading note...');
 
   const tabRefs = ref<HTMLButtonElement[]>([]);
 
   const tabs: Tab[] = [
-    { id: 'article', text: 'Article', name: 'PostEditArticle' },
-    { id: 'details', text: 'Details', name: 'PostEditDetails' },
-    { id: 'status', text: 'Status', name: 'PostEditStatus' }
+    { id: 'article', text: 'Article', name: 'NoteEditArticle' },
+    { id: 'details', text: 'Details', name: 'NoteEditDetails' },
+    { id: 'status', text: 'Status', name: 'NoteEditStatus' }
   ];
 
   onMounted(() => {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name);
   });
 
-  watch([() => route.params.spaceId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.noteId], (params: Params) => fetchNote(parseParams(params)), { immediate: true });
 
-  async function fetchPost(params: string[]) {
+  async function fetchNote(params: string[]) {
     const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: PostEdit) => {
-            post.value = { data: value };
+          .then((value: NoteEdit) => {
+            note.value = { data: value };
             pageStatus.value = 'Ready';
 
             eTag.value = response.headers.get("ETag");
@@ -54,7 +54,7 @@
             });
           })
           .catch(() => {
-            post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
+            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       }
     }
@@ -63,12 +63,12 @@
   }
 
   function getHeading(): string {
-    if (post.value.fetching === true) {
+    if (note.value.fetching === true) {
       return 'Fetching...';
-    } else if (post.value.error !== undefined) {
-      return post.value.error.heading;
-    } else if (post.value.data !== undefined) {
-      return 'Post Edit';
+    } else if (note.value.error !== undefined) {
+      return note.value.error.heading;
+    } else if (note.value.data !== undefined) {
+      return 'Note Edit';
     } else {
       return 'Unknown Error';
     }
@@ -109,15 +109,15 @@
   }
 
   function handleUpdateTitle(newTitle: string): void {
-    if (post.value.data !== undefined) post.value.data.version.title = newTitle;
+    if (note.value.data !== undefined) note.value.data.version.title = newTitle;
   }
 
   function handleUpdateDateNZ(newDateNZ: string): void {
-    if (post.value.data !== undefined) post.value.data.version.dateNZ = newDateNZ;
+    if (note.value.data !== undefined) note.value.data.version.dateNZ = newDateNZ;
   }
 
-  function handleUpdatePostStatus(newPostStatus: 'Draft' | 'Published'): void {
-    if (post.value.data !== undefined) post.value.data.status = newPostStatus;
+  function handleUpdateNoteStatus(newNoteStatus: 'Draft' | 'Published'): void {
+    if (note.value.data !== undefined) note.value.data.status = newNoteStatus;
   }
 
   function handleUpdateETag(newETag: string | null): void {
@@ -130,23 +130,23 @@
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="post === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="note === null">
     <header>
       <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="post.fetching === true">                
-      <progress max="100">Fetching post...</progress>
+    <section v-if="note.fetching === true">                
+      <progress max="100">Fetching note...</progress>
     </section>
 
-    <section v-if="post.error !== undefined">
+    <section v-if="note.error !== undefined">
       <p>
-        {{ post.error.body }}
+        {{ note.error.body }}
       </p>
     </section>
 
-    <template v-if="post.data !== undefined">
-      <ul role="tablist" aria-label="Post Settings">
+    <template v-if="note.data !== undefined">
+      <ul role="tablist" aria-label="Note Settings">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
@@ -161,18 +161,18 @@
         <component
           :is="Component"  
           :data-article="article"
-          :data-post="post"
-          :data-space-id="post.data.spaceId"
-          :data-post-id="post.data.id"
+          :data-note="note"
+          :data-space-id="note.data.spaceId"
+          :data-note-id="note.data.id"
           :data-page-status="pageStatus"
-          :data-title="post.data.version.title"
-          :data-date-nz="post.data.version.dateNZ"
+          :data-title="note.data.version.title"
+          :data-date-nz="note.data.version.dateNZ"
           :data-e-tag="eTag"
           @update-etag="handleUpdateETag"
           @update-article="handleUpdateArticle"
           @update-title="handleUpdateTitle"
           @update-date-nz="handleUpdateDateNZ"
-          @update-post-status="handleUpdatePostStatus"
+          @update-note-status="handleUpdateNoteStatus"
         />
       </RouterView>
     </template>

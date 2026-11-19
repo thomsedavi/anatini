@@ -3,11 +3,15 @@
   import RadioFieldset from '@/common/RadioFieldset.vue';
 
   const model = defineModel<Filters>({ required: true });
+
+  defineProps<{
+    contentType: string,
+  }>();
 </script>
 
 <template>
   <details>
-    <summary>Starred Posts</summary>
+    <summary>Starred {{contentType}}s</summary>
 
     <RadioFieldset
       v-model="model.starred"
@@ -16,11 +20,11 @@
         { name: 'starred', value: 'only', id: 'starredOnly', label: 'Show only starred' },
         { name: 'starred', value: 'hide', id: 'starredHide', label: 'Hide starred' }
       ]"
-      legend="Starred Posts Options" />
+      :legend="`Starred ${contentType} Options`" />
   </details>
 
   <details>
-    <summary>Bookmarked Posts</summary>
+    <summary>Bookmarked {{contentType}}s</summary>
 
     <RadioFieldset
       v-model="model.bookmarked"
@@ -29,11 +33,11 @@
         { name: 'bookmarked', value: 'only', id: 'bookmarkedOnly', label: 'Show only bookmarked' },
         { name: 'bookmarked', value: 'hide', id: 'bookmarkedHide', label: 'Hide bookmarked' }
       ]"
-      legend="Bookmarked Posts Options" />
+      :legend="`Bookmarked ${contentType} Options`" />
   </details>
 
   <details>
-    <summary>Dismissed Posts</summary>
+    <summary>Dismissed {{contentType}}s</summary>
 
     <RadioFieldset
       v-model="model.dismissed"
@@ -42,7 +46,7 @@
         { name: 'dismissed', value: 'only', id: 'dismissedOnly', label: 'Show only dismissed' },
         { name: 'dismissed', value: 'hide', id: 'dismissedHide', label: 'Hide dismissed' }
       ]"
-      legend="Dismissed Posts Options" />
+      :legend="`Dismissed ${contentType} Options`" />
   </details>
 
   <details>

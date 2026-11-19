@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, Post, Status, StatusActions, Visibility } from '@/common/types';
+  import type { InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
@@ -12,8 +12,8 @@
   const router = useRouter();
 
   const props = defineProps<{
-    dataUserId: string,
-    dataUserHandle: string,
+    dataSpaceId: string,
+    dataSpaceHandle: string,
     dataStatus: Status,
     dataInputErrors: InputError[],
   }>();
@@ -25,14 +25,14 @@
 
   const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputHandle = ref<string>('');
-  const inputPublishedAtNz = ref<string>('');
+  const inputNoteHandle = ref<string>('');
+  const inputNotePublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postPost() {
+  async function postNote() {
     emit('update-errors', []);
 
     if (tidy(inputBody.value) === '') {
@@ -43,13 +43,13 @@
 
     emit('update-status', 'pending');
 
-    const input = `users/${props.dataUserId}/notes`;
+    const input = `spaces/${props.dataSpaceId}/notes`;
 
     const statusActions: StatusActions = {
       201: (response?: Response) => {
           response?.json()
-            .then((value: Post) => {
-              router.push({ name: 'UserPost', params: { userId: props.dataUserHandle, postId: value.handle ?? value.id } });
+            .then((value: Note) => {
+              router.push({ name: 'SpaceNote', params: { spaceId: props.dataSpaceHandle, noteId: value.handle } });
             });
       },
       400: () => {
@@ -62,12 +62,12 @@
     body.append('body', formatParagraphs(inputBody.value));
     body.append('visibility', inputVisibility.value);
 
-    if (tidy(inputHandle.value) !== '') {
-      body.append('handle', tidy(inputHandle.value));
+    if (tidy(inputNoteHandle.value) !== '') {
+      body.append('handle', tidy(inputNoteHandle.value));
     }
 
-    if (inputPublishedAtNz.value !== '') {
-      body.append('publishedAtNz', inputPublishedAtNz.value);
+    if (inputNotePublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputNotePublishedAtNz.value);
     }
 
     const init = { method: "POST", body: body };
@@ -77,12 +77,12 @@
 </script>
 
 <template>
-  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
-      <h2>Create Post</h2>
+      <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postPost" :action="`/api/users/${dataUserId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
       <InputTextArea
         v-model="inputBody"
         label="Content"
@@ -91,26 +91,26 @@
         :maxLength="512"
         :error="getError('body')"
         :isArticle="true"
-        help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
+        help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
 
       <InputText
-        v-model="inputHandle"
+        v-model="inputNoteHandle"
         label="Handle"
         name="handle"
         id="handle"
         :maxlength="64"
-        help="lower case with hyphens (e.g. 'my-anatini-post'), optional custom web address"
+        help="lower case with hyphens (e.g. 'my-anatini-space'), optional custom web address"
         :error="getError('handle')" />
 
       <InputText
-        v-model="inputPublishedAtNz"
+        v-model="inputNotePublishedAtNz"
         type="datetime-local"
         label="Date & Time (NZ)"
         name="publishedAtNz"
         id="publishedAtNz"
-        help="Leave blank to publish immediately. Posts published in the future will not be visible until the scheduled time."
+        help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
         :error="getError('publishedAtNz')" />
 
       <SubmitButton

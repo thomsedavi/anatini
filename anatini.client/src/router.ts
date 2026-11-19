@@ -10,21 +10,21 @@ import SignUpView from './components/SignUpView.vue';
 import TagsView from './components/TagsView.vue';
 
 import HomeView from './components/home/HomeView.vue';
-import HomePostsView from './components/home/posts/HomePostsView.vue';
+import HomeNotesView from './components/home/notes/HomeNotesView.vue';
 import HomeEventsView from './components/home/events/HomeEventsView.vue';
 import HomeWorksView from './components/home/works/HomeWorksView.vue';
 
 import UsersView from './components/users/UsersView.vue';
 import UserView from './components/users/user/UserView.vue';
-import UserPostsView from './components/users/user/posts/UserPostsView.vue';
+import UserNotesView from './components/users/user/notes/UserNotesView.vue';
 import UserEventsView from './components/users/user/events/UserEventsView.vue';
 import UserWorksView from './components/users/user/works/UserWorksView.vue';
 import UserWorkView from './components/users/user/works/work/UserWorkView.vue';
 import UserWorkCreateView from './components/users/user/works/work/UserWorkCreateView.vue';
 import UserWorkEditView from './components/users/user/works/work/UserWorkEditView.vue';
-import UserPostView from './components/users/user/posts/post/UserPostView.vue';
-import UserPostCreateView from './components/users/user/posts/post/UserPostCreateView.vue';
-import UserPostEditView from './components/users/user/posts/post/UserPostEditView.vue';
+import UserNoteView from './components/users/user/notes/note/UserNoteView.vue';
+import UserNoteCreateView from './components/users/user/notes/note/UserNoteCreateView.vue';
+import UserNoteEditView from './components/users/user/notes/note/UserNoteEditView.vue';
 import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
 // import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
@@ -34,18 +34,18 @@ import UserSpaceCreateView from './components/users/user/spaces/space/UserSpaceC
 import SpaceView from './components/spaces/space/SpaceView.vue';
 import SpaceCreateView from './components/spaces/space/SpaceCreateView.vue';
 import SpaceEditView from './components/spaceEdit/SpaceEditView.vue';
-import SpaceEditPostCreateView from './components/spaceEdit/SpaceEditPostCreateView.vue';
+import SpaceEditNoteCreateView from './components/spaceEdit/SpaceEditNoteCreateView.vue';
 import SpaceEditDisplayView from './components/spaceEdit/SpaceEditDisplayView.vue';
-import SpaceEditPostEditView from './components/spaceEdit/SpaceEditPostEditView.vue';
-import SpaceEditPostsView from './components/spaceEdit/SpaceEditPostsView.vue';
+import SpaceEditNoteEditView from './components/spaceEdit/SpaceEditNoteEditView.vue';
+import SpaceEditNotesView from './components/spaceEdit/SpaceEditNotesView.vue';
 import SpaceWorksView from './components/spaces/space/works/SpaceWorksView.vue';
 import SpaceWorkView from './components/spaces/space/works/work/SpaceWorkView.vue';
 import SpaceWorkCreateView from './components/spaces/space/works/work/SpaceWorkCreateView.vue';
 import SpaceWorkEditView from './components/spaces/space/works/work/SpaceWorkEditView.vue';
-import SpacePostsView from './components/spaces/space/posts/SpacePostsView.vue';
-import SpacePostView from './components/spaces/space/posts/post/SpacePostView.vue';
-import SpacePostCreateView from './components/spaces/space/posts/post/SpacePostCreateView.vue';
-import SpacePostEditView from './components/spaces/space/posts/post/SpacePostEditView.vue';
+import SpaceNotesView from './components/spaces/space/notes/SpaceNotesView.vue';
+import SpaceNoteView from './components/spaces/space/notes/note/SpaceNoteView.vue';
+import SpaceNoteCreateView from './components/spaces/space/notes/note/SpaceNoteCreateView.vue';
+import SpaceNoteEditView from './components/spaces/space/notes/note/SpaceNoteEditView.vue';
 import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
 import SpaceEventView from './components/spaces/space/events/event/SpaceEventView.vue';
 import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
@@ -55,12 +55,12 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: HomeView,
     name: 'Home',
-    redirect: { name: 'HomePosts' },
+    redirect: { name: 'HomeNotes' },
     children: [
       {
-        path: 'home/posts',
-        component: HomePostsView,
-        name: 'HomePosts'
+        path: 'home/notes',
+        component: HomeNotesView,
+        name: 'HomeNotes'
       },
       {
         path: 'home/events',
@@ -113,27 +113,27 @@ const routes: RouteRecordRaw[] = [
     path: '/users/:userId',
     component: UserView,
     name: 'User',
-    redirect: { name: 'UserPosts' },
+    redirect: { name: 'UserNotes' },
     children: [
       {
-        path: 'posts/create',
-        component: UserPostCreateView,
-        name: 'UserPostCreate'
+        path: 'notes/create',
+        component: UserNoteCreateView,
+        name: 'UserNoteCreate'
       },
       {
-        path: 'posts/:postId/edit',
-        component: UserPostEditView,
-        name: 'UserPostEdit'
+        path: 'notes/:noteId/edit',
+        component: UserNoteEditView,
+        name: 'UserNoteEdit'
       },
       {
-        path: 'posts/:postId',
-        component: UserPostView,
-        name: 'UserPost'
+        path: 'notes/:noteId',
+        component: UserNoteView,
+        name: 'UserNote'
       },
       {
-        path: 'posts',
-        component: UserPostsView,
-        name: 'UserPosts'
+        path: 'notes',
+        component: UserNotesView,
+        name: 'UserNotes'
       },
       {
         path: 'events/create',
@@ -196,27 +196,27 @@ const routes: RouteRecordRaw[] = [
     path: '/spaces/:spaceId',
     component: SpaceView,
     name: 'Space',
-    redirect: { name: 'SpacePosts' },
+    redirect: { name: 'SpaceNotes' },
     children: [
       {
-        path: 'posts/create',
-        component: SpacePostCreateView,
-        name: 'SpacePostCreate'
+        path: 'note/create',
+        component: SpaceNoteCreateView,
+        name: 'SpaceNoteCreate'
       },
       {
-        path: 'posts/:postId/edit',
-        component: SpacePostEditView,
-        name: 'SpacePostEdit'
+        path: 'notes/:noteId/edit',
+        component: SpaceNoteEditView,
+        name: 'SpaceNoteEdit'
       },
       {
-        path: 'posts/:postId',
-        component: SpacePostView,
-        name: 'SpacePost'
+        path: 'notes/:noteId',
+        component: SpaceNoteView,
+        name: 'SpaceNote'
       },
       {
-        path: 'posts',
-        component: SpacePostsView,
-        name: 'SpacePosts'
+        path: 'notes',
+        component: SpaceNotesView,
+        name: 'SpaceNotes'
       },
       {
         path: 'events/create',
@@ -259,22 +259,22 @@ const routes: RouteRecordRaw[] = [
     path: '/spaces/:spaceId/edit',
     component: SpaceEditView,
     name: 'SpaceEdit',
-    redirect: { name: 'SpaceEditPosts' },
+    redirect: { name: 'SpaceEditNotes' },
     children: [
       {
-        path: 'posts/create',
-        component: SpaceEditPostCreateView,
-        name: 'SpaceEditPostCreate'
+        path: 'notes/create',
+        component: SpaceEditNoteCreateView,
+        name: 'SpaceEditNoteCreate'
       },
       {
-        path: 'posts/:postId/edit',
-        component: SpaceEditPostEditView,
-        name: 'SpaceEditPostEdit'
+        path: 'notes/:noteId/edit',
+        component: SpaceEditNoteEditView,
+        name: 'SpaceEditNoteEdit'
       },
       {
-        path: 'posts',
-        component: SpaceEditPostsView,
-        name: 'SpaceEditPosts'
+        path: 'notes',
+        component: SpaceEditNotesView,
+        name: 'SpaceEditNotes'
       },
       {
         path: 'display',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, SpaceEdit, InputError, Post, Status, StatusActions, Tab } from '@/common/types';
+  import type { APIResponse, SpaceEdit, InputError, Note, Status, StatusActions, Tab } from '@/common/types';
   import { nextTick, onMounted, ref, watch } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
   import { useRoute, useRouter } from 'vue-router';
@@ -10,7 +10,7 @@
   const router = useRouter();
 
   const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
-  const posts = ref<Post[] | null>(null);
+  const notes = ref<Note[] | null>(null);
   const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
   const inputErrors = ref<InputError[]>([]);
@@ -18,7 +18,7 @@
   const errorSectionRef = ref<HTMLElement | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'SpaceEditPosts', childNames: ['SpaceEditPostCreate', 'SpaceEditPostEdit'] },
+    { id: 'notes', text: 'Notes', name: 'SpaceEditNotes', childNames: ['SpaceEditNoteCreate', 'SpaceEditNoteEdit'] },
     { id: 'public', text: 'Display', name: 'SpaceEditDisplay' },
   ];
 
@@ -45,7 +45,7 @@
           });
       },
       401: () => {
-        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/notes/create` } });
       },
       403: () => {
         space.value = { error: { heading: 'Unknown Error', body: 'No access to space' }};
@@ -113,8 +113,8 @@
     }
   }
 
-  function handleUpdatePosts(newPosts: Post[]): void {
-    posts.value = newPosts;
+  function handleUpdateNotes(newNotes: Note[]): void {
+    notes.value = newNotes;
   }
 
   function handleUpdateStatus(newStatus: Status): void {
@@ -173,14 +173,14 @@
         <component
           :is="Component"
           :data-space-id="space.data.id"
-          :data-posts="posts"
+          :data-notes="notes"
           :data-name="space.data.name"
           :data-icon-image="space.data.iconImage"
           :data-status="status"
           :data-input-errors="inputErrors"
           @update-name="handleUpdateName"
           @update-status="handleUpdateStatus"
-          @update-posts="handleUpdatePosts"
+          @update-notes="handleUpdateNotes"
           @update-errors="handleUpdateErrors"
         />
       </RouterView>

@@ -89,7 +89,7 @@ export type Tab = {
   childNames?: RouteRecordNameGeneric[];
 }
 
-export type DraftPost = {
+export type DraftNote = {
   id: string;
   defaultHandle: string;
   title: string;
@@ -105,17 +105,17 @@ export type SpaceEdit = {
   iconImage: Image | null;
 };
 
-export type PostVersion = {
+export type NoteVersion = {
   title: string;
   body: string;
   dateNZ: string;
 }
 
-export type PostEdit = {
+export type NoteEdit = {
   id: string;
   spaceId: string;
   defaultHandle: string;
-  version: PostVersion;
+  version: NoteVersion;
   protected: boolean | null;
   status: 'Draft' | 'Published';
 }
@@ -149,7 +149,7 @@ export type Work = Content & {
   publishedAtNz: string | null;
 }
 
-export type Post = Content & {
+export type Note = Content & {
   title: string | null;
   publishedAtNz: string;
   visibility: Visibility;

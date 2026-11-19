@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { APIResponse, InputError, PostEdit, Status, StatusActions, Visibility } from '@/common/types';
+  import type { APIResponse, InputError, NoteEdit, Status, StatusActions, Visibility } from '@/common/types';
   import { ref, watch } from 'vue';
   import { formatParagraphs, parseFromBodyString, parseParams, tidy, type Params } from '@/common/utils';
   import { useRoute } from 'vue-router';
@@ -20,32 +20,32 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const post = ref<APIResponse<PostEdit>>({ fetching: true });
+  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
 
-  watch([() => route.params.spaceId, () => route.params.postId], (params: Params) => fetchPost(parseParams(params)), { immediate: true });
+  watch([() => route.params.spaceId, () => route.params.noteId], (params: Params) => fetchNote(parseParams(params)), { immediate: true });
 
-  async function fetchPost(params: string[]) {
+  async function fetchNote(params: string[]) {
     const input = `spaces/${params[0]}/notes/${params[1]}/edit`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: PostEdit) => {
-            post.value = { data: value};
+          .then((value: NoteEdit) => {
+            note.value = { data: value};
             inputArticle.value = parseFromBodyString(value.article);
             inputVisibility.value = value.visibility;
           })
           .catch(() => {
-            post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
+            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       },
       404: () => {
-        post.value = { error: { heading: '404 Not Found', body: 'Post not found' }};
+        note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};
       },
       500: () => {
-        post.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your post, please reload the page' }};
+        note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
       }
     };
 
@@ -53,11 +53,11 @@
   };
 
   function noChange(): boolean {
-    if (post.value.data === undefined) {
+    if (note.value.data === undefined) {
       return true;
-    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== post.value.data.article) {
+    } else if (tidy(inputArticle.value) !== '' && formatParagraphs(inputArticle.value) !== note.value.data.article) {
       return false;
-    } else if (inputVisibility.value !== post.value.data.visibility) {
+    } else if (inputVisibility.value !== note.value.data.visibility) {
       return false;
     }
 
@@ -68,8 +68,8 @@
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function patchPost() {
-    if (post.value.data === undefined || noChange()) {
+  async function patchNote() {
+    if (note.value.data === undefined || noChange()) {
       return;
     }
 
@@ -83,7 +83,7 @@
 
     emit('update-status', 'pending');
 
-    const input = `spaces/${route.params.spaceId}/notes/${route.params.postId}`;
+    const input = `spaces/${route.params.spaceId}/notes/${route.params.noteId}`;
 
     const statusActions: StatusActions = {
       200: () => {
@@ -93,11 +93,11 @@
 
     const body = new FormData();
 
-    if (formatParagraphs(inputArticle.value) !== post.value.data.article) {
+    if (formatParagraphs(inputArticle.value) !== note.value.data.article) {
       body.append('article', formatParagraphs(inputArticle.value));
     }
 
-    if (inputVisibility.value !== post.value.data.visibility) {
+    if (inputVisibility.value !== note.value.data.visibility) {
       body.append('visibility', inputVisibility.value);
     }
 
@@ -109,27 +109,27 @@
 
 
 <template>
-  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
-      <h2>Edit Post</h2>
+      <h2>Edit Note</h2>
     </header>
 
-    <template v-if="post === null">
-      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the post information is fetched.</p>
+    <template v-if="note === null">
+      <p role="status" class="visually-hidden" aria-live="polite">Please wait while the note information is fetched.</p>
                 
-      <progress max="100">Fetching post...</progress>
+      <progress max="100">Fetching note...</progress>
     </template>
 
-    <template v-if="post.error !== undefined">
+    <template v-if="note.error !== undefined">
       <p>
-        {{ post.error.body }}
+        {{ note.error.body }}
       </p>
     </template>
 
-    <template v-if="post.data !== undefined">
-      <form @submit.prevent="patchPost" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.postId}`" method="POST" novalidate>
+    <template v-if="note.data !== undefined">
+      <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <fieldset>
-          <legend class="visually-hidden">Edit Post</legend>
+          <legend class="visually-hidden">Edit Note</legend>
 
           <InputTextArea
             v-model="inputArticle"
@@ -139,7 +139,7 @@
             :maxLength="512"
             :error="getError('article')"
             :isArticle="true"
-            help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
+            help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
           <VisibilitySelect v-model="inputVisibility" />
         </fieldset>

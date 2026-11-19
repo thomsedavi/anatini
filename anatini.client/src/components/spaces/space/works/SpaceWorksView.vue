@@ -75,7 +75,7 @@
         <summary>Filter Options</summary>
 
         <form @submit.prevent="getWorks" :action="`/api/spaces/${dataSpaceId}/works`" method="GET" novalidate>
-          <FilterRadios v-model="filters" />
+          <FilterRadios v-model="filters" content-type="Work" />
 
           <button type="submit">Apply Filters</button>
           <button type="reset">Clear Filters</button>
@@ -90,6 +90,6 @@
       </li>
     </ul>
 
-    <p v-else>You do not have any posts</p>
+    <p v-else>You do not have any works</p>
   </section>
 </template>

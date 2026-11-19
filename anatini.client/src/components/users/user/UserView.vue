@@ -4,7 +4,7 @@
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
   import { store } from '@/common/store';
   import TabButton from '@/common/TabButton.vue';
-  import type { APIResponse, EventOccurrence, InputError, Post, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
+  import type { APIResponse, EventOccurrence, InputError, Note, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
   import { getTabIndex, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
@@ -15,13 +15,13 @@
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
   const tabIndex = ref<number>(-1);
-  const posts = ref<Post[] | null>(null);
+  const Notes = ref<Note[] | null>(null);
   const works = ref<Work[] | null>(null);
   const eventOccurrenceGroups = ref<{ date: string, eventOccurrences: EventOccurrence[] }[] | null>(null);
   const spaces = ref<Space[] | null>(null);
 
   const tabs: Tab[] = [
-    { id: 'posts', text: 'Posts', name: 'UserPosts', childNames: ['UserPost', 'UserPostCreate', 'UserPostEdit'] },
+    { id: 'notes', text: 'Notes', name: 'UserNotes', childNames: ['UserNote', 'UserNoteCreate', 'UserNoteEdit'] },
     { id: 'works', text: 'Works', name: 'UserWorks', childNames: ['UserWork', 'UserWorkCreate'] },
     { id: 'events', text: 'Events', name: 'UserEvents', childNames: ['UserEventCreate'] },
     { id: 'spaces', text: 'Spaces', name: 'UserSpaces', childNames: ['UserSpace', 'UserSpaceCreate'] },
@@ -163,8 +163,8 @@
     }
   }
 
-  function handleUpdatePosts(newPosts: Post[]): void {
-    posts.value = newPosts;
+  function handleUpdateNotes(newNotes: Note[]): void {
+    Notes.value = newNotes;
   }
 
   function handleUpdateWorks(newWorks: Work[]): void {
@@ -259,14 +259,14 @@
           :is="Component"
           :data-status="status"
           :data-input-errors="inputErrors"
-          :data-posts="posts"
+          :data-notes="Notes"
           :data-works="works"
           :data-event-occurrence-groups="eventOccurrenceGroups"
           :data-spaces="spaces"
           :data-user-id="user.data.id"
           :data-user-handle="user.data.handle"
           :data-user-name="user.data.name"
-          @update-posts="handleUpdatePosts"
+          @update-notes="handleUpdateNotes"
           @update-works="handleUpdateWorks"
           @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"
           @update-spaces="handleUpdateSpaces"

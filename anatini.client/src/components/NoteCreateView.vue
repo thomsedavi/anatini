@@ -12,8 +12,8 @@
 
   const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
   const inputErrors = ref<InputError[]>([]);
-  const inputPostName = ref<string>('');
-  const inputPostHandle = ref<string>('');
+  const inputNoteName = ref<string>('');
+  const inputNoteHandle = ref<string>('');
   const status = ref<Status>('idle');
   const errorSectionRef = ref<HTMLElement | null>(null);
 
@@ -33,7 +33,7 @@
           });
       },
       401: () => {
-        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/posts/create` } });
+        router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/notes/create` } });
       },
       403: () => {
         space.value = { error: { heading: 'Unknown Error', body: 'No access to space' }};
@@ -53,22 +53,22 @@
     return inputErrors.value.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postPost() {
+  async function postNote() {
     if (space.value.data === undefined) {
       return;
     }
 
     inputErrors.value = [];
 
-    const tidiedName = tidy(inputPostName.value);
-    const tidiedHandle = tidy(inputPostHandle.value);
+    const tidiedName = tidy(inputNoteName.value);
+    const tidiedHandle = tidy(inputNoteHandle.value);
 
     if (tidiedName === '') {
-      inputErrors.value.push({id: 'name', message: 'Post name is required'});
+      inputErrors.value.push({id: 'name', message: 'Note name is required'});
     }
 
     if (tidiedHandle === '') {
-      inputErrors.value.push({id: 'handle', message: 'Post handle is required'});
+      inputErrors.value.push({id: 'handle', message: 'Note handle is required'});
     }
 
     if (inputErrors.value.length > 0) {
@@ -88,7 +88,7 @@
         status.value = 'success';
 
         if (space.value.data !== undefined) {
-          router.push({ name: 'PostEdit', params: { spaceId: space.value.data.id, postId: tidiedHandle } });
+          router.push({ name: 'NoteEdit', params: { spaceId: space.value.data.id, noteId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -135,7 +135,7 @@
 <template>
   <main role="main" id="main" tabindex="-1">
     <header>
-      <h1>Create Post</h1>
+      <h1>Create Note</h1>
     </header>
 
     <section v-if="space === null">
@@ -152,7 +152,7 @@
 
     <template v-if="space.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
-        <h2 id="heading-errors">There was a problem creating your post</h2>
+        <h2 id="heading-errors">There was a problem creating your note</h2>
         <ul role="list">
           <li v-for="error in inputErrors" :key="'error' + error.id">
             <a :href="'#input-' + error.id">{{ error.message }}</a>
@@ -161,26 +161,26 @@
       </section>
 
       <section>
-        <form @submit.prevent="postPost" :action="`/api/spaces/${space.data.id}/posts`" method="POST" novalidate>
+        <form @submit.prevent="postNote" :action="`/api/spaces/${space.data.id}/notes`" method="POST" novalidate>
           <fieldset>
-            <legend class="visually-hidden">Create Post</legend>
+            <legend class="visually-hidden">Create Note</legend>
 
             <InputText
-              v-model="inputPostName"
+              v-model="inputNoteName"
               label="Name"
               name="name"
               id="name"
               :maxlength="64"
-              help="The display name of your post"
+              help="The display name of your note"
               :error="getError('name')" />
 
             <InputText
-              v-model="inputPostHandle"
+              v-model="inputNoteHandle"
               label="Handle"
               name="handle"
               id="handle"
               :maxlength="64"
-              help="lower case with hyphens (e.g. 'my-anatini-post')"
+              help="lower case with hyphens (e.g. 'my-anatini-note')"
               :error="getError('handle')" />
           </fieldset>
 

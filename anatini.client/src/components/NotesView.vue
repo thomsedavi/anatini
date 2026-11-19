@@ -4,6 +4,6 @@
 
 <template>
   <main role="main" id="main" tabindex="-1">
-    <h2>PostsView</h2>
+    <h2>NotesView</h2>
   </main>
 </template>

@@ -1,5 +1,5 @@
 import type { Router } from "vue-router";
-import type { EventOccurrence, Post, Work } from "./types";
+import type { EventOccurrence, Note, Work } from "./types";
 
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
@@ -311,20 +311,20 @@ export function escapeHtml(value: string | null): string | null {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-export function getPostAddress(post: Post, basis: 'name' | 'id'): string {
-  const postKey = basis === 'id' ? post.id : post.handle;
+export function getNoteAddress(note: Note, basis: 'name' | 'id'): string {
+  const noteKey = basis === 'id' ? note.id : note.handle;
 
-  if (post.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? post.spaceHeader.id : post.spaceHeader.handle;
+  if (note.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? note.spaceHeader.id : note.spaceHeader.handle;
 
-    return `spaces/${spaceKey}/notes/${postKey}`;
-  } else if (post.userHeader !== null) {
-    const userKey = basis === 'id' ? post.userHeader.id : post.userHeader.handle;
+    return `spaces/${spaceKey}/notes/${noteKey}`;
+  } else if (note.userHeader !== null) {
+    const userKey = basis === 'id' ? note.userHeader.id : note.userHeader.handle;
 
-    return `users/${userKey}/notes/${postKey}`;
+    return `users/${userKey}/notes/${noteKey}`;
   } else {
     // return id based address by default
-    return `posts/${post.id}`;
+    return `notes/${note.id}`;
   }
 }
 

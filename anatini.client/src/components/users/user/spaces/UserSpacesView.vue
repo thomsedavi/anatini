@@ -15,7 +15,7 @@
   }>();
 
   const emit = defineEmits<{
-    'update-spaces': [newPosts: Space[]],
+    'update-spaces': [newSpaces: Space[]],
   }>();
 
   onMounted(() => {
@@ -44,12 +44,12 @@
     </header>
 
     <ul role="list" v-if="dataSpaces !== null">
-      <li v-for="space in dataSpaces" :key="'post' + space.id">
+      <li v-for="space in dataSpaces" :key="'space' + space.id">
         <article v-html="getSpaceHtml(space)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>
 
-    <p v-else>You do not have any posts</p>
+    <p v-else>You do not have any spaces</p>
   </section>
 </template>

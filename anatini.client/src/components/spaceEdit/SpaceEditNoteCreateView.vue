@@ -21,13 +21,13 @@
 
   const inputArticle = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputPostHandle = ref<string>('');
+  const inputNoteHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
   }
 
-  async function postPost() {
+  async function postNote() {
     emit('update-errors', []);
 
     if (tidy(inputArticle.value) === '') {
@@ -56,8 +56,8 @@
     body.append('article', formatParagraphs(inputArticle.value));
     body.append('visibility', inputVisibility.value);
 
-    if (tidy(inputPostHandle.value) !== '') {
-      body.append('handle', tidy(inputPostHandle.value));
+    if (tidy(inputNoteHandle.value) !== '') {
+      body.append('handle', tidy(inputNoteHandle.value));
     }
 
     const init = { method: "POST", body: body };
@@ -67,14 +67,14 @@
 </script>
 
 <template>
-  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
-      <h2>Create Post</h2>
+      <h2>Create Note</h2>
     </header>
 
-    <form @submit.prevent="postPost" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
+    <form @submit.prevent="postNote" :action="`/api/spaces/${dataSpaceId}/notes`" method="POST" novalidate>
       <fieldset>
-        <legend class="visually-hidden">Create Post</legend>
+        <legend class="visually-hidden">Create Note</legend>
 
         <InputTextArea
           v-model="inputArticle"
@@ -84,12 +84,12 @@
           :maxLength="512"
           :error="getError('article')"
           :isArticle="true"
-          help="This is your post. Asterisks allow for *emphasis* and **strong text**." />
+          help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
         <VisibilitySelect v-model="inputVisibility" />
 
         <InputText
-          v-model="inputPostHandle"
+          v-model="inputNoteHandle"
           label="Handle"
           name="handle"
           id="handle"

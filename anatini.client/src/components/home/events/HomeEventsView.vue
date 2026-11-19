@@ -109,7 +109,7 @@
         <summary>Filter Options</summary>
 
         <form @submit.prevent="getEventOccurrences" action="/api/event-occurrences" method="GET" novalidate>
-          <FilterRadios v-model="filters" />
+          <FilterRadios v-model="filters" content-type="Event" />
 
           <button type="submit">Apply Filters</button>
           <button type="reset">Clear Filters</button>

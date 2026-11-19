@@ -1,7 +1,7 @@
 import { apiFetchAuthenticated } from "./apiFetch";
 import { formatDate, formatDateTime, formatTime, getDaysDifference } from "./dateUtils";
 import { store } from "./store";
-import type { Content, EventOccurrence, Post, Space, StatusActions, Work } from "./types";
+import type { Content, EventOccurrence, Note, Space, StatusActions, Work } from "./types";
 import { escapeHtml } from "./utils";
 
 function getFooterHtml(content: Content, contentType: string): string {
@@ -74,14 +74,14 @@ export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string
   return result;
 }
 
-export function getPostHtml(post: Post): string {
+export function getNoteHtml(note: Note): string {
   let result = '';
 
-  result += `<header><p><time datetime='${post.publishedAtNz}'>${formatDateTime(post.publishedAtNz)}</time></p></header>`;
+  result += `<header><p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p></header>`;
 
-  result += post.body;
+  result += note.body;
 
-  result += getFooterHtml(post, 'posts');
+  result += getFooterHtml(note, 'notes');
 
   return result;
 }

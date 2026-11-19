@@ -4,19 +4,19 @@
   import { apiFetch } from '@/common/apiFetch';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { buttonAction, getPostHtml } from '@/common/html';
+  import { buttonAction, getNoteHtml } from '@/common/html';
   import { store } from '@/common/store';
-  import type { Post, SearchParameter, StatusActions } from '@/common/types';
-  import { getPostAddress, handleClick } from '@/common/utils';
+  import type { Note, SearchParameter, StatusActions } from '@/common/types';
+  import { getNoteAddress, handleClick } from '@/common/utils';
 
   const router = useRouter();
 
   const props = defineProps<{
-    dataPosts: Post[] | null,
+    dataNotes: Note[] | null,
   }>();
 
   const emit = defineEmits<{
-    'update-posts': [newPosts: Post[]],
+    'update-notes': [newNotes: Note[]],
   }>();
 
   const filters = ref<Filters>({ ...defaultFilters });
@@ -24,14 +24,14 @@
   const hasMore = ref<boolean>(true);
 
   onMounted(() => {
-    if (props.dataPosts === null) {
+    if (props.dataNotes === null) {
       const input = 'notes';
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
-            .then((value: Post[]) => {
-              emit('update-posts', value);
+            .then((value: Note[]) => {
+              emit('update-notes', value);
             });
         }
       }
@@ -40,18 +40,18 @@
     }
   });
 
-  function getPosts() {
+  function getNotes() {
     const input = 'notes';
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: Post[]) => {
+          .then((value: Note[]) => {
             if (value.length < 10) {
               hasMore.value = false;
             }
 
-            emit('update-posts', value);
+            emit('update-notes', value);
           });
       }
     }
@@ -61,29 +61,29 @@
     apiFetch({ input, statusActions, searchParameters: currentSearchParameters.value });
   }
 
-  function getMorePosts() {
-    const lastPost = props.dataPosts?.[props.dataPosts.length - 1];
+  function getMoreNotes() {
+    const lastNote = props.dataNotes?.[props.dataNotes.length - 1];
 
-    if (lastPost !== undefined) {
+    if (lastNote !== undefined) {
       const input = 'notes';
 
       const statusActions: StatusActions = {
         200: (response?: Response) => {
           response?.json()
-            .then((value: Post[]) => {
+            .then((value: Note[]) => {
               if (value.length < 2) {
                 hasMore.value = false;
               }
 
-              emit('update-posts', [...(props.dataPosts ?? []), ...value]);
+              emit('update-notes', [...(props.dataNotes ?? []), ...value]);
             });
         }
       }
 
       const searchParameters = [...currentSearchParameters.value];
 
-      searchParameters.push({ key: 'lastPublishedAtNz', value: lastPost.publishedAtNz });
-      searchParameters.push({ key: 'lastPostId', value: lastPost.id });
+      searchParameters.push({ key: 'lastPublishedAtNz', value: lastNote.publishedAtNz });
+      searchParameters.push({ key: 'lastNoteId', value: lastNote.id });
 
       apiFetch({ input, statusActions, searchParameters });
     }
@@ -91,25 +91,25 @@
 </script>
 
 <template>
-  <section id="panel-posts" role="tabpanel" aria-labelledby="tab-posts">
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes">
     <header>
-      <h2>Posts</h2>
+      <h2>Notes</h2>
 
       <template v-if="store.isAuthenticated">
-        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Post creation options">
-          <button popovertarget="create-post-menu">
-            + Create Post
+        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Note creation options">
+          <button popovertarget="create-note-menu">
+            + Create Note
           </button>
-          <ul popover="auto" id="create-post-menu">
+          <ul popover="auto" id="create-note-menu">
             <li>
-              <RouterLink :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">Personal Post</RouterLink>
+              <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle } }">Personal Note</RouterLink>
             </li>
             <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
-              <RouterLink :to="{ name: 'SpacePostCreate', params: { spaceId: space.handle } }">{{space.name}} Post</RouterLink>
+              <RouterLink :to="{ name: 'SpaceNoteCreate', params: { spaceId: space.handle } }">{{space.name}} Note</RouterLink>
             </li>
           </ul>
         </nav>
-        <RouterLink v-else :to="{ name: 'UserPostCreate', params: { userId: store.userHandle } }">+ Create Post</RouterLink>
+        <RouterLink v-else :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle } }">+ Create Note</RouterLink>
       </template>
     </header>
 
@@ -117,8 +117,8 @@
       <details>
         <summary>Filter Options</summary>
 
-        <form @submit.prevent="getPosts" action="/api/notes" method="GET" novalidate>
-          <FilterRadios v-model="filters" />
+        <form @submit.prevent="getNotes" action="/api/notes" method="GET" novalidate>
+          <FilterRadios v-model="filters" content-type="Note" />
 
           <button type="submit">Apply Filters</button>
           <button type="reset">Clear Filters</button>
@@ -126,17 +126,17 @@
       </details>
     </search>
 
-    <ul role="list" v-if="dataPosts !== null">
-      <li v-for="post in dataPosts" :key="'post' + post.id">
-        <article v-html="getPostHtml(post)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, post, getPostAddress(post, 'id')))">
+    <ul role="list" v-if="dataNotes !== null">
+      <li v-for="note in dataNotes" :key="'note' + note.id">
+        <article v-html="getNoteHtml(note)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note, getNoteAddress(note, 'id')))">
         </article>
       </li>
     </ul>
 
-    <p v-else>There are not any posts</p>
+    <p v-else>There are not any notes</p>
 
     <footer>
-      <button type="button" aria-controls="panel-posts" v-if="dataPosts !== null && hasMore" @click="() => getMorePosts()">More</button>
+      <button type="button" aria-controls="panel-notes" v-if="dataNotes !== null && hasMore" @click="() => getMoreNotes()">More</button>
     </footer>
   </section>
 </template>

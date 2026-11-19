@@ -75,7 +75,7 @@
         <summary>Filter Options</summary>
 
         <form @submit.prevent="getWorks" :action="`/api/users/${dataUserId}/works`" method="GET" novalidate>
-          <FilterRadios v-model="filters" />
+          <FilterRadios v-model="filters" content-type="Work" />
 
           <button type="submit">Apply Filters</button>
           <button type="reset">Clear Filters</button>

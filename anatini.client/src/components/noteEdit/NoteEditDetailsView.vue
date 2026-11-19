@@ -8,7 +8,7 @@
 
   const props = defineProps<{
     dataSpaceId: string,
-    dataPostId: string,
+    dataNoteId: string,
     dataPageStatus: string,
     dataName: string,
     dataDateNZ: string,
@@ -25,7 +25,7 @@
   const inputDateNZ = ref<string>(props.dataDateNZ);
   const inputName = ref<string>(props.dataName);
 
-  function patchPostDetail(): void {
+  function patchNoteDetail(): void {
     if (!detailChanged()) {
       return;
     }
@@ -48,7 +48,7 @@
 
     const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-    const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
+    const input = `spaces/${props.dataSpaceId}/notes/${props.dataNoteId}`;
 
     const statusActions: StatusActions = {
       204: (response?: Response) => {
@@ -79,16 +79,16 @@
       <h2>Details</h2>
     </header>
 
-    <form @submit.prevent="patchPostDetail" :action="`/api/spaces/${dataSpaceId}/notes/${dataPostId}`" method="POST" novalidate>
+    <form @submit.prevent="patchNoteDetail" :action="`/api/spaces/${dataSpaceId}/notes/${dataNoteId}`" method="POST" novalidate>
       <fieldset>
-        <legend class="visually-hidden">Post Details</legend>
+        <legend class="visually-hidden">Note Details</legend>
 
         <template v-if="inputName !== null">
           <InputText
             v-model="inputName"
             label="Name"
             name="name"
-            id="name-post"
+            id="name-note"
             :maxlength="64"
             :error="undefined"
             help="Article name"
@@ -96,17 +96,17 @@
         </template>
 
         <template v-if="inputDateNZ !== null">
-          <label for="input-date-post">Publication Date</label>
+          <label for="input-date-note">Publication Date</label>
           <input 
             type="date" 
             v-model="inputDateNZ"
-            id="input-date-post" 
+            id="input-date-note"
             name="date"
-            aria-describedby="help-date-post"
+            aria-describedby="help-date-note"
             :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined"
             required >
 
-          <small id="help-date-post">
+          <small id="help-date-note">
             Articles dated in the future will not be visible until that date is reached
           </small>
         </template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import type { PostEdit, StatusActions } from '@/common/types';
+  import type { NoteEdit, StatusActions } from '@/common/types';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
 
   const props = defineProps<{
     dataSpaceId: string,
-    dataPostId: string,
-    dataPost: PostEdit,
+    dataNoteId: string,
+    dataNote: NoteEdit,
     dataPageStatus: string,
     dataETag: string | null,
   }>();
@@ -13,7 +13,7 @@
   const emit = defineEmits<{
     'update-etag': [eTag: string | null],
     'update-page-status': [newPageStatus: string],
-    'update-post-status': [newPostStatus: 'Draft' | 'Published'],
+    'update-note-status': [newNoteStatus: 'Draft' | 'Published'],
   }>();
 
   function setStatus(status: 'Draft' | 'Published'): void {
@@ -29,12 +29,12 @@
 
     const init = { method: "PATCH", headers: { "If-Match": props.dataETag }, body: body };
 
-    const input = `spaces/${props.dataSpaceId}/notes/${props.dataPostId}`;
+    const input = `spaces/${props.dataSpaceId}/notes/${props.dataNoteId}`;
 
     const statusActions: StatusActions = {
         204: (response?: Response) => {
           emit('update-etag', response?.headers.get("ETag") ?? null);
-          emit('update-post-status', status);
+          emit('update-note-status', status);
           emit('update-page-status', 'Ready');
         }
     }
@@ -49,16 +49,16 @@
       <h2>Status</h2>
     </header>
 
-    <p>This article is currently {{ dataPost.status.toLowerCase() }}.</p>
+    <p>This article is currently {{ dataNote.status.toLowerCase() }}.</p>
 
-    <p v-if="dataPost.status === 'Published'">Republish to update with any changes.</p>
+    <p v-if="dataNote.status === 'Published'">Republish to update with any changes.</p>
 
     <menu role="toolbar">
       <li>
-        <button type="button" @click="() => setStatus('Published')" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">{{ dataPost.status === 'Published' ? 'Republish' : 'Publish' }}</button>
+        <button type="button" @click="() => setStatus('Published')" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">{{ dataNote.status === 'Published' ? 'Republish' : 'Publish' }}</button>
       </li>
       <li>
-        <button type="button" @click="() => setStatus('Draft')" v-if="dataPost.status !== 'Draft'" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">Unpublish</button>
+        <button type="button" @click="() => setStatus('Draft')" v-if="dataNote.status !== 'Draft'" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">Unpublish</button>
       </li>
     </menu>
   </section>
