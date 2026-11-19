@@ -145,30 +145,26 @@
 
     <template v-if="note.data !== undefined">
       <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
-        <fieldset>
-          <legend class="visually-hidden">Edit Note</legend>
+        <InputTextArea
+          v-model="inputBody"
+          label="Content"
+          name="body"
+          id="body"
+          :maxLength="512"
+          :error="getError('body')"
+          :isArticle="true"
+          help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
-          <InputTextArea
-            v-model="inputBody"
-            label="Content"
-            name="body"
-            id="body"
-            :maxLength="512"
-            :error="getError('body')"
-            :isArticle="true"
-            help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
+        <VisibilitySelect v-model="inputVisibility" />
 
-          <VisibilitySelect v-model="inputVisibility" />
-
-          <InputText
-            v-model="inputNotePublishedAtNz"
-            type="datetime-local"
-            label="Date & Time (NZ)"
-            name="publishedAtNz"
-            id="publishedAtNz"
-            help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
-            :error="getError('publishedAtNz')" />
-        </fieldset>
+        <InputText
+          v-model="inputNotePublishedAtNz"
+          type="datetime-local"
+          label="Date & Time (NZ)"
+          name="publishedAtNz"
+          id="publishedAtNz"
+          help="Leave blank to publish immediately. Notes set in the future will not be visible until that scheduled time."
+          :error="getError('publishedAtNz')" />
 
         <SubmitButton
           :busy="dataStatus === 'pending'"
