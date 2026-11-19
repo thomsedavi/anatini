@@ -58,6 +58,8 @@ namespace Anatini.Server.Events
         {
             var eventOccurrencesQuery = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.ParentId == @event.Id);
 
+            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
+
             if (IsAuthenticated)
             {
                 eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);

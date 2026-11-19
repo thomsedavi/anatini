@@ -27,7 +27,8 @@ namespace Anatini.Server.Events
                 .AsNoTracking()
                 .Where(eventOccurrence => !eventOccurrence.PublishedAtUtc.HasValue || eventOccurrence.PublishedAtUtc.Value < utcNow)
                 .Include(eventOccurrence => eventOccurrence.User).ThenInclude(user => user!.Images)
-                .Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images);
+                .Include(eventOccurrence => eventOccurrence.Space).ThenInclude(space => space!.Images)
+                .Include(eventOccurrence => eventOccurrence.Parent);
 
             if (TryGetUserId(out Guid sourceUserId))
             {

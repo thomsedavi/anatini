@@ -14,8 +14,6 @@ namespace Anatini.Server.Context.Entities.BuilderExtensions
             eventOccurrenceBuilder.Property(eventOccurrence => eventOccurrence.EndsAtUtc).Has(order: 2);
 
             eventOccurrenceBuilder.HasIndex(eventOccurrence => new { eventOccurrence.StartsAtUtc, eventOccurrence.EndsAtUtc });
-
-            eventOccurrenceBuilder.Navigation(eventOccurrence => eventOccurrence.Parent).AutoInclude();
         }
     }
 }

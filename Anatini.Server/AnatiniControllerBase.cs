@@ -305,6 +305,8 @@ namespace Anatini.Server
                 eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
             }
 
+            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
+
             if (TryGetUserId(out Guid sourceUserId))
             {
                 eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
@@ -359,6 +361,8 @@ namespace Anatini.Server
             {
                 eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
             }
+
+            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
