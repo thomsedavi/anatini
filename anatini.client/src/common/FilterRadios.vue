@@ -43,8 +43,8 @@
       v-model="model.dismissed"
       :radios="[
         { name: 'dismissed', value: 'all', id: 'dismissedAll', label: 'No filter' },
-        { name: 'dismissed', value: 'only', id: 'dismissedOnly', label: 'Show only dismissed' },
-        { name: 'dismissed', value: 'hide', id: 'dismissedHide', label: 'Hide dismissed' }
+        { name: 'dismissed', value: 'show', id: 'dismissedShow', label: 'Show dismissed' },
+        { name: 'dismissed', value: 'only', id: 'dismissedOnly', label: 'Show only dismissed' }
       ]"
       :legend="`Dismissed ${contentType} Options`" />
   </details>

@@ -57,7 +57,7 @@ namespace Anatini.Server.Events
                 {
                     eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
-                else if (query.Dismissed == "hide")
+                else if (query.Dismissed != "show")
                 {
                     eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => !eventOccurrence.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }

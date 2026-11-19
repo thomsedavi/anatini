@@ -88,7 +88,7 @@ namespace Anatini.Server.Notes
                 {
                     notesQuery = notesQuery.Where(note => note.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
-                else if (query.Dismissed == "hide")
+                else if (query.Dismissed != "show")
                 {
                     notesQuery = notesQuery.Where(note => !note.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }

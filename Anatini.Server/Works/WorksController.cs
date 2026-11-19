@@ -51,7 +51,7 @@ namespace Anatini.Server.Works
                 {
                     worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
-                else if (query.Dismissed == "hide")
+                else if (query.Dismissed != "show")
                 {
                     worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
                 }
