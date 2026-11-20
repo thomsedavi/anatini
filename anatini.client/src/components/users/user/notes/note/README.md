@@ -18,7 +18,7 @@
   - logged in as other user
 - Can view draft note when logged in as user
 - Cannot view draft note when
-  - not logged in
+  - not logged in ✓
   - logged in as other user
 - Can view archived note when logged in as user
 - Cannot view archived note when

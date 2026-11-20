@@ -47,14 +47,14 @@
             };
           })
           .catch(() => {
-            user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
+            user.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
           });
       },
       404: () => {
-        user.value = { error: { heading: '404 Not Found', body: 'User not found' }};
+        user.value = { error: { status: 404, heading: '404 Not Found', body: 'User not found' }};
       },
       500: () => {
-        user.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
+        user.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
       }
     };
 

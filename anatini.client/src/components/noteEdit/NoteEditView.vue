@@ -54,7 +54,7 @@
             });
           })
           .catch(() => {
-            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            note.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       }
     }

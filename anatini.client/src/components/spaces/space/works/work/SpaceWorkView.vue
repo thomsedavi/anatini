@@ -29,11 +29,11 @@
             work.value = { data: value };
           })
           .catch(() => {
-            work.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your work, please reload the page' }};
+            work.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your work, please reload the page' }};
           });
       },
       404: () => {
-        work.value = { error: { heading: '404 Not Found', body: 'Work not found' }};
+        work.value = { error: { status: 404, heading: '404 Not Found', body: 'Work not found' }};
       }
     }
 

@@ -25,11 +25,11 @@
             });
           })
           .catch(() => {
-            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            note.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       },
       404: () => {
-        note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};
+        note.value = { error: { status: 404, heading: '404 Not Found', body: 'Note not found' }};
       }
     }
 

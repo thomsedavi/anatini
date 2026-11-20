@@ -29,11 +29,11 @@
             note.value = { data: value };
           })
           .catch(() => {
-            note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            note.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       },
       404: () => {
-        note.value = { error: { heading: '404 Not Found', body: 'Note not found' }};
+        note.value = { error: { status: 404, heading: '404 Not Found', body: 'Note not found' }};
       }
     }
 
@@ -52,6 +52,11 @@
     </nav>
 
     <article v-if="note.data !== undefined" :data-status="note.data.status.toLowerCase()" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    </article>
+
+    <article v-if="note.error !== undefined" :data-status="note.error.status">
+      <h2>{{ note.error.heading }}</h2>
+      <p>{{ note.error.body }}</p>
     </article>
   </section>
 </template>

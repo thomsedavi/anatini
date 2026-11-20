@@ -41,20 +41,20 @@
             inputName.value = value.name;
           })
           .catch(() => {
-            space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
+            space.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
           });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/notes/create` } });
       },
       403: () => {
-        space.value = { error: { heading: 'Unknown Error', body: 'No access to space' }};
+        space.value = { error: { status: 403, heading: 'Unknown Error', body: 'No access to space' }};
       },
       404: () => {
-        space.value = { error: { heading: '404 Not Found', body: 'Space not found' }};
+        space.value = { error: { status: 404, heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        space.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+        space.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
