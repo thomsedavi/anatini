@@ -67,7 +67,7 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/api/posts': {
+            '^/api/notes': {
                 target,
                 secure: false
             },

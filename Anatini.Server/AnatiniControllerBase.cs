@@ -228,6 +228,15 @@ namespace Anatini.Server
                 contentsQueryable = contentsQueryable.AsNoTracking();
             }
 
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                contentsQueryable = contentsQueryable.Include(content => content.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+            }
+            else
+            {
+                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published);
+            }
+
             if (Guid.TryParse(contentHandle, out Guid contentId))
             {
                 contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Id == contentId);
@@ -266,7 +275,11 @@ namespace Anatini.Server
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                contentsQueryable = contentsQueryable.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                contentsQueryable = contentsQueryable.Include(content => content.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+            }
+            else
+            {
+                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published);
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))
@@ -310,6 +323,10 @@ namespace Anatini.Server
             if (TryGetUserId(out Guid sourceUserId))
             {
                 eventOccurrencesQueryable = eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+            }
+            else
+            {
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => eventOccurrence.Status == Status.Published);
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))
@@ -367,6 +384,10 @@ namespace Anatini.Server
             if (TryGetUserId(out Guid sourceUserId))
             {
                 eventOccurrencesQueryable = eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+            }
+            else
+            {
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => eventOccurrence.Status == Status.Published);
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))

@@ -27,7 +27,7 @@
   const inputTitle = ref<string>('');
   const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
-  const inputStatus = ref<ContentStatus>('Draft');
+  const inputStatus = ref<ContentStatus>('Published');
   const inputHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
