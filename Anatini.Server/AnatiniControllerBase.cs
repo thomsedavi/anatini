@@ -276,6 +276,8 @@ namespace Anatini.Server
             if (TryGetUserId(out Guid sourceUserId))
             {
                 contentsQueryable = contentsQueryable.Include(content => content.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+
+                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published || content.UserId == sourceUserId);
             }
             else
             {
@@ -323,6 +325,8 @@ namespace Anatini.Server
             if (TryGetUserId(out Guid sourceUserId))
             {
                 eventOccurrencesQueryable = eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => eventOccurrence.Status == Status.Published || eventOccurrence.UserId == sourceUserId);
             }
             else
             {

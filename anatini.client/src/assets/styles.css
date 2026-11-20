@@ -540,7 +540,8 @@ section[role="tabpanel"] {
     flex-direction: column;
     gap: 0.75rem;
 
-    &[data-status="draft"] {
+    &[data-status="draft"],
+    &[data-status="archived"] {
       background-image: repeating-linear-gradient(
         -45deg,
         transparent 0 20px,

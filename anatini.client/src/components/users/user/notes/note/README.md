@@ -15,15 +15,15 @@
 - Can view public note when
   - not logged in ✓
   - logged in as owner ✓
-  - logged in as other user
+  - logged in as other user ✓
 - Can view draft note when logged in as user ✓
 - Cannot view draft note when
   - not logged in ✓
-  - logged in as other user
-- Can view archived note when logged in as user
+  - logged in as other user ✓
+- Can view archived note when logged in as user ✓
 - Cannot view archived note when
-  - not logged in
-  - logged in as other user
+  - not logged in ✓
+  - logged in as other user ✓
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error
 - Draft is visually distinct ✓
