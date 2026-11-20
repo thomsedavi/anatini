@@ -45,14 +45,14 @@
             });
           })
           .catch(() => {
-            user.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+            user.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
           });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: '/account' } });
       },
       500: () => {
-        user.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+        user.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 

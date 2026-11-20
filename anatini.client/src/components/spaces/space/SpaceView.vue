@@ -44,14 +44,14 @@
             };
           })
           .catch(() => {
-            space.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching this space, please reload the page' }};
+            space.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this space, please reload the page' }};
           });
       },
       404: () => {
-        space.value = { error: { status: 404, heading: '404 Not Found', body: 'Space not found' }};
+        space.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        space.value = { error: { status: 500, heading: 'Unknown Error', body: 'There was a problem fetching this space, please reload the page' }};
+        space.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this space, please reload the page' }};
       }
     };
 
