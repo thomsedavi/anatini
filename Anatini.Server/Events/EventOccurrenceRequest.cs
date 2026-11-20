@@ -1,11 +1,8 @@
-﻿namespace Anatini.Server.Events
+﻿using Anatini.Server.Utils;
+
+namespace Anatini.Server.Events
 {
-    public class EventOccurrencesQuery
+    public class EventOccurrencesQuery : ContentsQuery
     {
-        public string? Bookmarked { get; set; }
-        public string? Starred { get; set; }
-        public string? Dismissed { get; set; }
-        public string? Followed { get; set; }
-        public string? Collected { get; set; }
     }
 }

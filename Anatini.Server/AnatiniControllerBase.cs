@@ -39,19 +39,19 @@ namespace Anatini.Server
         [NonAction]
         public async Task<IActionResult> UsingAccountAsync(Func<ApplicationUser, Task<IActionResult>> accountFunction, ContextSettings? settings = null)
         {
-            var usersQuery = context.Users.AsQueryable();
+            var usersQueryable = context.Users.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                usersQuery = usersQuery.AsNoTracking();
+                usersQueryable = usersQueryable.AsNoTracking();
             }
 
-            usersQuery = usersQuery.Include(user => user.Images);
-            usersQuery = usersQuery.Include(user => user.SpaceRelationships.Where(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned)).ThenInclude(userSpaceRelationship => userSpaceRelationship.TargetSpace);
+            usersQueryable = usersQueryable.Include(user => user.Images);
+            usersQueryable = usersQueryable.Include(user => user.SpaceRelationships.Where(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned)).ThenInclude(userSpaceRelationship => userSpaceRelationship.TargetSpace);
 
             if (TryGetUserId(out Guid userId))
             {
-                var user = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
+                var user = await usersQueryable.FirstOrDefaultAsync(user => user.Id == userId);
 
                 if (user == null)
                 {
@@ -69,35 +69,35 @@ namespace Anatini.Server
         {
             ApplicationUser? userResult;
 
-            var usersQuery = context.Users.AsQueryable();
+            var usersQueryable = context.Users.AsQueryable();
 
             if (settings != null)
             {
                 if (settings.AsNoTracking)
                 {
-                    usersQuery = usersQuery.AsNoTracking();
+                    usersQueryable = usersQueryable.AsNoTracking();
                 }
 
                 if (settings.IncludeImages)
                 {
-                    usersQuery = usersQuery.Include((user) => user.Images);
+                    usersQueryable = usersQueryable.Include((user) => user.Images);
                 }
             }
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                usersQuery = usersQuery.Include(user => user.ReceivedUserRelationships.Where(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId));
+                usersQueryable = usersQueryable.Include(user => user.ReceivedUserRelationships.Where(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(userHandle, out Guid userId))
             {
-                userResult = await usersQuery.FirstOrDefaultAsync(user => user.Id == userId);
+                userResult = await usersQueryable.FirstOrDefaultAsync(user => user.Id == userId);
             }
             else
             {
                 var normalizedUserHandle = NormalizeHandle(userHandle);
 
-                userResult = await usersQuery.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
+                userResult = await usersQueryable.FirstOrDefaultAsync(user => user.Handle == normalizedUserHandle || user.Handles.Any(handle => handle.Handle == normalizedUserHandle));
             }
 
             if (userResult == null)
@@ -128,25 +128,25 @@ namespace Anatini.Server
         {
             Space? spaceResult;
 
-            var spacesQuery = context.Spaces.AsQueryable();
+            var spacesQueryable = context.Spaces.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                spacesQuery = spacesQuery.AsNoTracking();
+                spacesQueryable = spacesQueryable.AsNoTracking();
             }
 
-            spacesQuery = spacesQuery.Include(space => space.Images);
-            spacesQuery = spacesQuery.Include(space => space.Settings);
+            spacesQueryable = spacesQueryable.Include(space => space.Images);
+            spacesQueryable = spacesQueryable.Include(space => space.Settings);
 
             if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {
-                spaceResult = await spacesQuery.FirstOrDefaultAsync(space => space.Id == spaceId);
+                spaceResult = await spacesQueryable.FirstOrDefaultAsync(space => space.Id == spaceId);
             }
             else
             {
                 var normalizedSpaceHandle = NormalizeHandle(spaceHandle);
 
-                spaceResult = await spacesQuery.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
+                spaceResult = await spacesQueryable.FirstOrDefaultAsync(space => space.Handle == normalizedSpaceHandle || space.Handles.Any(handle => handle.Handle == normalizedSpaceHandle));
             }
 
             if (spaceResult == null)
@@ -177,17 +177,17 @@ namespace Anatini.Server
         {
             T? contentResult;
 
-            var contentsQuery = context.Contents.OfType<T>();
+            var contentsQueryable = context.Contents.OfType<T>();
 
             if (settings?.AsNoTracking ?? true)
             {
-                contentsQuery = contentsQuery.AsNoTracking();
+                contentsQueryable = contentsQueryable.AsNoTracking();
             }
 
-            contentsQuery = contentsQuery.Include(content => content.User);
-            contentsQuery = contentsQuery.Include(content => content.Space);
+            contentsQueryable = contentsQueryable.Include(content => content.User);
+            contentsQueryable = contentsQueryable.Include(content => content.Space);
 
-            contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.Id == contentId);
+            contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.Id == contentId);
 
             if (contentResult == null)
             {
@@ -221,22 +221,22 @@ namespace Anatini.Server
         {
             T? contentResult;
 
-            var contentsQuery = context.Contents.OfType<T>();
+            var contentsQueryable = context.Contents.OfType<T>();
 
             if (settings?.AsNoTracking ?? true)
             {
-                contentsQuery = contentsQuery.AsNoTracking();
+                contentsQueryable = contentsQueryable.AsNoTracking();
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))
             {
-                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Id == contentId);
+                contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Id == contentId);
             }
             else
             {
                 var normalizedContentHandle = NormalizeHandle(contentHandle);
 
-                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Handle == normalizedContentHandle);
+                contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.SpaceId == space.Id && content.Handle == normalizedContentHandle);
             }
 
             if (contentResult == null)
@@ -257,27 +257,27 @@ namespace Anatini.Server
         {
             T? contentResult;
 
-            var contentsQuery = context.Contents.OfType<T>();
+            var contentsQueryable = context.Contents.OfType<T>();
 
             if (settings?.AsNoTracking ?? true)
             {
-                contentsQuery = contentsQuery.AsNoTracking();
+                contentsQueryable = contentsQueryable.AsNoTracking();
             }
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                contentsQuery = contentsQuery.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                contentsQueryable = contentsQueryable.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))
             {
-                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Id == contentId);
+                contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Id == contentId);
             }
             else
             {
                 var normalizedContentHandle = NormalizeHandle(contentHandle);
 
-                contentResult = await contentsQuery.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Handle == normalizedContentHandle);
+                contentResult = await contentsQueryable.FirstOrDefaultAsync(content => content.UserId == user.Id && content.Handle == normalizedContentHandle);
             }
 
             if (contentResult == null)
@@ -298,18 +298,18 @@ namespace Anatini.Server
         {
             EventOccurrence? eventOccurrenceResult;
 
-            var eventOccurrencesQuery = context.EventOccurrences.AsQueryable();
+            var eventOccurrencesQueryable = context.EventOccurrences.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
+                eventOccurrencesQueryable = eventOccurrencesQueryable.AsNoTracking();
             }
 
-            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
+            eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.Parent);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))
@@ -328,13 +328,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
+                eventOccurrenceResult = await eventOccurrencesQueryable.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
                 var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
+                eventOccurrenceResult = await eventOccurrencesQueryable.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.UserId == user.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
             if (eventOccurrenceResult == null)
@@ -355,18 +355,18 @@ namespace Anatini.Server
         {
             EventOccurrence? eventOccurrenceResult;
 
-            var eventOccurrencesQuery = context.EventOccurrences.AsQueryable();
+            var eventOccurrencesQueryable = context.EventOccurrences.AsQueryable();
 
             if (settings?.AsNoTracking ?? true)
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.AsNoTracking();
+                eventOccurrencesQueryable = eventOccurrencesQueryable.AsNoTracking();
             }
 
-            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
+            eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.Parent);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
             }
 
             if (!Guid.TryParse(eventHandle, out Guid eventId))
@@ -385,13 +385,13 @@ namespace Anatini.Server
 
             if (Guid.TryParse(eventOccurrenceHandle, out Guid eventOccurrenceId))
             {
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
+                eventOccurrenceResult = await eventOccurrencesQueryable.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Id == eventOccurrenceId);
             }
             else
             {
                 var normalizedEventOccurrenceHandle = NormalizeHandle(eventOccurrenceHandle);
 
-                eventOccurrenceResult = await eventOccurrencesQuery.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
+                eventOccurrenceResult = await eventOccurrencesQueryable.FirstOrDefaultAsync(eventOccurrence => eventOccurrence.SpaceId == space.Id && eventOccurrence.ParentId == eventId && eventOccurrence.Handle == normalizedEventOccurrenceHandle);
             }
 
             if (eventOccurrenceResult == null)
@@ -526,6 +526,55 @@ namespace Anatini.Server
             else
             {
                 return Problem();
+            }
+        }
+
+        [NonAction]
+        public void ApplyQueryFilters(IQueryable<Content> contentsQueryable, ContentsQuery contentsQuery, Guid sourceUserId)
+        {
+            if (contentsQuery.Bookmarked == "only")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
+            }
+            else if (contentsQuery.Bookmarked == "hide")
+            {
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
+            }
+
+            if (contentsQuery.Starred == "only")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+            }
+            else if (contentsQuery.Starred == "hide")
+            {
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+            }
+
+            if (contentsQuery.Dismissed == "only")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+            }
+            else if (contentsQuery.Dismissed != "show")
+            {
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+            }
+
+            if (contentsQuery.Collected == "only")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
+            }
+            else if (contentsQuery.Collected == "hide")
+            {
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
+            }
+
+            if (contentsQuery.Followed == "only")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
+            }
+            else if (contentsQuery.Followed == "hide")
+            {
+                contentsQueryable = contentsQueryable.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId && userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed));
             }
         }
     }

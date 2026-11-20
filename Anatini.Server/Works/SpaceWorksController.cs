@@ -90,76 +90,33 @@ namespace Anatini.Server.Works
         });
 
         [HttpGet]
-        public async Task<IActionResult> GetWorks(string spaceHandle, [FromQuery] WorksQuery query) => await UsingSpaceAsync(spaceHandle, async (workSpace) =>
+        public async Task<IActionResult> GetWorks(string spaceHandle, [FromQuery] WorksQuery worksQuery) => await UsingSpaceAsync(spaceHandle, async (workSpace) =>
         {
             var utcNow = DateTime.UtcNow;
 
-            var worksQuery = Context.Works.Where(work => work.SpaceId == workSpace.Id);
+            var worksQueryable = Context.Works.Where(work => work.SpaceId == workSpace.Id);
 
-            worksQuery = worksQuery.AsNoTracking().Where(work => !work.PublishedAtUtc.HasValue || work.PublishedAtUtc.Value < utcNow);
+            worksQueryable = worksQueryable.AsNoTracking().Where(work => !work.PublishedAtUtc.HasValue || work.PublishedAtUtc.Value < utcNow);
 
             if (TryGetUserId(out Guid sourceUserId))
             {
-                worksQuery = worksQuery.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
+                worksQueryable = worksQueryable.Include(work => work.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
-                worksQuery = worksQuery.Where(work => (work.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                worksQueryable = worksQueryable.Where(work => (work.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
 
-                if (query.Bookmarked == "only")
-                {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
-                }
-                else if (query.Bookmarked == "hide")
-                {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
-                }
-
-                if (query.Starred == "only")
-                {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
-                }
-                else if (query.Starred == "hide")
-                {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
-                }
-
-                if (query.Dismissed == "only")
-                {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
-                }
-                else if (query.Dismissed != "show")
-                {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
-                }
-
-                if (query.Collected == "only")
-                {
-                    worksQuery = worksQuery.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
-                }
-                else if (query.Collected == "hide")
-                {
-                    worksQuery = worksQuery.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsCollected));
-                }
-
-                if (query.Followed == "only")
-                {
-                    worksQuery = worksQuery.Where(work => work.User != null && work.User.ReceivedUserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserUserRelationshipLabel.IsFollowed));
-                }
-                else if (query.Followed == "hide")
-                {
-                    worksQuery = worksQuery.Where(work => work.User != null && !work.User.ReceivedUserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserUserRelationshipLabel.IsFollowed));
-                }
+                ApplyQueryFilters(worksQueryable, worksQuery, sourceUserId);
             }
             else
             {
-                worksQuery = worksQuery.Where(work => work.Visibility == Visibility.Public);
+                worksQueryable = worksQueryable.Where(work => work.Visibility == Visibility.Public);
             }
 
-            if (query.LastTitle != null && query.LastWorkId.HasValue)
+            if (worksQuery.LastTitle != null && worksQuery.LastWorkId.HasValue)
             {
-                worksQuery = worksQuery.Where(work => string.Compare(work.Title, query.LastTitle) > 0 || (work.Title == query.LastTitle && work.Id > query.LastWorkId.Value));
+                worksQueryable = worksQueryable.Where(work => string.Compare(work.Title, worksQuery.LastTitle) > 0 || (work.Title == worksQuery.LastTitle && work.Id > worksQuery.LastWorkId.Value));
             }
 
-            var works = await worksQuery.OrderBy(work => work.Title).ThenBy(work => work.Id).Take(query.PageSize ?? 10).ToListAsync();
+            var works = await worksQueryable.OrderBy(work => work.Title).ThenBy(work => work.Id).Take(worksQuery.PageSize ?? 10).ToListAsync();
 
             if (works == null)
             {

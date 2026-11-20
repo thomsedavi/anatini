@@ -29,15 +29,10 @@ namespace Anatini.Server.Notes
         public DateTime? PublishedAtNz { get; set; }
     }
 
-    public class NotesQuery
+    public class NotesQuery : ContentsQuery
     {
         public DateTime? LastPublishedAtNz { get; set; }
         public Guid? LastNoteId { get; set; }
         public int? PageSize { get; set; }
-        public string? Bookmarked { get; set; }
-        public string? Starred { get; set; }
-        public string? Dismissed { get; set; }
-        public string? Followed { get; set; }
-        public string? Collected { get; set; }
     }
 }

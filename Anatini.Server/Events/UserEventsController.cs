@@ -56,25 +56,25 @@ namespace Anatini.Server.Events
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEventOccurrences(string userHandle, string eventHandle, DateTime? lastStartsAtUtc, int pageSize = 20) => await UsingUserContentAsync<Event>(userHandle, eventHandle, async (@event, eventOccurrenceUser) =>
         {
-            var eventOccurrencesQuery = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.ParentId == @event.Id);
+            var eventOccurrencesQueryable = Context.EventOccurrences.Where(eventOccurrence => eventOccurrence.ParentId == @event.Id);
 
-            eventOccurrencesQuery.Include(eventOccurrence => eventOccurrence.Parent);
+            eventOccurrencesQueryable.Include(eventOccurrence => eventOccurrence.Parent);
 
             if (IsAuthenticated)
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => (eventOccurrence.Visibility & (Visibility.Public | Visibility.Protected)) != 0);
             }
             else
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => eventOccurrence.Visibility == Visibility.Public);
             }
 
             if (lastStartsAtUtc.HasValue)
             {
-                eventOccurrencesQuery = eventOccurrencesQuery.Where(eventOccurrence => eventOccurrence.StartsAtUtc < lastStartsAtUtc.Value);
+                eventOccurrencesQueryable = eventOccurrencesQueryable.Where(eventOccurrence => eventOccurrence.StartsAtUtc < lastStartsAtUtc.Value);
             }
 
-            var eventOccurrences = await eventOccurrencesQuery.OrderBy(eventOccurrence => eventOccurrence.StartsAtUtc).Take(pageSize).ToListAsync();
+            var eventOccurrences = await eventOccurrencesQueryable.OrderBy(eventOccurrence => eventOccurrence.StartsAtUtc).Take(pageSize).ToListAsync();
 
             if (eventOccurrences == null)
             {

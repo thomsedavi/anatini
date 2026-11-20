@@ -29,15 +29,10 @@ namespace Anatini.Server.Works
         public string? Body { get; set; }
     }
 
-    public class WorksQuery
+    public class WorksQuery : ContentsQuery
     {
         public string? LastTitle { get; set; }
         public Guid? LastWorkId { get; set; }
         public int? PageSize { get; set; }
-        public string? Bookmarked { get; set; }
-        public string? Starred { get; set; }
-        public string? Dismissed { get; set; }
-        public string? Followed { get; set; }
-        public string? Collected { get; set; }
     }
 }

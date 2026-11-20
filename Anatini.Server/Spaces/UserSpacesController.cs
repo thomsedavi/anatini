@@ -40,13 +40,13 @@ namespace Anatini.Server.Spaces
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetSpaces(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
-            var spacesQuery = Context.Spaces.AsQueryable();
+            var spacesQueryable = Context.Spaces.AsQueryable();
 
-            spacesQuery = spacesQuery.AsNoTracking();
+            spacesQueryable = spacesQueryable.AsNoTracking();
 
-            spacesQuery = spacesQuery.Where(space => space.UserRelationships.Any(userSpaceRelationship => userSpaceRelationship.SourceUserId == user.Id && userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned));
+            spacesQueryable = spacesQueryable.Where(space => space.UserRelationships.Any(userSpaceRelationship => userSpaceRelationship.SourceUserId == user.Id && userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned));
 
-            var spaces = await spacesQuery.ToListAsync();
+            var spaces = await spacesQueryable.ToListAsync();
 
             if (spaces == null)
             {
