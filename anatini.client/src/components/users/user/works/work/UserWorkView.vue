@@ -51,7 +51,7 @@
       </ol>
     </nav>
 
-    <article v-if="work.data !== undefined" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
+    <article v-if="work.data !== undefined" :data-status="work.data.status.toLowerCase()" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
     </article>
   </section>
 </template>

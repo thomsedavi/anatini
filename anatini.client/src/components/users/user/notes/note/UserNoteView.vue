@@ -46,12 +46,12 @@
     <nav aria-label="Breadcrumb">
       <ol role="list">
         <li>
-          <RouterLink :to="{ name: 'UserNotes', params: { userId: dataUserHandle } }"><span aria-hidden="true">&larr;</span> Back to all works by {{ dataUserName }}</RouterLink>
+          <RouterLink :to="{ name: 'UserNotes', params: { userId: dataUserHandle } }"><span aria-hidden="true">&larr;</span> Back to all notes by {{ dataUserName }}</RouterLink>
         </li>
       </ol>
     </nav>
 
-    <article v-if="note.data !== undefined" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    <article v-if="note.data !== undefined" :data-status="note.data.status.toLowerCase()" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
     </article>
   </section>
 </template>

@@ -125,7 +125,7 @@
 
         <ul :aria-label="`Events starting ${formatDate(eventOccurrenceGroup.date)}`">
           <li v-for="eventOccurrence in eventOccurrenceGroup.eventOccurrences" :key="'eventOccurrence' + eventOccurrence.id">
-            <article v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, 'id')))">
+            <article :data-status="eventOccurrence.status.toLowerCase()" v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, 'id')))">
             </article>
           </li>
         </ul>

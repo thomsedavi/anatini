@@ -127,7 +127,7 @@ export type Content = {
   handle: string;
   body: string;
   visibility: Visibility;
-  status: Status;
+  status: ContentStatus;
   isStarred: boolean | null;
   isBookmarked: boolean | null;
   isDismissed: boolean | null;

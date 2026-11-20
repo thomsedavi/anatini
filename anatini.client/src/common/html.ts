@@ -109,7 +109,13 @@ export function getNoteHtml(note: Note, showOwner: boolean): string {
     result += getOwnerHtml(note);
   }
 
-  result += `<p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p></header>`;
+  result += `<p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p>`;
+
+  if (note.status === 'Draft') {
+    result += '<p>Draft</p>';
+  }
+
+  result += `</header>`;
 
   result += note.body;
 

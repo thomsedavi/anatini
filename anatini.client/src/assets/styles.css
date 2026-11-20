@@ -539,6 +539,14 @@ section[role="tabpanel"] {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+
+    &[data-status="draft"] {
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0 20px,
+        var(--bg-color) 20px 40px
+      );
+    }
   }
 
   > ul,

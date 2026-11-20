@@ -44,7 +44,7 @@
 
     <ul role="list" v-if="dataNotes !== null">
       <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article v-html="`${note.body}<footer><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time><menu role='toolbar'><li><a href='/spaces/${dataSpaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article :data-status="note.status.toLowerCase()" v-html="`${note.body}<footer><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time><menu role='toolbar'><li><a href='/spaces/${dataSpaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
         </article>
       </li>
     </ul>

@@ -85,7 +85,7 @@
 
     <ul role="list" v-if="dataNotes !== null">
       <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article v-html="getNoteHtml(note, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note, getNoteAddress(note, 'id')))">
+        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note, getNoteAddress(note, 'id')))">
         </article>
       </li>
     </ul>
