@@ -4,6 +4,32 @@ import { store } from "./store";
 import type { Content, EventOccurrence, Note, Space, StatusActions, Work } from "./types";
 import { escapeHtml } from "./utils";
 
+function getOwnerHtml(content: Content): string {
+  let result = '';
+
+  result += '<address role="presentation">';
+
+  if (content.userHeader !== null) {
+    result += `<a rel="author" href="/users/${content.userHeader.handle}">`;
+    if (content.userHeader.iconImage !== null) {
+      result += `<img src="${content.userHeader.iconImage.uri}" alt="">`;
+    }
+    result += content.userHeader.name;
+    result += `</a>`;
+  } else if (content.spaceHeader !== null) {
+    result += `<a rel="author" href="/spaces/${content.spaceHeader.handle}">`;
+    if (content.spaceHeader.iconImage !== null) {
+      result += `<img src="${content.spaceHeader.iconImage.uri}" alt="">`;
+    }
+    result += content.spaceHeader.name;
+    result += `</a>`;
+  }
+
+  result += '</address>';
+
+  return result;
+}
+
 function getFooterHtml(content: Content, contentType: string): string {
   let result = '';
 
@@ -74,10 +100,16 @@ export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string
   return result;
 }
 
-export function getNoteHtml(note: Note): string {
+export function getNoteHtml(note: Note, showOwner: boolean): string {
   let result = '';
 
-  result += `<header><p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p></header>`;
+  result += `<header>`;
+
+  if (showOwner) {
+    result += getOwnerHtml(note);
+  }
+
+  result += `<p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p></header>`;
 
   result += note.body;
 
@@ -126,25 +158,7 @@ export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3'
   result += `</${heading}>`;
 
   if (showOwner) {
-    result += '<address role="presentation">';
-
-    if (work.userHeader !== null) {
-      result += `<a rel="author" href="/users/${work.userHeader.handle}">`;
-      if (work.userHeader.iconImage !== null) {
-        result += `<img src="${work.userHeader.iconImage.uri}" alt="">`;
-      }
-      result += work.userHeader.name;
-      result += `</a>`;
-    } else if (work.spaceHeader !== null) {
-      result += `<a rel="author" href="/spaces/${work.spaceHeader.handle}">`;
-      if (work.spaceHeader.iconImage !== null) {
-        result += `<img src="${work.spaceHeader.iconImage.uri}" alt="">`;
-      }
-      result += work.spaceHeader.name;
-      result += `</a>`;
-    }
-
-    result += '</address>';
+    result += getOwnerHtml(work);
   }
 
   if (work.publishedAtNz !== null) {

@@ -1,11 +1,19 @@
 <script setup lang="ts">
-  import type { APIResponse, Note, StatusActions } from '@/common/types';
-  import { nextTick, ref, watch } from 'vue';
-  import { parseParams, type Params } from '@/common/utils';
-  import { useRoute } from 'vue-router';
+  import { ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
+  import { buttonAction, getNoteHtml } from '@/common/html';
+  import type { APIResponse, Note, StatusActions } from '@/common/types';
+  import { getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
+  const router = useRouter();
+
+  defineProps<{
+    dataUserId: string,
+    dataUserHandle: string,
+    dataUserName: string,
+  }>();
 
   const note = ref<APIResponse<Note>>({ fetching: true });
 
@@ -19,10 +27,6 @@
         response?.json()
           .then((value: Note) => {
             note.value = { data: value };
-
-            nextTick(() => {
-              document.querySelector('h1')?.focus();
-            });
           })
           .catch(() => {
             note.value = { error: { heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
@@ -35,20 +39,19 @@
 
     apiFetch({ input, statusActions });
   }
-
-  function getMainHtml(): string {
-    if (note.value.fetching === true) {
-      return '<p>Loading...</p>';
-    } else if (note.value.error !== undefined) {
-      return `<h1>${ note.value.error.body }</h1>`;
-    } else if (note.value.data !== undefined) {
-      return `<article>${note.value.data.body}</article>`;
-    } else {
-      return '<h1>Unknown Error</h1>';
-    }
-  }
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="note.fetching === true" v-html="getMainHtml()"></main>
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" tabindex="0">
+    <nav aria-label="Breadcrumb">
+      <ol role="list">
+        <li>
+          <RouterLink :to="{ name: 'UserNotes', params: { userId: dataUserHandle } }"><span aria-hidden="true">&larr;</span> Back to all works by {{ dataUserName }}</RouterLink>
+        </li>
+      </ol>
+    </nav>
+
+    <article v-if="note.data !== undefined" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    </article>
+  </section>
 </template>
