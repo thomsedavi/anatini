@@ -78,7 +78,7 @@ namespace Anatini.Server.Notes
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var note = Context.AddSpaceNoteAsync(createNote.Title, validationResult.SanitizedHtml, createNote.Visibility, noteSpace.Id, Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createNote.Handle));
+            var note = Context.AddSpaceNoteAsync(validationResult.SanitizedHtml, createNote.Visibility, noteSpace.Id, createNote.Status ?? Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createNote.Handle));
 
             await Context.SaveChangesAsync();
 

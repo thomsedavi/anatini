@@ -5,7 +5,7 @@ namespace Anatini.Server.Context.Entities.Extensions
 {
     public static class NoteContextExtensions
     {
-        public static Note AddUserNoteAsync(this ApplicationDbContext context, string? title, string body, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Note AddUserNoteAsync(this ApplicationDbContext context, string body, Visibility visibility, Guid userId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var noteId = Guid.CreateVersion7();
         
@@ -24,7 +24,6 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = publishedatUtc.Truncate(),
                 TimeZoneId = "Pacific/Auckland",
-                Title = title,
                 Body = body,
                 Visibility = visibility,
                 Status = status,
@@ -38,7 +37,7 @@ namespace Anatini.Server.Context.Entities.Extensions
             return note;
         }
         
-        public static Note AddSpaceNoteAsync(this ApplicationDbContext context, string? title, string body, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
+        public static Note AddSpaceNoteAsync(this ApplicationDbContext context, string body, Visibility visibility, Guid spaceId, Status status, DateTime utcNow, string? handle = null, DateTime? publishedAtNZ = null)
         {
             var noteId = Guid.CreateVersion7();
         
@@ -57,7 +56,6 @@ namespace Anatini.Server.Context.Entities.Extensions
                 Handle = handle ?? noteId.ToString(),
                 PublishedAtUtc = publishedatUtc.Truncate(),
                 TimeZoneId = "Pacific/Auckland",
-                Title = title,
                 Body = body,
                 Visibility = visibility,
                 Status = status,
