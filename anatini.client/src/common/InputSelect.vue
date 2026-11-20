@@ -26,7 +26,7 @@
     :aria-errormessage="error ? `error-${id}` : undefined"
     :hidden="hidden ?? undefined"
     :aria-describedby="help ? `help-${id}` : undefined">
-    <option v-for="option in options" :value="option.value" :key="`${id}-${option.value}`" :disabled="option.disabled ?? undefined">
+    <option v-for="option in options.filter(option => option.active ?? true)" :value="option.value" :key="`${id}-${option.value}`" :disabled="option.disabled ?? undefined">
       {{ option.text }}
     </option>
   </select>

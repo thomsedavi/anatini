@@ -2,11 +2,12 @@
   import { ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import type { Event, InputError, Status, StatusActions, Visibility } from '@/common/types';
-  import { formatParagraphs, tidy } from '@/common/utils';
-  import SubmitButton from '@/common/SubmitButton.vue';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
+  import StatusSelect from '@/common/StatusSelect.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import type { ContentStatus, Event, InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import { formatParagraphs, tidy } from '@/common/utils';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const router = useRouter();
@@ -27,6 +28,7 @@
   const inputEndTime = ref<string>('');
   const isEndDateDirty = ref<boolean>(false);
   const inputVisibility = ref<Visibility>('Public');
+  const inputStatus = ref<ContentStatus>('Draft');
   const inputPublishedAtNz = ref<string>('');
 
   watch(inputStartDate, (date) => {
@@ -129,6 +131,7 @@
     body.append('endsAtNz', endsAtNz);
 
     body.append('visibility', inputVisibility.value);
+    body.append('status', inputStatus.value);
 
     if (inputPublishedAtNz.value !== '') {
       body.append('publishedAtNz', inputPublishedAtNz.value);
@@ -168,6 +171,8 @@
         help="This is your event. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
+
+      <StatusSelect v-model="inputStatus" :can-archive="false" />
 
       <input type="radio" id="fixed-time" value="FixedTime" v-model="inputType" />
       <label for="fixed-time">Fixed From/To Time</label>

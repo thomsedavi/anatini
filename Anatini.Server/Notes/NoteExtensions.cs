@@ -25,6 +25,7 @@ namespace Anatini.Server.Notes
                 Title = note.Title,
                 Body = note.Body,
                 Visibility = note.Visibility.ToString(),
+                Status = note.Status.ToString(),
                 PublishedAtNz = note.PublishedAtUtc?.ConvertUtcToNz() ?? throw new InvalidOperationException(),
                 IsBookmarked = isBookmarked,
                 IsDismissed = isDismissed,

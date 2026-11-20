@@ -1,13 +1,14 @@
 <script setup lang="ts">
-  import type { InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { apiFetchAuthenticated } from '@/common/apiFetch';
   import InputText from '@/common/InputText.vue';
   import InputTextArea from '@/common/InputTextArea.vue';
-  import { formatParagraphs, tidy } from '@/common/utils';
+  import StatusSelect from '@/common/StatusSelect.vue';
   import SubmitButton from '@/common/SubmitButton.vue';
-  import { apiFetchAuthenticated } from '@/common/apiFetch';
+  import type { ContentStatus, InputError, Note, Status, StatusActions, Visibility } from '@/common/types';
+  import { formatParagraphs, tidy } from '@/common/utils';
   import VisibilitySelect from '@/common/VisibilitySelect.vue';
-  import { useRouter } from 'vue-router';
 
   const router = useRouter();
 
@@ -25,6 +26,7 @@
 
   const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
+  const inputStatus = ref<ContentStatus>('Draft');
   const inputHandle = ref<string>('');
   const inputPublishedAtNz = ref<string>('');
 
@@ -61,6 +63,7 @@
 
     body.append('body', formatParagraphs(inputBody.value));
     body.append('visibility', inputVisibility.value);
+    body.append('status', inputStatus.value);
 
     if (tidy(inputHandle.value) !== '') {
       body.append('handle', tidy(inputHandle.value));
@@ -94,6 +97,8 @@
         help="This is your note. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
+
+      <StatusSelect v-model="inputStatus" :can-archive="false" />
 
       <InputText
         v-model="inputHandle"

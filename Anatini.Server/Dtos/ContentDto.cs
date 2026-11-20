@@ -5,6 +5,8 @@
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
         public required string Body { get; set; }
+        public required string Visibility { get; set; }
+        public required string Status { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
         public SpaceHeaderDto? SpaceHeader { get; set; }
         public bool? IsBookmarked { get; set; }

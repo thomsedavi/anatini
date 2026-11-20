@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import type { Visibility } from '@/common/types';
   import { ref } from 'vue';
-  import InputSelect from './InputSelect.vue';
+  import InputSelect from '@/common/InputSelect.vue';
+  import type { Visibility } from '@/common/types';
 
   const model = defineModel<Visibility>({ required: true });
 

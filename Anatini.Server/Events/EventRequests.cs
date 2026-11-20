@@ -25,8 +25,8 @@ namespace Anatini.Server.Events
 
         public required string Body { get; set; }
 
-        [Display(Name = "Is Draft")]
-        public bool? IsDraft { get; set; }
+        [EnumDataType(typeof(Status))]
+        public Status? Status { get; set; }
 
         [RecurrenceRule]
         public string? RecurrenceRule { get; set; }

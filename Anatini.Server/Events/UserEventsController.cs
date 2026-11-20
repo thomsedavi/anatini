@@ -32,9 +32,9 @@ namespace Anatini.Server.Events
                 return BadRequest(new { error = "Unknown error" });
             }
 
-            var @event = Context.AddUserEvent(user.Id, createEvent, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published, validationResult.SanitizedHtml);
+            var @event = Context.AddUserEvent(user.Id, createEvent, createEvent.Status ?? Status.Published, validationResult.SanitizedHtml);
 
-            Context.AddEventOccurrences(@event, (createEvent.IsDraft ?? false) ? Status.Draft : Status.Published);
+            Context.AddEventOccurrences(@event, createEvent.Status ?? Status.Published);
 
             await Context.SaveChangesAsync();
 

@@ -20,8 +20,8 @@ namespace Anatini.Server.Works
         [MaxLength(256)]
         public required string Title { get; set; }
 
-        [Display(Name = "Is Draft")]
-        public bool? IsDraft { get; set; }
+        [EnumDataType(typeof(Status))]
+        public Status? Status { get; set; }
     }
 
     public class UpdateWork

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions, Visibility, Work } from '@/common/types';
-  import InputText from '@/common/InputText.vue';
-  import InputTextArea from '@/common/InputTextArea.vue';
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import SubmitButton from '@/common/SubmitButton.vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import VisibilitySelect from '@/common/VisibilitySelect.vue';
+  import InputText from '@/common/InputText.vue';
+  import InputTextArea from '@/common/InputTextArea.vue';
+  import StatusSelect from '@/common/StatusSelect.vue';
+  import SubmitButton from '@/common/SubmitButton.vue';
+  import type { ContentStatus, InputError, Status, StatusActions, Visibility, Work } from '@/common/types';
   import { formatParagraphs, tidy } from '@/common/utils';
+  import VisibilitySelect from '@/common/VisibilitySelect.vue';
 
   const router = useRouter();
 
@@ -26,6 +27,7 @@
   const inputTitle = ref<string>('');
   const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
+  const inputStatus = ref<ContentStatus>('Draft');
   const inputHandle = ref<string>('');
 
   function getError(id: string): string | undefined {
@@ -69,6 +71,7 @@
 
     body.append('title', tidiedTitle);
     body.append('visibility', inputVisibility.value);
+    body.append('status', inputStatus.value);
 
     if (tidy(inputHandle.value) !== '') {
       body.append('handle', tidy(inputHandle.value));
@@ -112,6 +115,8 @@
         help="Describe your work. Asterisks allow for *emphasis* and **strong text**." />
 
       <VisibilitySelect v-model="inputVisibility" />
+
+      <StatusSelect v-model="inputStatus" :can-archive="false" />
 
       <InputText
         v-model="inputHandle"

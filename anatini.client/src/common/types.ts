@@ -21,6 +21,7 @@ export type SelectOption = {
   text: string;
   value: string;
   disabled?: boolean;
+  active?: boolean;
 };
 
 export type Image = {
@@ -125,6 +126,8 @@ export type Content = {
   id: string;
   handle: string;
   body: string;
+  visibility: Visibility;
+  status: Status;
   isStarred: boolean | null;
   isBookmarked: boolean | null;
   isDismissed: boolean | null;

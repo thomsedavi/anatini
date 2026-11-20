@@ -35,7 +35,7 @@ namespace Anatini.Server.Works
                return BadRequest(new { error = "Unknown error" });
            }
 
-            var work = Context.AddSpaceWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, workSpace.Id, (createWork.IsDraft ?? false) ? Status.Draft : Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
+            var work = Context.AddSpaceWorkAsync(createWork.Title, validationResult.SanitizedHtml, createWork.Visibility, workSpace.Id, createWork.Status ?? Status.Published, DateTime.UtcNow, NormalizeHandleOrNull(createWork.Handle));
 
             await Context.SaveChangesAsync();
 

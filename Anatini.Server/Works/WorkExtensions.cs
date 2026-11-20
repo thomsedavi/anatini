@@ -25,6 +25,7 @@ namespace Anatini.Server.Works
                 Title = work.Title ?? throw new InvalidOperationException(),
                 Body = work.Body,
                 Visibility = work.Visibility.ToString(),
+                Status = work.Status.ToString(),
                 PublishedAtNz = work.PublishedAtUtc?.ConvertUtcToNz(),
                 IsBookmarked = isBookmarked,
                 IsDismissed = isDismissed,
