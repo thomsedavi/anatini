@@ -13,7 +13,7 @@
   - logged in as owner
   - logged in as other user
 - Can view public note when
-  - not logged in
+  - not logged in ✓
   - logged in as owner ✓
   - logged in as other user
 - Can view draft note when logged in as user
@@ -24,5 +24,7 @@
 - Cannot view archived note when
   - not logged in
   - logged in as other user
+- Displays 404 page if not found
+- Displays 500 page if internal server error
 # User Note Create
 # User Note Edit

@@ -124,7 +124,6 @@ namespace Anatini.Server.Notes
             return NoContent();
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
-        [Authorize]
         [HttpGet("{noteHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
