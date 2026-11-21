@@ -129,13 +129,22 @@ export function getUserHtml(user: User): string {
 
   result += `<h1>${escapeHtml(user.name)}</h1>`;
 
-  if (store.isAuthenticated) {
+  if (store.isAuthenticated && store.userId !== user.id) {
     result += `<menu role='toolbar' aria-label='User Actions'>`
 
     result += `<li><button type='button' aria-label='Follow' aria-pressed='${user.isFollowed ? 'true' : 'false'}'>${user.isFollowed ? 'Following' : 'Follow'}</button></li>`;
-    result += `<li><button type='button' aria-label='Trust' aria-pressed='${user.isTrusted ? 'true' : 'false'}'>${user.isTrusted ? 'Trusted' : 'Trust'}</button></li>`;
+
+    if (store.isTrusted) {
+      result += `<li><button type='button' aria-label='Trust' aria-pressed='${user.isTrusted ? 'true' : 'false'}'>${user.isTrusted ? 'Trusted' : 'Trust'}</button></li>`;
+    } else {
+      result += `<li><button type='button' aria-label='Trust' aria-pressed='${user.isTrusted ? 'true' : 'false'}' aria-describedby="trust-requirement-hint" aria-disabled="true">${user.isTrusted ? 'Trusted' : 'Trust'}</button></li>`;
+    }
 
     result += '</menu>'
+
+    if (!store.isTrusted) {
+      result += '<small id="trust-requirement-hint">Trust is disabled until your account has been trusted by at least 2 other users.</small>';
+    }
   }
 
   return result;

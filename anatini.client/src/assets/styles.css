@@ -215,6 +215,14 @@ main {
         outline: 2px solid #2563eb;
         outline-offset: 2px;
       }
+
+      &[aria-disabled="true"],
+      &[aria-disabled="true"]:hover {
+        opacity: 0.55;
+        color: #64748b;
+        background-color: #f8fafc;
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -239,6 +247,10 @@ h2 {
 button {
   cursor: pointer;
   font-family: inherit;
+
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 ul[role="tablist"] {

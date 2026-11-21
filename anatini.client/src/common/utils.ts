@@ -294,6 +294,12 @@ export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction
   const button = (mouseEvent.target as HTMLElement).closest('button');
 
   if (button !== null) {
+    const ariaDisabled = button.getAttribute('aria-disabled');
+
+    if (ariaDisabled === 'true') {
+      return;
+    }
+
     const ariaLabel = button.getAttribute('aria-label');
     const ariaPressed = button.getAttribute('aria-pressed');
 
