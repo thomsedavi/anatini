@@ -1,0 +1,37 @@
+# User Work
+- Displays user work with correct HTML
+- Does not display owner
+- Links back to user work list
+- Can star, bookmark, and dismiss when logged in
+- Cannot star, bookmark, or dismiss when not logged in
+- Has link to open edit page when owner
+- Does not have link to open edit page when:
+  - not logged in
+  - logged in as other user
+- Can view protected work when:
+  - logged in as owner
+  - logged in as trusted other user
+- Cannot view protected work when:
+  - not logged in
+  - logged in as untrusted other user
+- Can view public work when:
+  - not logged in
+  - logged in as owner
+  - logged in as other user
+- Can view draft work when logged in as user
+- Cannot view draft work when:
+  - not logged in
+  - logged in as other user
+- Can view archived work when logged in as user
+- Cannot view archived work when:
+  - not logged in
+  - logged in as other user
+- Can view future work when logged in as user
+- Cannot view future work when:
+  - not logged in
+  - logged in as other user
+- Displays 404 page if not found
+- Displays 500 page if internal server error
+- Draft is visually distinct
+# User Work Create
+# User Work Edit
