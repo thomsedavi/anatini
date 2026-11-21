@@ -7,11 +7,13 @@
 - Has link to open edit page when owner ✓
 - Does not have link to open edit page when
   - not logged in ✓
-  - logged in as other user
-- Cannot view protected note when not logged in
+  - logged in as other user ✓
 - Can view protected note when
-  - logged in as owner
-  - logged in as other user
+  - logged in as owner ✓
+  - logged in as trusted other user ✓
+- Cannot view protected note when
+  - not logged in ✓
+  - logged in as untrusted other user ✓
 - Can view public note when
   - not logged in ✓
   - logged in as owner ✓
@@ -24,8 +26,14 @@
 - Cannot view archived note when
   - not logged in ✓
   - logged in as other user ✓
+- Can view future note when logged in as user
+- Cannot view future note when
+  - not logged in
+  - logged in as other user
 - Displays 404 page if not found ✓
-- Displays 500 page if internal server error
+- Displays 500 page if internal server error ✓
 - Draft is visually distinct ✓
 # User Note Create
 # User Note Edit
+
+https://localhost:58343/users/uniquelydave/notes/protected-note

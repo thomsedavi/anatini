@@ -29,14 +29,20 @@
             note.value = { data: value };
           })
           .catch(() => {
-            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this note' }};
           });
+      },
+      401: () => {
+        note.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this note' }};
+      },
+      403: () => {
+        note.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this note' }};
       },
       404: () => {
         note.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
       },
       500: () => {
-        note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your note, please reload the page' }};
+        note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this note' }};
       }
     }
 
