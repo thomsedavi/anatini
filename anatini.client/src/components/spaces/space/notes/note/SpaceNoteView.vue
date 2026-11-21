@@ -1,11 +1,19 @@
 <script setup lang="ts">
-  import type { APIResponse, Note, StatusActions } from '@/common/types';
-  import { nextTick, ref, watch } from 'vue';
-  import { parseParams, type Params } from '@/common/utils';
-  import { useRoute } from 'vue-router';
+  import { ref, watch } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
+  import { contentButtonAction, getNoteHtml } from '@/common/html';
+  import type { APIResponse, Note, StatusActions } from '@/common/types';
+  import { getContentStatus, getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
+  const router = useRouter();
+
+  defineProps<{
+    dataSpaceId: string,
+    dataSpaceHandle: string,
+    dataSpaceName: string,
+  }>();
 
   const note = ref<APIResponse<Note>>({ fetching: true });
 
@@ -19,36 +27,44 @@
         response?.json()
           .then((value: Note) => {
             note.value = { data: value };
-
-            nextTick(() => {
-              document.querySelector('h1')?.focus();
-            });
           })
           .catch(() => {
-            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this note' }};
           });
+      },
+      401: () => {
+        note.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this note' }};
+      },
+      403: () => {
+        note.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this note' }};
       },
       404: () => {
         note.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
+      },
+      500: () => {
+        note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this note' }};
       }
     }
 
     apiFetch({ input, statusActions });
   }
-
-  function getMainHtml(): string {
-    if (note.value.fetching === true) {
-      return '<p>Loading...</p>';
-    } else if (note.value.error !== undefined) {
-      return `<h1>${ note.value.error.body }</h1>`;
-    } else if (note.value.data !== undefined) {
-      return `<article>${note.value.data.body}</article>`;
-    } else {
-      return '<h1>Unknown Error</h1>';
-    }
-  }
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="note.fetching === true" v-html="getMainHtml()"></main>
-</template>
+  <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" tabindex="0">
+    <nav aria-label="Breadcrumb">
+      <ol role="list">
+        <li>
+          <RouterLink :to="{ name: 'SpaceNotes', params: { spaceId: dataSpaceHandle } }"><span aria-hidden="true">&larr;</span> Back to all notes by {{ dataSpaceName }}</RouterLink>
+        </li>
+      </ol>
+    </nav>
+
+    <article v-if="note.data !== undefined" :data-status="getContentStatus(note.data.status, note.data.isScheduled)" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    </article>
+
+    <article v-if="note.error !== undefined" :data-status="note.error.status">
+      <h2>{{ note.error.heading }}</h2>
+      <p>{{ note.error.body }}</p>
+    </article>
+  </section></template>
