@@ -1,8 +1,6 @@
-﻿using System.Security.Claims;
-using Anatini.Server.Context;
-using Anatini.Server.Enums;
+﻿using Anatini.Server.Context;
+using Anatini.Server.Context.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace Anatini.Server.Authorization
 {
@@ -12,25 +10,13 @@ namespace Anatini.Server.Authorization
     {
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TrustedUserRequirement requirement)
         {
-            if (context.User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true"))
+            if (await dbContext.IsTrusted(context.User))
             {
                 context.Succeed(requirement);
-                return;
             }
-
-            var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out Guid targetUserId))
+            else
             {
                 context.Fail();
-                return;
-            }
-
-            var hasReceivedTrust = await dbContext.UserUserRelationships.AnyAsync(userTrust => userTrust.TargetUserId == targetUserId && userTrust.Label == UserUserRelationshipLabel.IsTrusted);
-
-            if (hasReceivedTrust)
-            {
-                context.Succeed(requirement);
             }
         }
     }

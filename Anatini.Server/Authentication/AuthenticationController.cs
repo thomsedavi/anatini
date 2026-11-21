@@ -159,7 +159,7 @@ namespace Anatini.Server.Authentication
                 if (user != null)
                 {
                     response.IsAuthenticated = true;
-                    response.IsTrusted = User.HasClaim(claim => claim.Type == "http://anatini.com/claims/istrusted" && claim.Value == "true");
+                    response.IsTrusted = await Context.IsTrusted(User);
                     response.UserId = user.Id;
                     response.UserHandle = user.Handle;
 
