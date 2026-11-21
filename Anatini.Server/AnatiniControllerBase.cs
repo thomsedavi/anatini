@@ -265,6 +265,7 @@ namespace Anatini.Server
         public async Task<IActionResult> UsingUserContentAsync<T>(string userHandle, string contentHandle, Func<T, ApplicationUser, Task<IActionResult>> contentFunction, ContextSettings? settings = null) where T : Content => await UsingUserAsync(userHandle, async (user) =>
         {
             T? contentResult;
+            var utcNow = DateTime.UtcNow;
 
             var contentsQueryable = context.Contents.OfType<T>();
 
@@ -277,11 +278,11 @@ namespace Anatini.Server
             {
                 contentsQueryable = contentsQueryable.Include(content => content.UserRelationships.Where(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId));
 
-                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published || content.UserId == sourceUserId);
+                contentsQueryable = contentsQueryable.Where(content => content.UserId == sourceUserId || (content.Status == Status.Published && (!content.PublishedAtUtc.HasValue || content.PublishedAtUtc.Value < utcNow)));
             }
             else
             {
-                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published);
+                contentsQueryable = contentsQueryable.Where(content => content.Status == Status.Published && (!content.PublishedAtUtc.HasValue || content.PublishedAtUtc.Value < utcNow));
             }
 
             if (Guid.TryParse(contentHandle, out Guid contentId))

@@ -113,6 +113,10 @@ export function getNoteHtml(note: Note, showOwner: boolean): string {
 
   if (note.status === 'Draft') {
     result += '<p>Draft</p>';
+  } else if (note.status === 'Archived') {
+    result += '<p>Archived</p>';
+  } else if (note.isScheduled) {
+    result += '<p>Scheduled</p>';
   }
 
   result += `</header>`;

@@ -127,6 +127,8 @@ namespace Anatini.Server.Notes
         [HttpGet("{noteHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNote(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, noteUser) =>

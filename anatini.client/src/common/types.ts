@@ -128,6 +128,7 @@ export type Content = {
   body: string;
   visibility: Visibility;
   status: ContentStatus;
+  isScheduled: boolean | null;
   isStarred: boolean | null;
   isBookmarked: boolean | null;
   isDismissed: boolean | null;

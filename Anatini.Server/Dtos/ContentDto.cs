@@ -9,6 +9,7 @@
         public required string Status { get; set; }
         public UserHeaderDto? UserHeader { get; set; }
         public SpaceHeaderDto? SpaceHeader { get; set; }
+        public bool? IsScheduled { get; set; }
         public bool? IsBookmarked { get; set; }
         public bool? IsStarred { get; set; }
         public bool? IsDismissed { get; set; }

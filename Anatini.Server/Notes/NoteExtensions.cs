@@ -11,6 +11,8 @@ namespace Anatini.Server.Notes
     {
         public static async Task<NoteDto> ToNoteDtoAsync(this Note note, Guid? userId, IBlobService? blobService = null, ApplicationUser? noteUser = null, Space? noteSpace = null)
         {
+            var publishedAtUtc = note.PublishedAtUtc ?? throw new InvalidOperationException();
+
             noteUser ??= note.User;
             noteSpace ??= note.Space;
 
@@ -26,7 +28,8 @@ namespace Anatini.Server.Notes
                 Body = note.Body,
                 Visibility = note.Visibility.ToString(),
                 Status = note.Status.ToString(),
-                PublishedAtNz = note.PublishedAtUtc?.ConvertUtcToNz() ?? throw new InvalidOperationException(),
+                PublishedAtNz = publishedAtUtc.ConvertUtcToNz(),
+                IsScheduled = publishedAtUtc > DateTime.UtcNow ? true : null,
                 IsBookmarked = isBookmarked,
                 IsDismissed = isDismissed,
                 IsStarred = isStarred,
