@@ -33,7 +33,7 @@ namespace Anatini.Server.Users
         public async Task<IActionResult> PostUserFollow(string userHandle) => await UsingUserAsync(userHandle, async (user) =>
         {
             return await AddUserUserRelationship(Context, user.Id, UserUserRelationshipLabel.IsFollowed);
-        });
+        }, new ContextSettings { IncludeRelationships = false });
 
         [Authorize(Policy = "IsTrusted")]
         [HttpDelete("follow")]

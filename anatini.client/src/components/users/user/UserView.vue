@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
-  import { store } from '@/common/store';
+  import { apiFetch } from '@/common/apiFetch';
+  import { getUserHtml, userButtonAction } from '@/common/html';
   import TabButton from '@/common/TabButton.vue';
   import type { APIResponse, EventOccurrence, InputError, Note, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
-  import { getTabIndex, parseParams, type Params } from '@/common/utils';
+  import { getTabIndex, getUserAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();
@@ -81,7 +81,7 @@
     }
   }
 
-  function handleClick(index: number): void {
+  function handleClickTab(index: number): void {
     const tab = tabs[index];
 
     if (tab !== undefined) {
@@ -92,74 +92,6 @@
       nextTick(() => {
         tabRefs.value[index]?.focus();
       });
-    }
-  }
-
-  function getHeading(): string {
-    if (user.value.fetching === true) {
-      return 'Fetching...';
-    } else if (user.value.error !== undefined) {
-      return user.value.error.heading;
-    } else if (user.value.data !== undefined) {
-      return user.value.data.name;
-    } else {
-      return 'Unknown Error';
-    }
-  }
-
-  function toggleTrust(): void {
-    if (user.value.data?.isTrusted === true) {
-      const input = `users/${route.params.userId}/trust`;
-
-      const statusActions: StatusActions = {
-        204: () => {
-          if (user.value.data !== undefined) user.value.data.isTrusted = false;
-        }
-      }
-
-      const init: RequestInit = { method: "DELETE" };
-
-      apiFetchAuthenticated({ input, statusActions, init });
-    } else if (user.value.data?.isTrusted === false) {
-      const input = `users/${route.params.userId}/trust`;
-
-      const statusActions: StatusActions = {
-        201: () => {
-          if (user.value.data !== undefined) user.value.data.isTrusted = true;
-        }
-      }
-
-      const init: RequestInit = { method: "POST" };
-
-      apiFetchAuthenticated({ input, statusActions, init });
-    }
-  }
-
-  function toggleFollow(): void {
-    if (user.value.data?.isFollowed === true) {
-      const input = `users/${route.params.userId}/follow`;
-
-      const statusActions: StatusActions = {
-        204: () => {
-          if (user.value.data !== undefined) user.value.data.isFollowed = false;
-        }
-      }
-
-      const init: RequestInit = { method: "DELETE" };
-
-      apiFetchAuthenticated({ input, statusActions, init });
-    } else if (user.value.data?.isFollowed === false) {
-      const input = `users/${route.params.userId}/follow`;
-
-      const statusActions: StatusActions = {
-        201: () => {
-          if (user.value.data !== undefined) user.value.data.isFollowed = true;
-        }
-      }
-
-      const init: RequestInit = { method: "POST" };
-
-      apiFetchAuthenticated({ input, statusActions, init });
     }
   }
 
@@ -201,9 +133,9 @@
       </ul>
     </section>
 
-    <header>
+    <header v-if="false">
       <figure>
-        <img v-if="user.data !== undefined && user.data.iconImage !== null" :alt="user.data.iconImage.altText ?? 'User icon'" :src="user.data.iconImage.uri" width="400" height="400" />
+        <img v-if="user.data !== undefined && user.data?.iconImage !== null" :alt="user.data?.iconImage?.altText ?? 'User icon'" :src="user.data?.iconImage?.uri" width="400" height="400" />
         <svg v-else
           view-box="0 0 400 400"
           width="400"
@@ -212,8 +144,9 @@
         </svg>
         <figcaption>Picture Of User</figcaption>
       </figure>
+    </header>
 
-      <h1 id="heading-main">{{ getHeading() }}</h1>
+    <header v-if="user.data !== undefined" v-html="getUserHtml(user.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => userButtonAction(label, pressed, user.data!, getUserAddress(user.data!, 'id')))">
     </header>
 
     <section v-if="user.fetching === true">
@@ -229,25 +162,11 @@
     </section>
 
     <template v-if="user.data !== undefined">
-      <section v-if="user.data.about !== null" aria-label="About user" v-html="user.data.about">
-      </section>
-
-      <menu role="toolbar" v-if="store.userId !== user.data.id && (user.data.isTrusted !== null || user.data.isFollowed !== null)">
-        <li v-if="user.data.isTrusted !== null">
-          <button type="button" :aria-pressed="user.data.isTrusted" @click="toggleTrust">{{ user.data.isTrusted ? "Remove Trust" : "Trust" }}</button>
-        </li>
-        <li v-if="user.data.isFollowed !== null">
-          <button type="button" :aria-pressed="user.data.isFollowed" @click="toggleFollow">{{ user.data.isFollowed ? "Remove Follow" : "Follow" }}</button>
-        </li>
-      </menu>
-    </template>
-
-    <template v-if="user.data !== undefined">
       <ul role="tablist" aria-label="User Content">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
-          @click="() => handleClick(index)"
+          @click="() => handleClickTab(index)"
           @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"

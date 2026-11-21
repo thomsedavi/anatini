@@ -5,7 +5,7 @@
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { buttonAction, getEventOccurrenceHtml } from '@/common/html';
+  import { contentButtonAction, getEventOccurrenceHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { EventOccurrence, SearchParameter, StatusActions } from '@/common/types';
   import { getEventOccurrenceAddress, handleClick } from '@/common/utils';
@@ -125,7 +125,7 @@
 
         <ul :aria-label="`Events starting ${formatDate(eventOccurrenceGroup.date)}`">
           <li v-for="eventOccurrence in eventOccurrenceGroup.eventOccurrences" :key="'eventOccurrence' + eventOccurrence.id">
-            <article :data-status="eventOccurrence.status.toLowerCase()" v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, 'id')))">
+            <article :data-status="eventOccurrence.status.toLowerCase()" v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, 'id')))">
             </article>
           </li>
         </ul>

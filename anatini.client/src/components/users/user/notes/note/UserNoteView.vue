@@ -2,7 +2,7 @@
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import { buttonAction, getNoteHtml } from '@/common/html';
+  import { contentButtonAction, getNoteHtml } from '@/common/html';
   import type { APIResponse, Note, StatusActions } from '@/common/types';
   import { getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
@@ -54,7 +54,7 @@
       </ol>
     </nav>
 
-    <article v-if="note.data !== undefined" :data-status="note.data.status.toLowerCase()" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    <article v-if="note.data !== undefined" :data-status="note.data.status.toLowerCase()" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
     </article>
 
     <article v-if="note.error !== undefined" :data-status="note.error.status">

@@ -2,7 +2,7 @@
   import { ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import { buttonAction, getWorkHtml } from '@/common/html';
+  import { contentButtonAction, getWorkHtml } from '@/common/html';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
   import { getWorkAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
@@ -51,7 +51,7 @@
       </ol>
     </nav>
 
-    <article v-if="work.data !== undefined" :data-status="work.data.status.toLowerCase()" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
+    <article v-if="work.data !== undefined" :data-status="work.data.status.toLowerCase()" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
     </article>
   </section>
 </template>

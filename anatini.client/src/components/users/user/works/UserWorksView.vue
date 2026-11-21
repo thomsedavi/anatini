@@ -4,7 +4,7 @@
   import { apiFetch } from '@/common/apiFetch';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { buttonAction, getWorkHtml } from '@/common/html';
+  import { contentButtonAction, getWorkHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { SearchParameter, StatusActions, Work } from '@/common/types';
   import { getWorkAddress, handleClick } from '@/common/utils';
@@ -85,7 +85,7 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article :data-status="work.status.toLowerCase()" v-html="getWorkHtml(work, false, 'h3', true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, work, getWorkAddress(work, 'id')))">
+        <article :data-status="work.status.toLowerCase()" v-html="getWorkHtml(work, false, 'h3', true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, work, getWorkAddress(work, 'id')))">
         </article>
       </li>
     </ul>

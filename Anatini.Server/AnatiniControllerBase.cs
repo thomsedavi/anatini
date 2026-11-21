@@ -82,11 +82,11 @@ namespace Anatini.Server
                 {
                     usersQueryable = usersQueryable.Include((user) => user.Images);
                 }
-            }
 
-            if (TryGetUserId(out Guid sourceUserId))
-            {
-                usersQueryable = usersQueryable.Include(user => user.ReceivedUserRelationships.Where(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId));
+                if (settings.IncludeRelationships && TryGetUserId(out Guid sourceUserId))
+                {
+                    usersQueryable = usersQueryable.Include(user => user.ReceivedUserRelationships.Where(userUserRelationship => userUserRelationship.SourceUserId == sourceUserId));
+                }
             }
 
             if (Guid.TryParse(userHandle, out Guid userId))
@@ -609,5 +609,6 @@ namespace Anatini.Server
         public bool AccessRequired { get; set; } = false;
         public bool AsNoTracking { get; set; } = true;
         public bool IncludeImages { get; set; } = false;
+        public bool IncludeRelationships { get; set; } = true;
     }
 }

@@ -125,9 +125,6 @@
                 <li>
                   <RouterLink :to="{ name: 'User', params: { userId: store.userHandle }}" @click="isShowing = []">Profile</RouterLink>
                 </li>
-                <li>
-                  <RouterLink :to="{ name: 'UserPostCreate', params: { userId: store.userHandle }}" @click="isShowing = []">Create Post</RouterLink>
-                </li>
               </template>
             </ul>
           </li>
@@ -148,9 +145,6 @@
                 <ul aria-labelledby="space-tech-heading" role="list">
                   <li>
                     <RouterLink :to="`/spaces/${space.handle}/edit`" @click="isShowing = []">Settings</RouterLink>
-                  </li>
-                  <li>
-                    <RouterLink :to="`/spaces/${space.handle}/edit/posts/create`" @click="isShowing = []">Create Post</RouterLink>
                   </li>
                 </ul>
               </li>

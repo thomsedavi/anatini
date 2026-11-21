@@ -4,7 +4,7 @@
   import { apiFetch } from '@/common/apiFetch';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { buttonAction, getNoteHtml } from '@/common/html';
+  import { contentButtonAction, getNoteHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { Note, SearchParameter, StatusActions } from '@/common/types';
   import { getNoteAddress, handleClick } from '@/common/utils';
@@ -85,7 +85,7 @@
 
     <ul role="list" v-if="dataNotes !== null">
       <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => buttonAction(label, pressed, note, getNoteAddress(note, 'id')))">
+        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note, getNoteAddress(note, 'id')))">
         </article>
       </li>
     </ul>

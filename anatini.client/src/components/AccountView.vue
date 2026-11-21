@@ -91,7 +91,7 @@
     }
   }
 
-  function handleClick(index: number): void {
+  function handleClickTab(index: number): void {
     const tab = tabs[index];
 
     if (tab !== undefined) {
@@ -168,7 +168,7 @@
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
-          @click="() => handleClick(index)"
+          @click="() => handleClickTab(index)"
           @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
           :text="tab.text"
           :id="tab.id"

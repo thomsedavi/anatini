@@ -1,5 +1,5 @@
 import type { Router } from "vue-router";
-import type { EventOccurrence, Note, Work } from "./types";
+import type { EventOccurrence, Note, User, Work } from "./types";
 
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
@@ -309,6 +309,12 @@ export function escapeHtml(value: string | null): string | null {
   }
 
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+export function getUserAddress(user: User, basis: 'name' | 'id'): string {
+  const userKey = basis === 'id' ? user.id : user.handle;
+
+  return `users/${userKey}`;
 }
 
 export function getNoteAddress(note: Note, basis: 'name' | 'id'): string {

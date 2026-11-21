@@ -1,7 +1,7 @@
 import { apiFetchAuthenticated } from "./apiFetch";
 import { formatDate, formatDateTime, formatTime, getDaysDifference } from "./dateUtils";
 import { store } from "./store";
-import type { Content, EventOccurrence, Note, Space, StatusActions, Work } from "./types";
+import type { Content, EventOccurrence, Note, Space, StatusActions, User, Work } from "./types";
 import { escapeHtml } from "./utils";
 
 function getOwnerHtml(content: Content): string {
@@ -124,6 +124,23 @@ export function getNoteHtml(note: Note, showOwner: boolean): string {
   return result;
 }
 
+export function getUserHtml(user: User): string {
+  let result = '';
+
+  result += `<h1>${escapeHtml(user.name)}</h1>`;
+
+  if (store.isAuthenticated) {
+    result += `<menu role='toolbar' aria-label='User Actions'>`
+
+    result += `<li><button type='button' aria-label='Follow' aria-pressed='${user.isFollowed ? 'true' : 'false'}'>${user.isFollowed ? 'Following' : 'Follow'}</button></li>`;
+    result += `<li><button type='button' aria-label='Trust' aria-pressed='${user.isTrusted ? 'true' : 'false'}'>${user.isTrusted ? 'Trusted' : 'Trust'}</button></li>`;
+
+    result += '</menu>'
+  }
+
+  return result;
+}
+
 export function getWorkTime(publishedAtNz: string): string {
   let result = '<p>Published: ';
 
@@ -180,7 +197,41 @@ export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3'
   return result;
 }
 
-export function buttonAction(label: string, pressed: string | null, content: Content, address: string): void {
+export function userButtonAction(label: string, pressed: string | null, user: User, address: string): void {
+  const action = label.toLowerCase();
+
+  if (pressed === 'true') {
+    const statusActions: StatusActions = {
+      204: () => {
+        if (action === "follow") {
+          user.isFollowed = null;
+        } else if (action === "trust") {
+          user.isTrusted = null;
+        }
+      }
+    }
+
+    const init: RequestInit = { method: "DELETE" };
+
+    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
+  } else {
+    const statusActions: StatusActions = {
+      201: () => {
+        if (action === "follow") {
+          user.isFollowed = true;
+        } else if (action === "trust") {
+          user.isTrusted = true;
+        }
+      }
+    }
+
+    const init: RequestInit = { method: "POST" };
+
+    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
+  }
+}
+
+export function contentButtonAction(label: string, pressed: string | null, content: Content, address: string): void {
   const action = label.toLowerCase();
 
   if (pressed === 'true') {
