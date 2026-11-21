@@ -4,7 +4,7 @@
   import { apiFetch } from '@/common/apiFetch';
   import { contentButtonAction, getNoteHtml } from '@/common/html';
   import type { APIResponse, Note, StatusActions } from '@/common/types';
-  import { getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
+  import { getContentStatus, getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();
@@ -60,7 +60,7 @@
       </ol>
     </nav>
 
-    <article v-if="note.data !== undefined" :data-status="note.data.status.toLowerCase()" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    <article v-if="note.data !== undefined" :data-status="getContentStatus(note.data.status, note.data.isScheduled)" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
     </article>
 
     <article v-if="note.error !== undefined" :data-status="note.error.status">

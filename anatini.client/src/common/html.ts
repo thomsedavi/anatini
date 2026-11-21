@@ -55,6 +55,18 @@ function getFooterHtml(content: Content, contentType: string): string {
   return result;
 }
 
+function getContentStatusHtml(content: Content): string {
+  if (content.status === 'Draft') {
+    return '<p>Draft</p>';
+  } else if (content.status === 'Archived') {
+    return '<p>Archived</p>';
+  } else if (content.isScheduled) {
+    return '<p>Scheduled</p>';
+  }
+
+  return '';
+}
+
 export function getSpaceHtml(space: Space): string {
   let result = '';
 
@@ -111,13 +123,7 @@ export function getNoteHtml(note: Note, showOwner: boolean): string {
 
   result += `<p><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time></p>`;
 
-  if (note.status === 'Draft') {
-    result += '<p>Draft</p>';
-  } else if (note.status === 'Archived') {
-    result += '<p>Archived</p>';
-  } else if (note.isScheduled) {
-    result += '<p>Scheduled</p>';
-  }
+  result += getContentStatusHtml(note);
 
   result += `</header>`;
 
@@ -200,6 +206,8 @@ export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3'
   if (work.publishedAtNz !== null) {
     result += getWorkTime(work.publishedAtNz);
   }
+
+  result += getContentStatusHtml(work);
 
   result += '</header>';
 

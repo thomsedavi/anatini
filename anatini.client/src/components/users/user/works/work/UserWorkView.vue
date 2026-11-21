@@ -4,7 +4,7 @@
   import { apiFetch } from '@/common/apiFetch';
   import { contentButtonAction, getWorkHtml } from '@/common/html';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
-  import { getWorkAddress, handleClick, parseParams, type Params } from '@/common/utils';
+  import { getContentStatus, getWorkAddress, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();
@@ -60,7 +60,7 @@
       </ol>
     </nav>
 
-    <article v-if="work.data !== undefined" :data-status="work.data.status.toLowerCase()" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
+    <article v-if="work.data !== undefined" :data-status="getContentStatus(work.data.status, work.data.isScheduled)" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, work.data!, getWorkAddress(work.data!, 'id')))">
     </article>
 
     <article v-if="work.error !== undefined" :data-status="work.error.status">

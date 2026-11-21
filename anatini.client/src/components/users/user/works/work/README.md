@@ -24,20 +24,20 @@
   - not logged in
   - logged in as owner ✓
   - logged in as other user
-- Can view draft work when logged in as owner
+- Can view draft work when logged in as owner ✓
 - Cannot view draft work when:
   - not logged in
   - logged in as other user
-- Can view archived work when logged in as owner
+- Can view archived work when logged in as owner ✓
 - Cannot view archived work when:
   - not logged in
   - logged in as other user
-- Can view future work when logged in as owner
+- Can view future work when logged in as owner ✓
 - Cannot view future work when:
   - not logged in
   - logged in as other user
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error ✓
-- Draft is visually distinct
+- Draft is visually distinct ✓
 # User Work Create
 # User Work Edit

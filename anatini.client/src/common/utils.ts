@@ -1,5 +1,5 @@
 import type { Router } from "vue-router";
-import type { EventOccurrence, Note, User, Work } from "./types";
+import type { ContentStatus, EventOccurrence, Note, User, Work } from "./types";
 
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
@@ -278,6 +278,18 @@ export function tidy(text: string): string {
   }
 
   return tidiedLines.join('\n');
+}
+
+export function getContentStatus(status: ContentStatus, isScheduled: boolean | null): string {
+  if (status === 'Draft') {
+    return 'draft';
+  } else if (status === 'Archived') {
+    return 'archived';
+  } else if (isScheduled) {
+    return 'scheduled';
+  }
+
+  return 'published';
 }
 
 export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string, pressed: string | null) => void): void {

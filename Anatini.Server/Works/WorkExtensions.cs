@@ -27,6 +27,7 @@ namespace Anatini.Server.Works
                 Visibility = work.Visibility.ToString(),
                 Status = work.Status.ToString(),
                 PublishedAtNz = work.PublishedAtUtc?.ConvertUtcToNz(),
+                IsScheduled = work.PublishedAtUtc.HasValue ? work.PublishedAtUtc > DateTime.UtcNow : null,
                 IsBookmarked = isBookmarked,
                 IsDismissed = isDismissed,
                 IsStarred = isStarred,
