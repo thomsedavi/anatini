@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { nextTick, ref } from 'vue';
-  import type { InputError, Status, StatusActions, Visibility } from '@/common/types';
+  import type { Account, InputError, Status, StatusActions, Visibility } from '@/common/types';
   import { tidy } from '@/common/utils';
   import InputText from '@/common/InputText.vue';
   import SubmitButton from '@/common/SubmitButton.vue';
@@ -86,10 +86,18 @@
     const input = 'authentication/sign-up';
 
     const statusActions: StatusActions = {
-      200: () => {
-        store.isAuthenticated = true;
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: Account) => {
+            status.value = 'success';
+            
+            store.account = value;
 
-        router.replace({ path: '/account' });     
+            router.replace({ path: '/account' });    
+          })
+          .catch(() => {
+            status.value = 'error';
+          });
       },
       404: () => {
         status.value = 'error';

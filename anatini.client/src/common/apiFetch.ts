@@ -42,7 +42,7 @@ export async function apiFetchAll(requests: Request[]): Promise<void> {
 }
 
 export async function apiFetchAuthenticated({ input, statusActions, init, searchParameters, onfinally }: Request): Promise<void> {
-  if (store.isAuthenticated === null || !store.isAuthenticated) {
+  if (store.account.isAuthenticated === null || !store.account.isAuthenticated) {
     statusActions?.[401]?.();
     return;
   }
@@ -89,7 +89,7 @@ function isUnsafeMethod(method?: string): boolean {
 }
 
 async function ensureCsrfToken(): Promise<void> {
-  const isAuthenticated = store.isAuthenticated === true;
+  const isAuthenticated = store.account.isAuthenticated === true;
 
   if (getCookieValue('XSRF-TOKEN') !== null && csrfTokenAuthState === isAuthenticated) {
     return;

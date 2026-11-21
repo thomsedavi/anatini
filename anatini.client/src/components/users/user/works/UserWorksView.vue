@@ -70,7 +70,7 @@
       <RouterLink :to="{ name: 'UserWorkCreate' }">+ Create Work</RouterLink>
     </header>
 
-    <search role="search" v-if="store.isAuthenticated">
+    <search role="search" v-if="store.account.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 

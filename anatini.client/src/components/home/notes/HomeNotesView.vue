@@ -95,25 +95,25 @@
     <header>
       <h2>Notes</h2>
 
-      <template v-if="store.isAuthenticated">
-        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Note creation options">
+      <template v-if="store.account.isAuthenticated">
+        <nav v-if="(store.account.spaces ?? []).length > 0" aria-label="Note creation options">
           <button popovertarget="create-note-menu">
             + Create Note
           </button>
           <ul popover="auto" id="create-note-menu">
             <li>
-              <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle } }">Personal Note</RouterLink>
+              <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.account.userHandle } }">Personal Note</RouterLink>
             </li>
-            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+            <li v-for="space in store.account.spaces ?? []" :key="'space' + space.id">
               <RouterLink :to="{ name: 'SpaceNoteCreate', params: { spaceId: space.handle } }">{{space.name}} Note</RouterLink>
             </li>
           </ul>
         </nav>
-        <RouterLink v-else :to="{ name: 'UserNoteCreate', params: { userId: store.userHandle } }">+ Create Note</RouterLink>
+        <RouterLink v-else :to="{ name: 'UserNoteCreate', params: { userId: store.account.userHandle } }">+ Create Note</RouterLink>
       </template>
     </header>
 
-    <search role="search" v-if="store.isAuthenticated">
+    <search role="search" v-if="store.account.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 

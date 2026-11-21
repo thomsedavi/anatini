@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { InputError, Status, StatusActions } from '@/common/types';
+  import type { Account, InputError, Status, StatusActions } from '@/common/types';
   import InputText from '@/common/InputText.vue';
   import { nextTick, ref } from 'vue';
   import { tidy } from '@/common/utils';
@@ -54,18 +54,24 @@
     const input = 'authentication/sign-in';
 
     const statusActions: StatusActions = {
-      200: () => {
-        status.value = 'success';
+      200: (response?: Response) => {
+        response?.json()
+          .then((value: Account) => {
+            status.value = 'success';
+            
+            store.account = value;
+            
+            let path = '/';
 
-        store.isAuthenticated = true;
+            if (typeof route.query.redirect === 'string') {
+              path = route.query.redirect;
+            }
 
-        let path = '/';
-
-        if (typeof route.query.redirect === 'string') {
-          path = route.query.redirect;
-        }
-
-        router.replace({ path: path });
+            router.replace({ path: path });
+          })
+          .catch(() => {
+            status.value = 'error';
+          });
       },
       401: () => {
         status.value = 'error';

@@ -93,7 +93,7 @@ namespace Anatini.Server.Authentication
 
             await signInManager.SignInAsync(user, isPersistent: signUpForm.IsPersistent ?? false);
 
-            return Ok();
+            return Ok(await GetAccountResponse());
         }
 
         [Authorize]
@@ -134,7 +134,7 @@ namespace Anatini.Server.Authentication
                 return Unauthorized();
             }
 
-            return Ok();
+            return Ok(await GetAccountResponse());
         }
 
         [Authorize]
@@ -150,7 +150,16 @@ namespace Anatini.Server.Authentication
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIsAuthenticated()
         {
-            var response = new IsAuthenticatedResponse();
+            return Ok(await GetAccountResponse());
+        }
+
+        [NonAction]
+        private async Task<AccountResponse> GetAccountResponse()
+        {
+            var response = new AccountResponse
+            {
+                IsAuthenticated = false
+            };
 
             if (TryGetUserId(out Guid userId))
             {
@@ -172,7 +181,7 @@ namespace Anatini.Server.Authentication
                 }
             }
 
-            return Ok(response);
+            return response;
         }
     }
 }

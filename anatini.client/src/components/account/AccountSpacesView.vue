@@ -11,7 +11,7 @@
   <section id="panel-spaces" role="tabpanel" aria-labelledby="tab-spaces">
     <header>
       <h2>Spaces</h2>
-      <RouterLink v-if="store.isTrusted" :to="{ name: 'SpaceCreate' }">+ Create Space</RouterLink>
+      <RouterLink v-if="store.account.isTrusted" :to="{ name: 'SpaceCreate' }">+ Create Space</RouterLink>
     </header>
 
     <section aria-labelledby="section-your-spaces">

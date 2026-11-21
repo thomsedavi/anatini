@@ -2,9 +2,9 @@
 
 namespace Anatini.Server.Authentication.Responses
 {
-    public class IsAuthenticatedResponse
+    public class AccountResponse
     {
-        public bool IsAuthenticated { get; set; } = false;
+        public bool? IsAuthenticated { get; set; }
         public bool? IsTrusted { get; set; }
         public Guid? UserId { get; set; }
         public string? UserHandle { get; set; }

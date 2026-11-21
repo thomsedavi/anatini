@@ -160,8 +160,8 @@ export type Note = Content & {
   visibility: Visibility;
 }
 
-export type IsAuthenticated = {
-  isAuthenticated: boolean;
+export type Account = {
+  isAuthenticated: boolean | null;
   isTrusted: boolean | null;
   spaces: SpaceEdit[] | null;
   userId: string | null;

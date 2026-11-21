@@ -86,25 +86,25 @@
     <header>
       <h2>Events</h2>
 
-      <template v-if="store.isAuthenticated">
-        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Event creation options">
+      <template v-if="store.account.isAuthenticated">
+        <nav v-if="(store.account.spaces ?? []).length > 0" aria-label="Event creation options">
           <button popovertarget="create-event-menu">
             + Create Event
           </button>
           <ul popover="auto" id="create-event-menu">
             <li>
-              <RouterLink :to="{ name: 'UserEventCreate', params: { userId: store.userHandle } }">Personal Event</RouterLink>
+              <RouterLink :to="{ name: 'UserEventCreate', params: { userId: store.account.userHandle } }">Personal Event</RouterLink>
             </li>
-            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+            <li v-for="space in store.account.spaces ?? []" :key="'space' + space.id">
               <RouterLink :to="{ name: 'SpaceEventCreate', params: { spaceId: space.handle } }">{{space.name}} Event</RouterLink>
             </li>
           </ul>
         </nav>
-        <RouterLink v-else :to="{ name: 'UserEventCreate', params: { userId: store.userHandle } }">+ Create Event</RouterLink>
+        <RouterLink v-else :to="{ name: 'UserEventCreate', params: { userId: store.account.userHandle } }">+ Create Event</RouterLink>
       </template>
     </header>
 
-    <search role="search" v-if="store.isAuthenticated">
+    <search role="search" v-if="store.account.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 

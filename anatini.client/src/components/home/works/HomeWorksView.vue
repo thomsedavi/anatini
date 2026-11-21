@@ -95,25 +95,25 @@
     <header>
       <h2>Work</h2>
 
-      <template v-if="store.isAuthenticated">
-        <nav v-if="(store.spaces ?? []).length > 0" aria-label="Work creation options">
+      <template v-if="store.account.isAuthenticated">
+        <nav v-if="(store.account.spaces ?? []).length > 0" aria-label="Work creation options">
           <button popovertarget="create-work-menu">
             + Create Work
           </button>
           <ul popover="auto" id="create-work-menu">
             <li>
-              <RouterLink :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">Personal Work</RouterLink>
+              <RouterLink :to="{ name: 'UserWorkCreate', params: { userId: store.account.userHandle } }">Personal Work</RouterLink>
             </li>
-            <li v-for="space in store.spaces ?? []" :key="'space' + space.id">
+            <li v-for="space in store.account.spaces ?? []" :key="'space' + space.id">
               <RouterLink :to="{ name: 'SpaceWorkCreate', params: { spaceId: space.handle } }">{{space.name}} Work</RouterLink>
             </li>
           </ul>
         </nav>
-        <RouterLink v-else :to="{ name: 'UserWorkCreate', params: { userId: store.userHandle } }">+ Create Work</RouterLink>
+        <RouterLink v-else :to="{ name: 'UserWorkCreate', params: { userId: store.account.userHandle } }">+ Create Work</RouterLink>
       </template>
     </header>
 
-    <search role="search" v-if="store.isAuthenticated">
+    <search role="search" v-if="store.account.isAuthenticated">
       <details>
         <summary>Filter Options</summary>
 
