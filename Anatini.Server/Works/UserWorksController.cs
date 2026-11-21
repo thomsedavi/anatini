@@ -78,10 +78,11 @@ namespace Anatini.Server.Works
             return Ok(await work.ToWorkDtoAsync(UserIdOrNull, BlobService, workUser: workUser));
         }, new ContextSettings { AccessRequired = true, AsNoTracking = false });
 
-        [Authorize]
         [HttpGet("{workHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetWork(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, workUser) =>
