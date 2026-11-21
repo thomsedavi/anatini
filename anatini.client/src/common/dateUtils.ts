@@ -4,8 +4,33 @@ const dateformatter = new Intl.DateTimeFormat('en-NZ', {
 });
 
 const dateTimeFormatter = new Intl.DateTimeFormat('en-NZ', {
-  dateStyle: 'long',
-  timeStyle: 'short'
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric'
+});
+
+const dateToHourFormatter = new Intl.DateTimeFormat('en-NZ', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: 'numeric',
+});
+
+const dateToDayFormatter = new Intl.DateTimeFormat('en-NZ', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const dateToMonthFormatter = new Intl.DateTimeFormat('en-NZ', {
+  month: 'long',
+  year: 'numeric',
+});
+
+const dateToYearFormatter = new Intl.DateTimeFormat('en-NZ', {
+  year: 'numeric',
 });
 
 const timeFormatter = new Intl.DateTimeFormat('en-NZ', {
@@ -15,6 +40,28 @@ const timeFormatter = new Intl.DateTimeFormat('en-NZ', {
 const weekdayFormatter = new Intl.DateTimeFormat('en-NZ', {
   weekday: 'long'
 });
+
+export function formatShortestDateTime(value: string): string {
+  const date = new Date(value);
+
+  if (value.slice(14, 16) === '00') {
+    if (value.slice(11, 13) === '00') {
+      if (value.slice(8, 10) === '01') {
+        if (value.slice(5, 7) === '01') {
+          return dateToYearFormatter.format(date);
+        }
+
+        return dateToMonthFormatter.format(date);
+      }
+
+      return dateToDayFormatter.format(date);
+    }
+
+    return dateToHourFormatter.format(date);
+  }
+
+  return dateTimeFormatter.format(date);
+}
 
 export function formatDate(value: string): string {
   return dateformatter.format(new Date(value));

@@ -2,7 +2,7 @@
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { store } from '@/common/store';
-  import type { IsAuthenticated, StatusActions } from '@/common/types';
+  import type { Account, StatusActions } from '@/common/types';
   import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
 
   const router = useRouter();
@@ -29,15 +29,11 @@
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
-          .then((value: IsAuthenticated) => {
-            store.isAuthenticated = value.isAuthenticated;
-            store.isTrusted = value.isTrusted;
-            store.spaces = value.spaces;
-            store.userId = value.userId;
-            store.userHandle = value.userHandle;
+          .then((value: Account) => {
+            store.account = value;
           })
           .catch(() => {
-            store.isAuthenticated = false;
+            store.account.isAuthenticated = false;
           });
       }
     };
@@ -58,13 +54,13 @@
 
     const statusActions: StatusActions = {
       204: () => {
-        store.isAuthenticated = false;
+        store.account = { isAuthenticated: false, isTrusted: null, spaces: null, userId: null, userHandle: null };
       },
       400: () => {
-        store.isAuthenticated = false;
+        store.account = { isAuthenticated: false, isTrusted: null, spaces: null, userId: null, userHandle: null };
       },
       401: () => {
-        store.isAuthenticated = false;
+        store.account = { isAuthenticated: false, isTrusted: null, spaces: null, userId: null, userHandle: null };
       }
     };
 
@@ -95,12 +91,12 @@
 </script>
 
 <template>
-  <template v-if="store.isAuthenticated !== null">
+  <template v-if="store.account.isAuthenticated !== null">
     <a href="#main" id="skip">Skip to main content</a>
 
     <header role="banner">
       <nav role="navigation" aria-label="Main">
-        <RouterLink to="/"><strong>ANATINI</strong></RouterLink>
+        <RouterLink to="/"><strong>ANATIA</strong></RouterLink>
         <button 
           type="button" 
           :aria-expanded="isShowing.includes('main')" 
@@ -115,21 +111,21 @@
         <ul id="main-dropdown" ref="dropdownRef" role="list" :hidden="!isShowing.includes('main')">
           <li><RouterLink to="/about" @click="isShowing = []">About</RouterLink></li>
 
-          <li id="account-list" v-if="store.isAuthenticated === true">
+          <li id="account-list" v-if="store.account.isAuthenticated === true">
             <strong id="account">Account</strong>
             <ul aria-labelledby="account" role="list">
               <li>
                 <RouterLink to="/account" @click="isShowing = []">Settings</RouterLink>
               </li>
-              <template v-if="store.userHandle !== null">
+              <template v-if="store.account.userHandle !== null">
                 <li>
-                  <RouterLink :to="{ name: 'User', params: { userId: store.userHandle }}" @click="isShowing = []">Profile</RouterLink>
+                  <RouterLink :to="{ name: 'User', params: { userId: store.account.userHandle }}" @click="isShowing = []">Profile</RouterLink>
                 </li>
               </template>
             </ul>
           </li>
 
-          <li id="spaces-list" v-if="store.spaces !== null">
+          <li id="spaces-list" v-if="store.account.spaces !== null">
             <button 
               type="button" 
               :aria-expanded="isShowing.includes('spaces')" 
@@ -140,7 +136,7 @@
             </button>
           
             <ul id="spaces-dropdown" role="list" :hidden="!isShowing.includes('spaces')">
-              <li v-for="space in store.spaces" :key="'space' + space.id">
+              <li v-for="space in store.account.spaces" :key="'space' + space.id">
                 <strong id="space-tech-heading">{{ space.name }}</strong>
                 <ul aria-labelledby="space-tech-heading" role="list">
                   <li>
@@ -150,7 +146,7 @@
               </li>
             </ul>
           </li>
-          <template v-if="store.isAuthenticated === null || store.isAuthenticated === false">
+          <template v-if="store.account.isAuthenticated === null || store.account.isAuthenticated === false">
             <li id="sign-up"><RouterLink to="/sign-up" @click="isShowing = []">Sign Up</RouterLink></li>
             <li id="sign-in"><RouterLink to="/sign-in" @click="isShowing = []">Sign In</RouterLink></li>
           </template>

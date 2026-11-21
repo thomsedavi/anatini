@@ -29,6 +29,7 @@
   const inputVisibility = ref<Visibility>('Public');
   const inputStatus = ref<ContentStatus>('Published');
   const inputHandle = ref<string>('');
+  const inputPublishedAtNz = ref<string>('');
 
   function getError(id: string): string | undefined {
     return props.dataInputErrors.find(inputError => inputError.id === id)?.message;
@@ -81,6 +82,10 @@
       body.append('body', formatParagraphs(inputBody.value));
     }
 
+    if (inputPublishedAtNz.value !== '') {
+      body.append('publishedAtNz', inputPublishedAtNz.value);
+    }
+
     const init = { method: "POST", body: body };
 
     apiFetchAuthenticated({ input, statusActions, init });
@@ -126,6 +131,15 @@
         :maxlength="64"
         help="lower case with hyphens (e.g. 'my-anatini-work'), optional custom web address"
         :error="getError('handle')" />
+
+      <InputText
+        v-model="inputPublishedAtNz"
+        type="datetime-local"
+        label="Date & Time (NZ)"
+        name="publishedAtNz"
+        id="publishedAtNz"
+        help="Leave blank to publish immediately. Works published in the future will not be visible until the scheduled time."
+        :error="getError('publishedAtNz')" />
 
       <SubmitButton
         :busy="dataStatus === 'pending'"

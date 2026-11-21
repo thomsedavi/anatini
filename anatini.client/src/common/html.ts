@@ -1,5 +1,5 @@
 import { apiFetchAuthenticated } from "./apiFetch";
-import { formatDate, formatDateTime, formatTime, getDaysDifference } from "./dateUtils";
+import { formatDate, formatDateTime, formatTime, getDaysDifference, formatShortestDateTime } from "./dateUtils";
 import { store } from "./store";
 import type { Content, EventOccurrence, Note, Space, StatusActions, User, Work } from "./types";
 import { escapeHtml } from "./utils";
@@ -160,12 +160,12 @@ export function getWorkTime(publishedAtNz: string): string {
   const publishedAtNzTime = formatTime(publishedAtNz);
 
   if (publishedAtNzTime === '12:00 am') {
-    result += `<time datetime="${publishedAtNz.slice(0, 10)}">${formatDate(publishedAtNz)}</time>`;
+    result += `<time datetime="${publishedAtNz.slice(0, 10)}">`;
   } else {
-    result += `<time datetime="${publishedAtNz}">${publishedAtNzTime}</time>`;
+    result += `<time datetime="${publishedAtNz}">`;
   }
 
-  result += '</p>';
+  result += `${formatShortestDateTime(publishedAtNz)}</time></p>`;
 
   return result;
 }

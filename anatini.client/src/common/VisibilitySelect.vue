@@ -7,8 +7,7 @@
 
   const visibilityOptions = ref([
     { text: 'Public', value: 'Public' },
-    { text: 'Protected', value: 'Protected' },
-    { text: 'Private', value: 'Private' }
+    { text: 'Protected', value: 'Protected' }
   ]);
 </script>
 
