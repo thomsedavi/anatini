@@ -1,4 +1,4 @@
-# User Note
+# Space Note
 - Displays space note with correct HTML ✓
 - Displays date ✓
 - Does not display owner ✓
@@ -35,5 +35,5 @@
 - Displays 500 page if internal server error ✓
 - Draft/Archived/Scheduled are visually distinct ✓
 - Protected notes should show protected status
-# User Note Create
-# User Note Edit
+# Space Note Create
+# Space Note Edit
