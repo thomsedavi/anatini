@@ -39,5 +39,6 @@
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error ✓
 - Draft/Archived/Scheduled is visually distinct ✓
+- Protected notes should show protected status
 # User Work Create
 # User Work Edit
