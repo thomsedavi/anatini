@@ -27,12 +27,12 @@
 - Cannot view archived note when:
   - not logged in ✓
   - logged in as other user ✓
-- Can view future note when logged in as owner ✓
-- Cannot view future note when:
+- Can view scheduled note when logged in as owner ✓
+- Cannot view scheduled note when:
   - not logged in ✓
   - logged in as other user ✓
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error ✓
-- Draft is visually distinct ✓
+- Draft/Archived/Scheduled is visually distinct ✓
 # User Note Create
 # User Note Edit

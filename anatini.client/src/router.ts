@@ -199,7 +199,7 @@ const routes: RouteRecordRaw[] = [
     redirect: { name: 'SpaceNotes' },
     children: [
       {
-        path: 'note/create',
+        path: 'notes/create',
         component: SpaceNoteCreateView,
         name: 'SpaceNoteCreate'
       },

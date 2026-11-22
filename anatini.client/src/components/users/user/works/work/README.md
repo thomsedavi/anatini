@@ -38,6 +38,6 @@
   - logged in as other user ✓
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error ✓
-- Draft is visually distinct ✓
+- Draft/Archived/Scheduled is visually distinct ✓
 # User Work Create
 # User Work Edit
