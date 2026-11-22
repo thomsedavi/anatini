@@ -9,33 +9,33 @@
 - Does not display owner in article header ✓
 - Links back to space work list ✓
 - Can star, bookmark, and dismiss when logged in ✓
-- Cannot star, bookmark, or dismiss when not logged in
+- Cannot star, bookmark, or dismiss when not logged in ✓
 - Has link to open edit page when owner ✓
 - Does not have link to open edit page when:
-  - not logged in
-  - logged in as other user
+  - not logged in ✓
+  - logged in as other user ✓
 - Can view protected work when:
   - logged in as owner ✓
-  - logged in as trusted other user
+  - logged in as trusted other user ✓
 - Cannot view protected work when:
-  - not logged in
-  - logged in as untrusted other user
+  - not logged in ✓
+  - logged in as untrusted other user ✓
 - Can view public work when:
-  - not logged in
+  - not logged in ✓
   - logged in as owner ✓
-  - logged in as other user
+  - logged in as other user ✓
 - Can view draft work when logged in as owner ✓
 - Cannot view draft work when:
-  - not logged in
-  - logged in as other user
+  - not logged in ✓
+  - logged in as other user ✓
 - Can view archived work when logged in as owner ✓
 - Cannot view archived work when:
-  - not logged in
-  - logged in as other user
-- Can view future work when logged in as owner
+  - not logged in ✓
+  - logged in as other user ✓
+- Can view future work when logged in as owner ✓
 - Cannot view future work when:
-  - not logged in
-  - logged in as other user
+  - not logged in ✓
+  - logged in as other user ✓
 - Displays 404 page if not found ✓
 - Displays 500 page if internal server error ✓
 - Draft/Archived/Scheduled is visually distinct ✓
