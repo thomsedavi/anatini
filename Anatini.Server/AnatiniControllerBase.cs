@@ -80,7 +80,7 @@ namespace Anatini.Server
 
                 if (settings.IncludeImages)
                 {
-                    usersQueryable = usersQueryable.Include((user) => user.Images);
+                    usersQueryable = usersQueryable.Include(user => user.Images);
                 }
 
                 if (settings.IncludeRelationships && TryGetUserId(out Guid sourceUserId))
@@ -130,13 +130,25 @@ namespace Anatini.Server
 
             var spacesQueryable = context.Spaces.AsQueryable();
 
-            if (settings?.AsNoTracking ?? true)
-            {
-                spacesQueryable = spacesQueryable.AsNoTracking();
-            }
-
-            spacesQueryable = spacesQueryable.Include(space => space.Images);
             spacesQueryable = spacesQueryable.Include(space => space.Settings);
+
+            if (settings != null)
+            {
+                if (settings.AsNoTracking)
+                {
+                    spacesQueryable = spacesQueryable.AsNoTracking();
+                }
+
+                if (settings.IncludeImages)
+                {
+                    spacesQueryable = spacesQueryable.Include(space => space.Images);
+                }
+
+                if (settings.IncludeRelationships && TryGetUserId(out Guid sourceUserId))
+                {
+                    spacesQueryable = spacesQueryable.Include(space => space.UserRelationships.Where(userSpaceRelationship => userSpaceRelationship.SourceUserId == sourceUserId));
+                }
+            }
 
             if (Guid.TryParse(spaceHandle, out Guid spaceId))
             {

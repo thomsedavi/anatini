@@ -127,12 +127,14 @@ namespace Anatini.Server.Notes
         [HttpGet("{noteHandle}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetNote(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, noteSpace) =>
         {
             return Ok(await note.ToNoteDtoAsync(UserIdOrNull, BlobService, noteSpace: noteSpace));
-        });
+        }, new ContextSettings { IncludeRelationships = true });
 
 
         [Authorize]
