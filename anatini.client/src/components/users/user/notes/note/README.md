@@ -1,7 +1,7 @@
 # User Note
 - Displays user note with correct HTML ✓
 - Displays date ✓
-- Does not display owner ✓
+- Does not display owner in article header ✓
 - Links back to user note list ✓
 - Can star, bookmark, and dismiss when logged in ✓
 - Cannot star, bookmark, or dismiss when not logged in ✓

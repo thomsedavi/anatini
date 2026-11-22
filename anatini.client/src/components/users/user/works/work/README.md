@@ -6,7 +6,7 @@
 - Displays day/month/year if date is day/month/year ✓
 - Displays hour/day/month/year if date is hour/day/month/year ✓
 - Displays minute/hour/day/month/year if date is minute/hour/day/month/year ✓
-- Does not display owner ✓
+- Does not display owner in article header ✓
 - Links back to user work list ✓
 - Can star, bookmark, and dismiss when logged in ✓
 - Cannot star, bookmark, or dismiss when not logged in ✓
