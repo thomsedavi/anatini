@@ -16,19 +16,20 @@ namespace Anatini.Server.Spaces.Extensions
                 About = space.About,
                 Handle = space.Handle,
                 IconImage = await space.GetIconImageAsync(blobService),
-                IsOwned = isAuthenticated ? space.UserRelationships.Any(userRelationship => userRelationship.Label == UserSpaceRelationshipLabel.IsOwned) : null,
+                IsOwned = isAuthenticated ? space.UserRelationships.Any(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsOwned) : null,
                 Settings = space.Settings.ToDictionary(setting => setting.Key, setting => setting.Value)
             };
         }
 
-        public static async Task<SpaceHeaderDto> ToSpaceHeaderDto(this Space space, IBlobService? blobService = null)
+        public static async Task<SpaceHeaderDto> ToSpaceHeaderDto(this Space space, bool isAuthenticated, IBlobService? blobService = null)
         {
             return new SpaceHeaderDto
             {
                 Id = space.Id,
                 Name = space.Name,
                 Handle = space.Handle,
-                IconImage = await space.GetIconImageAsync(blobService)
+                IconImage = await space.GetIconImageAsync(blobService),
+                IsFollowed = isAuthenticated ? space.UserRelationships.Any(userSpaceRelationship => userSpaceRelationship.Label == UserSpaceRelationshipLabel.IsFollowed) : null
             };
         }
 

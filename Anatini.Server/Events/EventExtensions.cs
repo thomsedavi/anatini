@@ -49,8 +49,8 @@ namespace Anatini.Server.Events
                     Id = eventOccurrence.Parent?.Id ?? throw new InvalidOperationException(),
                     Handle = eventOccurrence.Parent.Handle
                 },
-                UserHeader = eventOccurrenceUser != null ? await eventOccurrenceUser.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = eventOccurrenceSpace != null ? await eventOccurrenceSpace.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = eventOccurrenceUser != null ? await eventOccurrenceUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
+                SpaceHeader = eventOccurrenceSpace != null ? await eventOccurrenceSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
                 Handle = eventOccurrence.Handle,
                 StartsAtNz = eventOccurrence.StartsAtUtc.ConvertUtcToNz(),
                 EndsAtNz = eventOccurrence.EndsAtUtc.ConvertUtcToNz(),

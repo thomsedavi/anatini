@@ -24,14 +24,15 @@ namespace Anatini.Server.Users.Extensions
             return userDto;
         }
 
-        public static async Task<UserHeaderDto> ToUserHeaderDtoAsync(this ApplicationUser user, IBlobService? blobService = null)
+        public static async Task<UserHeaderDto> ToUserHeaderDtoAsync(this ApplicationUser user, bool isAuthenticated, IBlobService? blobService = null)
         {
             return new UserHeaderDto
             {
                 Id = user.Id,
                 Name = user.Name,
                 Handle = user.Handle,
-                IconImage = await user.GetIconImageAsync(blobService)
+                IconImage = await user.GetIconImageAsync(blobService),
+                IsFollowed = isAuthenticated ? user.ReceivedUserRelationships.Any(userUserRelationship => userUserRelationship.Label == UserUserRelationshipLabel.IsFollowed) : null
             };
         }
 

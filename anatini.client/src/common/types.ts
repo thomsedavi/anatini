@@ -44,6 +44,7 @@ export type UserHeader = {
   name: string;
   iconImage: Image | null;
   handle: string;
+  isFollowed: boolean | null;
 };
 
 export type EventHeader = {
@@ -82,6 +83,7 @@ export type SpaceHeader = {
   name: string;
   handle: string;
   iconImage: Image | null;
+  isFollowed: boolean | null;
 };
 
 export type Tab = {

@@ -21,8 +21,8 @@ namespace Anatini.Server.Notes
             return new NoteDto
             {
                 Id = note.Id,
-                UserHeader = noteUser != null ? await noteUser.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = noteSpace != null ? await noteSpace.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = noteUser != null ? await noteUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
+                SpaceHeader = noteSpace != null ? await noteSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
                 Handle = note.Handle,
                 Title = note.Title,
                 Body = note.Body,

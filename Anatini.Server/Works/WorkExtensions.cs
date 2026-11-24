@@ -19,8 +19,8 @@ namespace Anatini.Server.Works
             return new WorkDto
             {
                 Id = work.Id,
-                UserHeader = workUser != null ? await workUser.ToUserHeaderDtoAsync(blobService) : null,
-                SpaceHeader = workSpace != null ? await workSpace.ToSpaceHeaderDto(blobService) : null,
+                UserHeader = workUser != null ? await workUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
+                SpaceHeader = workSpace != null ? await workSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
                 Handle = work.Handle,
                 Title = work.Title ?? throw new InvalidOperationException(),
                 Body = work.Body,
