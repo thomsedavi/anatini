@@ -292,7 +292,7 @@ export function getContentStatus(status: ContentStatus, isScheduled: boolean | n
   return 'published';
 }
 
-export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string, pressed: string | null) => void): void {
+export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string, entityType: string | null, pressed: string | null) => void): void {
   const anchor = (mouseEvent.target as HTMLElement).closest('a');
 
   if (anchor !== null) {
@@ -303,9 +303,14 @@ export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction
     }
   }
 
-  const button = (mouseEvent.target as HTMLElement).closest('button');
+  const button = (mouseEvent.target as HTMLElement | null)?.closest('button');
 
-  if (button !== null) {
+  if (button instanceof HTMLButtonElement) {
+    if (button.popoverTargetElement instanceof HTMLElement) {
+      button.popoverTargetElement.showPopover();
+      return;
+    }
+
     const ariaDisabled = button.getAttribute('aria-disabled');
 
     if (ariaDisabled === 'true') {
@@ -316,7 +321,9 @@ export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction
     const ariaPressed = button.getAttribute('aria-pressed');
 
     if (ariaLabel !== null) {
-      buttonAction?.(ariaLabel, ariaPressed);
+      const entityType = button.getAttribute('data-entity-type');
+
+      buttonAction?.(ariaLabel, entityType, ariaPressed);
     }
   }
 }
@@ -329,13 +336,17 @@ export function escapeHtml(value: string | null): string | null {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-export function getUserAddress(user: User, basis: 'name' | 'id'): string {
-  const userKey = basis === 'id' ? user.id : user.handle;
+export function getNoteAddress(note: Note, entityType: string | null, basis: 'name' | 'id'): string {
+  if (entityType === 'space' && note.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? note.spaceHeader.id : note.spaceHeader.handle;
 
-  return `users/${userKey}`;
-}
+    return `spaces/${spaceKey}`;
+  } else if (entityType === 'user' && note.userHeader !== null) {
+    const userKey = basis === 'id' ? note.userHeader.id : note.userHeader.handle;
 
-export function getNoteAddress(note: Note, basis: 'name' | 'id'): string {
+    return `users/${userKey}`;
+  }
+
   const noteKey = basis === 'id' ? note.id : note.handle;
 
   if (note.spaceHeader !== null) {
@@ -352,7 +363,17 @@ export function getNoteAddress(note: Note, basis: 'name' | 'id'): string {
   }
 }
 
-export function getWorkAddress(work: Work, basis: 'name' | 'id'): string {
+export function getWorkAddress(work: Work, entityType: string | null, basis: 'name' | 'id'): string {
+  if (entityType === 'space' && work.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? work.spaceHeader.id : work.spaceHeader.handle;
+
+    return `spaces/${spaceKey}`;
+  } else if (entityType === 'user' && work.userHeader !== null) {
+    const userKey = basis === 'id' ? work.userHeader.id : work.userHeader.handle;
+
+    return `users/${userKey}`;
+  }
+
   const workKey = basis === 'id' ? work.id : work.handle;
 
   if (work.spaceHeader !== null) {
@@ -369,7 +390,17 @@ export function getWorkAddress(work: Work, basis: 'name' | 'id'): string {
   }
 }
 
-export function getEventOccurrenceAddress(eventOccurrence: EventOccurrence, basis: 'name' | 'id'): string {
+export function getEventOccurrenceAddress(eventOccurrence: EventOccurrence, entityType: string | null, basis: 'name' | 'id'): string {
+  if (entityType === 'space' && eventOccurrence.spaceHeader !== null) {
+    const spaceKey = basis === 'id' ? eventOccurrence.spaceHeader.id : eventOccurrence.spaceHeader.handle;
+
+    return `spaces/${spaceKey}`;
+  } else if (entityType === 'user' && eventOccurrence.userHeader !== null) {
+    const userKey = basis === 'id' ? eventOccurrence.userHeader.id : eventOccurrence.userHeader.handle;
+
+    return `users/${userKey}`;
+  }
+
   const eventKey = basis === 'id' ? eventOccurrence.eventHeader.id : eventOccurrence.eventHeader.handle;
   const eventOccurrenceKey = basis === 'id' ? eventOccurrence.id : eventOccurrence.handle;
 

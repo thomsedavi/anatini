@@ -100,14 +100,14 @@
           <button popovertarget="create-note-menu">
             + Create Note
           </button>
-          <ul popover="auto" id="create-note-menu">
+          <menu popover="auto" id="create-note-menu">
             <li>
               <RouterLink :to="{ name: 'UserNoteCreate', params: { userId: store.account.userHandle } }">Personal Note</RouterLink>
             </li>
             <li v-for="space in store.account.spaces ?? []" :key="'space' + space.id">
               <RouterLink :to="{ name: 'SpaceNoteCreate', params: { spaceId: space.handle } }">{{space.name}} Note</RouterLink>
             </li>
-          </ul>
+          </menu>
         </nav>
         <RouterLink v-else :to="{ name: 'UserNoteCreate', params: { userId: store.account.userHandle } }">+ Create Note</RouterLink>
       </template>
@@ -127,8 +127,8 @@
     </search>
 
     <ul role="list" v-if="dataNotes !== null">
-      <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note, getNoteAddress(note, 'id')))">
+      <li v-for="(note, index) in dataNotes" :key="'note' + note.id">
+        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, true, index)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, note, getNoteAddress(note, entityType, 'id')))">
         </article>
       </li>
     </ul>

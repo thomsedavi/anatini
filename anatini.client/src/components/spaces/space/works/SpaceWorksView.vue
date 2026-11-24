@@ -84,8 +84,8 @@
     </search>
 
     <ul role="list" v-if="dataWorks !== null">
-      <li v-for="work in dataWorks" :key="'work' + work.id">
-        <article v-html="getWorkHtml(work, false, 'h3', true)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, work, getWorkAddress(work, 'id')))">
+      <li v-for="(work, index) in dataWorks" :key="'work' + work.id">
+        <article v-html="getWorkHtml(work, false, 'h3', true, index)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, work, getWorkAddress(work, entityType, 'id')))">
         </article>
       </li>
     </ul>

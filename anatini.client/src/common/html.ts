@@ -112,7 +112,9 @@ export function getEventOccurrenceHtml(eventOccurrence: EventOccurrence): string
   return result;
 }
 
-export function getNoteHtml(note: Note, showOwner: boolean): string {
+export function getNoteHtml(note: Note, showOwner: boolean, index?: number): string {
+  const idPrefix = index === undefined ? 'work' : `work-${index}`;
+
   let result = '';
 
   result += `<header>`;
@@ -176,7 +178,8 @@ export function getWorkTime(publishedAtNz: string): string {
   return result;
 }
 
-export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3', headingIsLink: boolean): string {
+export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3', headingIsLink: boolean, index?: number): string {
+  const idPrefix = index === undefined ? 'work' : `work-${index}`;
   const hasOwnerHeader = work.userHeader !== null || work.spaceHeader !== null;
 
   let result = '';
@@ -218,8 +221,9 @@ export function getWorkHtml(work: Work, showOwner: boolean, heading: 'h2' | 'h3'
   return result;
 }
 
-export function userButtonAction(label: string, pressed: string | null, user: User, address: string): void {
+export function userButtonAction(label: string, pressed: string | null, user: User): void {
   const action = label.toLowerCase();
+  const input = `users/${user.id}/${action}`;
 
   if (pressed === 'true') {
     const statusActions: StatusActions = {
@@ -234,7 +238,7 @@ export function userButtonAction(label: string, pressed: string | null, user: Us
 
     const init: RequestInit = { method: "DELETE" };
 
-    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
+    apiFetchAuthenticated({ input, statusActions, init });
   } else {
     const statusActions: StatusActions = {
       201: () => {
@@ -248,7 +252,7 @@ export function userButtonAction(label: string, pressed: string | null, user: Us
 
     const init: RequestInit = { method: "POST" };
 
-    apiFetchAuthenticated({ input: `${address}/${action}`, statusActions, init });
+    apiFetchAuthenticated({ input, statusActions, init });
   }
 }
 

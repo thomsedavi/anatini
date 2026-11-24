@@ -5,7 +5,7 @@
   import { getUserHtml, userButtonAction } from '@/common/html';
   import TabButton from '@/common/TabButton.vue';
   import type { APIResponse, EventOccurrence, InputError, Note, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
-  import { getTabIndex, getUserAddress, handleClick, parseParams, type Params } from '@/common/utils';
+  import { getTabIndex, handleClick, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();
@@ -146,7 +146,7 @@
       </figure>
     </header>
 
-    <header v-if="user.data !== undefined" v-html="getUserHtml(user.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => userButtonAction(label, pressed, user.data!, getUserAddress(user.data!, 'id')))">
+    <header v-if="user.data !== undefined" v-html="getUserHtml(user.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, _entityType, pressed) => userButtonAction(label, pressed, user.data!))">
     </header>
 
     <section v-if="user.fetching === true">

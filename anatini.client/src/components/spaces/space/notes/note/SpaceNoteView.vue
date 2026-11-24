@@ -60,7 +60,7 @@
       </ol>
     </nav>
 
-    <article v-if="note.data !== undefined" :data-status="getContentStatus(note.data.status, note.data.isScheduled)" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, 'id')))">
+    <article v-if="note.data !== undefined" :data-status="getContentStatus(note.data.status, note.data.isScheduled)" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, entityType, 'id')))">
     </article>
 
     <article v-if="note.error !== undefined" :data-status="note.error.status">
