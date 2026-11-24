@@ -519,7 +519,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> AddContentRelationship(ApplicationDbContext context, Guid contentId, UserContentRelationshipLabel label)
+        public async Task<IActionResult> AddContentRelationship(Guid contentId, UserContentRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -550,7 +550,7 @@ namespace Anatini.Server
         }
 
         [NonAction]
-        public async Task<IActionResult> DeleteContentRelationship(ApplicationDbContext context, Guid contentId, UserContentRelationshipLabel label)
+        public async Task<IActionResult> DeleteContentRelationship(Guid contentId, UserContentRelationshipLabel label)
         {
             if (TryGetUserId(out Guid sourceUserId))
             {
@@ -559,6 +559,58 @@ namespace Anatini.Server
                 if (userContentRelationship != null)
                 {
                     context.Remove(userContentRelationship);
+                    await context.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        [NonAction]
+        public async Task<IActionResult> AddSpaceRelationship(Guid spaceId, UserSpaceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userSpaceRelationship = new ApplicationUserSpaceRelationship
+                {
+                    SourceUserId = sourceUserId,
+                    TargetSpaceId = spaceId,
+                    Label = label,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                context.Add(userSpaceRelationship);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException postgresException && postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                }
+
+                return Created();
+            }
+            else
+            {
+                return Problem();
+            }
+        }
+
+        [NonAction]
+        public async Task<IActionResult> DeleteSpaceRelationship(Guid spaceId, UserSpaceRelationshipLabel label)
+        {
+            if (TryGetUserId(out Guid sourceUserId))
+            {
+                var userSpaceRelationship = await context.UserSpaceRelationships.FirstOrDefaultAsync(userSpaceRelationship => userSpaceRelationship.TargetSpaceId == spaceId && userSpaceRelationship.SourceUserId == sourceUserId && userSpaceRelationship.Label == label);
+
+                if (userSpaceRelationship != null)
+                {
+                    context.Remove(userSpaceRelationship);
                     await context.SaveChangesAsync();
                 }
 

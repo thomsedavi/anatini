@@ -4,6 +4,7 @@
     public enum UserSpaceRelationshipLabel
     {
         None = 0,
-        IsOwned = 1
+        IsOwned = 1,
+        IsFollowed = 2
     }
 }

@@ -3,6 +3,7 @@ using Anatini.Server.Common;
 using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Context.Entities.Extensions;
+using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
 using Anatini.Server.Spaces.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -89,6 +90,20 @@ namespace Anatini.Server.Spaces
         public async Task<IActionResult> GetImage(string spaceHandle, string imageHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
         {
             return await Task.FromResult(Ok($"TODO Image Result for {imageHandle}"));
+        });
+
+        [Authorize]
+        [HttpPost("{spaceHandle}/follow")]
+        public async Task<IActionResult> PostSpaceFollow(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        {
+            return await AddSpaceRelationship(space.Id, UserSpaceRelationshipLabel.IsFollowed);
+        });
+
+        [Authorize]
+        [HttpDelete("{spaceHandle}/follow")]
+        public async Task<IActionResult> DeleteSpaceFollow(string spaceHandle) => await UsingSpaceAsync(spaceHandle, async (space) =>
+        {
+            return await DeleteSpaceRelationship(space.Id, UserSpaceRelationshipLabel.IsFollowed);
         });
     }
 }

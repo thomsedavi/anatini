@@ -141,42 +141,42 @@ namespace Anatini.Server.Notes
         [HttpPost("{noteHandle}/bookmark")]
         public async Task<IActionResult> PostNoteBookmark(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await AddContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/bookmark")]
         public async Task<IActionResult> DeleteNoteBookmark(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await DeleteContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{noteHandle}/star")]
         public async Task<IActionResult> PostNoteStar(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await AddContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/star")]
         public async Task<IActionResult> DeleteNoteStar(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await DeleteContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{noteHandle}/dismiss")]
         public async Task<IActionResult> PostNoteDismiss(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await AddContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{noteHandle}/dismiss")]
         public async Task<IActionResult> DeleteNoteDismiss(string spaceHandle, string noteHandle) => await UsingSpaceContentAsync<Note>(spaceHandle, noteHandle, async (note, _) =>
         {
-            return await DeleteContentRelationship(Context, note.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsDismissed);
         });
     }
 }

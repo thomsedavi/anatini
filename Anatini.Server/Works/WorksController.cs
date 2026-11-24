@@ -55,42 +55,42 @@ namespace Anatini.Server.Works
         [HttpPost("{workId:guid}/bookmark")]
         public async Task<IActionResult> PostWorkBookmark(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{workId:guid}/bookmark")]
         public async Task<IActionResult> DeleteWorkBookmark(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{workId:guid}/star")]
         public async Task<IActionResult> PostWorkStar(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{workId:guid}/star")]
         public async Task<IActionResult> DeleteWorkStar(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{workId:guid}/dismiss")]
         public async Task<IActionResult> PostWorkDismiss(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{workId:guid}/dismiss")]
         public async Task<IActionResult> DeleteWorkDismiss(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
         });
     }
 }

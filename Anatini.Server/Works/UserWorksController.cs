@@ -131,42 +131,42 @@ namespace Anatini.Server.Works
         [HttpPost("{workHandle}/bookmark")]
         public async Task<IActionResult> PostWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/bookmark")]
         public async Task<IActionResult> DeleteWorkBookmark(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsBookmarked);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsBookmarked);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/star")]
         public async Task<IActionResult> PostWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/star")]
         public async Task<IActionResult> DeleteWorkStar(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
         });
 
         [Authorize]
         [HttpPost("{workHandle}/dismiss")]
         public async Task<IActionResult> PostWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await AddContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
         });
 
         [Authorize]
         [HttpDelete("{workHandle}/dismiss")]
         public async Task<IActionResult> DeleteWorkDismiss(string userHandle, string workHandle) => await UsingUserContentAsync<Work>(userHandle, workHandle, async (work, _) =>
         {
-            return await DeleteContentRelationship(Context, work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
         });
     }
 }
