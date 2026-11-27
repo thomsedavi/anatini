@@ -2,13 +2,14 @@
   import { onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
+  import ContentArticle from '@/common/ContentArticle.vue';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
   import { contentButtonAction, getEventOccurrenceHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { EventOccurrence, SearchParameter, StatusActions } from '@/common/types';
-  import { getEventOccurrenceAddress, handleClick } from '@/common/utils';
+  import { getEventOccurrenceAddress, handleClick, updateContent } from '@/common/utils';
 
   const router = useRouter();
 

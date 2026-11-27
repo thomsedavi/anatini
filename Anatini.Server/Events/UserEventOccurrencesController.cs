@@ -3,6 +3,7 @@ using Anatini.Server.Context;
 using Anatini.Server.Context.Entities;
 using Anatini.Server.Enums;
 using Anatini.Server.Images.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,48 @@ namespace Anatini.Server.Events
             }
 
             return Ok(await Task.WhenAll(eventOccurrences.Select(eventOccurrence => eventOccurrence.ToEventOccurrenceDtoAsync(UserIdOrNull, BlobService, eventOccurrenceUser: eventOccurrenceUser))));
+        });
+
+        [Authorize]
+        [HttpPost("{eventOccurrenceHandle}/bookmark")]
+        public async Task<IActionResult> PostEventOccurrenceBookmark(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventOccurrenceHandle}/bookmark")]
+        public async Task<IActionResult> DeleteEventOccurrenceBookmark(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsBookmarked);
+        });
+
+        [Authorize]
+        [HttpPost("{eventOccurrenceHandle}/star")]
+        public async Task<IActionResult> PostEventOccurrenceStar(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventOccurrenceHandle}/star")]
+        public async Task<IActionResult> DeleteEventOccurrenceStar(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+        });
+
+        [Authorize]
+        [HttpPost("{eventOccurrenceHandle}/dismiss")]
+        public async Task<IActionResult> PostEventOccurrenceDismiss(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
+        });
+
+        [Authorize]
+        [HttpDelete("{eventOccurrenceHandle}/dismiss")]
+        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string userHandle, string eventOccurrenceHandle) => await UsingUserContentAsync<EventOccurrence>(userHandle, eventOccurrenceHandle, async (eventOccurrence, _) =>
+        {
+            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
         });
     }
 }

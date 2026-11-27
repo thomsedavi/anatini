@@ -7,7 +7,7 @@ export type StatusActions = { [id: number]: (response?: Response) => void };
 export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
-export type ContentType = 'Note' | 'Work';
+export type ContentType = 'Note' | 'Work' | 'EventOccurrence';
 export type ContentStatus = 'Draft' | 'Published' | 'Archived';
 export type OwnerType = 'User' | 'Space';
 
