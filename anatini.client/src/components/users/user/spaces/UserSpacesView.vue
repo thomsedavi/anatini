@@ -2,11 +2,7 @@
   import type { Space, StatusActions } from '@/common/types';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import { useRouter } from 'vue-router';
-  import { handleClick } from '@/common/utils';
-  import { getSpaceHtml } from '@/common/html';
-
-  const router = useRouter();
+  import { ContentBody } from '@/common/utils';
 
   const props = defineProps<{
     dataUserId: string,
@@ -45,7 +41,14 @@
 
     <ul role="list" v-if="dataSpaces !== null">
       <li v-for="space in dataSpaces" :key="'space' + space.id">
-        <article v-html="getSpaceHtml(space)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
+        <article>
+          <header>
+            <h3>
+              <RouterLink :to="{ name: 'Space', params: { spaceId: space.handle } }">{{ space.name }}</RouterLink>
+            </h3>
+          </header>
+
+          <ContentBody v-if="space.about !== null" :html="space.about" />
         </article>
       </li>
     </ul>
