@@ -82,7 +82,7 @@
 
     <ul role="list" v-if="dataNotes !== null">
       <li v-for="(note, index) in dataNotes" :key="'note' + note.id">
-        <ContentArticle :content="note" content-type="Note" :index="index" @update-content="(newNote) => updateContent(note, newNote)" />
+        <ContentArticle :content="note" content-type="Note" :index="index" :is-main="false" @update-content="(newNote) => updateContent(note, newNote)" />
       </li>
     </ul>
 

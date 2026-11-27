@@ -59,7 +59,7 @@
       </ol>
     </nav>
 
-    <ContentArticle v-if="noteResponse.data !== undefined" :content="noteResponse.data" content-type="Note" @update-content="(newNote) => updateContent(noteResponse.data!, newNote)" />
+    <ContentArticle v-if="noteResponse.data !== undefined" :content="noteResponse.data" content-type="Note" :is-main="true" @update-content="(newNote) => updateContent(noteResponse.data!, newNote)" />
 
     <article v-if="noteResponse.error !== undefined" :data-status="noteResponse.error.status">
       <h2>{{ noteResponse.error.heading }}</h2>

@@ -1,6 +1,8 @@
 # User Work
 - Displays user work with correct HTML ✓
 - Does not display date if undated ✓
+- DateTime attribute of Time includes time if date has time component
+- DateTime attribute of Time excludes time if date has no time component
 - Displays year if date is year ✓
 - Displays month/year if date is month/year ✓
 - Displays day/month/year if date is day/month/year ✓

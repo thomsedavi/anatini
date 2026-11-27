@@ -1,15 +1,12 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
+  import ContentArticle from '@/common/ContentArticle.vue';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { contentButtonAction, getWorkHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { SearchParameter, StatusActions, Work } from '@/common/types';
-  import { getWorkAddress, handleClick } from '@/common/utils';
-
-  const router = useRouter();
+  import { updateContent } from '@/common/utils';
 
   const props = defineProps<{
     dataSpaceId: string,
@@ -85,8 +82,7 @@
 
     <ul role="list" v-if="dataWorks !== null">
       <li v-for="(work, index) in dataWorks" :key="'work' + work.id">
-        <article v-html="getWorkHtml(work, false, 'h3', true, index)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, work, getWorkAddress(work, entityType, 'id')))">
-        </article>
+        <ContentArticle :content="work" content-type="Work" :index="index" :is-main="false" @update-content="(newWork) => updateContent(work, newWork)" />
       </li>
     </ul>
 

@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from "@/common/apiFetch";
-  import { formatDateTime } from "@/common/dateUtils";
+  import { formatDateTime, formatShortestDateTime } from "@/common/dateUtils";
   import { store } from "@/common/store";
   import type { Content, ContentType, StatusActions } from '@/common/types';
-  import { ContentBody, getContentAddress, getContentStatus, isNote, pascalToKebab } from '@/common/utils';
+  import { ContentBody, getContentAddress, getContentStatus, getWorkDateTime, isNote, isWork, pascalToKebab } from '@/common/utils';
 
   const props = defineProps<{
     content: Content,
     contentType: ContentType,
-    showOwner?: boolean,
+    isMain: boolean,
     index?: number,
   }>();
 
@@ -95,18 +95,26 @@
 <template>
   <article :data-status="getContentStatus(content)">
     <header>
-      <address v-if="showOwner && content.ownerHeader !== null" role="presentation">
+      <template v-if="isWork(content, contentType)">
+        <h2 v-if="isMain">{{ content.title }}</h2>
+        <h3 v-else-if="content.ownerHeader !== null"><RouterLink :to="{ name: `${content.ownerHeader.type}${contentType}`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, [`${contentTypeKebab}Id`]: content.handle } }">{{ content.title }}</RouterLink></h3>
+        <h3 v-else>{{ content.title }}</h3>
+      </template>
+      <address v-if="!isMain && content.ownerHeader !== null" role="presentation">
         <RouterLink :to="{ name: content.ownerHeader.type, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle } }">{{ content.ownerHeader.name }}</RouterLink>
       </address>
-      <p>
-        <time v-if="isNote(content, contentType)" :datetime="content.publishedAtNz">{{ formatDateTime(content.publishedAtNz) }}</time>
+      <p v-if="isNote(content, contentType)">
+        <time :datetime="content.publishedAtNz">{{ formatDateTime(content.publishedAtNz) }}</time>
+      </p>
+      <p v-if="isWork(content, contentType) && content.publishedAtNz !== null">
+        Published: <time :datetime="getWorkDateTime(content.publishedAtNz)">{{ formatShortestDateTime(content.publishedAtNz) }}</time>
       </p>
       <p v-if="content.status === 'Draft'">Draft</p>
       <p v-else-if="content.status === 'Archived'">Archived</p>
       <p v-else-if="content.isScheduled">Scheduled</p>
       <button type="button" :popovertarget="`${contentIdPrefix}-additional-actions`">…</button>
       <menu :id="`${contentIdPrefix}-additional-actions`" popover="auto" aria-label="Additional actions">
-        <li v-if="showOwner && content.ownerHeader !== null">
+        <li v-if="!isMain && content.ownerHeader !== null">
           <button :data-entity-type="content.ownerHeader.type" :data-entity-id="content.ownerHeader.id" aria-label="Follow" :aria-pressed="content.ownerHeader.isFollowed ?? false" @click="() => ownerButtonAction('follow', content.ownerHeader!.isFollowed)">{{ content.ownerHeader!.isFollowed ? 'Unfollow' : 'Follow' }}</button>
         </li>
         <li v-if="content.isOwned && content.ownerHeader !== null">

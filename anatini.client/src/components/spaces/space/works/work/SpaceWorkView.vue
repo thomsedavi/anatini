@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import { contentButtonAction, getWorkHtml } from '@/common/html';
+  import ContentArticle from '@/common/ContentArticle.vue';
   import type { APIResponse, StatusActions, Work } from '@/common/types';
-  import { getContentStatus, getWorkAddress, handleClick, parseParams, type Params } from '@/common/utils';
+  import { parseParams, updateContent, type Params } from '@/common/utils';
 
   const route = useRoute();
-  const router = useRouter();
 
   defineProps<{
     dataSpaceId: string,
@@ -60,8 +59,7 @@
       </ol>
     </nav>
 
-    <article v-if="workResponse.data !== undefined" :data-status="getContentStatus(workResponse.data.status, workResponse.data.isScheduled)" v-html="getWorkHtml(workResponse.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, workResponse.data!, getWorkAddress(workResponse.data!, entityType, 'id')))">
-    </article>
+    <ContentArticle v-if="workResponse.data !== undefined" :content="workResponse.data" content-type="Work" :is-main="true" @update-content="(newWork) => updateContent(workResponse.data!, newWork)" />
 
     <article v-if="workResponse.error !== undefined" :data-status="workResponse.error.status">
       <h2>{{ workResponse.error.heading }}</h2>
