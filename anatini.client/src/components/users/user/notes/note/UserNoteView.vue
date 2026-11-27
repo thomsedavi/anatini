@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
-  import { contentButtonAction, getNoteHtml } from '@/common/html';
+  import ContentArticle from '@/common/ContentArticle.vue';
   import type { APIResponse, Note, StatusActions } from '@/common/types';
-  import { getContentStatus, getNoteAddress, handleClick, parseParams, type Params } from '@/common/utils';
+  import { parseParams, updateContent, type Params } from '@/common/utils';
 
   const route = useRoute();
-  const router = useRouter();
 
   defineProps<{
     dataUserId: string,
@@ -15,7 +14,7 @@
     dataUserName: string,
   }>();
 
-  const note = ref<APIResponse<Note>>({ fetching: true });
+  const noteResponse = ref<APIResponse<Note>>({ fetching: true });
 
   watch([() => route.params.userId, () => route.params.noteId], (params: Params) => fetchNote(parseParams(params)), { immediate: true });
 
@@ -26,23 +25,23 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Note) => {
-            note.value = { data: value };
+            noteResponse.value = { data: value };
           })
           .catch(() => {
-            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this note' }};
+            noteResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this note' }};
           });
       },
       401: () => {
-        note.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this note' }};
+        noteResponse.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this note' }};
       },
       403: () => {
-        note.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this note' }};
+        noteResponse.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this note' }};
       },
       404: () => {
-        note.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
+        noteResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
       },
       500: () => {
-        note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this note' }};
+        noteResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this note' }};
       }
     }
 
@@ -60,12 +59,11 @@
       </ol>
     </nav>
 
-    <article v-if="note.data !== undefined" :data-status="getContentStatus(note.data.status, note.data.isScheduled)" v-html="getNoteHtml(note.data, false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, note.data!, getNoteAddress(note.data!, entityType, 'id')))">
-    </article>
+    <ContentArticle v-if="noteResponse.data !== undefined" :content="noteResponse.data" content-type="Note" @update-content="(newNote) => updateContent(noteResponse.data!, newNote)" />
 
-    <article v-if="note.error !== undefined" :data-status="note.error.status">
-      <h2>{{ note.error.heading }}</h2>
-      <p>{{ note.error.body }}</p>
+    <article v-if="noteResponse.error !== undefined" :data-status="noteResponse.error.status">
+      <h2>{{ noteResponse.error.heading }}</h2>
+      <p>{{ noteResponse.error.body }}</p>
     </article>
   </section>
 </template>

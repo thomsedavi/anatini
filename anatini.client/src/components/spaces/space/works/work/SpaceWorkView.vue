@@ -15,7 +15,7 @@
     dataSpaceName: string,
   }>();
 
-  const work = ref<APIResponse<Work>>({ fetching: true });
+  const workResponse = ref<APIResponse<Work>>({ fetching: true });
 
   watch([() => route.params.spaceId, () => route.params.workId], (params: Params) => fetchWork(parseParams(params)), { immediate: true });
 
@@ -26,23 +26,23 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Work) => {
-            work.value = { data: value };
+            workResponse.value = { data: value };
           })
           .catch(() => {
-            work.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this work' }};
+            workResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this work' }};
           });
       },
       401: () => {
-        work.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this work' }};
+        workResponse.value = { error: { status: '401', heading: '401 Unauthorised', body: 'You do not have access to this work' }};
       },
       403: () => {
-        work.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this work' }};
+        workResponse.value = { error: { status: '403', heading: '403 Forbidden', body: 'You do not have access to this work' }};
       },
       404: () => {
-        work.value = { error: { status: '404', heading: '404 Not Found', body: 'Work not found' }};
+        workResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Work not found' }};
       },
       500: () => {
-        work.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this work' }};
+        workResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this work' }};
       }
     }
 
@@ -60,12 +60,12 @@
       </ol>
     </nav>
 
-    <article v-if="work.data !== undefined" :data-status="getContentStatus(work.data.status, work.data.isScheduled)" v-html="getWorkHtml(work.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, work.data!, getWorkAddress(work.data!, entityType, 'id')))">
+    <article v-if="workResponse.data !== undefined" :data-status="getContentStatus(workResponse.data.status, workResponse.data.isScheduled)" v-html="getWorkHtml(workResponse.data, false, 'h2', false)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, workResponse.data!, getWorkAddress(workResponse.data!, entityType, 'id')))">
     </article>
 
-    <article v-if="work.error !== undefined" :data-status="work.error.status">
-      <h2>{{ work.error.heading }}</h2>
-      <p>{{ work.error.body }}</p>
+    <article v-if="workResponse.error !== undefined" :data-status="workResponse.error.status">
+      <h2>{{ workResponse.error.heading }}</h2>
+      <p>{{ workResponse.error.body }}</p>
     </article>
   </section>
 </template>

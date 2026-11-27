@@ -1,8 +1,6 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Spaces.Extensions;
-using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Notes
@@ -16,13 +14,12 @@ namespace Anatini.Server.Notes
             noteUser ??= note.User;
             noteSpace ??= note.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(note, userId, noteUser, noteSpace);
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(note, userId, noteUser, noteSpace, blobService);
 
             return new NoteDto
             {
                 Id = note.Id,
-                UserHeader = noteUser != null ? await noteUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
-                SpaceHeader = noteSpace != null ? await noteSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
+                OwnerHeader = ownerHeader,
                 Handle = note.Handle,
                 Title = note.Title,
                 Body = note.Body,

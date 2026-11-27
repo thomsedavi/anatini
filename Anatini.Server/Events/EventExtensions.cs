@@ -1,20 +1,18 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Spaces.Extensions;
-using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Events
 {
     public static class EventExtensions
     {
-        public static EventDto ToEventDto(this Event @event, Guid? userId, ApplicationUser? eventUser = null, Space? eventSpace = null)
+        public static async Task<EventDto> ToEventDto(this Event @event, Guid? userId, ApplicationUser? eventUser = null, Space? eventSpace = null)
         {
             eventUser ??= @event.User;
             eventSpace ??= @event.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(@event, userId, eventUser, eventSpace);
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, _) = await ContentHelper.GetUserContentDetails(@event, userId, eventUser, eventSpace);
 
             return new EventDto
             {
@@ -39,7 +37,7 @@ namespace Anatini.Server.Events
             eventOccurrenceUser ??= eventOccurrence.User;
             eventOccurrenceSpace ??= eventOccurrence.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(eventOccurrence, userId, eventOccurrenceUser, eventOccurrenceSpace);
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(eventOccurrence, userId, eventOccurrenceUser, eventOccurrenceSpace, blobService);
 
             return new EventOccurrenceDto
             {
@@ -49,8 +47,7 @@ namespace Anatini.Server.Events
                     Id = eventOccurrence.Parent?.Id ?? throw new InvalidOperationException(),
                     Handle = eventOccurrence.Parent.Handle
                 },
-                UserHeader = eventOccurrenceUser != null ? await eventOccurrenceUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
-                SpaceHeader = eventOccurrenceSpace != null ? await eventOccurrenceSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
+                OwnerHeader = ownerHeader,
                 Handle = eventOccurrence.Handle,
                 StartsAtNz = eventOccurrence.StartsAtUtc.ConvertUtcToNz(),
                 EndsAtNz = eventOccurrence.EndsAtUtc.ConvertUtcToNz(),

@@ -10,7 +10,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
+  const spaceResponse = ref<APIResponse<SpaceEdit>>({ fetching: true });
   const inputErrors = ref<InputError[]>([]);
   const inputNoteName = ref<string>('');
   const inputNoteHandle = ref<string>('');
@@ -26,23 +26,23 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: SpaceEdit) => {
-            space.value = { data: value };
+            spaceResponse.value = { data: value };
           })
           .catch(() => {
-            space.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+            spaceResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
           });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/notes/create` } });
       },
       403: () => {
-        space.value = { error: { status: '403', heading: '403 Forbidden', body: 'No access to space' }};
+        spaceResponse.value = { error: { status: '403', heading: '403 Forbidden', body: 'No access to space' }};
       },
       404: () => {
-        space.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
+        spaceResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        space.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
+        spaceResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -54,7 +54,7 @@
   }
 
   async function postNote() {
-    if (space.value.data === undefined) {
+    if (spaceResponse.value.data === undefined) {
       return;
     }
 
@@ -81,14 +81,14 @@
 
     status.value = 'pending';
 
-    const input = `spaces/${space.value.data.id}/notes`;
+    const input = `spaces/${spaceResponse.value.data.id}/notes`;
 
     const statusActions: StatusActions = {
       201: () => {
         status.value = 'success';
 
-        if (space.value.data !== undefined) {
-          router.push({ name: 'NoteEdit', params: { spaceId: space.value.data.id, noteId: tidiedHandle } });
+        if (spaceResponse.value.data !== undefined) {
+          router.push({ name: 'NoteEdit', params: { spaceId: spaceResponse.value.data.id, noteId: tidiedHandle } });
         }
       },
       400: (response?: Response) => {
@@ -138,19 +138,19 @@
       <h1>Create Note</h1>
     </header>
 
-    <section v-if="space === null">
+    <section v-if="spaceResponse === null">
       <p role="status" class="visually-hidden" aria-live="polite">Please wait while the space information is fetched.</p>
                 
       <progress max="100">Fetching space...</progress>
     </section>
 
-    <section v-if="space.error !== undefined">
+    <section v-if="spaceResponse.error !== undefined">
       <p>
-        {{ space.error.body }}
+        {{ spaceResponse.error.body }}
       </p>
     </section>
 
-    <template v-if="space.data !== undefined">
+    <template v-if="spaceResponse.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem creating your note</h2>
         <ul role="list">
@@ -161,7 +161,7 @@
       </section>
 
       <section>
-        <form @submit.prevent="postNote" :action="`/api/spaces/${space.data.id}/notes`" method="POST" novalidate>
+        <form @submit.prevent="postNote" :action="`/api/spaces/${spaceResponse.data.id}/notes`" method="POST" novalidate>
           <fieldset>
             <legend class="visually-hidden">Create Note</legend>
 

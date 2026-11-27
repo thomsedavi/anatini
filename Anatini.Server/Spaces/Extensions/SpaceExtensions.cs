@@ -21,11 +21,12 @@ namespace Anatini.Server.Spaces.Extensions
             };
         }
 
-        public static async Task<SpaceHeaderDto> ToSpaceHeaderDto(this Space space, bool isAuthenticated, IBlobService? blobService = null)
+        public static async Task<OwnerHeaderDto> ToOwnerHeaderDtoAsync(this Space space, bool isAuthenticated, IBlobService? blobService = null)
         {
-            return new SpaceHeaderDto
+            return new OwnerHeaderDto
             {
                 Id = space.Id,
+                Type = OwnerType.Space.ToString(),
                 Name = space.Name,
                 Handle = space.Handle,
                 IconImage = await space.GetIconImageAsync(blobService),

@@ -1,15 +1,12 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
+  import ContentArticle from '@/common/ContentArticle.vue';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { contentButtonAction, getNoteHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { Note, SearchParameter, StatusActions } from '@/common/types';
-  import { getNoteAddress, handleClick } from '@/common/utils';
-
-  const router = useRouter();
+  import { updateContent } from '@/common/utils';
 
   const props = defineProps<{
     dataSpaceId: string,
@@ -85,8 +82,7 @@
 
     <ul role="list" v-if="dataNotes !== null">
       <li v-for="(note, index) in dataNotes" :key="'note' + note.id">
-        <article :data-status="note.status.toLowerCase()" v-html="getNoteHtml(note, false, index)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, note, getNoteAddress(note, entityType, 'id')))">
-        </article>
+        <ContentArticle :content="note" content-type="Note" :index="index" @update-content="(newNote) => updateContent(note, newNote)" />
       </li>
     </ul>
 

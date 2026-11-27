@@ -1,8 +1,6 @@
 ﻿using Anatini.Server.Context.Entities;
 using Anatini.Server.Dtos;
 using Anatini.Server.Images.Services;
-using Anatini.Server.Spaces.Extensions;
-using Anatini.Server.Users.Extensions;
 using Anatini.Server.Utils;
 
 namespace Anatini.Server.Works
@@ -14,13 +12,12 @@ namespace Anatini.Server.Works
             workUser ??= work.User;
             workSpace ??= work.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned) = ContentHelper.GetUserContentRelationships(work, userId, workUser, workSpace);
+            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(work, userId, workUser, workSpace, blobService);
 
             return new WorkDto
             {
                 Id = work.Id,
-                UserHeader = workUser != null ? await workUser.ToUserHeaderDtoAsync(userId.HasValue, blobService) : null,
-                SpaceHeader = workSpace != null ? await workSpace.ToSpaceHeaderDto(userId.HasValue, blobService) : null,
+                OwnerHeader = ownerHeader,
                 Handle = work.Handle,
                 Title = work.Title ?? throw new InvalidOperationException(),
                 Body = work.Body,

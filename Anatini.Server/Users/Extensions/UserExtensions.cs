@@ -24,11 +24,12 @@ namespace Anatini.Server.Users.Extensions
             return userDto;
         }
 
-        public static async Task<UserHeaderDto> ToUserHeaderDtoAsync(this ApplicationUser user, bool isAuthenticated, IBlobService? blobService = null)
+        public static async Task<OwnerHeaderDto> ToOwnerHeaderDtoAsync(this ApplicationUser user, bool isAuthenticated, IBlobService? blobService = null)
         {
-            return new UserHeaderDto
+            return new OwnerHeaderDto
             {
                 Id = user.Id,
+                Type = OwnerType.User.ToString(),
                 Name = user.Name,
                 Handle = user.Handle,
                 IconImage = await user.GetIconImageAsync(blobService),

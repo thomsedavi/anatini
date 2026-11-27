@@ -24,7 +24,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const note = ref<APIResponse<Note>>({ fetching: true });
+  const noteResponse = ref<APIResponse<Note>>({ fetching: true });
   const inputBody = ref<string>('');
   const inputVisibility = ref<Visibility>('Public');
   const inputNotePublishedAtNz = ref<string>('');
@@ -38,20 +38,20 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Note) => {
-            note.value = { data: value };
+            noteResponse.value = { data: value };
             inputBody.value = parseFromBodyString(`<article>${value.body}</article>`);
             inputVisibility.value = value.visibility;
             inputNotePublishedAtNz.value = formatDateTimeNz(value.publishedAtNz);
           })
           .catch(() => {
-            note.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
+            noteResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       },
       404: () => {
-        note.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
+        noteResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Note not found' }};
       },
       500: () => {
-        note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your note, please reload the page' }};
+        noteResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your note, please reload the page' }};
       },
     };
 
@@ -59,13 +59,13 @@
   };
 
   function noChange(): boolean {
-    if (note.value.data === undefined) {
+    if (noteResponse.value.data === undefined) {
       return true;
-    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== note.value.data.body) {
+    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== noteResponse.value.data.body) {
       return false;
-    } else if (inputVisibility.value !== note.value.data.visibility) {
+    } else if (inputVisibility.value !== noteResponse.value.data.visibility) {
       return false;
-    } else if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtNz)) {
+    } else if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(noteResponse.value.data.publishedAtNz)) {
       return false;
     }
 
@@ -77,7 +77,7 @@
   }
 
   async function patchNote() {
-    if (note.value.data === undefined) {
+    if (noteResponse.value.data === undefined) {
       return;
     }
 
@@ -101,21 +101,21 @@
 
     const statusActions: StatusActions = {
       204: () => {
-        router.push({ name: 'SpaceNote', params: { spaceId: props.dataSpaceHandle, noteId: note.value.data!.handle } });
+        router.push({ name: 'SpaceNote', params: { spaceId: props.dataSpaceHandle, noteId: noteResponse.value.data!.handle } });
       }
     }
 
     const body = new FormData();
 
-    if (formatParagraphs(inputBody.value) !== note.value.data.body) {
+    if (formatParagraphs(inputBody.value) !== noteResponse.value.data.body) {
       body.append('article', formatParagraphs(inputBody.value));
     }
 
-    if (inputVisibility.value !== note.value.data.visibility) {
+    if (inputVisibility.value !== noteResponse.value.data.visibility) {
       body.append('visibility', inputVisibility.value);
     }
 
-    if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(note.value.data.publishedAtNz)) {
+    if (inputNotePublishedAtNz.value !== '' && inputNotePublishedAtNz.value !== formatDateTimeNz(noteResponse.value.data.publishedAtNz)) {
       body.append('publishedAtNz', inputNotePublishedAtNz.value);
     }
 
@@ -131,19 +131,19 @@
       <h2>Edit Note</h2>
     </header>
 
-    <template v-if="note === null">
+    <template v-if="noteResponse === null">
       <p role="status" class="visually-hidden" aria-live="polite">Please wait while the note information is fetched.</p>
                 
       <progress max="100">Fetching note...</progress>
     </template>
 
-    <template v-if="note.error !== undefined">
+    <template v-if="noteResponse.error !== undefined">
       <p>
-        {{ note.error.body }}
+        {{ noteResponse.error.body }}
       </p>
     </template>
 
-    <template v-if="note.data !== undefined">
+    <template v-if="noteResponse.data !== undefined">
       <form @submit.prevent="patchNote" :action="`/api/spaces/${route.params.spaceId}/notes/${route.params.noteId}`" method="POST" novalidate>
         <InputTextArea
           v-model="inputBody"

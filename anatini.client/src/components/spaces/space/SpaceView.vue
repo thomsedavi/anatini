@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const space = ref<APIResponse<Space>>({ fetching: true });
+  const spaceResponse = ref<APIResponse<Space>>({ fetching: true });
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
@@ -31,7 +31,7 @@
   async function fetchSpace(params: string[]) {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
 
-    space.value = { fetching: true };
+    spaceResponse.value = { fetching: true };
 
     const input = `spaces/${params[0]}`;
 
@@ -39,19 +39,19 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Space) => {
-            space.value = {
+            spaceResponse.value = {
               data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null }
             };
           })
           .catch(() => {
-            space.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this space, please reload the page' }};
+            spaceResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this space, please reload the page' }};
           });
       },
       404: () => {
-        space.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
+        spaceResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        space.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this space, please reload the page' }};
+        spaceResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this space, please reload the page' }};
       }
     };
 
@@ -117,14 +117,14 @@
 
 <template>
   <main role="main" id="main" tabindex="-1">
-    <template v-if="space.data !== undefined">
+    <template v-if="spaceResponse.data !== undefined">
       <ul role="tablist" aria-label="Space Content">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
           :selected="tabIndex === index"
           @click="() => handleClickTab(index)"
           @keydown="(event: KeyboardEvent) => handleKeyDown(event, index)"
-          :text="space.data.settings[`${tab.id}-name`] ?? tab.text"
+          :text="spaceResponse.data.settings[`${tab.id}-name`] ?? tab.text"
           :id="tab.id"
           :add-button-ref="(el: HTMLButtonElement) => { tabRefs.push(el); }" />
       </ul>
@@ -137,9 +137,9 @@
           :data-notes="notes"
           :data-works="works"
           :data-event-occurrence-groups="eventOccurrenceGroups"
-          :data-space-id="space.data.id"
-          :data-space-handle="space.data.handle"
-          :data-space-name="space.data.name"
+          :data-space-id="spaceResponse.data.id"
+          :data-space-handle="spaceResponse.data.handle"
+          :data-space-name="spaceResponse.data.name"
           @update-notes="handleUpdateNotes"
           @update-works="handleUpdateWorks"
           @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"

@@ -7,8 +7,7 @@
         public required string Body { get; set; }
         public required string Visibility { get; set; }
         public required string Status { get; set; }
-        public UserHeaderDto? UserHeader { get; set; }
-        public SpaceHeaderDto? SpaceHeader { get; set; }
+        public OwnerHeaderDto? OwnerHeader { get; set; }
         public bool? IsScheduled { get; set; }
         public bool? IsBookmarked { get; set; }
         public bool? IsStarred { get; set; }

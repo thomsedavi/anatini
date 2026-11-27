@@ -8,6 +8,7 @@ export type InputError = { id: string; message: string; };
 export type Status = 'idle' | 'pending' | 'success' | 'error';
 export type Visibility = 'Public' | 'Protected' | 'Private';
 export type ContentStatus = 'Draft' | 'Published' | 'Archived';
+export type OwnerType = 'User' | 'Space';
 
 export type Request = {
   input: RequestInfo | URL,
@@ -36,14 +37,6 @@ export type User = {
   handle: string;
   about: string | null;
   isTrusted: boolean | null;
-  isFollowed: boolean | null;
-};
-
-export type UserHeader = {
-  id: string;
-  name: string;
-  iconImage: Image | null;
-  handle: string;
   isFollowed: boolean | null;
 };
 
@@ -78,12 +71,13 @@ export type Space = {
   settings: { [key: string]: string }
 };
 
-export type SpaceHeader = {
+export type OwnerHeader = {
   id: string;
   name: string;
   handle: string;
   iconImage: Image | null;
   isFollowed: boolean | null;
+  type: OwnerType;
 };
 
 export type Tab = {
@@ -136,8 +130,7 @@ export type Content = {
   isDismissed: boolean | null;
   isCollected: boolean | null;
   isOwned: boolean | null;
-  userHeader: UserHeader | null;
-  spaceHeader: SpaceHeader | null;
+  ownerHeader: OwnerHeader | null;
 }
 
 export type Event = Content & {
@@ -159,7 +152,6 @@ export type Work = Content & {
 export type Note = Content & {
   title: string | null;
   publishedAtNz: string;
-  visibility: Visibility;
 }
 
 export type Account = {

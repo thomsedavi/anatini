@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const space = ref<APIResponse<SpaceEdit>>({ fetching: true });
+  const spaceResponse = ref<APIResponse<SpaceEdit>>({ fetching: true });
   const notes = ref<Note[] | null>(null);
   const tabIndex = ref<number>(-1);
   const inputName = ref<string>('');
@@ -37,24 +37,24 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: SpaceEdit) => {
-            space.value = { data: value };
+            spaceResponse.value = { data: value };
             inputName.value = value.name;
           })
           .catch(() => {
-            space.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
+            spaceResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your space, please reload the page' }};
           });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: `/spaces/${params[0]}/notes/create` } });
       },
       403: () => {
-        space.value = { error: { status: '403', heading: '403 Forbidden', body: 'No access to space' }};
+        spaceResponse.value = { error: { status: '403', heading: '403 Forbidden', body: 'No access to space' }};
       },
       404: () => {
-        space.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
+        spaceResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'Space not found' }};
       },
       500: () => {
-        space.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
+        spaceResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -62,11 +62,11 @@
   };
 
   function getHeading(): string {
-    if (space.value.fetching === true) {
+    if (spaceResponse.value.fetching === true) {
       return 'Fetching...';
-    } else if (space.value.error !== undefined) {
-      return space.value.error.heading;
-    } else if (space.value.data !== undefined) {
+    } else if (spaceResponse.value.error !== undefined) {
+      return spaceResponse.value.error.heading;
+    } else if (spaceResponse.value.data !== undefined) {
       return 'Space Settings';
     } else {
       return 'Unknown Error';
@@ -108,8 +108,8 @@
   }
 
   function handleUpdateName(newName: string): void {
-    if (space.value.data !== undefined) {
-     space.value.data.name = newName;
+    if (spaceResponse.value.data !== undefined) {
+     spaceResponse.value.data.name = newName;
     }
   }
 
@@ -133,22 +133,22 @@
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="space === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="spaceResponse === null">
     <header>
       <h1 id="heading-main">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="space === null">
+    <section v-if="spaceResponse === null">
       <progress max="100">Fetching account...</progress>
     </section>
 
-    <section v-if="space.error !== undefined">
+    <section v-if="spaceResponse.error !== undefined">
       <p>
-        {{ space.error.body }}
+        {{ spaceResponse.error.body }}
       </p>
     </section>
 
-    <template v-if="space.data !== undefined">
+    <template v-if="spaceResponse.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
         <ul role="list">
@@ -172,10 +172,10 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :data-space-id="space.data.id"
+          :data-space-id="spaceResponse.data.id"
           :data-notes="notes"
-          :data-name="space.data.name"
-          :data-icon-image="space.data.iconImage"
+          :data-name="spaceResponse.data.name"
+          :data-icon-image="spaceResponse.data.iconImage"
           :data-status="status"
           :data-input-errors="inputErrors"
           @update-name="handleUpdateName"

@@ -7,8 +7,8 @@
 
   const route = useRoute();
 
-  const user = ref<APIResponse<User>>({ fetching: true });
-  const eventOccurrence = ref<APIResponse<EventOccurrence>>({ fetching: true });
+  const userResponse = ref<APIResponse<User>>({ fetching: true });
+  const eventOccurrenceResponse = ref<APIResponse<EventOccurrence>>({ fetching: true });
 
   watch([() => route.params.userId, () => route.params.eventId, () => route.params.occurrenceId], (params: Params) => fetchEventOccurrence(parseParams(params)), { immediate: true });
 
@@ -19,7 +19,7 @@
         200: (response?: Response) => {
           response?.json()
             .then((value: User) => {
-              user.value = { data: value };
+              userResponse.value = { data: value };
             });
         }
       }
@@ -31,7 +31,7 @@
         200: (response?: Response) => {
           response?.json()
             .then((value: EventOccurrence) => {
-              eventOccurrence.value = { data: value };
+              eventOccurrenceResponse.value = { data: value };
             });
         }
       }
@@ -41,24 +41,24 @@
   }
 
   function toggleBookmark(): void {
-    if (eventOccurrence.value.data?.isBookmarked === true) {
+    if (eventOccurrenceResponse.value.data?.isBookmarked === true) {
       const input = `users/${route.params.userId}/events/${route.params.eventId}/occurrences/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         204: () => {
-          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.isBookmarked = false;
+          if (eventOccurrenceResponse.value.data !== undefined) eventOccurrenceResponse.value.data.isBookmarked = false;
         }
       }
 
       const init: RequestInit = { method: "DELETE" };
 
       apiFetchAuthenticated({ input, statusActions, init });
-    } else if (eventOccurrence.value.data?.isBookmarked === false) {
+    } else if (eventOccurrenceResponse.value.data?.isBookmarked === false) {
       const input = `users/${route.params.userId}/events/${route.params.eventId}/occurrence/${route.params.occurrenceId}/bookmark`;
 
       const statusActions: StatusActions = {
         201: () => {
-          if (eventOccurrence.value.data !== undefined) eventOccurrence.value.data.isBookmarked = true;
+          if (eventOccurrenceResponse.value.data !== undefined) eventOccurrenceResponse.value.data.isBookmarked = true;
         }
       }
 
@@ -71,13 +71,13 @@
 
 <template>
   <main role="main" id="main" tabindex="-1">
-    <article :aria-busy="eventOccurrence.fetching === true" aria-labelledby="heading-main">
-      <template v-if="eventOccurrence.data !== undefined">
+    <article :aria-busy="eventOccurrenceResponse.fetching === true" aria-labelledby="heading-main">
+      <template v-if="eventOccurrenceResponse.data !== undefined">
         <header>
-          <h1>{{ eventOccurrence.data.title }}</h1>
+          <h1>{{ eventOccurrenceResponse.data.title }}</h1>
         </header>
 
-        <section v-if="eventOccurrence.data.body !== null" aria-label="About event occurrence" v-html="eventOccurrence.data.body">
+        <section v-if="eventOccurrenceResponse.data.body !== null" aria-label="About event occurrence" v-html="eventOccurrenceResponse.data.body">
         </section>
 
         <footer>
@@ -86,7 +86,7 @@
           </nav>
           <menu role="toolbar">
             <li>
-              <button type="button" :aria-pressed="eventOccurrence.data.isBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
+              <button type="button" :aria-pressed="eventOccurrenceResponse.data.isBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
             </li>
           </menu>
         </footer>

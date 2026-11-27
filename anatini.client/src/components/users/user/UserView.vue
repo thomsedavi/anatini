@@ -10,7 +10,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const user = ref<APIResponse<User>>({ fetching: true });
+  const userResponse = ref<APIResponse<User>>({ fetching: true });
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const status = ref<Status>('idle');
@@ -34,27 +34,25 @@
   async function fetchUser(params: string[]) {
     tabIndex.value = tabs.findIndex(tab => tab.name === route.name || tab.childNames?.includes(route.name));
 
-    user.value = { fetching: true };
-
     const input = `users/${params[0]}`;
 
     const statusActions: StatusActions = {
       200: (response?: Response) => {
         response?.json()
           .then((value: User) => {
-            user.value = {
+            userResponse.value = {
               data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null }
             };
           })
           .catch(() => {
-            user.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
+            userResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching this user, please reload the page' }};
           });
       },
       404: () => {
-        user.value = { error: { status: '404', heading: '404 Not Found', body: 'User not found' }};
+        userResponse.value = { error: { status: '404', heading: '404 Not Found', body: 'User not found' }};
       },
       500: () => {
-        user.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this user, please reload the page' }};
+        userResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching this user, please reload the page' }};
       }
     };
 
@@ -135,7 +133,7 @@
 
     <header v-if="false">
       <figure>
-        <img v-if="user.data !== undefined && user.data?.iconImage !== null" :alt="user.data?.iconImage?.altText ?? 'User icon'" :src="user.data?.iconImage?.uri" width="400" height="400" />
+        <img v-if="userResponse.data !== undefined && userResponse.data?.iconImage !== null" :alt="userResponse.data?.iconImage?.altText ?? 'User icon'" :src="userResponse.data?.iconImage?.uri" width="400" height="400" />
         <svg v-else
           view-box="0 0 400 400"
           width="400"
@@ -146,22 +144,22 @@
       </figure>
     </header>
 
-    <header v-if="user.data !== undefined" v-html="getUserHtml(user.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, _entityType, pressed) => userButtonAction(label, pressed, user.data!))">
+    <header v-if="userResponse.data !== undefined" v-html="getUserHtml(userResponse.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, _entityType, pressed) => userButtonAction(label, pressed, userResponse.data!))">
     </header>
 
-    <section v-if="user.fetching === true">
+    <section v-if="userResponse.fetching === true">
       <p role="status" class="visually-hidden" aria-live="polite">Please wait while the user information is fetched.</p>
               
       <progress max="100">Fetching user...</progress>
     </section>
 
-    <section v-if="user.error !== undefined">
+    <section v-if="userResponse.error !== undefined">
       <p>
-        {{ user.error.body }}
+        {{ userResponse.error.body }}
       </p>
     </section>
 
-    <template v-if="user.data !== undefined">
+    <template v-if="userResponse.data !== undefined">
       <ul role="tablist" aria-label="User Content">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
@@ -182,9 +180,9 @@
           :data-works="works"
           :data-event-occurrence-groups="eventOccurrenceGroups"
           :data-spaces="spaces"
-          :data-user-id="user.data.id"
-          :data-user-handle="user.data.handle"
-          :data-user-name="user.data.name"
+          :data-user-id="userResponse.data.id"
+          :data-user-handle="userResponse.data.handle"
+          :data-user-name="userResponse.data.name"
           @update-notes="handleUpdateNotes"
           @update-works="handleUpdateWorks"
           @update-event-occurrence-groups="handleUpdateEventOccurrenceGroups"

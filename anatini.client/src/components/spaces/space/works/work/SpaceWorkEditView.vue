@@ -21,7 +21,7 @@
     'update-errors': [newInputErrors: InputError[]],
   }>();
 
-  const work = ref<APIResponse<Work>>({ fetching: true });
+  const workResponse = ref<APIResponse<Work>>({ fetching: true });
   const inputBody = ref<string>('');
 
   watch([() => route.params.spaceId, () => route.params.workId], (params: Params) => fetchWork(parseParams(params)), { immediate: true });
@@ -33,7 +33,7 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: Work) => {
-            work.value = { data: value };
+            workResponse.value = { data: value };
             inputBody.value = parseFromBodyString(value.body);
           });
       },
@@ -43,9 +43,9 @@
   }
 
   function noChange(): boolean {
-    if (work.value.data === undefined) {
+    if (workResponse.value.data === undefined) {
       return true;
-    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== work.value.data.body) {
+    } else if (tidy(inputBody.value) !== '' && formatParagraphs(inputBody.value) !== workResponse.value.data.body) {
       return false;
     }
 
@@ -57,7 +57,7 @@
   }
 
   async function patchWork() {
-    if (work.value.data === undefined) {
+    if (workResponse.value.data === undefined) {
       return;
     }
 
@@ -82,7 +82,7 @@
     
     const body = new FormData();
 
-    if (formatParagraphs(inputBody.value) !== work.value.data.body) {
+    if (formatParagraphs(inputBody.value) !== workResponse.value.data.body) {
       body.append('body', formatParagraphs(inputBody.value));
     }
 
@@ -98,19 +98,19 @@
       <h2>Edit Work</h2>
     </header>
 
-    <template v-if="work === null">
+    <template v-if="workResponse === null">
       <p role="status" class="visually-hidden" aria-live="polite">Please wait while the work information is fetched.</p>
                 
       <progress max="100">Fetching work...</progress>
     </template>
 
-    <template v-if="work.error !== undefined">
+    <template v-if="workResponse.error !== undefined">
       <p>
-        {{ work.error.body }}
+        {{ workResponse.error.body }}
       </p>
     </template>
 
-    <template v-if="work.data !== undefined">
+    <template v-if="workResponse.data !== undefined">
       <form @submit.prevent="patchWork" :action="`/api/spaces/${route.params.spaceId}/works/${route.params.postId}`" method="POST" novalidate>
         <InputTextArea
           v-model="inputBody"

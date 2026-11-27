@@ -9,7 +9,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const user = ref<APIResponse<UserEdit>>({ fetching: true });
+  const userResponse = ref<APIResponse<UserEdit>>({ fetching: true });
   const errorSectionRef = ref<HTMLElement | null>(null);
   const inputErrors = ref<InputError[]>([]);
   const inputName = ref<string>('');
@@ -36,7 +36,7 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: UserEdit) => {
-            user.value = { data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null } };
+            userResponse.value = { data: { ...value, about: value.about?.replace(/\r\n/g, "\n") ?? null } };
             inputName.value = value.name;
             inputUserAbout.value = value.about ?? '';
 
@@ -45,14 +45,14 @@
             });
           })
           .catch(() => {
-            user.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
+            userResponse.value = { error: { status: 'unknown', heading: 'Unknown Error', body: 'There was a problem fetching your account, please reload the page' }};
           });
       },
       401: () => {
         router.replace({ path: '/sign-in', query: { redirect: '/account' } });
       },
       500: () => {
-        user.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
+        userResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your account, please reload the page' }};
       }
     };
 
@@ -60,11 +60,11 @@
   });
 
   function getHeading(): string {
-    if (user.value.fetching === true) {
+    if (userResponse.value.fetching === true) {
       return 'Fetching...';
-    } else if (user.value.error !== undefined) {
-      return user.value.error.heading;
-    } else if (user.value.data !== undefined) {
+    } else if (userResponse.value.error !== undefined) {
+      return userResponse.value.error.heading;
+    } else if (userResponse.value.data !== undefined) {
       return 'Account Settings';
     } else {
       return 'Unknown Error';
@@ -106,20 +106,20 @@
   }
 
   function handleUpdateName(newName: string): void {
-    if (user.value !== null && 'displayName' in user.value) {
-     user.value.displayName = newName;
+    if (userResponse.value !== null && 'displayName' in userResponse.value) {
+     userResponse.value.displayName = newName;
     }
   }
 
   function handleUpdateAbout(newAbout: string): void {
-    if (user.value !== null && 'about' in user.value) {
-     user.value.about = newAbout;
+    if (userResponse.value !== null && 'about' in userResponse.value) {
+     userResponse.value.about = newAbout;
     }
   }
 
   function handleUpdateVisibility(newVisibility: Visibility): void {
-    if (user.value.data !== undefined) {
-     user.value.data.visibility = newVisibility;
+    if (userResponse.value.data !== undefined) {
+     userResponse.value.data.visibility = newVisibility;
     }
   }
 
@@ -139,22 +139,22 @@
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="user === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="userResponse === null">
     <header>
       <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="user === null">                
+    <section v-if="userResponse === null">                
       <progress max="100">Fetching account...</progress>
     </section>
 
-    <section v-if="user.error !== undefined">
+    <section v-if="userResponse.error !== undefined">
       <p>
-        {{ user.error.body }}
+        {{ userResponse.error.body }}
       </p>
     </section>
 
-    <template v-if="user.data !== undefined">
+    <template v-if="userResponse.data !== undefined">
       <section id="errors" v-if="inputErrors.length > 0" ref="errorSectionRef" tabindex="-1" aria-live="assertive" aria-labelledby="heading-errors">
         <h2 id="heading-errors">There was a problem updating your account</h2>
         <ul role="list">
@@ -178,11 +178,11 @@
       <RouterView v-slot="{ Component }">
         <component
           :is="Component"
-          :data-name="user.data.name"
-          :data-about="user.data.about"
-          :data-icon-image="user.data.iconImage"
-          :data-spaces="user.data.spaces"
-          :data-visibility="user.data.visibility"
+          :data-name="userResponse.data.name"
+          :data-about="userResponse.data.about"
+          :data-icon-image="userResponse.data.iconImage"
+          :data-spaces="userResponse.data.spaces"
+          :data-visibility="userResponse.data.visibility"
           :data-status="status"
           :data-input-errors="inputErrors"
           @update-name="handleUpdateName"

@@ -11,7 +11,7 @@
   const route = useRoute();
   const router = useRouter();
 
-  const note = ref<APIResponse<NoteEdit>>({ fetching: true });
+  const noteResponse = ref<APIResponse<NoteEdit>>({ fetching: true });
   const article = ref<Node | null>(null);
   const eTag = ref<string | null>(null);
   const tabIndex = ref<number>(0);
@@ -38,7 +38,7 @@
       200: (response?: Response) => {
         response?.json()
           .then((value: NoteEdit) => {
-            note.value = { data: value };
+            noteResponse.value = { data: value };
             pageStatus.value = 'Ready';
 
             eTag.value = response.headers.get("ETag");
@@ -54,7 +54,7 @@
             });
           })
           .catch(() => {
-            note.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your note, please reload the page' }};
+            noteResponse.value = { error: { status: '500', heading: '500 Internal Server Error', body: 'There was a problem fetching your note, please reload the page' }};
           });
       }
     }
@@ -63,11 +63,11 @@
   }
 
   function getHeading(): string {
-    if (note.value.fetching === true) {
+    if (noteResponse.value.fetching === true) {
       return 'Fetching...';
-    } else if (note.value.error !== undefined) {
-      return note.value.error.heading;
-    } else if (note.value.data !== undefined) {
+    } else if (noteResponse.value.error !== undefined) {
+      return noteResponse.value.error.heading;
+    } else if (noteResponse.value.data !== undefined) {
       return 'Note Edit';
     } else {
       return 'Unknown Error';
@@ -109,15 +109,15 @@
   }
 
   function handleUpdateTitle(newTitle: string): void {
-    if (note.value.data !== undefined) note.value.data.version.title = newTitle;
+    if (noteResponse.value.data !== undefined) noteResponse.value.data.version.title = newTitle;
   }
 
   function handleUpdateDateNZ(newDateNZ: string): void {
-    if (note.value.data !== undefined) note.value.data.version.dateNZ = newDateNZ;
+    if (noteResponse.value.data !== undefined) noteResponse.value.data.version.dateNZ = newDateNZ;
   }
 
   function handleUpdateNoteStatus(newNoteStatus: 'Draft' | 'Published'): void {
-    if (note.value.data !== undefined) note.value.data.status = newNoteStatus;
+    if (noteResponse.value.data !== undefined) noteResponse.value.data.status = newNoteStatus;
   }
 
   function handleUpdateETag(newETag: string | null): void {
@@ -130,22 +130,22 @@
 </script>
 
 <template>
-  <main role="main" id="main" tabindex="-1" :aria-busy="note === null">
+  <main role="main" id="main" tabindex="-1" :aria-busy="noteResponse === null">
     <header>
       <h1 ref="headingMainRef" tabindex="-1">{{ getHeading() }}</h1>
     </header>
 
-    <section v-if="note.fetching === true">                
+    <section v-if="noteResponse.fetching === true">                
       <progress max="100">Fetching note...</progress>
     </section>
 
-    <section v-if="note.error !== undefined">
+    <section v-if="noteResponse.error !== undefined">
       <p>
-        {{ note.error.body }}
+        {{ noteResponse.error.body }}
       </p>
     </section>
 
-    <template v-if="note.data !== undefined">
+    <template v-if="noteResponse.data !== undefined">
       <ul role="tablist" aria-label="Note Settings">
         <TabButton v-for="(tab, index) in tabs"
           :key="tab.id"
@@ -161,12 +161,12 @@
         <component
           :is="Component"  
           :data-article="article"
-          :data-note="note"
-          :data-space-id="note.data.spaceId"
-          :data-note-id="note.data.id"
+          :data-note="noteResponse"
+          :data-space-id="noteResponse.data.spaceId"
+          :data-note-id="noteResponse.data.id"
           :data-page-status="pageStatus"
-          :data-title="note.data.version.title"
-          :data-date-nz="note.data.version.dateNZ"
+          :data-title="noteResponse.data.version.title"
+          :data-date-nz="noteResponse.data.version.dateNZ"
           :data-e-tag="eTag"
           @update-etag="handleUpdateETag"
           @update-article="handleUpdateArticle"
