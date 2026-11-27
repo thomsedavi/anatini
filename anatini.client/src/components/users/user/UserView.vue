@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { nextTick, ref, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { apiFetch } from '@/common/apiFetch';
-  import { getUserHtml, userButtonAction } from '@/common/html';
+  import { apiFetch, apiFetchAuthenticated } from '@/common/apiFetch';
+  import { store } from '@/common/store';
   import TabButton from '@/common/TabButton.vue';
   import type { APIResponse, EventOccurrence, InputError, Note, Space, Status, StatusActions, Tab, User, Work } from '@/common/types';
-  import { getTabIndex, handleClick, parseParams, type Params } from '@/common/utils';
+  import { getTabIndex, parseParams, type Params } from '@/common/utils';
 
   const route = useRoute();
   const router = useRouter();
@@ -118,6 +118,44 @@
       });
     }
   }
+
+  function userButtonAction(action: string, isPressed: boolean | null): void {
+    const user = userResponse.value.data;
+
+    if (user !== undefined) {
+      const ownerAddress = `users/${user.id}`;
+
+      if (isPressed) {
+        const statusActions: StatusActions = {
+          204: () => {
+            if (action === "follow") {
+              user.isFollowed = false;
+            } else if (action === "trust") {
+              user.isTrusted = false;
+            }
+          }
+        }
+
+        const init: RequestInit = { method: "DELETE" };
+
+        apiFetchAuthenticated({ input: `${ownerAddress}/${action}`, statusActions, init });
+      } else {
+        const statusActions: StatusActions = {
+          201: () => {
+            if (action === "follow") {
+              user.isFollowed = true;
+            } else if (action === "trust") {
+              user.isTrusted = true;
+            }
+          }
+        }
+
+        const init: RequestInit = { method: "POST" };
+
+        apiFetchAuthenticated({ input: `${ownerAddress}/${action}`, statusActions, init });
+      }
+    }
+  }
 </script>
 
 <template>
@@ -144,7 +182,20 @@
       </figure>
     </header>
 
-    <header v-if="userResponse.data !== undefined" v-html="getUserHtml(userResponse.data)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, _entityType, pressed) => userButtonAction(label, pressed, userResponse.data!))">
+    <header v-if="userResponse.data !== undefined">
+      <h1>{{ userResponse.data.name }}</h1>
+
+      <menu v-if="store.account.isAuthenticated && store.account.userId !== userResponse.data.id" role="toolbar" aria-label="User Actions">
+        <li>
+          <button type="button" aria-label="Follow" :aria-pressed="userResponse.data.isFollowed ?? false" @click="() => userButtonAction('follow', userResponse.data!.isFollowed)">{{ userResponse.data.isFollowed ? 'Following' : 'Follow' }}</button>
+        </li>
+        <li>
+          <button v-if="store.account.isTrusted" type="button" aria-label="Trust" :aria-pressed="userResponse.data.isTrusted ?? false" @click="() => userButtonAction('trust', userResponse.data!.isTrusted)">{{ userResponse.data.isTrusted ? 'Trusted' : 'Trust' }}</button>
+          <button v-else type="button" aria-label="Trust" :aria-pressed="userResponse.data.isTrusted ?? false" aria-describedby="trust-requirement-hint" aria-disabled="true">{{  userResponse.data.isTrusted ? 'Trusted' : 'Trust'}}</button>
+        </li>
+      </menu>
+
+      <small v-if="!store.account.isTrusted" id="trust-requirement-hint">Trust is disabled until your account has been trusted by at least 2 other users.</small>
     </header>
 
     <section v-if="userResponse.fetching === true">
