@@ -11,8 +11,8 @@
 - Displays minute/hour/day/month/year if date is minute/hour/day/month/year ✓
 - Does not display owner in article header ✓
 - Links back to user work list ✓
-- Can star, bookmark, and dismiss when logged in ✓
-- Cannot star, bookmark, or dismiss when not logged in ✓
+- Can like, bookmark, and hide when logged in ✓
+- Cannot like, bookmark, or hide when not logged in ✓
 - Has link to open edit page when owner ✓
 - Does not have link to open edit page when:
   - not logged in ✓

@@ -12,7 +12,7 @@ namespace Anatini.Server.Works
             workUser ??= work.User;
             workSpace ??= work.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(work, userId, workUser, workSpace, blobService);
+            var (isBookmarked, isHidden, isLiked, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(work, userId, workUser, workSpace, blobService);
 
             return new WorkDto
             {
@@ -26,8 +26,8 @@ namespace Anatini.Server.Works
                 PublishedAtNz = work.PublishedAtUtc?.ConvertUtcToNz(),
                 IsScheduled = work.PublishedAtUtc.HasValue ? work.PublishedAtUtc > DateTime.UtcNow : null,
                 IsBookmarked = isBookmarked,
-                IsDismissed = isDismissed,
-                IsStarred = isStarred,
+                IsHidden = isHidden,
+                IsLiked = isLiked,
                 IsCollected = isCollected,
                 IsOwned = isOwned
             };

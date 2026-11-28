@@ -185,7 +185,7 @@
     <header v-if="userResponse.data !== undefined">
       <h1>{{ userResponse.data.name }}</h1>
 
-      <menu v-if="store.account.isAuthenticated && store.account.userId !== userResponse.data.id" role="toolbar" aria-label="User Actions">
+      <menu v-if="store.account.isAuthenticated && store.account.userId !== userResponse.data.id" aria-label="User Actions">
         <li>
           <button type="button" aria-label="Follow" :aria-pressed="userResponse.data.isFollowed ?? false" @click="() => userButtonAction('follow', userResponse.data!.isFollowed)">{{ userResponse.data.isFollowed ? 'Following' : 'Follow' }}</button>
         </li>

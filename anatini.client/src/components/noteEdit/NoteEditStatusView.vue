@@ -53,7 +53,7 @@
 
     <p v-if="dataNote.status === 'Published'">Republish to update with any changes.</p>
 
-    <menu role="toolbar">
+    <menu>
       <li>
         <button type="button" @click="() => setStatus('Published')" :aria-disabled="dataPageStatus !== 'Ready' ? true : undefined">{{ dataNote.status === 'Published' ? 'Republish' : 'Publish' }}</button>
       </li>

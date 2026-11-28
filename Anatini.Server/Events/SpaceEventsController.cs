@@ -64,31 +64,31 @@ namespace Anatini.Server.Events
         });
 
         [Authorize]
-        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
-        public async Task<IActionResult> PostEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
+        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/like")]
+        public async Task<IActionResult> PostEventOccurrenceLike(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/star")]
-        public async Task<IActionResult> DeleteEventOccurrenceStar(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
+        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/like")]
+        public async Task<IActionResult> DeleteEventOccurrenceLike(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
-        public async Task<IActionResult> PostEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
+        [HttpPost("{eventHandle}/occurrences/{eventOccurrenceHandle}/hide")]
+        public async Task<IActionResult> PostEventOccurrenceHide(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsHidden);
         });
 
         [Authorize]
-        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/dismiss")]
-        public async Task<IActionResult> DeleteEventOccurrenceDismiss(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
+        [HttpDelete("{eventHandle}/occurrences/{eventOccurrenceHandle}/hide")]
+        public async Task<IActionResult> DeleteEventOccurrenceHide(string spaceHandle, string eventHandle, string eventOccurrenceHandle) => await UsingSpaceEventOccurrenceAsync(spaceHandle, eventHandle, eventOccurrenceHandle, async (eventOccurrence) =>
         {
-            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(eventOccurrence.Id, UserContentRelationshipLabel.IsHidden);
         });
     }
 }

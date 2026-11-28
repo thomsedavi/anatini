@@ -66,31 +66,31 @@ namespace Anatini.Server.Works
         });
 
         [Authorize]
-        [HttpPost("{workId:guid}/star")]
-        public async Task<IActionResult> PostWorkStar(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
+        [HttpPost("{workId:guid}/like")]
+        public async Task<IActionResult> PostWorkLike(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpDelete("{workId:guid}/star")]
-        public async Task<IActionResult> DeleteWorkStar(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
+        [HttpDelete("{workId:guid}/like")]
+        public async Task<IActionResult> DeleteWorkLike(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpPost("{workId:guid}/dismiss")]
-        public async Task<IActionResult> PostWorkDismiss(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
+        [HttpPost("{workId:guid}/hide")]
+        public async Task<IActionResult> PostWorkHide(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsHidden);
         });
 
         [Authorize]
-        [HttpDelete("{workId:guid}/dismiss")]
-        public async Task<IActionResult> DeleteWorkDismiss(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
+        [HttpDelete("{workId:guid}/hide")]
+        public async Task<IActionResult> DeleteWorkHide(Guid workId) => await UsingContentAsync<Work>(workId, async (work) =>
         {
-            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsHidden);
         });
     }
 }

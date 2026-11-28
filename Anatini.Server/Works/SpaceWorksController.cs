@@ -142,31 +142,31 @@ namespace Anatini.Server.Works
         });
 
         [Authorize]
-        [HttpPost("{workHandle}/star")]
-        public async Task<IActionResult> PostWorkStar(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
+        [HttpPost("{workHandle}/like")]
+        public async Task<IActionResult> PostWorkLike(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
         {
-            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpDelete("{workHandle}/star")]
-        public async Task<IActionResult> DeleteWorkStar(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
+        [HttpDelete("{workHandle}/like")]
+        public async Task<IActionResult> DeleteWorkLike(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
         {
-            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpPost("{workHandle}/dismiss")]
-        public async Task<IActionResult> PostWorkDismiss(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
+        [HttpPost("{workHandle}/hide")]
+        public async Task<IActionResult> PostWorkHide(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
         {
-            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(work.Id, UserContentRelationshipLabel.IsHidden);
         });
 
         [Authorize]
-        [HttpDelete("{workHandle}/dismiss")]
-        public async Task<IActionResult> DeleteWorkDismiss(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
+        [HttpDelete("{workHandle}/hide")]
+        public async Task<IActionResult> DeleteWorkHide(string spaceHandle, string workHandle) => await UsingSpaceContentAsync<Work>(spaceHandle, workHandle, async (work, _) =>
         {
-            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(work.Id, UserContentRelationshipLabel.IsHidden);
         });
     }
 }

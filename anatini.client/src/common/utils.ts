@@ -334,9 +334,9 @@ export function ContentBody(props: {html: string}) {
 }
 
 export function updateContent(content: Content, newContent: Content): void {
-  content.isStarred = newContent.isStarred;
+  content.isLiked = newContent.isLiked;
   content.isBookmarked = newContent.isBookmarked;
-  content.isDismissed = newContent.isDismissed;
+  content.isHidden = newContent.isHidden;
   content.ownerHeader = newContent.ownerHeader;
 }
 

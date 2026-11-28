@@ -634,22 +634,22 @@ namespace Anatini.Server
                 contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked));
             }
 
-            if (contentsQuery.Starred == "only")
+            if (contentsQuery.Liked == "only")
             {
-                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsLiked));
             }
-            else if (contentsQuery.Starred == "hide")
+            else if (contentsQuery.Liked == "hide")
             {
-                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsStarred));
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsLiked));
             }
 
-            if (contentsQuery.Dismissed == "only")
+            if (contentsQuery.Hidden == "only")
             {
-                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+                contentsQueryable = contentsQueryable.Where(work => work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsHidden));
             }
-            else if (contentsQuery.Dismissed != "show")
+            else if (contentsQuery.Hidden != "show")
             {
-                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed));
+                contentsQueryable = contentsQueryable.Where(work => !work.UserRelationships.Any(userContentRelationship => userContentRelationship.SourceUserId == sourceUserId && userContentRelationship.Label == UserContentRelationshipLabel.IsHidden));
             }
 
             if (contentsQuery.Collected == "only")

@@ -11,16 +11,16 @@
 
 <template>
   <details>
-    <summary>Starred {{contentType}}s</summary>
+    <summary>Liked {{contentType}}s</summary>
 
     <RadioFieldset
-      v-model="model.starred"
+      v-model="model.liked"
       :radios="[
-        { name: 'starred', value: 'all', id: 'starredAll', label: 'No filter' },
-        { name: 'starred', value: 'only', id: 'starredOnly', label: 'Show only starred' },
-        { name: 'starred', value: 'hide', id: 'starredHide', label: 'Hide starred' }
+        { name: 'liked', value: 'all', id: 'likedAll', label: 'No filter' },
+        { name: 'liked', value: 'only', id: 'likedOnly', label: 'Show only liked' },
+        { name: 'liked', value: 'hide', id: 'likedHide', label: 'Hide liked' }
       ]"
-      :legend="`Starred ${contentType} Options`" />
+      :legend="`Liked ${contentType} Options`" />
   </details>
 
   <details>
@@ -37,16 +37,16 @@
   </details>
 
   <details>
-    <summary>Dismissed {{contentType}}s</summary>
+    <summary>Hidden {{contentType}}s</summary>
 
     <RadioFieldset
-      v-model="model.dismissed"
+      v-model="model.hidden"
       :radios="[
-        { name: 'dismissed', value: 'all', id: 'dismissedAll', label: 'No filter' },
-        { name: 'dismissed', value: 'show', id: 'dismissedShow', label: 'Show dismissed' },
-        { name: 'dismissed', value: 'only', id: 'dismissedOnly', label: 'Show only dismissed' }
+        { name: 'hidden', value: 'all', id: 'hiddenAll', label: 'No filter' },
+        { name: 'hidden', value: 'show', id: 'hiddenShow', label: 'Show hidden' },
+        { name: 'hidden', value: 'only', id: 'hiddenOnly', label: 'Show only hidden' }
       ]"
-      :legend="`Dismissed ${contentType} Options`" />
+      :legend="`Hidden ${contentType} Options`" />
   </details>
 
   <details>

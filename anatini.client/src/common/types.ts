@@ -127,9 +127,9 @@ export type Content = {
   visibility: Visibility;
   status: ContentStatus;
   isScheduled: boolean | null;
-  isStarred: boolean | null;
+  isLiked: boolean | null;
   isBookmarked: boolean | null;
-  isDismissed: boolean | null;
+  isHidden: boolean | null;
   isCollected: boolean | null;
   isOwned: boolean | null;
   ownerHeader: OwnerHeader | null;

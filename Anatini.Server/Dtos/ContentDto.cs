@@ -10,8 +10,8 @@
         public OwnerHeaderDto? OwnerHeader { get; set; }
         public bool? IsScheduled { get; set; }
         public bool? IsBookmarked { get; set; }
-        public bool? IsStarred { get; set; }
-        public bool? IsDismissed { get; set; }
+        public bool? IsLiked { get; set; }
+        public bool? IsHidden { get; set; }
         public bool? IsCollected { get; set; }
         public bool? IsOwned { get; set; }
     }

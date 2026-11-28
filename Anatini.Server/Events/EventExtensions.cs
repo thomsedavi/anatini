@@ -12,7 +12,7 @@ namespace Anatini.Server.Events
             eventUser ??= @event.User;
             eventSpace ??= @event.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, _) = await ContentHelper.GetUserContentDetails(@event, userId, eventUser, eventSpace);
+            var (isBookmarked, isHidden, isLiked, isCollected, isOwned, _) = await ContentHelper.GetUserContentDetails(@event, userId, eventUser, eventSpace);
 
             return new EventDto
             {
@@ -25,8 +25,8 @@ namespace Anatini.Server.Events
                 Visibility = @event.Visibility.ToString(),
                 Status = @event.Status.ToString(),
                 IsBookmarked = isBookmarked,
-                IsDismissed = isDismissed,
-                IsStarred = isStarred,
+                IsHidden = isHidden,
+                IsLiked = isLiked,
                 IsCollected = isCollected,
                 IsOwned = isOwned
             };
@@ -38,7 +38,7 @@ namespace Anatini.Server.Events
             eventOccurrenceUser ??= eventOccurrence.User;
             eventOccurrenceSpace ??= eventOccurrence.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(eventOccurrence, userId, eventOccurrenceUser, eventOccurrenceSpace, blobService);
+            var (isBookmarked, isHidden, isLiked, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(eventOccurrence, userId, eventOccurrenceUser, eventOccurrenceSpace, blobService);
 
             return new EventOccurrenceDto
             {
@@ -58,8 +58,8 @@ namespace Anatini.Server.Events
                 Visibility = eventOccurrence.Visibility.ToString(),
                 Status = eventOccurrence.Status.ToString(),
                 IsBookmarked = isBookmarked,
-                IsDismissed = isDismissed,
-                IsStarred = isStarred,
+                IsHidden = isHidden,
+                IsLiked = isLiked,
                 IsCollected = isCollected,
                 IsOwned = isOwned
             };

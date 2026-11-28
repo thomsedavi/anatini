@@ -151,31 +151,31 @@ namespace Anatini.Server.Notes
         });
 
         [Authorize]
-        [HttpPost("{noteHandle}/star")]
-        public async Task<IActionResult> PostNoteStar(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
+        [HttpPost("{noteHandle}/like")]
+        public async Task<IActionResult> PostNoteLike(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
         {
-            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsStarred);
+            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpDelete("{noteHandle}/star")]
-        public async Task<IActionResult> DeleteNoteStar(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
+        [HttpDelete("{noteHandle}/like")]
+        public async Task<IActionResult> DeleteNoteLike(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
         {
-            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsStarred);
+            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsLiked);
         });
 
         [Authorize]
-        [HttpPost("{noteHandle}/dismiss")]
-        public async Task<IActionResult> PostNoteDismiss(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
+        [HttpPost("{noteHandle}/hide")]
+        public async Task<IActionResult> PostNoteHide(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
         {
-            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsDismissed);
+            return await AddContentRelationship(note.Id, UserContentRelationshipLabel.IsHidden);
         });
 
         [Authorize]
-        [HttpDelete("{noteHandle}/dismiss")]
-        public async Task<IActionResult> DeleteNoteDismiss(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
+        [HttpDelete("{noteHandle}/hide")]
+        public async Task<IActionResult> DeleteNoteHide(string userHandle, string noteHandle) => await UsingUserContentAsync<Note>(userHandle, noteHandle, async (note, _) =>
         {
-            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsDismissed);
+            return await DeleteContentRelationship(note.Id, UserContentRelationshipLabel.IsHidden);
         });
     }
 }

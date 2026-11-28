@@ -14,7 +14,7 @@ namespace Anatini.Server.Notes
             noteUser ??= note.User;
             noteSpace ??= note.Space;
 
-            var (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(note, userId, noteUser, noteSpace, blobService);
+            var (isBookmarked, isHidden, isLiked, isCollected, isOwned, ownerHeader) = await ContentHelper.GetUserContentDetails(note, userId, noteUser, noteSpace, blobService);
 
             return new NoteDto
             {
@@ -28,8 +28,8 @@ namespace Anatini.Server.Notes
                 PublishedAtNz = publishedAtUtc.ConvertUtcToNz(),
                 IsScheduled = publishedAtUtc > DateTime.UtcNow ? true : null,
                 IsBookmarked = isBookmarked,
-                IsDismissed = isDismissed,
-                IsStarred = isStarred,
+                IsHidden = isHidden,
+                IsLiked = isLiked,
                 IsCollected = isCollected,
                 IsOwned = isOwned
             };

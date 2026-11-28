@@ -84,7 +84,7 @@
           <nav>
 
           </nav>
-          <menu role="toolbar">
+          <menu>
             <li>
               <button type="button" :aria-pressed="eventOccurrenceResponse.data.isBookmarked ?? false" @click="toggleBookmark">Bookmark</button>
             </li>

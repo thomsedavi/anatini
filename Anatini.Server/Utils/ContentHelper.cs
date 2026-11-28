@@ -9,19 +9,19 @@ namespace Anatini.Server.Utils
 {
     public static class ContentHelper
     {
-        public static async Task<(bool? isBookmarked, bool? isDismissed, bool? isStarred, bool? isCollected, bool? isOwned, OwnerHeaderDto? ownerHeader)> GetUserContentDetails(Content content, Guid? userId, ApplicationUser? contentUser, Space? contentSpace, IBlobService? blobService = null)
+        public static async Task<(bool? isBookmarked, bool? isHidden, bool? isLiked, bool? isCollected, bool? isOwned, OwnerHeaderDto? ownerHeader)> GetUserContentDetails(Content content, Guid? userId, ApplicationUser? contentUser, Space? contentSpace, IBlobService? blobService = null)
         {
             bool? isBookmarked = null;
-            bool? isDismissed = null;
-            bool? isStarred = null;
+            bool? isHidden = null;
+            bool? isLiked = null;
             bool? isCollected = null;
             bool? isOwned = null;
 
             if (userId.HasValue)
             {
                 isBookmarked = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsBookmarked);
-                isDismissed = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsDismissed);
-                isStarred = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsStarred);
+                isHidden = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsHidden);
+                isLiked = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsLiked);
                 isCollected = content.UserRelationships.Any(userContentRelationship => userContentRelationship.Label == UserContentRelationshipLabel.IsCollected);
 
                 if (contentUser?.Id == userId.Value)
@@ -49,7 +49,7 @@ namespace Anatini.Server.Utils
                 ownerHeader = await contentSpace.ToOwnerHeaderDtoAsync(userId.HasValue, blobService);
             }
 
-            return (isBookmarked, isDismissed, isStarred, isCollected, isOwned, ownerHeader);
+            return (isBookmarked, isHidden, isLiked, isCollected, isOwned, ownerHeader);
         }
     }
 }
