@@ -187,7 +187,6 @@ main {
     }
 
     button {
-      cursor: pointer;
       background-color: #f1f5f9;
       color: #1e293b;
       padding: 0.5rem 1rem;
@@ -545,35 +544,6 @@ section[role="tabpanel"] {
           background-color: #0052a3;
         }
       }
-
-      > ul {
-        margin: auto;
-        max-width: 90vw;
-        padding: 0.5rem;
-        background: #ffffff;
-        border: none;
-        border-radius: 8px;
-        list-style: none;
-
-        &::backdrop {
-          background-color: rgba(0, 0, 0, 0.05);
-          backdrop-filter: blur(0.5px);
-        }
-
-        > li {
-          > a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: #333333;
-            font-size: 0.95rem;
-
-            &:hover {
-              background-color: #f5f5f5;
-              color: #0066cc;
-            }
-          }
-        }
-      }
     }
   }
 
@@ -603,9 +573,9 @@ section[role="tabpanel"] {
     flex-direction: column;
     gap: 0.75rem;
 
-    &[data-status="draft"],
-    &[data-status="archived"],
-    &[data-status="scheduled"] {
+    &[data-status="Draft"],
+    &[data-status="Archived"],
+    &[data-status="Scheduled"] {
       background-image: repeating-linear-gradient(
         -45deg,
         transparent 0 20px,
@@ -685,6 +655,62 @@ section[role="tabpanel"] {
             }
           }
         }
+      }
+    }
+  }
+}
+
+[popover] {
+  margin: auto;
+  max-width: 90vw;
+  padding: 0.375rem;
+  min-width: 9rem;
+  border: none;
+  border-radius: 0.5rem;
+
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(0.5px);
+  }
+
+  li {
+    display: flex;
+
+    a,
+    button {
+      width: 100%;
+      padding: 0.45rem 0.65rem;
+      border-radius: 0.375rem;
+      color: #0f172a;
+      font-size: 0.875rem;
+    }
+
+    a {
+      &:hover,
+      &:focus-visible {
+        background-color: #f1f5f9;
+      }
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      text-align: left;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #f1f5f9;
+      }
+
+      &[aria-pressed="true"] {
+        font-weight: 600;
+        color: #2563eb;
       }
     }
   }
