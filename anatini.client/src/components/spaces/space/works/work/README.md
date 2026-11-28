@@ -1,4 +1,5 @@
 # Space Work
+- Displays space work name with H2 heading
 - Displays space work with correct HTML ✓
 - Does not display date if undated ✓
 - DateTime attribute of Time includes time if date has time component

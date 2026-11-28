@@ -1,17 +1,13 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
   import { apiFetch } from '@/common/apiFetch';
   import ContentArticle from '@/common/ContentArticle.vue';
   import { formatDate, getDayOfWeek } from '@/common/dateUtils';
   import { defaultFilters, getSearchParameters, type Filters } from '@/common/filters';
   import FilterRadios from '@/common/FilterRadios.vue';
-  import { contentButtonAction, getEventOccurrenceHtml } from '@/common/html';
   import { store } from '@/common/store';
   import type { EventOccurrence, SearchParameter, StatusActions } from '@/common/types';
-  import { getEventOccurrenceAddress, handleClick, updateContent } from '@/common/utils';
-
-  const router = useRouter();
+  import { updateContent } from '@/common/utils';
 
   const props = defineProps<{
     dataEventOccurrenceGroups: { date: string, eventOccurrences: EventOccurrence[] }[] | null,
@@ -125,9 +121,8 @@
         </h3>
 
         <ul :aria-label="`Events starting ${formatDate(eventOccurrenceGroup.date)}`">
-          <li v-for="eventOccurrence in eventOccurrenceGroup.eventOccurrences" :key="'eventOccurrence' + eventOccurrence.id">
-            <article :data-status="eventOccurrence.status.toLowerCase()" v-html="getEventOccurrenceHtml(eventOccurrence)" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router, (label, entityType, pressed) => contentButtonAction(label, pressed, eventOccurrence, getEventOccurrenceAddress(eventOccurrence, entityType, 'id')))">
-            </article>
+          <li v-for="(eventOccurrence, index) in eventOccurrenceGroup.eventOccurrences" :key="'eventOccurrence' + eventOccurrence.id">
+            <ContentArticle :content="eventOccurrence" content-type="EventOccurrence" :index="index" :is-main="false" @update-content="(newEventOccurrence) => updateContent(eventOccurrence, newEventOccurrence)" />
           </li>
         </ul>
       </section>

@@ -44,6 +44,7 @@ export type User = {
 export type EventHeader = {
   id: string;
   handle: string;
+  hasRecurrenceRule: boolean;
 }
 
 export type UserEdit = {

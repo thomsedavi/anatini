@@ -11,5 +11,6 @@
     {
         public required Guid Id { get; set; }
         public required string Handle { get; set; }
+        public required bool HasRecurrenceRule { get; set; }
     }
 }

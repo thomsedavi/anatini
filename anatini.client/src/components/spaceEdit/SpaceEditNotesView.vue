@@ -1,12 +1,9 @@
 <script setup lang="ts">
-  import type { Note, StatusActions } from '@/common/types';
-  import { formatDateTime } from '@/common/dateUtils';
   import { onMounted } from 'vue';
   import { apiFetchAuthenticated } from '@/common/apiFetch';
-  import { handleClick } from '@/common/utils';
-  import { useRouter } from 'vue-router';
-
-  const router = useRouter();
+  import ContentArticle from '@/common/ContentArticle.vue';
+  import type { Note, StatusActions } from '@/common/types';
+  import { updateContent } from '@/common/utils';
 
   const props = defineProps<{
     dataSpaceId: string,
@@ -43,9 +40,8 @@
     </header>
 
     <ul role="list" v-if="dataNotes !== null">
-      <li v-for="note in dataNotes" :key="'note' + note.id">
-        <article :data-status="note.status.toLowerCase()" v-html="`${note.body}<footer><time datetime='${note.publishedAtNz}'>${formatDateTime(note.publishedAtNz)}</time><menu role='toolbar'><li><a href='/spaces/${dataSpaceId}/edit/notes/${note.handle ?? note.id}/edit'>Edit</a></li></menu></footer>`" @click.prevent="(mouseEvent) => handleClick(mouseEvent, router)">
-        </article>
+      <li v-for="(note, index) in dataNotes" :key="'note' + note.id">
+        <ContentArticle :content="note" content-type="Note" :index="index" :is-main="false" @update-content="(newNote) => updateContent(note, newNote)" />
       </li>
     </ul>
 

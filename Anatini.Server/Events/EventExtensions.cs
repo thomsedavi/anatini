@@ -34,6 +34,7 @@ namespace Anatini.Server.Events
 
         public static async Task<EventOccurrenceDto> ToEventOccurrenceDtoAsync(this EventOccurrence eventOccurrence, Guid? userId, IBlobService? blobService = null, ApplicationUser? eventOccurrenceUser = null, Space? eventOccurrenceSpace = null)
         {
+            var @event = eventOccurrence.GetEvent();
             eventOccurrenceUser ??= eventOccurrence.User;
             eventOccurrenceSpace ??= eventOccurrence.Space;
 
@@ -44,8 +45,9 @@ namespace Anatini.Server.Events
                 Id = eventOccurrence.Id,
                 EventHeader = new EventHeaderDto
                 {
-                    Id = eventOccurrence.Parent?.Id ?? throw new InvalidOperationException(),
-                    Handle = eventOccurrence.Parent.Handle
+                    Id = @event.Id,
+                    Handle = @event.Handle,
+                    HasRecurrenceRule = @event.RecurrenceRule != null
                 },
                 OwnerHeader = ownerHeader,
                 Handle = eventOccurrence.Handle,
@@ -61,6 +63,11 @@ namespace Anatini.Server.Events
                 IsCollected = isCollected,
                 IsOwned = isOwned
             };
+        }
+
+        public static Event GetEvent(this EventOccurrence eventOccurrence)
+        {
+            return eventOccurrence.Parent as Event ?? throw new InvalidOperationException();
         }
     }
 }

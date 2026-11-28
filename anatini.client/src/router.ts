@@ -27,7 +27,8 @@ import UserNoteCreateView from './components/users/user/notes/note/UserNoteCreat
 import UserNoteEditView from './components/users/user/notes/note/UserNoteEditView.vue';
 import UserEventView from './components/users/user/events/event/UserEventView.vue';
 import UserEventCreateView from './components/users/user/events/event/UserEventCreateView.vue';
-// import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
+import UserEventEditView from './components/users/user/events/event/UserEventEditView.vue';
+import UserEventOccurrenceView from './components/users/user/events/event/UserEventOccurrenceView.vue';
 import UserSpacesView from './components/users/user/spaces/UserSpacesView.vue';
 import UserSpaceCreateView from './components/users/user/spaces/space/UserSpaceCreateView.vue';
 
@@ -49,6 +50,7 @@ import SpaceNoteEditView from './components/spaces/space/notes/note/SpaceNoteEdi
 import SpaceEventsView from './components/spaces/space/events/SpaceEventsView.vue';
 import SpaceEventView from './components/spaces/space/events/event/SpaceEventView.vue';
 import SpaceEventCreateView from './components/spaces/space/events/event/SpaceEventCreateView.vue';
+import SpaceEventEditView from './components/spaces/space/events/event/SpaceEventEditView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -140,11 +142,16 @@ const routes: RouteRecordRaw[] = [
         component: UserEventCreateView,
         name: 'UserEventCreate'
       },
-      // {
-      //   path: 'events/:eventId/occurrence/:occurrenceId',
-      //   component: UserEventOccurrenceView,
-      //   name: 'EventOccurrence',
-      // },
+      {
+        path: 'events/:eventId/edit',
+        component: UserEventEditView,
+        name: 'UserEventEdit',
+      },
+      {
+        path: 'events/:eventId/occurrence/:occurrenceId',
+        component: UserEventOccurrenceView,
+        name: 'UserEventOccurrence',
+      },
       {
         path: 'events/:eventId',
         component: UserEventView,
@@ -222,6 +229,11 @@ const routes: RouteRecordRaw[] = [
         path: 'events/create',
         component: SpaceEventCreateView,
         name: 'SpaceEventCreate'
+      },
+      {
+        path: 'events/:eventId/edit',
+        component: SpaceEventEditView,
+        name: 'SpaceEventEdit',
       },
       {
         path: 'events/:eventId',

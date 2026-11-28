@@ -1,5 +1,14 @@
-import type { Router } from "vue-router";
-import type { ContentStatus, EventOccurrence, Note, User, Work } from "./types";
+import type { Content, ContentType, EventOccurrence, Note, Work } from "./types";
+import { computed, h, type VNode } from "vue";
+import { formatTime } from "./dateUtils";
+
+export function pascalToKebab(string: string) {
+  return string.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+export function pascalToCamel(string: string) {
+  return string.replace(/^./, match => match.toLowerCase());
+}
 
 export function serializeToString(node: Node): string {
   const serializer = new XMLSerializer();
@@ -280,140 +289,75 @@ export function tidy(text: string): string {
   return tidiedLines.join('\n');
 }
 
-export function getContentStatus(status: ContentStatus, isScheduled: boolean | null): string {
-  if (status === 'Draft') {
-    return 'draft';
-  } else if (status === 'Archived') {
-    return 'archived';
-  } else if (isScheduled) {
-    return 'scheduled';
+export function getContentStatus(content: Content): string {
+  if (content.status === 'Draft') {
+    return 'Draft';
+  } else if (content.status === 'Archived') {
+    return 'Archived';
+  } else if (content.isScheduled) {
+    return 'Scheduled';
   }
 
   return 'published';
 }
 
-export function handleClick(mouseEvent: MouseEvent, router: Router, buttonAction?: (label: string, entityType: string | null, pressed: string | null) => void): void {
-  const anchor = (mouseEvent.target as HTMLElement).closest('a');
+export function getContentAddress(content: Content, contentType: ContentType, basis: 'name' | 'id'): string {
+  const contentTypeKebab = pascalToKebab(contentType);
+  const contentKey = basis === 'id' ? content.id : content.handle;
 
-  if (anchor !== null) {
-    const href = anchor.getAttribute('href');
+  if (content.ownerHeader !== null) {
+    const ownerTypeKebab = pascalToKebab(content.ownerHeader.type);
+    const ownerKey = basis === 'id' ? content.ownerHeader.id : content.ownerHeader.handle;
 
-    if (href !== null) {
-      router.push(href);
-    }
-  }
-
-  const button = (mouseEvent.target as HTMLElement | null)?.closest('button');
-
-  if (button instanceof HTMLButtonElement) {
-    if (button.popoverTargetElement instanceof HTMLElement) {
-      button.popoverTargetElement.showPopover();
-      return;
-    }
-
-    const ariaDisabled = button.getAttribute('aria-disabled');
-
-    if (ariaDisabled === 'true') {
-      return;
-    }
-
-    const ariaLabel = button.getAttribute('aria-label');
-    const ariaPressed = button.getAttribute('aria-pressed');
-
-    if (ariaLabel !== null) {
-      const entityType = button.getAttribute('data-entity-type');
-
-      buttonAction?.(ariaLabel, entityType, ariaPressed);
-    }
-  }
-}
-
-export function escapeHtml(value: string | null): string | null {
-  if (value === null) {
-    return null;
-  }
-
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-export function getNoteAddress(note: Note, entityType: string | null, basis: 'name' | 'id'): string {
-  if (entityType === 'space' && note.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? note.spaceHeader.id : note.spaceHeader.handle;
-
-    return `spaces/${spaceKey}`;
-  } else if (entityType === 'user' && note.userHeader !== null) {
-    const userKey = basis === 'id' ? note.userHeader.id : note.userHeader.handle;
-
-    return `users/${userKey}`;
-  }
-
-  const noteKey = basis === 'id' ? note.id : note.handle;
-
-  if (note.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? note.spaceHeader.id : note.spaceHeader.handle;
-
-    return `spaces/${spaceKey}/notes/${noteKey}`;
-  } else if (note.userHeader !== null) {
-    const userKey = basis === 'id' ? note.userHeader.id : note.userHeader.handle;
-
-    return `users/${userKey}/notes/${noteKey}`;
+    return `${ownerTypeKebab}s/${ownerKey}/${contentTypeKebab}s/${contentKey}`;
   } else {
     // return id based address by default
-    return `notes/${note.id}`;
+    return `${contentTypeKebab}s/${content.id}`;
   }
 }
 
-export function getWorkAddress(work: Work, entityType: string | null, basis: 'name' | 'id'): string {
-  if (entityType === 'space' && work.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? work.spaceHeader.id : work.spaceHeader.handle;
+function parseHtmlToVNodes(input: string): VNode[] {
+  if (typeof document === 'undefined') return [];
 
-    return `spaces/${spaceKey}`;
-  } else if (entityType === 'user' && work.userHeader !== null) {
-    const userKey = basis === 'id' ? work.userHeader.id : work.userHeader.handle;
+  const template = document.createElement('template');
+  template.innerHTML = input.trim();
 
-    return `users/${userKey}`;
-  }
-
-  const workKey = basis === 'id' ? work.id : work.handle;
-
-  if (work.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? work.spaceHeader.id : work.spaceHeader.handle;
-
-    return `spaces/${spaceKey}/works/${workKey}`;
-  } else if (work.userHeader !== null) {
-    const userKey = basis === 'id' ? work.userHeader.id : work.userHeader.handle;
-
-    return `users/${userKey}/works/${workKey}`;
-  } else {
-    // return id based address by default
-    return `works/${work.id}`;
-  }
+  return Array.from(template.content.childNodes)
+    .filter((node): node is HTMLElement => node instanceof HTMLElement)
+    .map((el) =>
+      h(el.tagName.toLowerCase(), { innerHTML: el.innerHTML })
+    );
 }
 
-export function getEventOccurrenceAddress(eventOccurrence: EventOccurrence, entityType: string | null, basis: 'name' | 'id'): string {
-  if (entityType === 'space' && eventOccurrence.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? eventOccurrence.spaceHeader.id : eventOccurrence.spaceHeader.handle;
+export function ContentBody(props: {html: string}) {
+  return computed(() => parseHtmlToVNodes(props.html)).value;
+}
 
-    return `spaces/${spaceKey}`;
-  } else if (entityType === 'user' && eventOccurrence.userHeader !== null) {
-    const userKey = basis === 'id' ? eventOccurrence.userHeader.id : eventOccurrence.userHeader.handle;
+export function updateContent(content: Content, newContent: Content): void {
+  content.isStarred = newContent.isStarred;
+  content.isBookmarked = newContent.isBookmarked;
+  content.isDismissed = newContent.isDismissed;
+  content.ownerHeader = newContent.ownerHeader;
+}
 
-    return `users/${userKey}`;
-  }
+export function isNote(content: Content, contentType: ContentType): content is Note {
+  return contentType === 'Note';
+}
 
-  const eventKey = basis === 'id' ? eventOccurrence.eventHeader.id : eventOccurrence.eventHeader.handle;
-  const eventOccurrenceKey = basis === 'id' ? eventOccurrence.id : eventOccurrence.handle;
+export function isWork(content: Content, contentType: ContentType): content is Work {
+  return contentType === 'Work';
+}
 
-  if (eventOccurrence.spaceHeader !== null) {
-    const spaceKey = basis === 'id' ? eventOccurrence.spaceHeader.id : eventOccurrence.spaceHeader.handle;
+export function isEventOccurrence(content: Content, contentType: ContentType): content is EventOccurrence {
+  return contentType === 'EventOccurrence';
+}
 
-    return `spaces/${spaceKey}/events/${eventKey}/occurrences/${eventOccurrenceKey}`;
-  } else if (eventOccurrence.userHeader !== null) {
-    const userKey = basis === 'id' ? eventOccurrence.userHeader.id : eventOccurrence.userHeader.handle;
+export function getWorkDateTime(publishedAtNz: string): string {
+  const publishedAtNzTime = formatTime(publishedAtNz);
 
-    return `users/${userKey}/events/${eventKey}/occurrences/${eventOccurrenceKey}`;
+  if (publishedAtNzTime === '12:00 am') {
+    return `<time datetime="${publishedAtNz.slice(0, 10)}">`;
   } else {
-    // return id based address by default
-    return `events/${eventOccurrence.eventHeader.id}/occurrence/${eventOccurrence.id}`;
+    return `<time datetime="${publishedAtNz}">`;
   }
 }

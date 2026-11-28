@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { apiFetchAuthenticated } from "@/common/apiFetch";
-  import { formatDateTime, formatShortestDateTime } from "@/common/dateUtils";
+  import { formatDate, formatDateTime, formatShortestDateTime, formatTime, getDaysDifference } from "@/common/dateUtils";
   import { store } from "@/common/store";
   import type { Content, ContentType, StatusActions } from '@/common/types';
-  import { ContentBody, getContentAddress, getContentStatus, getWorkDateTime, isNote, isWork, pascalToKebab } from '@/common/utils';
+  import { ContentBody, getContentAddress, getContentStatus, getWorkDateTime, isEventOccurrence, isNote, isWork, pascalToCamel, pascalToKebab } from '@/common/utils';
 
   const props = defineProps<{
     content: Content,
@@ -17,7 +17,11 @@
   }>();
 
   const contentTypeKebab = pascalToKebab(props.contentType);
+  const contentTypeCamel = pascalToCamel(props.contentType);
   const contentIdPrefix = props.index === undefined ? contentTypeKebab : `${contentTypeKebab}-${props.index}`;
+  const startsAtNzTime = isEventOccurrence(props.content, props.contentType) ? formatTime(props.content.startsAtNz) : undefined;
+  const endsAtNzTime = isEventOccurrence(props.content, props.contentType) ? formatTime(props.content.endsAtNz) : undefined;
+  const daysDifference = isEventOccurrence(props.content, props.contentType) ? getDaysDifference(props.content.startsAtNz, props.content.endsAtNz) : undefined;
 
   function ownerButtonAction(action: string, isPressed: boolean | null): void {
     const ownerHeader = props.content.ownerHeader;
@@ -95,9 +99,15 @@
 <template>
   <article :data-status="getContentStatus(content)">
     <header>
-      <template v-if="isWork(content, contentType)">
+      <template v-if="isWork(content, contentType) || isEventOccurrence(content, contentType)">
         <h2 v-if="isMain">{{ content.title }}</h2>
-        <h3 v-else-if="content.ownerHeader !== null"><RouterLink :to="{ name: `${content.ownerHeader.type}${contentType}`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, [`${contentTypeKebab}Id`]: content.handle } }">{{ content.title }}</RouterLink></h3>
+        <h3 v-else-if="content.ownerHeader !== null">
+          <RouterLink v-if="isWork(content, contentType)" :to="{ name: `${content.ownerHeader.type}${contentType}`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, [`${contentTypeCamel}Id`]: content.handle } }">{{ content.title }}</RouterLink>
+          <template v-else-if="isEventOccurrence(content, contentType)">
+            <RouterLink v-if="!content.eventHeader.hasRecurrenceRule" :to="{ name: `${content.ownerHeader.type}Event`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, 'eventId': content.eventHeader.id } }">{{ content.title }}</RouterLink>
+            <template v-else>{{ content.title }}</template>
+          </template>
+        </h3>
         <h3 v-else>{{ content.title }}</h3>
       </template>
       <address v-if="!isMain && content.ownerHeader !== null" role="presentation">
@@ -109,16 +119,28 @@
       <p v-if="isWork(content, contentType) && content.publishedAtNz !== null">
         Published: <time :datetime="getWorkDateTime(content.publishedAtNz)">{{ formatShortestDateTime(content.publishedAtNz) }}</time>
       </p>
+      <p v-if="isEventOccurrence(content, contentType)">
+        <template v-if="startsAtNzTime !== '12:00 am' && endsAtNzTime !== '12:00 am'">
+          <time :datetime="content.startsAtNz">{{ startsAtNzTime }}</time> - <time :datetime="content.endsAtNz">{{ endsAtNzTime }}</time>
+        </template>
+        <template v-else-if="daysDifference === 1">
+          <time :dateTime="content.startsAtNz.slice(0, 10)">All Day</time>
+        </template>
+        <template v-else>
+          <time :datetime="content.startsAtNz.slice(0, 10)">{{ formatDate(content.startsAtNz) }}</time> - <time :datetime="content.endsAtNz.slice(0, 10)">{{ formatDate(content.endsAtNz) }}</time>
+        </template>
+      </p>
       <p v-if="content.status === 'Draft'">Draft</p>
       <p v-else-if="content.status === 'Archived'">Archived</p>
       <p v-else-if="content.isScheduled">Scheduled</p>
       <button type="button" :popovertarget="`${contentIdPrefix}-additional-actions`">…</button>
       <menu :id="`${contentIdPrefix}-additional-actions`" popover="auto" aria-label="Additional actions">
-        <li v-if="!isMain && content.ownerHeader !== null">
+        <li v-if="!isMain && content.ownerHeader !== null && content.ownerHeader.id !== store.account.userId">
           <button :data-entity-type="content.ownerHeader.type" :data-entity-id="content.ownerHeader.id" aria-label="Follow" :aria-pressed="content.ownerHeader.isFollowed ?? false" @click="() => ownerButtonAction('follow', content.ownerHeader!.isFollowed)">{{ content.ownerHeader!.isFollowed ? 'Unfollow' : 'Follow' }}</button>
         </li>
         <li v-if="content.isOwned && content.ownerHeader !== null">
-          <RouterLink :to="{ name: `${content.ownerHeader.type}${contentType}Edit`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, [`${contentTypeKebab}Id`]: content.handle } }">Edit</RouterLink>
+          <RouterLink v-if="!isEventOccurrence(content, contentType)" :to="{ name: `${content.ownerHeader.type}${contentType}Edit`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, [`${contentTypeCamel}Id`]: content.handle } }">Edit</RouterLink>
+          <RouterLink v-if="isEventOccurrence(content, contentType) && !content.eventHeader.hasRecurrenceRule" :to="{ name: `${content.ownerHeader.type}EventEdit`, params: { [`${content.ownerHeader.type.toLowerCase()}Id`]: content.ownerHeader.handle, eventId: content.handle } }">Edit</RouterLink>
         </li>
       </menu>
     </header>
